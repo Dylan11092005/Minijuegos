@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://miluhf0slqvc"]
+
+[ext_resource type="Script" uid="uid://ca1625yumtfe6" path="res://minigame_house/Screw.gd" id="1_fagc0"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_fagc0"]
+radius = 50.0
+
+[node name="Screw" type="Area2D" unique_id=494444542]
+script = ExtResource("1_fagc0")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1955863413]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1878147772]
+shape = SubResource("CircleShape2D_fagc0")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=84797793]

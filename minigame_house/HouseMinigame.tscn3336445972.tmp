@@ -1,0 +1,41 @@
+[gd_scene format=3 uid="uid://cgdkn0qo0drho"]
+
+[ext_resource type="Script" uid="uid://dshms2m10iev1" path="res://minigame_house/HouseMinigame.gd" id="1_dhsa5"]
+
+[node name="HouseMinigame" type="Node2D" unique_id=285727490]
+script = ExtResource("1_dhsa5")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1640180912]
+
+[node name="TimerLabel" type="Label" parent="CanvasLayer" unique_id=2098698018]
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="StatusLabel" type="Label" parent="CanvasLayer" unique_id=2088168877]
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="BtnBack" type="Button" parent="CanvasLayer" unique_id=1750213553]
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="ResultPanel" type="Panel" parent="CanvasLayer" unique_id=1974071868]
+visible = false
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ResultLabel" type="Label" parent="CanvasLayer/ResultPanel" unique_id=1901374664]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="BtnRestart" type="Button" parent="CanvasLayer/ResultPanel" unique_id=1321934339]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="GameTimer" type="Timer" parent="." unique_id=1651408493]
+wait_time = 40.0
+one_shot = true
+
+[node name="HouseContainer" type="Node2D" parent="." unique_id=1332241059]

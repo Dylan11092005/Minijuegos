@@ -1,10 +1,13 @@
 [gd_scene format=3 uid="uid://dlx3as015ftwm"]
 
+[ext_resource type="Script" uid="uid://bexod7nu5vlim" path="res://MenuPrincipal.gd" id="1_0oe1n"]
+
 [node name="MenuPrincipal" type="Control" unique_id=962077772]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
+script = ExtResource("1_0oe1n")
 
 [node name="GridContainer" type="GridContainer" parent="." unique_id=344840998]
 layout_mode = 0
@@ -124,3 +127,5 @@ text = "Casilla 73"
 [node name="Button25" type="Button" parent="GridContainer" unique_id=1832084104]
 layout_mode = 2
 text = "Casilla 74"
+
+[connection signal="pressed" from="GridContainer/Button4" to="." method="_on_button_4_pressed"]
