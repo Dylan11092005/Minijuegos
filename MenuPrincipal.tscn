@@ -8,33 +8,41 @@ offset_bottom = 40.0
 
 [node name="GridContainer" type="GridContainer" parent="." unique_id=344840998]
 layout_mode = 0
-offset_left = 377.0
-offset_top = 212.0
-offset_right = 844.0
-offset_bottom = 412.0
+offset_left = 572.0
+offset_top = 382.0
+offset_right = 1422.0
+offset_bottom = 732.0
+theme_override_constants/h_separation = 25
+theme_override_constants/v_separation = 25
 columns = 5
 
 [node name="Button" type="Button" parent="GridContainer" unique_id=137881982]
+custom_minimum_size = Vector2(150, 50)
 layout_mode = 2
 text = "Casilla 3"
 
 [node name="Button2" type="Button" parent="GridContainer" unique_id=1153548136]
+custom_minimum_size = Vector2(150, 50)
 layout_mode = 2
 text = "Casilla 9"
 
 [node name="Button3" type="Button" parent="GridContainer" unique_id=1429419352]
+custom_minimum_size = Vector2(150, 50)
 layout_mode = 2
 text = "Casilla 13"
 
 [node name="Button4" type="Button" parent="GridContainer" unique_id=1477976834]
+custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 text = "Casilla 15"
 
 [node name="Button5" type="Button" parent="GridContainer" unique_id=854909288]
+custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 text = "Casilla 19"
 
 [node name="Button6" type="Button" parent="GridContainer" unique_id=171613763]
+custom_minimum_size = Vector2(150, 50)
 layout_mode = 2
 text = "Casilla 23"
 
@@ -55,6 +63,7 @@ layout_mode = 2
 text = "Casilla 31"
 
 [node name="Button11" type="Button" parent="GridContainer" unique_id=1654919356]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 text = "Casilla 35"
 
@@ -75,6 +84,7 @@ layout_mode = 2
 text = "Casilla 47"
 
 [node name="Button16" type="Button" parent="GridContainer" unique_id=2029603091]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 text = "Casilla 50"
 
@@ -103,6 +113,7 @@ layout_mode = 2
 text = "Casilla 70"
 
 [node name="Button23" type="Button" parent="GridContainer" unique_id=1448095493]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 text = "Casilla 71"
 
