@@ -1,0 +1,115 @@
+[gd_scene format=3 uid="uid://dlx3as015ftwm"]
+
+[node name="MenuPrincipal" type="Control" unique_id=962077772]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="GridContainer" type="GridContainer" parent="." unique_id=344840998]
+layout_mode = 0
+offset_left = 377.0
+offset_top = 212.0
+offset_right = 844.0
+offset_bottom = 412.0
+columns = 5
+
+[node name="Button" type="Button" parent="GridContainer" unique_id=137881982]
+layout_mode = 2
+text = "Casilla 3"
+
+[node name="Button2" type="Button" parent="GridContainer" unique_id=1153548136]
+layout_mode = 2
+text = "Casilla 9"
+
+[node name="Button3" type="Button" parent="GridContainer" unique_id=1429419352]
+layout_mode = 2
+text = "Casilla 13"
+
+[node name="Button4" type="Button" parent="GridContainer" unique_id=1477976834]
+layout_mode = 2
+text = "Casilla 15"
+
+[node name="Button5" type="Button" parent="GridContainer" unique_id=854909288]
+layout_mode = 2
+text = "Casilla 19"
+
+[node name="Button6" type="Button" parent="GridContainer" unique_id=171613763]
+layout_mode = 2
+text = "Casilla 23"
+
+[node name="Button7" type="Button" parent="GridContainer" unique_id=387016951]
+layout_mode = 2
+text = "Casilla 25"
+
+[node name="Button8" type="Button" parent="GridContainer" unique_id=202846616]
+layout_mode = 2
+text = "Casilla 28"
+
+[node name="Button9" type="Button" parent="GridContainer" unique_id=281868442]
+layout_mode = 2
+text = "Casilla 29"
+
+[node name="Button10" type="Button" parent="GridContainer" unique_id=565947548]
+layout_mode = 2
+text = "Casilla 31"
+
+[node name="Button11" type="Button" parent="GridContainer" unique_id=1654919356]
+layout_mode = 2
+text = "Casilla 35"
+
+[node name="Button12" type="Button" parent="GridContainer" unique_id=1400360364]
+layout_mode = 2
+text = "Casilla 37"
+
+[node name="Button13" type="Button" parent="GridContainer" unique_id=1572921254]
+layout_mode = 2
+text = "Casilla 42"
+
+[node name="Button14" type="Button" parent="GridContainer" unique_id=2065991972]
+layout_mode = 2
+text = "Casilla 44"
+
+[node name="Button15" type="Button" parent="GridContainer" unique_id=733711560]
+layout_mode = 2
+text = "Casilla 47"
+
+[node name="Button16" type="Button" parent="GridContainer" unique_id=2029603091]
+layout_mode = 2
+text = "Casilla 50"
+
+[node name="Button17" type="Button" parent="GridContainer" unique_id=1099424910]
+layout_mode = 2
+text = "Casilla 53"
+
+[node name="Button18" type="Button" parent="GridContainer" unique_id=1339448757]
+layout_mode = 2
+text = "Casilla 55"
+
+[node name="Button19" type="Button" parent="GridContainer" unique_id=1733480246]
+layout_mode = 2
+text = "Casilla 60"
+
+[node name="Button20" type="Button" parent="GridContainer" unique_id=1308018345]
+layout_mode = 2
+text = "Casilla 63"
+
+[node name="Button21" type="Button" parent="GridContainer" unique_id=2079999451]
+layout_mode = 2
+text = "Casilla 67"
+
+[node name="Button22" type="Button" parent="GridContainer" unique_id=1322491638]
+layout_mode = 2
+text = "Casilla 70"
+
+[node name="Button23" type="Button" parent="GridContainer" unique_id=1448095493]
+layout_mode = 2
+text = "Casilla 71"
+
+[node name="Button24" type="Button" parent="GridContainer" unique_id=341299166]
+layout_mode = 2
+text = "Casilla 73"
+
+[node name="Button25" type="Button" parent="GridContainer" unique_id=1832084104]
+layout_mode = 2
+text = "Casilla 74"
