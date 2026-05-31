@@ -1,23 +1,37 @@
 [gd_scene format=3 uid="uid://cgdkn0qo0drho"]
 
 [ext_resource type="Script" uid="uid://dshms2m10iev1" path="res://minigame_house/HouseMinigame.gd" id="1_dhsa5"]
+[ext_resource type="Texture2D" uid="uid://gljo40eoymp3" path="res://minigame_house/assets/Wood.png" id="2_to2ju"]
 
 [node name="HouseMinigame" type="Node2D" unique_id=285727490]
 script = ExtResource("1_dhsa5")
 
+[node name="Background" type="Sprite2D" parent="." unique_id=586096648]
+position = Vector2(1118.5, 575.125)
+scale = Vector2(1.9700851, 1.6465516)
+texture = ExtResource("2_to2ju")
+
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1640180912]
 
 [node name="TimerLabel" type="Label" parent="CanvasLayer" unique_id=2098698018]
-offset_right = 40.0
-offset_bottom = 23.0
+offset_left = 166.0
+offset_top = 599.0
+offset_right = 277.0
+offset_bottom = 641.0
+theme_override_font_sizes/font_size = 40
 
 [node name="StatusLabel" type="Label" parent="CanvasLayer" unique_id=2088168877]
-offset_right = 40.0
-offset_bottom = 23.0
+offset_left = 378.0
+offset_top = 3.0
+offset_right = 418.0
+offset_bottom = 26.0
 
 [node name="BtnBack" type="Button" parent="CanvasLayer" unique_id=1750213553]
-offset_right = 8.0
-offset_bottom = 8.0
+visible = false
+offset_left = 934.0
+offset_top = 13.0
+offset_right = 991.0
+offset_bottom = 42.0
 
 [node name="ResultPanel" type="Panel" parent="CanvasLayer" unique_id=1128493767]
 visible = false
@@ -25,17 +39,22 @@ offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="ResultLabel" type="Label" parent="CanvasLayer/ResultPanel" unique_id=1348728650]
+visible = false
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 23.0
+theme_override_font_sizes/font_size = 40
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="BtnRestart" type="Button" parent="CanvasLayer/ResultPanel" unique_id=477160499]
 layout_mode = 0
 offset_right = 8.0
 offset_bottom = 8.0
+text = "Reiniciar"
 
 [node name="GameTimer" type="Timer" parent="." unique_id=1651408493]
-wait_time = 40.0
+wait_time = 60.0
 one_shot = true
 
 [node name="HouseContainer" type="Node2D" parent="." unique_id=1332241059]

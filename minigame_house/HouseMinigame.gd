@@ -12,7 +12,7 @@ extends Node2D
 const SCREW_SCENE = preload("res://minigame_house/Screw.tscn")
 const PIECE_SCENE = preload("res://minigame_house/Piece.tscn")
 
-const TOTAL_TIME = 40.0
+const TOTAL_TIME = 60.0
 var time_remaining: float = TOTAL_TIME
 var total_pieces: int = 0
 var detached_pieces: int = 0
@@ -162,7 +162,7 @@ func _ready():
 	btn_restart.pressed.connect(_on_restart_pressed)
 	game_timer.timeout.connect(_on_timer_timeout)
 	house_container.scale = Vector2(0.75, 0.75)
-	house_container.position = Vector2(1000, 600)
+	house_container.position = Vector2(1000, 700)
 	_build_house()
 	_start_game()
 
