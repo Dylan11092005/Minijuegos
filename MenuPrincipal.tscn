@@ -128,4 +128,5 @@ text = "Casilla 73"
 layout_mode = 2
 text = "Casilla 74"
 
+[connection signal="pressed" from="GridContainer/Button2" to="." method="_on_button_2_pressed"]
 [connection signal="pressed" from="GridContainer/Button4" to="." method="_on_button_4_pressed"]
