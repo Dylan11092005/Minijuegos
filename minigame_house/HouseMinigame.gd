@@ -28,81 +28,132 @@ var house_data = [
 	{
 		"id": "wall_main",
 		"texture": "res://minigame_house/assets/wall_main.png",
-		"position": Vector2(0, 0),
-		"piece_scale": Vector2(1.0, 1.0),
+		"position": Vector2(0, 120),
+		"piece_scale": Vector2(1.3, 1.3),
 		"screws": [
-			{"offset": Vector2(-220, -180), "color": "orange"},
-			{"offset": Vector2(0, -180),    "color": "orange"},
-			{"offset": Vector2(220, -180),  "color": "orange"},
-			{"offset": Vector2(-220, 180),  "color": "green"},
-			{"offset": Vector2(220, 180),   "color": "green"},
+			{"offset": Vector2(-215, -170), "color": "orange"},
+			{"offset": Vector2(10, -170),    "color": "orange"},
+			{"offset": Vector2(230, -170),  "color": "purple"},
+			{"offset": Vector2(-215, 0),  "color": "green"},
+			{"offset": Vector2(40, 0),   "color": "green"},
+			{"offset": Vector2(230, 0),   "color": "purple"},
 		]
 	},
 	{
 		"id": "wall_windows",
 		"texture": "res://minigame_house/assets/wall_windows.png",
-		"position": Vector2(0, -312),
-		"piece_scale": Vector2(2.59, 2.59),
+		"position": Vector2(5, -395),
+		"piece_scale": Vector2(3.2, 3.2),
 		"screws": [
-			{"offset": Vector2(-90, -70), "color": "purple"},
-			{"offset": Vector2(90, -70),  "color": "purple"},
-			{"offset": Vector2(-90, 70),  "color": "green"},
-			{"offset": Vector2(90, 70),   "color": "green"},
+			{"offset": Vector2(-90, -5), "color": "purple"},
+			{"offset": Vector2(90, -5),  "color": "orange"},
+			{"offset": Vector2(-90, 60),  "color": "green"},
+			{"offset": Vector2(90, 60),   "color": "green"},
+			{"offset": Vector2(0, 60),  "color": "red"},
+			{"offset": Vector2(0, -65),  "color": "red"},
 		]
 	},
 	{
 		"id": "roof",
 		"texture": "res://minigame_house/assets/roof.png",
-		"position": Vector2(0, -540),
-		"piece_scale": Vector2(2.48, 2.48),
+		"position": Vector2(5, -620),
+		"piece_scale": Vector2(3.5, 3.5),
 		"screws": [
-			{"offset": Vector2(-90, -30), "color": "orange"},
-			{"offset": Vector2(0, -60),   "color": "orange"},
-			{"offset": Vector2(90, -30),  "color": "orange"},
-			{"offset": Vector2(-60, 50),  "color": "green"},
-			{"offset": Vector2(60, 50),   "color": "green"},
+			{"offset": Vector2(-2, -20), "color": "purple"},
+			{"offset": Vector2(-45, 10), "color": "orange"},
+			{"offset": Vector2(41, 10), "color": "green"},
+			{"offset": Vector2(80, 35), "color": "green"},
+			{"offset": Vector2(-80, 35), "color": "red"},
+			{"offset": Vector2(-60, -20), "color": "purple"},
+			
 		]
 	},
 	{
 		"id": "door",
 		"texture": "res://minigame_house/assets/door.png",
-		"position": Vector2(-120, 100),
-		"piece_scale": Vector2(1.5, 1.5),
+		"position": Vector2(-90, 170),
+		"piece_scale": Vector2(3.3, 3.3),
 		"screws": [
-			{"offset": Vector2(0, -50), "color": "orange"},
-			{"offset": Vector2(0, 50),  "color": "orange"},
+			{"offset": Vector2(0, 0), "color": "red"},
+		
 		]
 	},
 	{
 		"id": "fence_left",
 		"texture": "res://minigame_house/assets/fence.png",
-		"position": Vector2(-338, 200),
-		"piece_scale": Vector2(1.0, 1.0),
+		"position": Vector2(-370, 290),
+		"piece_scale": Vector2(2.0, 2.0),
 		"screws": [
-			{"offset": Vector2(-40, 0), "color": "purple"},
-			{"offset": Vector2(40, 0),  "color": "green"},
+			{"offset": Vector2(37, -20), "color": "red"},
+			{"offset": Vector2(37, 20), "color": "purple"},
+			{"offset": Vector2(-27, -20), "color": "red"},
+			{"offset": Vector2(-27, 20), "color": "green"},
+			
 		]
 	},
 	{
 		"id": "fence_right",
 		"texture": "res://minigame_house/assets/fence.png",
-		"position": Vector2(338, 200),
-		"piece_scale": Vector2(1.0, 1.0),
+		"position": Vector2(370, 290),
+		"piece_scale": Vector2(2.0, 2.0),
 		"screws": [
-			{"offset": Vector2(-40, 0), "color": "purple"},
-			{"offset": Vector2(40, 0),  "color": "green"},
+			{"offset": Vector2(-27, -20), "color": "red"},
+			{"offset": Vector2(35, 20), "color": "purple"},
+			{"offset": Vector2(35, -20), "color": "orange"},
+			{"offset": Vector2(-27, 20), "color": "green"},
+		
+		]
+	},
+	{
+		"id": "magnet_lantch",
+		"texture": "res://minigame_house/assets/magnet_latch.png",
+		"position": Vector2(-90, 390),
+		"piece_scale": Vector2(2.3, 2.3),
+		"screws": [
+			{"offset": Vector2(45, 20), "color": "orange"},
+			{"offset": Vector2(-45, 20), "color": "orange"},
+			
+		]
+	},
+	{
+		"id": "windows_frame",
+		"texture": "res://minigame_house/assets/windows_frame.png",
+		"position": Vector2(-145, -360),
+		"piece_scale": Vector2(2.3, 2.3),
+		"screws": [
+			{"offset": Vector2(-5, 3), "color": "purple"},
+			
+			
+		]
+	},
+	{
+		"id": "windows_frame",
+		"texture": "res://minigame_house/assets/windows_frame.png",
+		"position": Vector2(155, -360),
+		"piece_scale": Vector2(2.3, 2.3),
+		"screws": [
+			{"offset": Vector2(0, 3), "color": "red"},
+			
+		]
+	},
+	{
+		"id": "windows_frame",
+		"texture": "res://minigame_house/assets/windows_frame.png",
+		"position": Vector2(178, 100),
+		"piece_scale": Vector2(2.1, 2.8),
+		"screws": [
+			{"offset": Vector2(0, 0), "color": "red"},
+			
 		]
 	},
 ]
 
 var screw_textures = {
-	"red":    "res://minigame_house/screws/screw_orange.png",
+	"red":    "res://minigame_house/screws/screw_red.png",
 	"green":  "res://minigame_house/screws/screw_green.png",
-	"yellow": "res://minigame_house/screws/screw_orange.png",
+	"yellow": "res://minigame_house/screws/screw_yellow.png",
 	"orange": "res://minigame_house/screws/screw_orange.png",
 	"purple": "res://minigame_house/screws/screw_purple.png",
-	"pink":   "res://minigame_house/screws/screw_purple.png",
-	"blue":   "res://minigame_house/screws/screw_green.png",
 }
 
 func _ready():
@@ -111,7 +162,7 @@ func _ready():
 	btn_restart.pressed.connect(_on_restart_pressed)
 	game_timer.timeout.connect(_on_timer_timeout)
 	house_container.scale = Vector2(0.75, 0.75)
-	house_container.position = Vector2(576, 590)
+	house_container.position = Vector2(1000, 600)
 	_build_house()
 	_start_game()
 
@@ -134,7 +185,12 @@ func _build_house():
 			var screw = SCREW_SCENE.instantiate()
 			screw.position = screw_data["offset"]
 			screw.parent_piece = piece
-			screw.scale = Vector2(0.3, 0.3)
+
+			var parent_scale = piece.scale.x
+			screw.scale = Vector2(
+				0.37 / parent_scale,
+				0.37 / parent_scale
+			)
 
 			var color = screw_data.get("color", "green")
 			if screw_textures.has(color):
