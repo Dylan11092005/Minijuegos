@@ -13,9 +13,18 @@ func _ready():
 func on_screw_removed():
 	screw_count -= 1
 	if screw_count <= 0:
+		var gpos = global_position
+		var gscale = global_scale
+		var groot = get_tree().current_scene
+		
+		get_parent().remove_child(self)
+		groot.add_child(self)
+		
+		# Asignar global_scale DESPUÉS de añadir al nuevo padre
+		global_position = gpos
+		global_scale = gscale
+		
 		freeze = false
-		# Sube: Piece -> HouseContainer -> HouseMinigame
-		get_parent().get_parent().on_piece_detached(self)
 
 func add_screw():
 	screw_count += 1

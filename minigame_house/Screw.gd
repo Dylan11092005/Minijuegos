@@ -32,7 +32,12 @@ func remove_screw():
 	if is_removed:
 		return
 	is_removed = true
+
+	# Notifica ANTES de la animación
 	emit_signal("screw_clicked", self)
+
+	if parent_piece and parent_piece.has_method("on_screw_removed"):
+		parent_piece.on_screw_removed()
 
 	var base_scale = scale
 	var tween = create_tween()
@@ -42,6 +47,4 @@ func remove_screw():
 	tween.tween_property(self, "rotation", rotation + PI * 2, 0.3)
 	await tween.finished
 
-	if parent_piece and parent_piece.has_method("on_screw_removed"):
-		parent_piece.on_screw_removed()
 	queue_free()

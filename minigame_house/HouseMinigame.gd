@@ -18,11 +18,8 @@ var total_pieces: int = 0
 var detached_pieces: int = 0
 var game_active: bool = false
 
-# wall_main: 557x448 <- base
-# wall_windows: 215x177 -> escalar x2.59 para igualar ancho
-# roof: 224x157 -> escalar x2.48 para igualar ancho
-# door: 69x118
-# fence: 120x100
+var total_screws: int = 0
+var removed_screws: int = 0
 
 var house_data = [
 	{
@@ -65,7 +62,6 @@ var house_data = [
 			{"offset": Vector2(80, 35), "color": "green"},
 			{"offset": Vector2(-80, 35), "color": "red"},
 			{"offset": Vector2(-60, -20), "color": "purple"},
-			
 		]
 	},
 	{
@@ -75,7 +71,6 @@ var house_data = [
 		"piece_scale": Vector2(3.3, 3.3),
 		"screws": [
 			{"offset": Vector2(0, 0), "color": "red"},
-		
 		]
 	},
 	{
@@ -88,7 +83,6 @@ var house_data = [
 			{"offset": Vector2(37, 20), "color": "purple"},
 			{"offset": Vector2(-27, -20), "color": "red"},
 			{"offset": Vector2(-27, 20), "color": "green"},
-			
 		]
 	},
 	{
@@ -101,7 +95,6 @@ var house_data = [
 			{"offset": Vector2(35, 20), "color": "purple"},
 			{"offset": Vector2(35, -20), "color": "orange"},
 			{"offset": Vector2(-27, 20), "color": "green"},
-		
 		]
 	},
 	{
@@ -112,38 +105,33 @@ var house_data = [
 		"screws": [
 			{"offset": Vector2(45, 20), "color": "orange"},
 			{"offset": Vector2(-45, 20), "color": "orange"},
-			
 		]
 	},
 	{
-		"id": "windows_frame",
+		"id": "windows_frame_1",
 		"texture": "res://minigame_house/assets/windows_frame.png",
 		"position": Vector2(-145, -360),
 		"piece_scale": Vector2(2.3, 2.3),
 		"screws": [
 			{"offset": Vector2(-5, 3), "color": "purple"},
-			
-			
 		]
 	},
 	{
-		"id": "windows_frame",
+		"id": "windows_frame_2",
 		"texture": "res://minigame_house/assets/windows_frame.png",
 		"position": Vector2(155, -360),
 		"piece_scale": Vector2(2.3, 2.3),
 		"screws": [
 			{"offset": Vector2(0, 3), "color": "red"},
-			
 		]
 	},
 	{
-		"id": "windows_frame",
+		"id": "windows_frame_3",
 		"texture": "res://minigame_house/assets/windows_frame.png",
 		"position": Vector2(178, 100),
 		"piece_scale": Vector2(2.1, 2.8),
 		"screws": [
 			{"offset": Vector2(0, 0), "color": "red"},
-			
 		]
 	},
 ]
@@ -169,6 +157,8 @@ func _ready():
 func _build_house():
 	total_pieces = house_data.size()
 	detached_pieces = 0
+	total_screws = 0
+	removed_screws = 0
 
 	for data in house_data:
 		var piece: RigidBody2D = PIECE_SCENE.instantiate()
@@ -181,16 +171,13 @@ func _build_house():
 
 		house_container.add_child(piece)
 
+		var parent_scale = piece.scale.x
+
 		for screw_data in data["screws"]:
 			var screw = SCREW_SCENE.instantiate()
 			screw.position = screw_data["offset"]
 			screw.parent_piece = piece
-
-			var parent_scale = piece.scale.x
-			screw.scale = Vector2(
-				0.37 / parent_scale,
-				0.37 / parent_scale
-			)
+			screw.scale = Vector2(0.37 / parent_scale, 0.37 / parent_scale)
 
 			var color = screw_data.get("color", "green")
 			if screw_textures.has(color):
@@ -199,6 +186,7 @@ func _build_house():
 			screw.screw_clicked.connect(_on_screw_clicked)
 			piece.add_child(screw)
 			piece.add_screw()
+			total_screws += 1
 
 func _start_game():
 	time_remaining = TOTAL_TIME
@@ -215,26 +203,33 @@ func _process(_delta):
 func _on_screw_clicked(_screw):
 	if not game_active:
 		return
+	removed_screws += 1
+	if removed_screws >= total_screws:
+		_win()
 
 func on_piece_detached(_piece: RigidBody2D):
 	detached_pieces += 1
-	if detached_pieces >= total_pieces:
-		_win()
 
 func _on_timer_timeout():
-	if detached_pieces < total_pieces:
+	if removed_screws < total_screws:
 		_lose()
+
+func _show_result():
+	var canvas = $CanvasLayer
+	canvas.move_child(result_panel, canvas.get_child_count() - 1)
+	result_panel.position = Vector2(758 - result_panel.size.x / 2, 400 - result_panel.size.y / 2)
+	result_panel.show()
 
 func _win():
 	game_active = false
 	game_timer.stop()
-	result_label.text = "🎉 ¡Ganaste!\nDesarmaste la casa"
-	result_panel.show()
+	result_label.text = "🎉 ¡Ganaste!\n   Desarmaste la casa"
+	_show_result()
 
 func _lose():
 	game_active = false
-	result_label.text = "⏰ ¡Se acabó el tiempo!\nInténtalo de nuevo"
-	result_panel.show()
+	result_label.text = "⏰ ¡Se acabó el tiempo!\n   Inténtalo de nuevo"
+	_show_result()
 
 func _on_back_pressed():
 	get_tree().change_scene_to_file("res://Main.tscn")

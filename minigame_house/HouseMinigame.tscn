@@ -14,10 +14,10 @@ texture = ExtResource("2_to2ju")
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1640180912]
 
 [node name="TimerLabel" type="Label" parent="CanvasLayer" unique_id=2098698018]
-offset_left = 166.0
-offset_top = 599.0
-offset_right = 277.0
-offset_bottom = 641.0
+offset_left = 32.0
+offset_top = 10.0
+offset_right = 143.0
+offset_bottom = 65.0
 theme_override_font_sizes/font_size = 40
 
 [node name="StatusLabel" type="Label" parent="CanvasLayer" unique_id=2088168877]
@@ -39,10 +39,10 @@ offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="ResultLabel" type="Label" parent="CanvasLayer/ResultPanel" unique_id=1348728650]
-visible = false
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
+offset_right = 400.0
+offset_bottom = 250.0
+theme_override_colors/font_color = Color(0.94464624, 0.7104224, 0.45057064, 1)
 theme_override_font_sizes/font_size = 40
 horizontal_alignment = 1
 vertical_alignment = 1
