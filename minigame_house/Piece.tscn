@@ -2,12 +2,9 @@
 
 [ext_resource type="Script" uid="uid://b5gxpkkrwg4sm" path="res://minigame_house/Piece.gd" id="1_lk56y"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_lk56y"]
-
 [node name="Piece" type="RigidBody2D" unique_id=531814604]
 script = ExtResource("1_lk56y")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1577799611]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=253346670]
-shape = SubResource("RectangleShape2D_lk56y")

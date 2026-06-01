@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://gljo40eoymp3"
-path="res://.godot/imported/Wood.png-5224324cc8fd89f8d7504afc00c90271.ctex"
+uid="uid://be6wilqgox7yf"
+path="res://.godot/imported/Wood.jpg-f5a39e316c4e76d7cd9250f453761706.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://minigame_house/assets/Wood.png"
-dest_files=["res://.godot/imported/Wood.png-5224324cc8fd89f8d7504afc00c90271.ctex"]
+source_file="res://minigame_house/assets/Wood.jpg"
+dest_files=["res://.godot/imported/Wood.jpg-f5a39e316c4e76d7cd9250f453761706.ctex"]
 
 [params]
 

@@ -1,24 +1,27 @@
 [gd_scene format=3 uid="uid://cgdkn0qo0drho"]
 
 [ext_resource type="Script" uid="uid://dshms2m10iev1" path="res://minigame_house/HouseMinigame.gd" id="1_dhsa5"]
-[ext_resource type="Texture2D" uid="uid://gljo40eoymp3" path="res://minigame_house/assets/Wood.png" id="2_to2ju"]
+[ext_resource type="Texture2D" uid="uid://be6wilqgox7yf" path="res://minigame_house/assets/Wood.jpg" id="2_to2ju"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_to2ju"]
+bg_color = Color(0.3342767, 0.271695, 0.21732834, 1)
 
 [node name="HouseMinigame" type="Node2D" unique_id=285727490]
 script = ExtResource("1_dhsa5")
 
 [node name="Background" type="Sprite2D" parent="." unique_id=586096648]
-position = Vector2(1118.5, 575.125)
-scale = Vector2(1.9700851, 1.6465516)
+position = Vector2(994.51605, 592.46344)
+scale = Vector2(0.9429033, 0.7831707)
 texture = ExtResource("2_to2ju")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1640180912]
 
 [node name="TimerLabel" type="Label" parent="CanvasLayer" unique_id=2098698018]
-offset_left = 32.0
-offset_top = 10.0
-offset_right = 143.0
-offset_bottom = 65.0
-theme_override_font_sizes/font_size = 40
+offset_left = 19.0
+offset_top = 23.0
+offset_right = 130.0
+offset_bottom = 81.0
+theme_override_font_sizes/font_size = 30
 
 [node name="StatusLabel" type="Label" parent="CanvasLayer" unique_id=2088168877]
 offset_left = 378.0
@@ -37,6 +40,7 @@ offset_bottom = 42.0
 visible = false
 offset_right = 40.0
 offset_bottom = 40.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_to2ju")
 
 [node name="ResultLabel" type="Label" parent="CanvasLayer/ResultPanel" unique_id=1348728650]
 layout_mode = 0
@@ -52,6 +56,22 @@ layout_mode = 0
 offset_right = 8.0
 offset_bottom = 8.0
 text = "Reiniciar"
+
+[node name="InstructionsLabel" type="Label" parent="CanvasLayer" unique_id=2068682364]
+offset_left = 1438.0
+offset_top = 254.0
+offset_right = 1975.0
+offset_bottom = 815.0
+theme_override_font_sizes/font_size = 40
+text = "Construyeron
+casas cerca de
+un volcán activo.
+*Retrocede 1 casiila*
+
+Desarma la casa
+ antes que se acabe
+ el tiempo y haga 
+erupción el volcán."
 
 [node name="GameTimer" type="Timer" parent="." unique_id=1651408493]
 wait_time = 60.0

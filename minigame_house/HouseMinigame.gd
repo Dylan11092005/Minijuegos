@@ -198,8 +198,8 @@ func _process(_delta):
 		return
 	time_remaining -= _delta
 	time_remaining = max(time_remaining, 0.0)
-	timer_label.text = "Tiempo: %d" % int(ceil(time_remaining))
-
+	timer_label.text = "Tiempo restante para la erupción: %d" % int(ceil(time_remaining))
+ 
 func _on_screw_clicked(_screw):
 	if not game_active:
 		return
@@ -217,18 +217,36 @@ func _on_timer_timeout():
 func _show_result():
 	var canvas = $CanvasLayer
 	canvas.move_child(result_panel, canvas.get_child_count() - 1)
-	result_panel.position = Vector2(758 - result_panel.size.x / 2, 400 - result_panel.size.y / 2)
+	
+	result_panel.custom_minimum_size = Vector2(500, 250)
+	result_panel.size = Vector2(500, 250)
+	
+	# Centrar usando el tamaño real de pantalla
+	var screen_size = get_viewport().get_visible_rect().size
+	result_panel.position = Vector2(
+		screen_size.x / 2 - 250,
+		screen_size.y / 2 - 125
+	)
+	
+	var style = StyleBoxFlat.new()
+	style.bg_color = Color(0, 0, 0, 0.85)
+	style.corner_radius_top_left = 15
+	style.corner_radius_top_right = 15
+	style.corner_radius_bottom_left = 15
+	style.corner_radius_bottom_right = 15
+	result_panel.add_theme_stylebox_override("panel", style)
+	
 	result_panel.show()
 
 func _win():
 	game_active = false
 	game_timer.stop()
-	result_label.text = "🎉 ¡Ganaste!\n   Desarmaste la casa"
+	result_label.text = "   🎉 ¡Ganaste!\n   Desarmaste la casa"
 	_show_result()
 
 func _lose():
 	game_active = false
-	result_label.text = "⏰ ¡Se acabó el tiempo!\n   Inténtalo de nuevo"
+	result_label.text = "  ⏰ ¡Se acabó el tiempo!\n   Inténtalo de nuevo"
 	_show_result()
 
 func _on_back_pressed():
