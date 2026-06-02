@@ -31,8 +31,8 @@ func _physics_process(delta):
 	move_and_slide()
 
 	# Límites para pantalla 1280 x 720
-	position.x = clamp(position.x, 648, 1280)
-	position.y = 848
+	position.x = clamp(position.x, 100, 1760)
+	position.y = 820
 
 
 func recibir_daño():
