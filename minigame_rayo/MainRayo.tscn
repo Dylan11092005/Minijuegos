@@ -14,7 +14,7 @@ rayo_scene = ExtResource("2_0ej5d")
 script = ExtResource("3_0ej5d")
 
 [node name="PlayerRayo" parent="." unique_id=1999096692 instance=ExtResource("2_07qu5")]
-position = Vector2(360, 700)
+position = Vector2(640, 620)
 
 [node name="TimerSpawnRayos" type="Timer" parent="." unique_id=921495330]
 autostart = true

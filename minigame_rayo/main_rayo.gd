@@ -32,7 +32,7 @@ func _on_timer_spawn_rayos_timeout():
 		return
 
 	var rayo = rayo_scene.instantiate()
-	rayo.position.x = randi_range(50, 670)
+	rayo.position.x = randi_range(80, 1200)
 	rayo.position.y = -50
 	add_child(rayo)
 

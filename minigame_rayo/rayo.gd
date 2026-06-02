@@ -1,14 +1,15 @@
 extends Area2D
 
-@export var velocidad_caida := 350
+@export var velocidad_caida := 420
 
 func _process(delta):
 	position.y += velocidad_caida * delta
 
-	if position.y > 850:
+	if position.y > 760:
 		queue_free()
+
 
 func _on_body_entered(body):
 	if body.name == "PlayerRayo":
-		body.vidas -= 1
+		body.recibir_daño()
 		queue_free()
