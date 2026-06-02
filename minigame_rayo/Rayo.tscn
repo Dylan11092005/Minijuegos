@@ -4,16 +4,18 @@
 [ext_resource type="Texture2D" uid="uid://d2wltm311tqi8" path="res://minigame_rayo/assets/minigame_rayo/rayito.png" id="2_hkgip"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hkgip"]
-size = Vector2(40, 70)
+size = Vector2(104.5, 127)
 
 [node name="Rayo" type="Area2D" unique_id=330485081]
 script = ExtResource("1_hkgip")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=262050738]
-scale = Vector2(0.25, 0.25)
+position = Vector2(23.4375, 38.9375)
+scale = Vector2(0.45833334, 0.5961111)
 texture = ExtResource("2_hkgip")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=181254025]
+position = Vector2(26.75, 40.5)
 shape = SubResource("RectangleShape2D_hkgip")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
