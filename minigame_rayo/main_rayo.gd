@@ -11,8 +11,17 @@ var mensaje_actual := ""
 @onready var timer_tormenta = $TimerTormenta
 @onready var hud = $UI/HUD
 
+
 func _ready():
+	randomize()
+	
+	tiempo = 30
+	juego_terminado = false
 	mensaje_actual = ""
+	
+	if player:
+		player.vidas = 3
+	
 	actualizar_ui()
 
 
@@ -24,16 +33,24 @@ func _process(delta):
 
 
 func actualizar_ui():
-	hud.actualizar_hud(tiempo, player.vidas, mensaje_actual)
+	if hud:
+		hud.actualizar_hud(tiempo, player.vidas, mensaje_actual)
 
 
 func _on_timer_spawn_rayos_timeout():
 	if juego_terminado:
 		return
 
+	if rayo_scene == null:
+		print("ERROR: No se asignó la escena Rayo.tscn en MainRayo.")
+		return
+
+	var ancho_pantalla := get_viewport_rect().size.x
+
 	var rayo = rayo_scene.instantiate()
-	rayo.position.x = randi_range(80, 1200)
-	rayo.position.y = -50
+	rayo.position.x = randi_range(80, int(ancho_pantalla - 80))
+	rayo.position.y = -80
+
 	add_child(rayo)
 
 
@@ -50,14 +67,18 @@ func _on_timer_tormenta_timeout():
 func ganar():
 	juego_terminado = true
 	mensaje_actual = "¡Ganaste!\nSobreviviste a la tormenta."
+
 	timer_spawn.stop()
 	timer_tormenta.stop()
+
 	actualizar_ui()
 
 
 func perder():
 	juego_terminado = true
 	mensaje_actual = "Perdiste.\nTe alcanzaron 3 rayos."
+
 	timer_spawn.stop()
 	timer_tormenta.stop()
+
 	actualizar_ui()
