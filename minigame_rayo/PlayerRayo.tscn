@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://cxlnhhgbk1c0"]
+
+[ext_resource type="Script" uid="uid://cskva1kukmw2e" path="res://minigame_rayo/player_rayo.gd" id="1_08aj0"]
+[ext_resource type="Texture2D" uid="uid://qynw3eqli7w2" path="res://minigame_rayo/assets/minigame_rayo/personaje.png" id="2_08aj0"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_6dcg6"]
+radius = 35.0
+
+[node name="PlayerRayo" type="CharacterBody2D" unique_id=1999096692]
+script = ExtResource("1_08aj0")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=852544817]
+scale = Vector2(0.7, 0.7)
+texture = ExtResource("2_08aj0")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1638112778]
+shape = SubResource("CircleShape2D_6dcg6")

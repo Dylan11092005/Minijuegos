@@ -1,0 +1,55 @@
+[gd_scene format=3 uid="uid://cy5oiqt5qhuct"]
+
+[ext_resource type="Script" uid="uid://5ye170pbx26r" path="res://minigame_rayo/main_rayo.gd" id="1_djott"]
+[ext_resource type="PackedScene" uid="uid://dnqamtvfyd7xr" path="res://minigame_rayo/Rayo.tscn" id="2_0ej5d"]
+[ext_resource type="PackedScene" uid="uid://cxlnhhgbk1c0" path="res://minigame_rayo/PlayerRayo.tscn" id="2_07qu5"]
+[ext_resource type="Script" uid="uid://b5alxsrj2ybtt" path="res://minigame_rayo/fondo_tormenta.gd" id="3_0ej5d"]
+[ext_resource type="Script" uid="uid://ba48odk5717bg" path="res://minigame_rayo/hud_rayo.gd" id="5_sm828"]
+
+[node name="MainRayo" type="Node2D" unique_id=130022186]
+script = ExtResource("1_djott")
+rayo_scene = ExtResource("2_0ej5d")
+
+[node name="FondoTormenta" type="Node2D" parent="." unique_id=1342631120]
+script = ExtResource("3_0ej5d")
+
+[node name="PlayerRayo" parent="." unique_id=1999096692 instance=ExtResource("2_07qu5")]
+position = Vector2(360, 700)
+
+[node name="TimerSpawnRayos" type="Timer" parent="." unique_id=921495330]
+autostart = true
+
+[node name="TimerTormenta" type="Timer" parent="." unique_id=1412855667]
+autostart = true
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=1994493467]
+
+[node name="HUD" type="Node2D" parent="UI" unique_id=224234544]
+script = ExtResource("5_sm828")
+
+[node name="LabelTiempo" type="Label" parent="UI" unique_id=1133134658]
+visible = false
+offset_left = 356.0
+offset_top = 12.0
+offset_right = 396.0
+offset_bottom = 35.0
+text = "30"
+
+[node name="LabelVidas" type="Label" parent="UI" unique_id=796050199]
+visible = false
+offset_left = 665.0
+offset_top = 18.0
+offset_right = 705.0
+offset_bottom = 41.0
+pivot_offset = Vector2(-386, 78)
+text = "3"
+
+[node name="LabelMensaje" type="Label" parent="UI" unique_id=1981300698]
+visible = false
+offset_left = 252.0
+offset_top = 297.0
+offset_right = 475.0
+offset_bottom = 339.0
+
+[connection signal="timeout" from="TimerSpawnRayos" to="." method="_on_timer_spawn_rayos_timeout"]
+[connection signal="timeout" from="TimerTormenta" to="." method="_on_timer_tormenta_timeout"]
