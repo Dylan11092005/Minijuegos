@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://cxlnhhgbk1c0" path="res://minigame_rayo/PlayerRayo.tscn" id="2_07qu5"]
 [ext_resource type="Script" uid="uid://b5alxsrj2ybtt" path="res://minigame_rayo/fondo_tormenta.gd" id="3_0ej5d"]
 [ext_resource type="Script" uid="uid://ba48odk5717bg" path="res://minigame_rayo/hud_rayo.gd" id="5_sm828"]
+[ext_resource type="PackedScene" uid="uid://dsdbaxj6xesxn" path="res://ui_global/ResultadoJuego.tscn" id="6_1etp8"]
 
 [node name="MainRayo" type="Node2D" unique_id=130022186]
 script = ExtResource("1_djott")
@@ -50,6 +51,8 @@ offset_left = 252.0
 offset_top = 297.0
 offset_right = 475.0
 offset_bottom = 339.0
+
+[node name="ResultadoJuego" parent="." unique_id=2106536257 instance=ExtResource("6_1etp8")]
 
 [connection signal="timeout" from="TimerSpawnRayos" to="." method="_on_timer_spawn_rayos_timeout"]
 [connection signal="timeout" from="TimerTormenta" to="." method="_on_timer_tormenta_timeout"]

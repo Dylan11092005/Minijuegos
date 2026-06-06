@@ -2,7 +2,7 @@ extends Node2D
 
 @export var rayo_scene: PackedScene
 
-var tiempo := 30
+var tiempo := 15
 var juego_terminado := false
 var mensaje_actual := ""
 
@@ -10,12 +10,13 @@ var mensaje_actual := ""
 @onready var timer_spawn = $TimerSpawnRayos
 @onready var timer_tormenta = $TimerTormenta
 @onready var hud = $UI/HUD
+@onready var resultado_juego = $ResultadoJuego
 
 
 func _ready():
 	randomize()
 	
-	tiempo = 30
+	tiempo = 15
 	juego_terminado = false
 	mensaje_actual = ""
 	
@@ -66,19 +67,21 @@ func _on_timer_tormenta_timeout():
 
 func ganar():
 	juego_terminado = true
-	mensaje_actual = "¡Ganaste!\nSobreviviste a la tormenta."
+	mensaje_actual = ""
 
 	timer_spawn.stop()
 	timer_tormenta.stop()
 
 	actualizar_ui()
+	resultado_juego.mostrar_ganaste()
 
 
 func perder():
 	juego_terminado = true
-	mensaje_actual = "Perdiste.\nTe alcanzaron 3 rayos."
+	mensaje_actual = ""
 
 	timer_spawn.stop()
 	timer_tormenta.stop()
 
 	actualizar_ui()
+	resultado_juego.mostrar_perdiste()

@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://dsdbaxj6xesxn"]
+
+[ext_resource type="Script" uid="uid://7wk2j2cui3vk" path="res://ui_global/resultado_juego.gd" id="1_dq4m0"]
+
+[node name="ResultadoJuego" type="CanvasLayer" unique_id=2106536257]
+script = ExtResource("1_dq4m0")
+
+[node name="Contenedor" type="Control" parent="." unique_id=1736358406]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1280.0
+offset_bottom = 648.0
+
+[node name="PanelFondo" type="Panel" parent="Contenedor" unique_id=811803372]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="LabelMensaje" type="Label" parent="Contenedor" unique_id=980075962]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="BotonVolver" type="Button" parent="Contenedor" unique_id=807214878]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0

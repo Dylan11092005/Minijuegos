@@ -1,6 +1,6 @@
 extends Area2D
 
-@export var velocidad_caida := 430
+@export var velocidad_caida := 630
 @export var velocidad_giro := 0.0
 
 var pantalla_alto := 720.0
@@ -8,7 +8,7 @@ var pantalla_alto := 720.0
 
 func _ready():
 	# Hace que cada rayo tenga una velocidad un poco diferente
-	velocidad_caida = randf_range(380, 520)
+	velocidad_caida = randf_range(480, 620)
 
 	# Pequeña variación visual
 	rotation_degrees = randf_range(-8, 8)
