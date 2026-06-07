@@ -31,6 +31,12 @@ const SCREEN_SIZE = Vector2(1920, 1080)
 const MODAL_SIZE  = Vector2(1600, 920)
 
 # =========================================================
+# SONIDOS
+# =========================================================
+@onready var audio_fondo    = $AudioFondo
+@onready var audio_deslizar = $AudioDeslizar
+
+# =========================================================
 # VARIABLES
 # =========================================================
 var piece_size: Vector2
@@ -106,6 +112,11 @@ func _start_game() -> void:
 	_create_pieces()
 	_shuffle_pieces()
 	_animate_modal()
+
+	# Música de fondo suave en loop
+	audio_fondo.volume_db = -15.0
+	audio_deslizar.volume_db = -10.0 
+	audio_fondo.play()
 
 	timer_hud.iniciar(TOTAL_TIME, "Tiempo restante", "para completar el mapa")
 
@@ -254,6 +265,8 @@ func _swap_pieces(a: int, b: int) -> void:
 	pieces[a]["current_pos"] = pieces[b]["current_pos"]
 	pieces[b]["current_pos"] = temp_pos
 	_apply_positions()
+	# Sonido al intercambiar piezas
+	audio_deslizar.play()
 
 # =========================================================
 # HIGHLIGHTS
@@ -286,12 +299,14 @@ func _check_win() -> void:
 # =========================================================
 func _win() -> void:
 	game_active = false
+	audio_fondo.stop()
 	timer_hud.detener()
 	panel_resultado.mostrar_ganaste()
 	emit_signal("puzzle_completed")
 
 func _lose() -> void:
 	game_active = false
+	audio_fondo.stop()
 	timer_hud.detener()
 	panel_resultado.mostrar_perdiste()
 	emit_signal("puzzle_failed")
@@ -352,7 +367,7 @@ func _build_ui() -> void:
 	puzzle_border.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	modal.add_child(puzzle_border)
 
-	# --- Mapa de referencia (más pequeño y más a la derecha) ---
+	# --- Mapa de referencia ---
 	var preview_border      := Panel.new()
 	preview_border.position  = Vector2(1160, 60)
 	preview_border.size      = Vector2(400, 300)
