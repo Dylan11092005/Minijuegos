@@ -10,6 +10,8 @@
 [ext_resource type="Texture2D" uid="uid://b4vnrgj2f07g2" path="res://minigame_rio/assets/basura/bolsa.png" id="6_at5mt"]
 [ext_resource type="Texture2D" uid="uid://6f6poywa3m1g" path="res://minigame_rio/assets/basura/papel.png" id="7_obk83"]
 [ext_resource type="Texture2D" uid="uid://7vcec8dmyiph" path="res://minigame_rio/assets/basura/vaso.png" id="8_g6qnw"]
+[ext_resource type="AudioStream" uid="uid://t00vgos3fk8d" path="res://minigame_rio/assets/audio/rio.mp3" id="11_obk83"]
+[ext_resource type="AudioStream" uid="uid://drft0fi2jm8jq" path="res://minigame_rio/assets/audio/basura.mp3" id="12_g6qnw"]
 
 [node name="RiverCleanupMinigame" type="Node2D" unique_id=937733243]
 script = ExtResource("1_ge4tx")
@@ -21,12 +23,12 @@ mouse_filter = 2
 color = Color(0.49411765, 0.78431374, 0.8901961, 1)
 
 [node name="Basurero" type="Node2D" parent="." unique_id=538202841]
-position = Vector2(1789, 954)
+position = Vector2(1816, 942)
 
 [node name="Sprite2D" type="Sprite2D" parent="Basurero" unique_id=856862876]
 z_index = 2
-position = Vector2(12.999977, 5)
-scale = Vector2(0.30856237, 0.3)
+position = Vector2(12.999939, 17.999985)
+scale = Vector2(0.4544925, 0.4725806)
 texture = ExtResource("2_uq7vv")
 
 [node name="Basuras" type="Node2D" parent="." unique_id=10957908]
@@ -34,11 +36,11 @@ z_index = 1
 position = Vector2(3, -1)
 
 [node name="TrashItem" parent="Basuras" unique_id=1090431356 instance=ExtResource("3_108rc")]
-position = Vector2(1516, 255)
+position = Vector2(1129, 596)
 trash_texture = ExtResource("4_v4lh6")
 
 [node name="TrashItem2" parent="Basuras" unique_id=324431832 instance=ExtResource("3_108rc")]
-position = Vector2(663, 302)
+position = Vector2(851, 254)
 trash_texture = ExtResource("5_8ne84")
 
 [node name="TrashItem3" parent="Basuras" unique_id=1530706150 instance=ExtResource("3_108rc")]
@@ -46,11 +48,19 @@ position = Vector2(187, 260)
 trash_texture = ExtResource("6_at5mt")
 
 [node name="TrashItem4" parent="Basuras" unique_id=727513537 instance=ExtResource("3_108rc")]
-position = Vector2(498, 693)
+position = Vector2(1713, 457)
+trash_texture = ExtResource("7_obk83")
+
+[node name="TrashItem7" parent="Basuras" unique_id=670870072 instance=ExtResource("3_108rc")]
+position = Vector2(86, 510)
 trash_texture = ExtResource("7_obk83")
 
 [node name="TrashItem5" parent="Basuras" unique_id=919389235 instance=ExtResource("3_108rc")]
-position = Vector2(1362, 673)
+position = Vector2(1430, 302)
+trash_texture = ExtResource("8_g6qnw")
+
+[node name="TrashItem6" parent="Basuras" unique_id=1019013895 instance=ExtResource("3_108rc")]
+position = Vector2(641, 643)
 trash_texture = ExtResource("8_g6qnw")
 
 [node name="GameTimer" type="Timer" parent="." unique_id=405383887]
@@ -69,6 +79,7 @@ z_index = 1
 position = Vector2(953, 793.00006)
 scale = Vector2(2.936186, 1.6776667)
 texture = ExtResource("4_108rc")
+metadata/_edit_lock_ = true
 
 [node name="Cesped2" type="Sprite2D" parent="." unique_id=1529457348]
 z_index = 1
@@ -86,3 +97,10 @@ position = Vector2(969, 553.00006)
 scale = Vector2(4.0199995, 1.7820001)
 texture = ExtResource("5_vjmpl")
 metadata/_edit_lock_ = true
+
+[node name="RiverSound" type="AudioStreamPlayer" parent="." unique_id=442071721]
+stream = ExtResource("11_obk83")
+autoplay = true
+
+[node name="TrashSound" type="AudioStreamPlayer" parent="." unique_id=804693863]
+stream = ExtResource("12_g6qnw")

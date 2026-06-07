@@ -17,6 +17,9 @@ var panel_resultado: CanvasLayer
 @onready var basuras = $Basuras
 @onready var btn_back = $CanvasLayer/BackButton
 
+@onready var river_sound = $RiverSound
+@onready var trash_sound = $TrashSound
+
 
 func _ready():
 	timer_hud = TIMER_HUD_SCENE.instantiate()
@@ -36,6 +39,9 @@ func _ready():
 	for trash in basuras.get_children():
 		trash.dropped.connect(_on_trash_dropped)
 
+	if river_sound != null:
+		river_sound.play()
+
 	_start_game()
 
 
@@ -52,6 +58,10 @@ func _on_trash_dropped(trash):
 
 	if distance_to_bin <= drop_distance:
 		trash_collected += 1
+
+		if trash_sound != null:
+			trash_sound.play()
+
 		trash.queue_free()
 
 		if trash_collected >= trash_total:
@@ -68,14 +78,25 @@ func _on_tiempo_agotado():
 func _win():
 	game_active = false
 	timer_hud.detener()
+
+	if river_sound != null:
+		river_sound.stop()
+
 	panel_resultado.mostrar_ganaste()
 
 
 func _lose():
 	game_active = false
 	timer_hud.detener()
+
+	if river_sound != null:
+		river_sound.stop()
+
 	panel_resultado.mostrar_perdiste()
 
 
 func _on_back_pressed():
+	if river_sound != null:
+		river_sound.stop()
+
 	get_tree().change_scene_to_file("res://MenuPrincipal.tscn")
