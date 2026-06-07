@@ -8,10 +8,10 @@ radius = 105.076164
 [node name="HuecosMalos" type="Area2D" unique_id=738862998]
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1534994883]
-position = Vector2(743.875, 302.5)
+position = Vector2(3.000061, 1)
 scale = Vector2(0.023468014, 0.018838862)
 texture = ExtResource("1_cuweo")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=530315225]
-position = Vector2(746, 306)
+position = Vector2(1, 2)
 shape = SubResource("CircleShape2D_ko1eo")
