@@ -3,12 +3,17 @@ extends Node2D
 @onready var btn_back = $CanvasLayer/BtnBack
 @onready var house_container = $HouseContainer
 
+# ── Sonidos ──────────────────────────────────────────────
+@onready var audio_fondo     = $AudioFondo
+@onready var audio_tornillo  = $AudioTornillo
+@onready var audio_caida     = $AudioCaida
+
 const SCREW_SCENE = preload("res://minigame_house/Screw.tscn")
 const PIECE_SCENE = preload("res://minigame_house/Piece.tscn")
 const TIMER_HUD_SCENE = preload("res://ui_global/timer_ui.tscn")
 const PANEL_RESULTADO_SCENE = preload("res://ui_global/ResultadoJuego.tscn")
 
-const TOTAL_TIME = 60.0
+const TOTAL_TIME = 40.0
 var total_pieces: int = 0
 var detached_pieces: int = 0
 var game_active: bool = false
@@ -194,6 +199,8 @@ func _build_house():
 
 func _start_game():
 	game_active = true
+	audio_fondo.volume_db = -15.0  # Ajusta este valor a tu gusto
+	audio_fondo.play()
 	timer_hud.iniciar(TOTAL_TIME, "Tiempo restante", "para la erupción")
 
 func _process(_delta):
@@ -202,12 +209,16 @@ func _process(_delta):
 func _on_screw_clicked(_screw):
 	if not game_active:
 		return
+	# Sonido al quitar tornillo
+	audio_tornillo.play()
 	removed_screws += 1
 	if removed_screws >= total_screws:
 		_win()
 
 func on_piece_detached(_piece: RigidBody2D):
 	detached_pieces += 1
+	# Sonido al caer la pieza
+	audio_caida.play()
 
 func _on_tiempo_agotado():
 	if game_active:
@@ -215,13 +226,16 @@ func _on_tiempo_agotado():
 
 func _win():
 	game_active = false
+	audio_fondo.stop()
 	timer_hud.detener()
 	panel_resultado.mostrar_ganaste()
 
 func _lose():
 	game_active = false
+	audio_fondo.stop()
 	timer_hud.detener()
 	panel_resultado.mostrar_perdiste()
 
 func _on_back_pressed():
+	audio_fondo.stop()
 	get_tree().change_scene_to_file("res://Main.tscn")

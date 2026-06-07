@@ -2,6 +2,9 @@
 
 [ext_resource type="Script" uid="uid://dshms2m10iev1" path="res://minigame_house/HouseMinigame.gd" id="1_dhsa5"]
 [ext_resource type="Texture2D" uid="uid://be6wilqgox7yf" path="res://minigame_house/assets/Wood.jpg" id="2_to2ju"]
+[ext_resource type="AudioStream" uid="uid://djbshm2balub3" path="res://minigame_house/music/FondoHouse.wav" id="3_84h05"]
+[ext_resource type="AudioStream" uid="uid://yncv337f8nqy" path="res://minigame_house/music/QuitarTornillo.wav" id="4_gawxg"]
+[ext_resource type="AudioStream" uid="uid://cm6m1yyhbc3di" path="res://minigame_house/music/CaidaPieza.wav" id="5_jaypx"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_to2ju"]
 bg_color = Color(0.3342767, 0.271695, 0.21732834, 1)
@@ -69,3 +72,12 @@ wait_time = 60.0
 one_shot = true
 
 [node name="HouseContainer" type="Node2D" parent="." unique_id=1332241059]
+
+[node name="AudioFondo" type="AudioStreamPlayer" parent="." unique_id=213290253]
+stream = ExtResource("3_84h05")
+
+[node name="AudioTornillo" type="AudioStreamPlayer" parent="." unique_id=1528503988]
+stream = ExtResource("4_gawxg")
+
+[node name="AudioCaida" type="AudioStreamPlayer" parent="." unique_id=884774488]
+stream = ExtResource("5_jaypx")

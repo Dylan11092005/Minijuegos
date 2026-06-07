@@ -16,12 +16,12 @@ signal puzzle_failed
 @export var rows: int = 3
 @export var piece_gap: int = 6
 
-const TOTAL_TIME = 60.0
+const TOTAL_TIME = 30.0
 
 # =========================================================
 # ESCENAS GLOBALES
 # =========================================================
-const TIMER_HUD_SCENE      = preload("res://ui_global/timer_ui.tscn")
+const TIMER_HUD_SCENE       = preload("res://ui_global/timer_ui.tscn")
 const PANEL_RESULTADO_SCENE = preload("res://ui_global/ResultadoJuego.tscn")
 
 # =========================================================
@@ -45,6 +45,7 @@ var game_active: bool   = false
 var modal:           Panel
 var board_container: Node2D
 var guide_preview:   TextureRect
+var puzzle_border:   Panel
 
 var timer_hud:       CanvasLayer
 var panel_resultado: CanvasLayer
@@ -53,6 +54,7 @@ var panel_resultado: CanvasLayer
 # COLORES
 # =========================================================
 const COLOR_GOLD     = Color("#D4AF37")
+const COLOR_BORDER   = Color("#406080")
 const COLOR_SELECTED = Color(1.0, 0.878, 0.251, 0.35)
 const COLOR_CORRECT  = Color(0.251, 1.0, 0.502, 0.2)
 
@@ -187,6 +189,23 @@ func _apply_positions() -> void:
 		piece["sprite"].position = target
 
 	_refresh_highlights()
+	_update_puzzle_border()
+
+# =========================================================
+# ACTUALIZAR BORDE EXTERIOR DEL PUZZLE
+# =========================================================
+func _update_puzzle_border() -> void:
+	if puzzle_border == null:
+		return
+
+	var start_x = 70
+	var start_y = 240
+	var pad     = 8
+	var total_w = cols * (piece_size.x + piece_gap) - piece_gap
+	var total_h = rows * (piece_size.y + piece_gap) - piece_gap
+
+	puzzle_border.position = Vector2(start_x - pad, start_y - pad)
+	puzzle_border.size     = Vector2(total_w + pad * 2, total_h + pad * 2)
 
 # =========================================================
 # INPUT
@@ -316,20 +335,35 @@ func _build_ui() -> void:
 	board_container = Node2D.new()
 	modal.add_child(board_container)
 
+	# --- Borde exterior del puzzle ---
+	puzzle_border = Panel.new()
+	var puzzle_border_style := StyleBoxFlat.new()
+	puzzle_border_style.bg_color                   = Color(0, 0, 0, 0.0)
+	puzzle_border_style.border_width_left          = 4
+	puzzle_border_style.border_width_top           = 4
+	puzzle_border_style.border_width_right         = 4
+	puzzle_border_style.border_width_bottom        = 4
+	puzzle_border_style.border_color               = COLOR_BORDER
+	puzzle_border_style.corner_radius_top_left     = 10
+	puzzle_border_style.corner_radius_top_right    = 10
+	puzzle_border_style.corner_radius_bottom_left  = 10
+	puzzle_border_style.corner_radius_bottom_right = 10
+	puzzle_border.add_theme_stylebox_override("panel", puzzle_border_style)
+	puzzle_border.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	modal.add_child(puzzle_border)
 
-
-	# --- Mini mapa de referencia ---
+	# --- Mapa de referencia (más pequeño y más a la derecha) ---
 	var preview_border      := Panel.new()
-	preview_border.position  = Vector2(1260, 40)
-	preview_border.size      = Vector2(280, 200)
+	preview_border.position  = Vector2(1160, 60)
+	preview_border.size      = Vector2(400, 300)
 
 	var preview_style := StyleBoxFlat.new()
 	preview_style.bg_color                   = Color(0, 0, 0, 0.2)
-	preview_style.border_width_left          = 3
-	preview_style.border_width_top           = 3
-	preview_style.border_width_right         = 3
-	preview_style.border_width_bottom        = 3
-	preview_style.border_color               = COLOR_GOLD
+	preview_style.border_width_left          = 4
+	preview_style.border_width_top           = 4
+	preview_style.border_width_right         = 4
+	preview_style.border_width_bottom        = 4
+	preview_style.border_color               = COLOR_BORDER
 	preview_style.corner_radius_top_left     = 10
 	preview_style.corner_radius_top_right    = 10
 	preview_style.corner_radius_bottom_left  = 10
@@ -338,8 +372,8 @@ func _build_ui() -> void:
 	modal.add_child(preview_border)
 
 	guide_preview              = TextureRect.new()
-	guide_preview.position     = Vector2(1275, 55)
-	guide_preview.size         = Vector2(250, 170)
+	guide_preview.position     = Vector2(1175, 75)
+	guide_preview.size         = Vector2(370, 270)
 	guide_preview.expand_mode  = TextureRect.EXPAND_IGNORE_SIZE
 	guide_preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	modal.add_child(guide_preview)
