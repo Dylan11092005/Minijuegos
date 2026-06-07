@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://m3dt448yc1u"]
 
 [ext_resource type="Script" uid="uid://b4wiwlpwdn702" path="res://ui_global/timer_ui.gd" id="1_qxuu0"]
+[ext_resource type="AudioStream" uid="uid://cfmnqqrcvqffb" path="res://ui_global/music/Tiempo.mp3" id="2_737en"]
 
 [node name="TimerUI" type="CanvasLayer" unique_id=1042888595]
 script = ExtResource("1_qxuu0")
@@ -43,3 +44,6 @@ vertical_alignment = 1
 
 [node name="LabelDespues" type="Label" parent="Contenedor/HBox" unique_id=1037333544]
 layout_mode = 2
+
+[node name="AudioTiempo" type="AudioStreamPlayer" parent="." unique_id=972899839]
+stream = ExtResource("2_737en")
