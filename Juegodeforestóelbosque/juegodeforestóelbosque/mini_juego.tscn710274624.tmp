@@ -67,7 +67,7 @@ position = Vector2(1009, 825)
 position = Vector2(563, 828)
 
 [node name="Hueco10" parent="." unique_id=70330380 instance=ExtResource("4_nnfgc")]
-position = Vector2(-181, 834)
+position = Vector2(-190, 834)
 
 [node name="Hueco8" parent="." unique_id=188632477 instance=ExtResource("4_nnfgc")]
 position = Vector2(1546, 552)

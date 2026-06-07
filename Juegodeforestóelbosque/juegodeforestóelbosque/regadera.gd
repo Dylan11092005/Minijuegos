@@ -1,28 +1,39 @@
 extends Area2D
 
-var arrastrando = false
-var posicion_inicial
+var is_active = false
+var start_position = Vector2.ZERO
 
 func _ready():
-	posicion_inicial = global_position
+	start_position = global_position
 
-func _input_event(viewport, event, shape_idx):
-	if event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_LEFT:
-			arrastrando = event.pressed
+func _input_event(_viewport, event, _shape_idx):
+	# Si el jugador hace clic sobre la regadera, la activa como herramienta
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		if event.pressed and not is_active:
+			is_active = true
+			Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN) # Oculta el cursor normal
 
-func _process(delta):
-	if arrastrando:
+func _process(_delta):
+	if is_active:
+		# La regadera sigue al ratón de forma continua
 		global_position = get_global_mouse_position()
-		revisar_semillas()
+		realizar_riego()
 
 func _input(event):
-	if event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
-			arrastrando = false
-			global_position = posicion_inicial
+	# Si presiona Clic Derecho, cancela la herramienta y la regresa a su sitio
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
+		if event.pressed && is_active:
+			desactivar_regadera()
 
-func revisar_semillas():
-	for area in get_overlapping_areas():
-		if area.is_in_group("semilla_colocada"):
-			area.regar()
+func realizar_riego():
+	# Revisa qué áreas está tocando el pico de la regadera en este fotograma
+	var areas = get_overlapping_areas()
+	for area in areas:
+		if area.is_in_group("holes"):
+			# Llama a la función del hueco. Si tenía semilla, pasará a arbusto
+			area.try_water()
+
+func desactivar_regadera():
+	is_active = false
+	global_position = start_position
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE) # Devuelve el cursor normal
