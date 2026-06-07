@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://b67c2xr3n4kqq"]
+
+[ext_resource type="Texture2D" uid="uid://cday4626onnal" path="res://sprites/HuecoMalo.png" id="1_cuweo"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ko1eo"]
+radius = 105.076164
+
+[node name="HuecosMalos" type="Area2D" unique_id=738862998]
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1534994883]
+position = Vector2(743.875, 302.5)
+scale = Vector2(0.023468014, 0.018838862)
+texture = ExtResource("1_cuweo")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=530315225]
+position = Vector2(746, 306)
+shape = SubResource("CircleShape2D_ko1eo")
