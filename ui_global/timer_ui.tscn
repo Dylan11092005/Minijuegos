@@ -1,0 +1,45 @@
+[gd_scene format=3 uid="uid://m3dt448yc1u"]
+
+[ext_resource type="Script" uid="uid://b4wiwlpwdn702" path="res://ui_global/timer_ui.gd" id="1_qxuu0"]
+
+[node name="TimerUI" type="CanvasLayer" unique_id=1042888595]
+script = ExtResource("1_qxuu0")
+
+[node name="Contenedor" type="Panel" parent="." unique_id=1870995745]
+visible = false
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="HBox" type="HBoxContainer" parent="Contenedor" unique_id=469607447]
+layout_mode = 0
+offset_left = 3.0
+offset_right = 43.0
+offset_bottom = 40.0
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="LabelAntes" type="Label" parent="Contenedor/HBox" unique_id=367138515]
+visible = false
+layout_mode = 2
+text = "\"\""
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="RelojControl" type="Panel" parent="Contenedor/HBox" unique_id=866935676]
+custom_minimum_size = Vector2(52, 52)
+layout_mode = 2
+
+[node name="AgujasMinutos" type="Node2D" parent="Contenedor/HBox/RelojControl" unique_id=474054158]
+position = Vector2(26, 26)
+
+[node name="AgujasSegundos" type="Node2D" parent="Contenedor/HBox/RelojControl" unique_id=991843200]
+position = Vector2(26, 26)
+
+[node name="LabelTiempo" type="Label" parent="Contenedor/HBox" unique_id=248523768]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "60"
+vertical_alignment = 1
+
+[node name="LabelDespues" type="Label" parent="Contenedor/HBox" unique_id=1037333544]
+layout_mode = 2

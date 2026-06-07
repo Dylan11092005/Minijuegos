@@ -1,25 +1,22 @@
 extends Node2D
 
-@onready var timer_label = $CanvasLayer/TimerLabel
-@onready var status_label = $CanvasLayer/StatusLabel
-@onready var game_timer = $GameTimer
-@onready var result_panel = $CanvasLayer/ResultPanel
-@onready var result_label = $CanvasLayer/ResultPanel/ResultLabel
 @onready var btn_back = $CanvasLayer/BtnBack
-@onready var btn_restart = $CanvasLayer/ResultPanel/BtnRestart
 @onready var house_container = $HouseContainer
 
 const SCREW_SCENE = preload("res://minigame_house/Screw.tscn")
 const PIECE_SCENE = preload("res://minigame_house/Piece.tscn")
+const TIMER_HUD_SCENE = preload("res://ui_global/timer_ui.tscn")
+const PANEL_RESULTADO_SCENE = preload("res://ui_global/ResultadoJuego.tscn")
 
 const TOTAL_TIME = 60.0
-var time_remaining: float = TOTAL_TIME
 var total_pieces: int = 0
 var detached_pieces: int = 0
 var game_active: bool = false
-
 var total_screws: int = 0
 var removed_screws: int = 0
+
+var timer_hud: CanvasLayer
+var panel_resultado: CanvasLayer
 
 var house_data = [
 	{
@@ -145,12 +142,19 @@ var screw_textures = {
 }
 
 func _ready():
-	result_panel.hide()
+	timer_hud = TIMER_HUD_SCENE.instantiate()
+	add_child(timer_hud)
+	timer_hud.tiempo_agotado.connect(_on_tiempo_agotado)
+	timer_hud.set_tamano_panel(500, 60)
+
+	panel_resultado = PANEL_RESULTADO_SCENE.instantiate()
+	add_child(panel_resultado)
+
 	btn_back.pressed.connect(_on_back_pressed)
-	btn_restart.pressed.connect(_on_restart_pressed)
-	game_timer.timeout.connect(_on_timer_timeout)
+
 	house_container.scale = Vector2(0.75, 0.75)
 	house_container.position = Vector2(1000, 700)
+
 	_build_house()
 	_start_game()
 
@@ -189,17 +193,12 @@ func _build_house():
 			total_screws += 1
 
 func _start_game():
-	time_remaining = TOTAL_TIME
 	game_active = true
-	game_timer.start(TOTAL_TIME)
+	timer_hud.iniciar(TOTAL_TIME, "Tiempo restante", "para la erupción")
 
 func _process(_delta):
-	if not game_active:
-		return
-	time_remaining -= _delta
-	time_remaining = max(time_remaining, 0.0)
-	timer_label.text = "Tiempo restante para la erupción: %d" % int(ceil(time_remaining))
- 
+	pass
+
 func _on_screw_clicked(_screw):
 	if not game_active:
 		return
@@ -210,47 +209,19 @@ func _on_screw_clicked(_screw):
 func on_piece_detached(_piece: RigidBody2D):
 	detached_pieces += 1
 
-func _on_timer_timeout():
-	if removed_screws < total_screws:
+func _on_tiempo_agotado():
+	if game_active:
 		_lose()
-
-func _show_result():
-	var canvas = $CanvasLayer
-	canvas.move_child(result_panel, canvas.get_child_count() - 1)
-	
-	result_panel.custom_minimum_size = Vector2(500, 250)
-	result_panel.size = Vector2(500, 250)
-	
-	# Centrar usando el tamaño real de pantalla
-	var screen_size = get_viewport().get_visible_rect().size
-	result_panel.position = Vector2(
-		screen_size.x / 2 - 250,
-		screen_size.y / 2 - 125
-	)
-	
-	var style = StyleBoxFlat.new()
-	style.bg_color = Color(0, 0, 0, 0.85)
-	style.corner_radius_top_left = 15
-	style.corner_radius_top_right = 15
-	style.corner_radius_bottom_left = 15
-	style.corner_radius_bottom_right = 15
-	result_panel.add_theme_stylebox_override("panel", style)
-	
-	result_panel.show()
 
 func _win():
 	game_active = false
-	game_timer.stop()
-	result_label.text = "   🎉 ¡Ganaste!\n   Desarmaste la casa"
-	_show_result()
+	timer_hud.detener()
+	panel_resultado.mostrar_ganaste()
 
 func _lose():
 	game_active = false
-	result_label.text = "  ⏰ ¡Se acabó el tiempo!\n   Inténtalo de nuevo"
-	_show_result()
+	timer_hud.detener()
+	panel_resultado.mostrar_perdiste()
 
 func _on_back_pressed():
 	get_tree().change_scene_to_file("res://Main.tscn")
-
-func _on_restart_pressed():
-	get_tree().reload_current_scene()

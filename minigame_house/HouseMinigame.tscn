@@ -63,15 +63,6 @@ offset_top = 254.0
 offset_right = 1975.0
 offset_bottom = 815.0
 theme_override_font_sizes/font_size = 40
-text = "Construyeron
-casas cerca de
-un volcán activo.
-*Retrocede 1 casiila*
-
-Desarma la casa
- antes que se acabe
- el tiempo y haga 
-erupción el volcán."
 
 [node name="GameTimer" type="Timer" parent="." unique_id=1651408493]
 wait_time = 60.0

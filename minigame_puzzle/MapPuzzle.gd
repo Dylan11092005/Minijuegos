@@ -15,7 +15,14 @@ signal puzzle_failed
 @export var cols: int = 4
 @export var rows: int = 3
 @export var piece_gap: int = 6
-@export var time_limit: float = 60.0
+
+const TOTAL_TIME = 60.0
+
+# =========================================================
+# ESCENAS GLOBALES
+# =========================================================
+const TIMER_HUD_SCENE      = preload("res://ui_global/timer_ui.tscn")
+const PANEL_RESULTADO_SCENE = preload("res://ui_global/ResultadoJuego.tscn")
 
 # =========================================================
 # RESOLUCIÓN
@@ -29,19 +36,18 @@ const MODAL_SIZE  = Vector2(1600, 920)
 var piece_size: Vector2
 var pieces: Array = []
 
-var selected_index: int   = -1
-var game_active: bool     = false
-var time_remaining: float = 0.0
+var selected_index: int = -1
+var game_active: bool   = false
 
 # =========================================================
 # UI
 # =========================================================
-var overlay:         ColorRect
 var modal:           Panel
 var board_container: Node2D
 var guide_preview:   TextureRect
-var timer_label:     Label
-var result_overlay:  Panel
+
+var timer_hud:       CanvasLayer
+var panel_resultado: CanvasLayer
 
 # =========================================================
 # COLORES
@@ -49,42 +55,38 @@ var result_overlay:  Panel
 const COLOR_GOLD     = Color("#D4AF37")
 const COLOR_SELECTED = Color(1.0, 0.878, 0.251, 0.35)
 const COLOR_CORRECT  = Color(0.251, 1.0, 0.502, 0.2)
-const COLOR_WIN      = Color("#1A3A1A")
-const COLOR_LOSE     = Color("#3A1A1A")
 
 # =========================================================
 # READY
 # =========================================================
 func _ready() -> void:
+	timer_hud = TIMER_HUD_SCENE.instantiate()
+	add_child(timer_hud)
+	timer_hud.tiempo_agotado.connect(_on_tiempo_agotado)
+	timer_hud.set_tamano_panel(600, 60)
+
+	panel_resultado = PANEL_RESULTADO_SCENE.instantiate()
+	add_child(panel_resultado)
+
 	_build_ui()
+
 	if map_texture:
-		start_game()
+		_start_game()
 
 # =========================================================
 # PROCESS
 # =========================================================
-func _process(delta: float) -> void:
-	if not game_active:
-		return
-
-	time_remaining -= delta
-	_update_timer_label()
-
-	if time_remaining <= 0.0:
-		time_remaining = 0.0
-		_on_time_out()
+func _process(_delta: float) -> void:
+	pass
 
 # =========================================================
 # START GAME
 # =========================================================
-func start_game() -> void:
+func _start_game() -> void:
 	_clear_pieces()
 
 	selected_index = -1
 	game_active    = true
-	time_remaining = time_limit
-
-	overlay.visible = true
 
 	if map_texture == null:
 		return
@@ -102,6 +104,8 @@ func start_game() -> void:
 	_create_pieces()
 	_shuffle_pieces()
 	_animate_modal()
+
+	timer_hud.iniciar(TOTAL_TIME, "Tiempo restante", "para completar el mapa")
 
 # =========================================================
 # CREAR PIEZAS
@@ -256,85 +260,36 @@ func _check_win() -> void:
 	for piece in pieces:
 		if piece["current_pos"] != piece["correct_pos"]:
 			return
+	_win()
 
+# =========================================================
+# WIN / LOSE
+# =========================================================
+func _win() -> void:
 	game_active = false
-	_show_result(true)
+	timer_hud.detener()
+	panel_resultado.mostrar_ganaste()
 	emit_signal("puzzle_completed")
 
-# =========================================================
-# TIME OUT
-# =========================================================
-func _on_time_out() -> void:
+func _lose() -> void:
 	game_active = false
-	_show_result(false)
+	timer_hud.detener()
+	panel_resultado.mostrar_perdiste()
 	emit_signal("puzzle_failed")
 
 # =========================================================
-# RESULTADO
+# CALLBACK TIMER
 # =========================================================
-func _show_result(won: bool) -> void:
-	result_overlay.visible = true
-
-	var bg_style := StyleBoxFlat.new()
-	bg_style.bg_color                       = COLOR_WIN if won else COLOR_LOSE
-	bg_style.corner_radius_top_left         = 16
-	bg_style.corner_radius_top_right        = 16
-	bg_style.corner_radius_bottom_left      = 16
-	bg_style.corner_radius_bottom_right     = 16
-	bg_style.border_width_left              = 3
-	bg_style.border_width_top               = 3
-	bg_style.border_width_right             = 3
-	bg_style.border_width_bottom            = 3
-	bg_style.border_color                   = COLOR_GOLD
-	result_overlay.add_theme_stylebox_override("panel", bg_style)
-
-	var title := result_overlay.get_node("Title")
-	var body  := result_overlay.get_node("Body")
-	var btn   := result_overlay.get_node("CloseButton")
-
-	if won:
-		title.text = "¡Mapa completado!"
-		body.text  = "Excelente trabajo. Armaste el mapa de riesgo escolar a tiempo."
-	else:
-		title.text = "¡Tiempo agotado!"
-		body.text  = "No lograste armar el mapa a tiempo. ¡Inténtalo de nuevo!"
-
-	btn.text = "Reiniciar"
-
-	btn.pressed.connect(_on_result_closed, CONNECT_ONE_SHOT)
-
-	result_overlay.scale    = Vector2(0.8, 0.8)
-	result_overlay.modulate = Color(1, 1, 1, 0)
-
-	var tween = create_tween()
-	tween.set_parallel(true)
-	tween.tween_property(result_overlay, "scale",    Vector2.ONE,    0.25)
-	tween.tween_property(result_overlay, "modulate", Color(1,1,1,1), 0.25)
-
-func _on_result_closed() -> void:
-	result_overlay.visible = false
-	start_game()
-
-# =========================================================
-# TIMER LABEL
-# =========================================================
-func _update_timer_label() -> void:
-	var secs         = int(ceil(time_remaining))
-	timer_label.text = "⏱ %d s" % secs
-
-	if time_remaining <= 10.0:
-		timer_label.add_theme_color_override("font_color", Color("#FF4444"))
-	else:
-		timer_label.add_theme_color_override("font_color", COLOR_GOLD)
+func _on_tiempo_agotado() -> void:
+	if game_active:
+		_lose()
 
 # =========================================================
 # BUILD UI
 # =========================================================
 func _build_ui() -> void:
 
-	# =====================================================
-	# FONDO
-	# =====================================================
+	# --- Fondo ---
 	if background_texture:
 		var bg := TextureRect.new()
 		bg.texture      = background_texture
@@ -344,60 +299,26 @@ func _build_ui() -> void:
 		bg.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 		add_child(bg)
 
-	# =====================================================
-	# OVERLAY
-	# =====================================================
-	overlay         = ColorRect.new()
-	overlay.color   = Color(0, 0, 0, 0.0)
-	overlay.size    = SCREEN_SIZE
-	overlay.visible = false
-	add_child(overlay)
-
-	# =====================================================
-	# MODAL
-	# =====================================================
+	# --- Modal ---
 	modal          = Panel.new()
 	modal.size     = MODAL_SIZE
 	modal.position = (SCREEN_SIZE - MODAL_SIZE) / 2
 	add_child(modal)
 
 	var style := StyleBoxFlat.new()
-	style.bg_color                   = Color(0, 0, 0, 0.0)
-	style.border_width_left          = 0
-	style.border_width_top           = 0
-	style.border_width_right         = 0
-	style.border_width_bottom        = 0
+	style.bg_color            = Color(0, 0, 0, 0.0)
+	style.border_width_left   = 0
+	style.border_width_top    = 0
+	style.border_width_right  = 0
+	style.border_width_bottom = 0
 	modal.add_theme_stylebox_override("panel", style)
 
 	board_container = Node2D.new()
 	modal.add_child(board_container)
 
-	# =====================================================
-	# TEXTO EDUCATIVO
-	# =====================================================
-	var instruction_label := Label.new()
-	instruction_label.text          = "Participaste en la elaboración del mapa de riesgo escolar."
-	instruction_label.position      = Vector2(70, 40)
-	instruction_label.size          = Vector2(820, 100)
-	instruction_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	instruction_label.add_theme_font_size_override("font_size", 30)
-	instruction_label.add_theme_color_override("font_color", Color.WHITE)
-	modal.add_child(instruction_label)
 
-	# =====================================================
-	# TIMER
-	# =====================================================
-	timer_label          = Label.new()
-	timer_label.text     = "⏱ 60 s"
-	timer_label.position = Vector2(70, 155)
-	timer_label.size     = Vector2(300, 60)
-	timer_label.add_theme_font_size_override("font_size", 36)
-	timer_label.add_theme_color_override("font_color", COLOR_GOLD)
-	modal.add_child(timer_label)
 
-	# =====================================================
-	# MINI MAPA
-	# =====================================================
+	# --- Mini mapa de referencia ---
 	var preview_border      := Panel.new()
 	preview_border.position  = Vector2(1260, 40)
 	preview_border.size      = Vector2(280, 200)
@@ -423,41 +344,6 @@ func _build_ui() -> void:
 	guide_preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	modal.add_child(guide_preview)
 	guide_preview.move_to_front()
-
-	# =====================================================
-	# PANEL DE RESULTADO
-	# =====================================================
-	result_overlay          = Panel.new()
-	result_overlay.size     = Vector2(700, 340)
-	result_overlay.position = (MODAL_SIZE - Vector2(700, 340)) / 2
-	result_overlay.visible  = false
-	modal.add_child(result_overlay)
-
-	var r_title := Label.new()
-	r_title.name                 = "Title"
-	r_title.position             = Vector2(40, 50)
-	r_title.size                 = Vector2(620, 80)
-	r_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	r_title.add_theme_font_size_override("font_size", 48)
-	r_title.add_theme_color_override("font_color", COLOR_GOLD)
-	result_overlay.add_child(r_title)
-
-	var r_body := Label.new()
-	r_body.name                 = "Body"
-	r_body.position             = Vector2(40, 150)
-	r_body.size                 = Vector2(620, 80)
-	r_body.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	r_body.autowrap_mode        = TextServer.AUTOWRAP_WORD_SMART
-	r_body.add_theme_font_size_override("font_size", 24)
-	r_body.add_theme_color_override("font_color", Color.WHITE)
-	result_overlay.add_child(r_body)
-
-	var r_btn := Button.new()
-	r_btn.name     = "CloseButton"
-	r_btn.position = Vector2(200, 260)
-	r_btn.size     = Vector2(300, 60)
-	r_btn.add_theme_font_size_override("font_size", 26)
-	result_overlay.add_child(r_btn)
 
 # =========================================================
 # ANIMACIÓN MODAL
