@@ -22,3 +22,6 @@ func _on_button_2_pressed() -> void:
 	
 func _on_button_pressed() -> void:
 	get_tree().change_scene_to_file("res://minigame_puzzle/MapPuzzle.tscn")
+	
+	func _on_button_pressed() -> void:
+	get_tree().change_scene_to_file("res://Juegodeforestóelbosque/MiniJuego.tscn")
