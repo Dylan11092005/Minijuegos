@@ -1,0 +1,253 @@
+[gd_scene format=3 uid="uid://bhj7f83qasm8s"]
+
+[ext_resource type="Script" uid="uid://caflbc53k5cx" path="res://mini_juego.gd" id="1_4td8a"]
+[ext_resource type="Texture2D" uid="uid://bkeknrhvfkvwg" path="res://sprites/Jardin.png" id="2_4td8a"]
+[ext_resource type="Texture2D" uid="uid://cjpony6qcpc44" path="res://sprites/huecoBueno.png" id="2_mjiq4"]
+[ext_resource type="Script" uid="uid://cd0hu4nemafww" path="res://semilla_1.gd" id="3_b0edn"]
+[ext_resource type="Texture2D" uid="uid://d4cydis4lrhi0" path="res://sprites/semilla1.png" id="4_mjiq4"]
+[ext_resource type="Texture2D" uid="uid://cday4626onnal" path="res://sprites/HuecoMalo.png" id="4_w4vif"]
+[ext_resource type="Script" uid="uid://n1t61c74dgot" path="res://regadera.gd" id="5_b0edn"]
+[ext_resource type="Texture2D" uid="uid://d0gtu02p57nfp" path="res://sprites/watering-can.png" id="8_i140o"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4td8a"]
+size = Vector2(141.96875, 143.0625)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_w4vif"]
+radius = 108.63241
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_w4vif"]
+size = Vector2(180, 159)
+
+[node name="MiniJuego" type="Node2D" unique_id=681249820]
+script = ExtResource("1_4td8a")
+metadata/_edit_vertical_guides_ = [-31552.0]
+
+[node name="Fondo" type="Sprite2D" parent="." unique_id=1365374616 groups=["hueco_bueno"]]
+position = Vector2(999.4999, 631.5)
+scale = Vector2(0.5528646, 0.55138886)
+texture = ExtResource("2_4td8a")
+
+[node name="HuecoBueno1" type="Area2D" parent="." unique_id=2099651757 groups=["hueco_bueno"]]
+
+[node name="Sprite2D" type="Sprite2D" parent="HuecoBueno1" unique_id=255707040]
+position = Vector2(831, 826)
+scale = Vector2(0.010410418, 0.010555788)
+texture = ExtResource("2_mjiq4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HuecoBueno1" unique_id=659855331]
+position = Vector2(838, 823)
+shape = SubResource("RectangleShape2D_4td8a")
+
+[node name="HuecoMalo1" type="Area2D" parent="." unique_id=556834066]
+
+[node name="Sprite2D" type="Sprite2D" parent="HuecoMalo1" unique_id=1294161025]
+position = Vector2(1308, 1089)
+scale = Vector2(0.016091371, 0.015138929)
+texture = ExtResource("4_w4vif")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HuecoMalo1" unique_id=412286901]
+position = Vector2(1306, 1087)
+shape = SubResource("RectangleShape2D_4td8a")
+
+[node name="HuecoMalo2" type="Area2D" parent="." unique_id=1600453167]
+
+[node name="Sprite2D" type="Sprite2D" parent="HuecoMalo2" unique_id=918640896]
+position = Vector2(852, 1098)
+scale = Vector2(0.01582533, 0.015585949)
+texture = ExtResource("4_w4vif")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HuecoMalo2" unique_id=98337378]
+position = Vector2(849, 1094)
+shape = SubResource("RectangleShape2D_4td8a")
+
+[node name="HuecoMalo3" type="Area2D" parent="." unique_id=1480979094]
+
+[node name="Sprite2D" type="Sprite2D" parent="HuecoMalo3" unique_id=1664470221]
+position = Vector2(1047, 825)
+scale = Vector2(0.016651634, 0.01645572)
+texture = ExtResource("4_w4vif")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HuecoMalo3" unique_id=519330700]
+position = Vector2(1046, 826)
+shape = SubResource("RectangleShape2D_4td8a")
+
+[node name="HuecoMalo4" type="Area2D" parent="." unique_id=401544255]
+
+[node name="Sprite2D" type="Sprite2D" parent="HuecoMalo4" unique_id=1462344387]
+position = Vector2(580, 1106)
+scale = Vector2(0.016651634, 0.01645572)
+texture = ExtResource("4_w4vif")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HuecoMalo4" unique_id=1355239194]
+position = Vector2(575, 1098)
+shape = SubResource("RectangleShape2D_4td8a")
+
+[node name="HuecoMalo7" type="Area2D" parent="." unique_id=211405444]
+
+[node name="Sprite2D" type="Sprite2D" parent="HuecoMalo7" unique_id=869434888]
+position = Vector2(1865.9999, 1101.0001)
+scale = Vector2(0.016651634, 0.01645572)
+texture = ExtResource("4_w4vif")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HuecoMalo7" unique_id=1004318916]
+position = Vector2(1857, 1094)
+shape = SubResource("RectangleShape2D_4td8a")
+
+[node name="HuecoMalo5" type="Area2D" parent="." unique_id=1396557597]
+
+[node name="Sprite2D" type="Sprite2D" parent="HuecoMalo5" unique_id=40298047]
+position = Vector2(139, 1099.0001)
+scale = Vector2(0.016651634, 0.01645572)
+texture = ExtResource("4_w4vif")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HuecoMalo5" unique_id=1972618626]
+position = Vector2(146, 1099)
+shape = SubResource("RectangleShape2D_4td8a")
+
+[node name="HuecoMalo6" type="Area2D" parent="." unique_id=1369056471]
+
+[node name="Sprite2D" type="Sprite2D" parent="HuecoMalo6" unique_id=1610497987]
+position = Vector2(326, 827)
+scale = Vector2(0.016651634, 0.01645572)
+texture = ExtResource("4_w4vif")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HuecoMalo6" unique_id=1200419282]
+position = Vector2(326, 830)
+shape = SubResource("RectangleShape2D_4td8a")
+
+[node name="HuecoBueno2" type="Area2D" parent="." unique_id=1763703139 groups=["hueco_bueno"]]
+
+[node name="Sprite2D" type="Sprite2D" parent="HuecoBueno2" unique_id=394646430]
+position = Vector2(360.00003, 1093.9999)
+scale = Vector2(0.010410418, 0.010555788)
+texture = ExtResource("2_mjiq4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HuecoBueno2" unique_id=413022836]
+position = Vector2(358, 1098)
+shape = SubResource("RectangleShape2D_4td8a")
+
+[node name="HuecoBueno3" type="Area2D" parent="." unique_id=857807255 groups=["hueco_bueno"]]
+
+[node name="Sprite2D" type="Sprite2D" parent="HuecoBueno3" unique_id=585150213]
+position = Vector2(1074, 1096)
+scale = Vector2(0.010410418, 0.010555788)
+texture = ExtResource("2_mjiq4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HuecoBueno3" unique_id=1966964825]
+position = Vector2(1070, 1091)
+shape = SubResource("RectangleShape2D_4td8a")
+
+[node name="HuecoBueno4" type="Area2D" parent="." unique_id=932587059 groups=["hueco_bueno"]]
+
+[node name="Sprite2D" type="Sprite2D" parent="HuecoBueno4" unique_id=546725860]
+position = Vector2(126, 832.00006)
+scale = Vector2(0.011057541, 0.010755082)
+texture = ExtResource("2_mjiq4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HuecoBueno4" unique_id=547628265]
+position = Vector2(130.01563, 826.53125)
+shape = SubResource("RectangleShape2D_4td8a")
+
+[node name="HuecoBueno6" type="Area2D" parent="." unique_id=931979514 groups=["hueco_bueno"]]
+
+[node name="Sprite2D" type="Sprite2D" parent="HuecoBueno6" unique_id=1638507323]
+position = Vector2(1588, 1094.9999)
+scale = Vector2(0.010410418, 0.010555788)
+texture = ExtResource("2_mjiq4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HuecoBueno6" unique_id=416296184 groups=["hueco_bueno"]]
+position = Vector2(1581, 1096)
+shape = SubResource("RectangleShape2D_4td8a")
+
+[node name="HuecoBueno7" type="Area2D" parent="." unique_id=1203206265 groups=["hueco_bueno"]]
+
+[node name="Sprite2D" type="Sprite2D" parent="HuecoBueno7" unique_id=718094814]
+position = Vector2(1579.0001, 827.99994)
+scale = Vector2(0.010410418, 0.010555788)
+texture = ExtResource("2_mjiq4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HuecoBueno7" unique_id=2142748879]
+position = Vector2(1575, 830)
+shape = SubResource("RectangleShape2D_4td8a")
+
+[node name="HuecoBueno8" type="Area2D" parent="." unique_id=473897002 groups=["hueco_bueno"]]
+
+[node name="Sprite2D" type="Sprite2D" parent="HuecoBueno8" unique_id=806042489]
+position = Vector2(1862, 829)
+scale = Vector2(0.010410418, 0.010555788)
+texture = ExtResource("2_mjiq4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HuecoBueno8" unique_id=294607589]
+position = Vector2(1860, 824)
+shape = SubResource("RectangleShape2D_4td8a")
+
+[node name="HuecoBueno9" type="Area2D" parent="." unique_id=1369544981 groups=["hueco_bueno"]]
+
+[node name="Sprite2D" type="Sprite2D" parent="HuecoBueno9" unique_id=659929309]
+position = Vector2(1267, 826)
+scale = Vector2(0.010410418, 0.010555788)
+texture = ExtResource("2_mjiq4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HuecoBueno9" unique_id=1626528320]
+position = Vector2(1262, 827)
+shape = SubResource("RectangleShape2D_4td8a")
+
+[node name="HuecoBueno5" type="Area2D" parent="." unique_id=1070530415 groups=["hueco_bueno"]]
+
+[node name="Sprite2D" type="Sprite2D" parent="HuecoBueno5" unique_id=460397296]
+position = Vector2(533, 836.00006)
+scale = Vector2(-0.01036778, -0.010234852)
+texture = ExtResource("2_mjiq4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HuecoBueno5" unique_id=179445895]
+position = Vector2(527, 834)
+shape = SubResource("RectangleShape2D_4td8a")
+
+[node name="Semilla1" type="Area2D" parent="." unique_id=1208517653]
+script = ExtResource("3_b0edn")
+
+[node name="Sprite2D" type="Sprite2D" parent="Semilla1" unique_id=1111497039]
+position = Vector2(1582, 615)
+scale = Vector2(1.1180853, 1.4008789)
+texture = ExtResource("4_mjiq4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Semilla1" unique_id=1133654009]
+position = Vector2(1586, 592)
+shape = SubResource("CircleShape2D_w4vif")
+
+[node name="Regadera" type="Area2D" parent="." unique_id=2009986234]
+script = ExtResource("5_b0edn")
+
+[node name="Sprite2D" type="Sprite2D" parent="Regadera" unique_id=1691318645]
+position = Vector2(1872, 603)
+scale = Vector2(1.1252745, 1.0966798)
+texture = ExtResource("8_i140o")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Regadera" unique_id=878947234]
+position = Vector2(1864, 592)
+shape = SubResource("RectangleShape2D_w4vif")
+
+[node name="LabelTiempo" type="Label" parent="." unique_id=417362606]
+offset_left = 874.0
+offset_top = 78.0
+offset_right = 988.0
+offset_bottom = 125.0
+text = "Tiempo: 1.20"
+justification_flags = 171
+
+[node name="Mensaje" type="Label" parent="." unique_id=195695306]
+offset_left = 257.0
+offset_top = 189.0
+offset_right = 1702.0
+offset_bottom = 1108.0
+
+[node name="Timer" type="Timer" parent="." unique_id=623610932]
+wait_time = 1.2
+one_shot = true
+autostart = true
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=2012207941]
+position = Vector2(1000, 630)
+zoom = Vector2(0.6, 0.6)
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

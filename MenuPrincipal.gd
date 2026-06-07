@@ -10,8 +10,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	pass
 
-
-func _on_button_5_pressed() -> void:
+func _on_button_5_toggled() -> void:
 	get_tree().change_scene_to_file("res://Juegodeforestóelbosque/MiniJuego.tscn")
 	
 func _on_button_4_pressed() -> void:
@@ -26,7 +25,3 @@ func _on_button_2_pressed() -> void:
 func _on_button_pressed() -> void:
 	get_tree().change_scene_to_file("res://minigame_puzzle/MapPuzzle.tscn")
 	
-
-
-func _on_button_5_toggled(toggled_on: bool) -> void:
-	pass # Replace with function body.

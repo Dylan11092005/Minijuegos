@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://bhss3r5a7y41v"]
+
+[ext_resource type="Script" uid="uid://cjumqlef0ee2k" path="res://hueco_semilla.gd" id="1_8mpq1"]
+[ext_resource type="Texture2D" uid="uid://cjpony6qcpc44" path="res://sprites/huecoBueno.png" id="2_u4sah"]
+[ext_resource type="Texture2D" uid="uid://cday4626onnal" path="res://sprites/HuecoMalo.png" id="3_rbhqb"]
+[ext_resource type="Texture2D" uid="uid://vo328xoitfkq" path="res://sprites/semilla_puesta.png" id="4_mvxjv"]
+[ext_resource type="Texture2D" uid="uid://byktwlbcoxe8q" path="res://sprites/arbol.png" id="5_2qcvq"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_y6c15"]
+radius = 95.7549
+
+[node name="Hueco" type="Area2D" unique_id=1823693233]
+script = ExtResource("1_8mpq1")
+img_hueco_bueno = ExtResource("2_u4sah")
+img_hueco_malo = ExtResource("3_rbhqb")
+img_hueco_con_semilla = ExtResource("4_mvxjv")
+img_arbusto = ExtResource("5_2qcvq")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=471783839]
+position = Vector2(4, 1)
+scale = Vector2(0.014232255, 0.011737506)
+texture = ExtResource("2_u4sah")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=421072296]
+z_index = 5
+position = Vector2(2, 0)
+shape = SubResource("CircleShape2D_y6c15")

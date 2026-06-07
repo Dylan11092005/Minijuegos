@@ -1,0 +1,102 @@
+[gd_scene format=3 uid="uid://bhj7f83qasm8s"]
+
+[ext_resource type="Script" uid="uid://caflbc53k5cx" path="res://mini_juego.gd" id="1_4td8a"]
+[ext_resource type="Texture2D" uid="uid://bkeknrhvfkvwg" path="res://sprites/Jardin.png" id="2_4td8a"]
+[ext_resource type="PackedScene" uid="uid://ldd4h7dm67ei" path="res://semilla_hueco.tscn" id="3_xbmpo"]
+[ext_resource type="PackedScene" uid="uid://bhss3r5a7y41v" path="res://hueco.tscn" id="4_nnfgc"]
+[ext_resource type="PackedScene" uid="uid://b67c2xr3n4kqq" path="res://huecos_malos.tscn" id="5_nnfgc"]
+[ext_resource type="PackedScene" uid="uid://cws6fxthegns5" path="res://regadera.tscn" id="6_b0edn"]
+
+[node name="MiniJuego" type="Node2D" unique_id=681249820]
+script = ExtResource("1_4td8a")
+seed_scene = ExtResource("3_xbmpo")
+metadata/_edit_vertical_guides_ = [-31552.0]
+
+[node name="Fondo" type="Sprite2D" parent="." unique_id=1365374616 groups=["hueco_bueno"]]
+z_index = -10
+position = Vector2(1000.9999, 633.00006)
+scale = Vector2(0.55364585, 0.55277777)
+texture = ExtResource("2_4td8a")
+
+[node name="Semilla" parent="." unique_id=1212064156 instance=ExtResource("3_xbmpo")]
+position = Vector2(1758, 492)
+
+[node name="LabelTiempo" type="Label" parent="." unique_id=417362606]
+offset_left = 874.0
+offset_top = 78.0
+offset_right = 988.0
+offset_bottom = 125.0
+text = "Tiempo: 1.20"
+justification_flags = 171
+
+[node name="Mensaje" type="Label" parent="." unique_id=195695306]
+offset_left = -334.0
+offset_top = 111.0
+offset_right = 1111.0
+offset_bottom = 1030.0
+
+[node name="Timer" type="Timer" parent="." unique_id=623610932]
+wait_time = 80.0
+one_shot = true
+autostart = true
+
+[node name="Hueco" parent="." unique_id=1823693233 instance=ExtResource("4_nnfgc")]
+position = Vector2(847, 825)
+
+[node name="Hueco2" parent="." unique_id=57484412 instance=ExtResource("4_nnfgc")]
+position = Vector2(1053, 823)
+
+[node name="Hueco3" parent="." unique_id=1336637606 instance=ExtResource("4_nnfgc")]
+position = Vector2(137, 819)
+
+[node name="Hueco4" parent="." unique_id=2099894286 instance=ExtResource("4_nnfgc")]
+position = Vector2(558, 1101)
+
+[node name="Hueco6" parent="." unique_id=618451372 instance=ExtResource("4_nnfgc")]
+position = Vector2(1552, 828)
+
+[node name="Hueco7" parent="." unique_id=1177328390 instance=ExtResource("4_nnfgc")]
+position = Vector2(1091, 1101)
+
+[node name="Hueco9" parent="." unique_id=111557823 instance=ExtResource("4_nnfgc")]
+position = Vector2(563, 828)
+
+[node name="Hueco10" parent="." unique_id=70330380 instance=ExtResource("4_nnfgc")]
+position = Vector2(347, 1101)
+
+[node name="Hueco8" parent="." unique_id=188632477 instance=ExtResource("4_nnfgc")]
+position = Vector2(1577, 1092)
+
+[node name="HuecosMalos" parent="." unique_id=738862998 instance=ExtResource("5_nnfgc")]
+position = Vector2(1830, 824)
+
+[node name="HuecosMalos3" parent="." unique_id=1471014068 instance=ExtResource("5_nnfgc")]
+position = Vector2(1271, 818)
+rotation = -0.00018624676
+
+[node name="HuecosMalos2" parent="." unique_id=1192791827 instance=ExtResource("5_nnfgc")]
+position = Vector2(345, 821)
+
+[node name="HuecosMalos4" parent="." unique_id=910049937 instance=ExtResource("5_nnfgc")]
+position = Vector2(854, 1091)
+
+[node name="HuecosMalos5" parent="." unique_id=1414825004 instance=ExtResource("5_nnfgc")]
+position = Vector2(1858, 1091)
+
+[node name="HuecosMalos7" parent="." unique_id=2055900324 instance=ExtResource("5_nnfgc")]
+position = Vector2(1309, 1101)
+
+[node name="HuecosMalos6" parent="." unique_id=680707283 instance=ExtResource("5_nnfgc")]
+position = Vector2(132, 1100)
+
+[node name="SpawnPoint" type="Marker2D" parent="." unique_id=1850664924]
+position = Vector2(1758, 487)
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=2012207941]
+position = Vector2(1000, 630)
+zoom = Vector2(0.6, 0.6)
+
+[node name="Regadera" parent="." unique_id=541666541 instance=ExtResource("6_b0edn")]
+position = Vector2(291, 543)
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
