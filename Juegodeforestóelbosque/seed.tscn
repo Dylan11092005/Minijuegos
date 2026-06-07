@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://c1bf151ei0xm"]
+
+[ext_resource type="Script" path="res://seed.gd" id="1_24r2x"]
+[ext_resource type="Texture2D" path="res://sprites/seed.png" id="2_24r2x"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_f7cx5"]
+radius = 131.7953
+
+[node name="Semilla" type="Area2D" unique_id=1212064156]
+script = ExtResource("1_24r2x")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=84625137]
+position = Vector2(-1.140614, 4.3437576)
+scale = Vector2(0.38336176, 0.35021967)
+texture = ExtResource("2_24r2x")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1050006750]
+z_index = 10
+position = Vector2(1, -1)
+shape = SubResource("CircleShape2D_f7cx5")
