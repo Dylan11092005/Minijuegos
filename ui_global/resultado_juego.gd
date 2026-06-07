@@ -6,6 +6,8 @@ extends CanvasLayer
 @onready var panel_fondo = $Contenedor/PanelFondo
 @onready var label_mensaje = $Contenedor/LabelMensaje
 @onready var boton_volver = $Contenedor/BotonVolver
+@onready var audio_victoria = $AudioVictoria
+@onready var audio_derrota = $AudioDerrota
 
 # Paleta oficial
 var color_verde := Color("#60B060")
@@ -169,6 +171,8 @@ func mostrar_ganaste():
 	label_mensaje.text = mensaje_actual
 	label_mensaje.add_theme_color_override("font_color", color_azul_oscuro)
 	visible = true
+	audio_victoria.volume_db = -5
+	audio_victoria.play()
 
 
 func mostrar_perdiste():
@@ -176,6 +180,8 @@ func mostrar_perdiste():
 	label_mensaje.text = mensaje_actual
 	label_mensaje.add_theme_color_override("font_color", color_azul_oscuro)
 	visible = true
+	audio_derrota.volume_db = -10
+	audio_derrota.play()
 
 
 func ocultar():
