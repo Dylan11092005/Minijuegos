@@ -1,43 +1,53 @@
 extends Node2D
 
+const TIMER_HUD_SCENE       = preload("res://ui_global/timer_ui.tscn")
+const PANEL_RESULTADO_SCENE = preload("res://ui_global/ResultadoJuego.tscn")
+
+const TOTAL_TIME = 15.0
+
 @export var rayo_scene: PackedScene
 
-var tiempo := 15
 var juego_terminado := false
-var mensaje_actual := ""
+var mensaje_actual  := ""
 
-@onready var player = $PlayerRayo
-@onready var timer_spawn = $TimerSpawnRayos
-@onready var timer_tormenta = $TimerTormenta
-@onready var hud = $UI/HUD
-@onready var resultado_juego = $ResultadoJuego
+@onready var player       = $PlayerRayo
+@onready var timer_spawn  = $TimerSpawnRayos
 
+var timer_hud:       CanvasLayer
+var panel_resultado: CanvasLayer
 
+# =========================================================
+# READY
+# =========================================================
 func _ready():
 	randomize()
-	
-	tiempo = 15
+
 	juego_terminado = false
-	mensaje_actual = ""
-	
+	mensaje_actual  = ""
+
 	if player:
 		player.vidas = 3
-	
-	actualizar_ui()
 
+	timer_hud = TIMER_HUD_SCENE.instantiate()
+	add_child(timer_hud)
+	timer_hud.tiempo_agotado.connect(_on_tiempo_agotado)
+	timer_hud.set_tamano_panel(500, 60)
 
-func _process(delta):
-	actualizar_ui()
+	panel_resultado = PANEL_RESULTADO_SCENE.instantiate()
+	add_child(panel_resultado)
 
-	if player.vidas <= 0 and juego_terminado == false:
+	timer_hud.iniciar(TOTAL_TIME, "Tiempo restante", "para sobrevivir")
+
+# =========================================================
+# PROCESS
+# =========================================================
+func _process(_delta):
+	if player.vidas <= 0 and not juego_terminado:
 		perder()
 
-
-func actualizar_ui():
-	if hud:
-		hud.actualizar_hud(tiempo, player.vidas, mensaje_actual)
-
-
+# =========================================================
+# SPAWN RAYOS
+# =========================================================
 func _on_timer_spawn_rayos_timeout():
 	if juego_terminado:
 		return
@@ -47,41 +57,29 @@ func _on_timer_spawn_rayos_timeout():
 		return
 
 	var ancho_pantalla := get_viewport_rect().size.x
-
 	var rayo = rayo_scene.instantiate()
 	rayo.position.x = randi_range(80, int(ancho_pantalla - 80))
 	rayo.position.y = -80
-
 	add_child(rayo)
 
-
-func _on_timer_tormenta_timeout():
-	if juego_terminado:
-		return
-
-	tiempo -= 1
-
-	if tiempo <= 0:
+# =========================================================
+# CALLBACK TIMER AGOTADO
+# =========================================================
+func _on_tiempo_agotado():
+	if not juego_terminado:
 		ganar()
 
-
+# =========================================================
+# GANAR / PERDER
+# =========================================================
 func ganar():
 	juego_terminado = true
-	mensaje_actual = ""
-
 	timer_spawn.stop()
-	timer_tormenta.stop()
-
-	actualizar_ui()
-	resultado_juego.mostrar_ganaste()
-
+	timer_hud.detener()
+	panel_resultado.mostrar_ganaste()
 
 func perder():
 	juego_terminado = true
-	mensaje_actual = ""
-
 	timer_spawn.stop()
-	timer_tormenta.stop()
-
-	actualizar_ui()
-	resultado_juego.mostrar_perdiste()
+	timer_hud.detener()
+	panel_resultado.mostrar_perdiste()
