@@ -7,34 +7,34 @@
 [ext_resource type="Texture2D" uid="uid://byktwlbcoxe8q" path="res://sprites/arbol.png" id="5_ba458"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_k06nb"]
-radius = 97.020615
+radius = 108.00463
 
 [node name="Hole" type="Area2D" unique_id=1337232162]
 script = ExtResource("1_cr06n")
 
 [node name="SpriteEmpty" type="Sprite2D" parent="." unique_id=2040489358]
 z_index = 10
-position = Vector2(619, 261)
-scale = Vector2(0.015207644, 0.01504821)
+position = Vector2(-1, 6)
+scale = Vector2(0.012993087, 0.012840683)
 texture = ExtResource("2_q7xbi")
 
 [node name="SpriteInvalid" type="Sprite2D" parent="." unique_id=74092622]
-position = Vector2(618.00006, 251.99998)
-scale = Vector2(0.0243454, 0.023511548)
+position = Vector2(-3.9999995, 2.0000014)
+scale = Vector2(0.020773886, 0.02082994)
 texture = ExtResource("3_1eslj")
 
 [node name="SpritePlanted" type="Sprite2D" parent="." unique_id=639120571]
-position = Vector2(615.5, 252.5)
-scale = Vector2(0.0143502345, 0.013930273)
+position = Vector2(-1, 4.0000153)
+scale = Vector2(0.012711247, 0.01329708)
 texture = ExtResource("4_rluvt")
 
 [node name="SpriteWatered" type="Sprite2D" parent="." unique_id=1334931950]
 z_index = 15
-position = Vector2(621.12494, 41.500053)
-scale = Vector2(0.17033453, 0.12977299)
+position = Vector2(-2.9999695, -153)
+scale = Vector2(0.112125896, 0.09449174)
 texture = ExtResource("5_ba458")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=304074164]
 z_index = 15
-position = Vector2(622, 259)
+position = Vector2(-4, 0)
 shape = SubResource("CircleShape2D_k06nb")

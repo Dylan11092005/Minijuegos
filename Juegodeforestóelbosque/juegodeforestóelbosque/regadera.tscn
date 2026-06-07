@@ -4,16 +4,16 @@
 [ext_resource type="Texture2D" uid="uid://d0gtu02p57nfp" path="res://sprites/watering-can.png" id="2_53cfk"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_frqy3"]
-radius = 82.02438
+radius = 113.0
 
 [node name="Regadera" type="Area2D" unique_id=541666541]
 script = ExtResource("1_bo4sr")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1820105656]
-position = Vector2(-0.9999981, -0.9999981)
-scale = Vector2(1.0351563, 0.98828125)
+position = Vector2(9.536743e-07, -1)
+scale = Vector2(1.2675781, 1.2285156)
 texture = ExtResource("2_53cfk")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=742508027]
-position = Vector2(-2, -2)
+position = Vector2(0, -3)
 shape = SubResource("CircleShape2D_frqy3")
