@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://csw4y3pr4wa71"]
+
+[ext_resource type="Script" uid="uid://bdn22qfk2nna4" path="res://player_laberinto.gd" id="1_5dogo"]
+
+[node name="PlayerLaberinto" type="CharacterBody2D" unique_id=680603886]
+script = ExtResource("1_5dogo")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=211255312]
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=896584475]

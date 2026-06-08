@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://d3cptwbki6y8"]
+
+[ext_resource type="Script" uid="uid://cd8yw40cmf5ve" path="res://main_laberinto.gd" id="1_15bar"]
+[ext_resource type="Script" uid="uid://ci28kagmd2svs" path="res://fondo_inundacion.gd" id="1_ep6ps"]
+
+[node name="MainLaberinto" type="Node2D" unique_id=72569117]
+script = ExtResource("1_15bar")
+
+[node name="Fondo" type="Node2D" parent="." unique_id=120878475]
+script = ExtResource("1_ep6ps")
+
+[node name="Laberinto" type="Node2D" parent="." unique_id=766137972]
+
+[node name="Area2D" type="Area2D" parent="." unique_id=984031000]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=2060447495]
+
+[node name="Label" type="Label" parent="." unique_id=1423771419]
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="Timer" type="Timer" parent="." unique_id=628233439]
+autostart = true
