@@ -6,6 +6,8 @@
 [ext_resource type="Script" uid="uid://b5alxsrj2ybtt" path="res://minigame_rayo/fondo_tormenta.gd" id="3_0ej5d"]
 [ext_resource type="Script" uid="uid://ba48odk5717bg" path="res://minigame_rayo/hud_rayo.gd" id="5_sm828"]
 [ext_resource type="PackedScene" uid="uid://dsdbaxj6xesxn" path="res://ui_global/ResultadoJuego.tscn" id="6_1etp8"]
+[ext_resource type="AudioStream" uid="uid://dcouj2bayvlga" path="res://minigame_rayo/assets/sonidos/lluvia.mp3" id="7_jys7k"]
+[ext_resource type="AudioStream" uid="uid://eb5qpqoqg48h" path="res://minigame_rayo/assets/sonidos/rayo.mp3" id="8_0w1y4"]
 
 [node name="MainRayo" type="Node2D" unique_id=130022186]
 script = ExtResource("1_djott")
@@ -50,5 +52,13 @@ offset_right = 475.0
 offset_bottom = 339.0
 
 [node name="ResultadoJuego" parent="." unique_id=2106536257 instance=ExtResource("6_1etp8")]
+
+[node name="AudioLluvia" type="AudioStreamPlayer" parent="." unique_id=1221711485]
+stream = ExtResource("7_jys7k")
+volume_db = -40.536
+
+[node name="AudioRayo" type="AudioStreamPlayer" parent="." unique_id=649442358]
+stream = ExtResource("8_0w1y4")
+volume_db = -46.561
 
 [connection signal="timeout" from="TimerSpawnRayos" to="." method="_on_timer_spawn_rayos_timeout"]

@@ -1,19 +1,27 @@
 extends Node2D
-
+signal relampago_aparecio
 var ANCHO := 1280.0
 var ALTO := 720.0
 
 var tiempo := 0.0
 var flash := 0.0
 var intensidad_flash := 0.0
-
+var tiempo_para_siguiente_relampago := 1.5
 
 func _process(delta):
 	tiempo += delta
 
-	if randf() < 0.008:
-		flash = 0.28
-		intensidad_flash = randf_range(0.35, 0.75)
+	if tiempo_para_siguiente_relampago > 0:
+		tiempo_para_siguiente_relampago -= delta
+
+	if tiempo_para_siguiente_relampago <= 0:
+		if randf() < 0.015:
+			flash = 0.28
+			intensidad_flash = randf_range(0.35, 0.75)
+			relampago_aparecio.emit()
+
+			# Espera entre relámpagos decorativos
+			tiempo_para_siguiente_relampago = randf_range(4.0, 8.0)
 
 	if flash > 0:
 		flash -= delta
