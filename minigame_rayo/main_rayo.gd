@@ -10,16 +10,20 @@ const TOTAL_TIME = 15.0
 var juego_terminado := false
 var mensaje_actual  := ""
 
-@onready var player         = $PlayerRayo
-@onready var timer_spawn    = $TimerSpawnRayos
+@onready var player       = $PlayerRayo
+@onready var timer_spawn  = $TimerSpawnRayos
+@onready var hud_vidas    = $UI/HUD
 @onready var fondo_tormenta = $FondoTormenta
-@onready var audio_lluvia   = $AudioLluvia
-@onready var audio_rayo     = $AudioRayo
+@onready var audio_lluvia = $AudioLluvia
+@onready var audio_rayo   = $AudioRayo
 
 var timer_hud: CanvasLayer
 var panel_resultado: CanvasLayer
 
 
+# =========================================================
+# READY
+# =========================================================
 func _ready():
 	randomize()
 
@@ -29,23 +33,28 @@ func _ready():
 	if player:
 		player.vidas = 3
 
+	# Timer reutilizable
 	timer_hud = TIMER_HUD_SCENE.instantiate()
 	add_child(timer_hud)
 	timer_hud.tiempo_agotado.connect(_on_tiempo_agotado)
 	timer_hud.set_tamano_panel(500, 60)
 
+	# Panel de ganar/perder
 	panel_resultado = PANEL_RESULTADO_SCENE.instantiate()
 	add_child(panel_resultado)
 
 	timer_hud.iniciar(TOTAL_TIME, "Tiempo restante", "para sobrevivir")
 
-	# Sonido de lluvia de fondo
+	# Actualizar corazones al iniciar
+	actualizar_hud_vidas()
+
+	# Sonido de lluvia
 	if audio_lluvia:
 		audio_lluvia.volume_db = -12
 		audio_lluvia.play()
 		audio_lluvia.finished.connect(_on_audio_lluvia_finished)
 
-	# Sonido del relámpago decorativo del fondo
+	# Sonido de relámpago del fondo
 	if fondo_tormenta:
 		fondo_tormenta.relampago_aparecio.connect(_on_relampago_fondo)
 
@@ -53,11 +62,27 @@ func _ready():
 		audio_rayo.volume_db = -3
 
 
+# =========================================================
+# PROCESS
+# =========================================================
 func _process(_delta):
+	actualizar_hud_vidas()
+
 	if player.vidas <= 0 and not juego_terminado:
 		perder()
 
 
+# =========================================================
+# ACTUALIZAR CORAZONES
+# =========================================================
+func actualizar_hud_vidas():
+	if hud_vidas and player:
+		hud_vidas.actualizar_hud(0, player.vidas, "")
+
+
+# =========================================================
+# SPAWN RAYOS
+# =========================================================
 func _on_timer_spawn_rayos_timeout():
 	if juego_terminado:
 		return
@@ -74,6 +99,9 @@ func _on_timer_spawn_rayos_timeout():
 	add_child(rayo)
 
 
+# =========================================================
+# AUDIO
+# =========================================================
 func _on_relampago_fondo():
 	if juego_terminado:
 		return
@@ -88,11 +116,17 @@ func _on_audio_lluvia_finished():
 		audio_lluvia.play()
 
 
+# =========================================================
+# CALLBACK TIMER AGOTADO
+# =========================================================
 func _on_tiempo_agotado():
 	if not juego_terminado:
 		ganar()
 
 
+# =========================================================
+# GANAR / PERDER
+# =========================================================
 func ganar():
 	juego_terminado = true
 
