@@ -1,20 +1,20 @@
 [gd_scene format=3 uid="uid://ldd4h7dm67ei"]
 
 [ext_resource type="Script" uid="uid://bwyln735v10bh" path="res://minigame_defo/seed.gd" id="1_24r2x"]
-[ext_resource type="Texture2D" uid="uid://boas6ljx36nn1" path="res://minigame_defo/sprites/seed.png" id="2_24r2x"]
+[ext_resource type="Texture2D" uid="uid://dwfnuulc8wh4a" path="res://minigame_defo/sprites/Semillas.png" id="2_57emn"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_f7cx5"]
-radius = 75.95393
+radius = 100.60318
 
 [node name="Semilla" type="Area2D" unique_id=1212064156]
 script = ExtResource("1_24r2x")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=84625137]
-position = Vector2(3.8146973e-06, -2.000002)
-scale = Vector2(0.25836176, 0.25451654)
-texture = ExtResource("2_24r2x")
+position = Vector2(22.13124, -3.8939228)
+scale = Vector2(0.42523235, 0.48405668)
+texture = ExtResource("2_57emn")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1050006750]
 z_index = 10
-position = Vector2(2, -2)
+position = Vector2(33, 20)
 shape = SubResource("CircleShape2D_f7cx5")
