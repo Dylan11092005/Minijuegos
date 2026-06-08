@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bkeknrhvfkvwg"
-path="res://.godot/imported/Jardin.png-e32cc9aeca44346cb46c35c2b3dccf5f.ctex"
+path="res://.godot/imported/Jardin.png-28f97931d45f7febc22d961e17b4ead3.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprites/Jardin.png"
-dest_files=["res://.godot/imported/Jardin.png-e32cc9aeca44346cb46c35c2b3dccf5f.ctex"]
+source_file="res://minigame_defo/sprites/Jardin.png"
+dest_files=["res://.godot/imported/Jardin.png-28f97931d45f7febc22d961e17b4ead3.ctex"]
 
 [params]
 

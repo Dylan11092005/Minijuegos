@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d4cydis4lrhi0"
-path="res://.godot/imported/semilla1.png-da30347e31d97eaaa18132c82223135c.ctex"
+path="res://.godot/imported/semilla1.png-1f3e4b090bdb2b5bb0f7859f614a81ff.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprites/semilla1.png"
-dest_files=["res://.godot/imported/semilla1.png-da30347e31d97eaaa18132c82223135c.ctex"]
+source_file="res://minigame_defo/sprites/semilla1.png"
+dest_files=["res://.godot/imported/semilla1.png-1f3e4b090bdb2b5bb0f7859f614a81ff.ctex"]
 
 [params]
 

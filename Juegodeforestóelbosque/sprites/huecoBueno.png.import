@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cjpony6qcpc44"
-path="res://.godot/imported/huecoBueno.png-2dc9848782c88bed3267b03f15157b7e.ctex"
+path="res://.godot/imported/huecoBueno.png-6c44e18eb1c5bb7253c97346924d4a5d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprites/huecoBueno.png"
-dest_files=["res://.godot/imported/huecoBueno.png-2dc9848782c88bed3267b03f15157b7e.ctex"]
+source_file="res://minigame_defo/sprites/huecoBueno.png"
+dest_files=["res://.godot/imported/huecoBueno.png-6c44e18eb1c5bb7253c97346924d4a5d.ctex"]
 
 [params]
 
