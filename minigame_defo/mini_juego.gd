@@ -33,6 +33,7 @@ func _ready():
 	crear_timer()
 	crear_panel_resultado()
 	conectar_boton_back()
+	timer_hud.set_tamano_panel(600, 60)
 
 	_start_game()
 

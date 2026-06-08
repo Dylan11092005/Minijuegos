@@ -86,8 +86,8 @@ position = Vector2(1022, 1100)
 
 [node name="Regadera" parent="." unique_id=541666541 instance=ExtResource("6_b0edn")]
 z_index = 10
-position = Vector2(1054, 1026)
+position = Vector2(1064, 1064)
 
 [node name="Semilla" parent="." unique_id=1212064156 instance=ExtResource("3_xbmpo")]
 z_index = 10
-position = Vector2(2263, 1053)
+position = Vector2(2298, 1208)
