@@ -1,0 +1,74 @@
+[gd_scene format=3 uid="uid://cjr8rwja674f5"]
+
+[ext_resource type="Script" uid="uid://m61mx5tehtiy" path="res://selector_edad/AgeSelector.gd" id="1_xv3ck"]
+[ext_resource type="Texture2D" uid="uid://d3wovm11fy185" path="res://selector_edad/assets/Fondo.png" id="2_5bp0f"]
+[ext_resource type="Texture2D" uid="uid://b4td8kild0dgp" path="res://selector_edad/assets/Barra.png" id="2_ta6bi"]
+[ext_resource type="Texture2D" uid="uid://b8xv2nus7uul4" path="res://selector_edad/assets/Etapa1.png" id="3_5bp0f"]
+[ext_resource type="Texture2D" uid="uid://dkg103j7yjxk6" path="res://selector_edad/assets/PiedraSelectora.png" id="4_okh50"]
+[ext_resource type="Texture2D" uid="uid://cn11rxs3l4sdt" path="res://selector_edad/assets/Boton_continuar.png" id="5_vtiug"]
+
+[node name="AgeSelector" type="Control" unique_id=2085806543]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_xv3ck")
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=1033444763]
+layout_mode = 0
+offset_left = -4.0
+offset_top = 1.0
+offset_right = 2011.0
+offset_bottom = 1211.0
+texture = ExtResource("2_5bp0f")
+
+[node name="Bar" type="TextureRect" parent="." unique_id=304513519]
+layout_mode = 0
+offset_left = 76.0
+offset_top = 354.0
+offset_right = 1855.0
+offset_bottom = 494.0
+texture = ExtResource("2_ta6bi")
+
+[node name="PandaDisplay" type="TextureRect" parent="." unique_id=1116512730]
+layout_mode = 0
+offset_left = 837.0
+offset_top = 509.0
+offset_right = 1090.0
+offset_bottom = 853.0
+texture = ExtResource("3_5bp0f")
+stretch_mode = 5
+
+[node name="StoneSlider" type="TextureButton" parent="." unique_id=1691107195]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 330.0
+offset_right = 257.0
+offset_bottom = 525.0
+texture_normal = ExtResource("4_okh50")
+
+[node name="AgeLabel" type="Label" parent="." unique_id=5999252]
+layout_mode = 0
+offset_left = 930.0
+offset_top = 396.0
+offset_right = 1066.0
+offset_bottom = 508.0
+theme_override_font_sizes/font_size = 52
+text = "0"
+
+[node name="BtnContinuar" type="TextureButton" parent="." unique_id=266149419]
+layout_mode = 0
+offset_left = 831.0
+offset_top = 855.0
+offset_right = 1086.0
+offset_bottom = 945.0
+texture_normal = ExtResource("5_vtiug")
+
+[node name="InstructionLabel" type="Label" parent="." unique_id=902567860]
+layout_mode = 0
+offset_left = 560.0
+offset_top = 133.0
+offset_right = 1402.0
+offset_bottom = 242.0
+theme_override_font_sizes/font_size = 79
+text = "¿Cuántos años tienes?"
