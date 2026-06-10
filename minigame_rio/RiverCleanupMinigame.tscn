@@ -2,17 +2,28 @@
 
 [ext_resource type="Script" uid="uid://bf660g618hqrv" path="res://minigame_rio/RiverCleanupMinigame.gd" id="1_ge4tx"]
 [ext_resource type="Texture2D" uid="uid://dvvbqjqqo2tvj" path="res://minigame_rio/assets/basurero.png" id="2_uq7vv"]
+[ext_resource type="Shader" uid="uid://bamvh5yhcaqwh" path="res://minigame_rio/RiverCleanupMinigame.gdshader" id="2_wn5pj"]
 [ext_resource type="PackedScene" uid="uid://ce3pi21xcyeqx" path="res://minigame_rio/TrashItem.tscn" id="3_108rc"]
+[ext_resource type="Texture2D" uid="uid://bpyn3y3v3xnbl" path="res://minigame_rio/assets/aguaTileable.png" id="3_wn5pj"]
 [ext_resource type="Texture2D" uid="uid://bk8ag62y7k8f3" path="res://minigame_rio/assets/cesped1.png" id="4_108rc"]
 [ext_resource type="Texture2D" uid="uid://cusetxwcjxlnd" path="res://minigame_rio/assets/basura/botella.png" id="4_v4lh6"]
 [ext_resource type="Texture2D" uid="uid://bdb0xccj5iac3" path="res://minigame_rio/assets/basura/lata.png" id="5_8ne84"]
-[ext_resource type="Texture2D" uid="uid://ddpqijx7gpvk4" path="res://minigame_rio/assets/agua.png" id="5_vjmpl"]
 [ext_resource type="Texture2D" uid="uid://b4vnrgj2f07g2" path="res://minigame_rio/assets/basura/bolsa.png" id="6_at5mt"]
 [ext_resource type="Texture2D" uid="uid://6f6poywa3m1g" path="res://minigame_rio/assets/basura/papel.png" id="7_obk83"]
 [ext_resource type="Texture2D" uid="uid://7vcec8dmyiph" path="res://minigame_rio/assets/basura/vaso.png" id="8_g6qnw"]
 [ext_resource type="Script" uid="uid://bgv08pt3nmr64" path="res://minigame_rio/WaterMove.gd" id="11_g6qnw"]
 [ext_resource type="AudioStream" uid="uid://t00vgos3fk8d" path="res://minigame_rio/assets/audio/rio.mp3" id="11_obk83"]
 [ext_resource type="AudioStream" uid="uid://drft0fi2jm8jq" path="res://minigame_rio/assets/audio/basura.mp3" id="12_g6qnw"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_msvyt"]
+shader = ExtResource("2_wn5pj")
+shader_parameter/water_texture = ExtResource("3_wn5pj")
+shader_parameter/speed = 0.08
+shader_parameter/wave_strength = 0.01
+shader_parameter/wave_speed = 1.2
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_r8a0m"]
+load_path = "res://.godot/imported/agua.png-9fd2be9bb80b8d4fd871a4ab5b80bb30.ctex"
 
 [node name="RiverCleanupMinigame" type="Node2D" unique_id=937733243]
 script = ExtResource("1_ge4tx")
@@ -22,6 +33,14 @@ offset_right = 1920.0
 offset_bottom = 1080.0
 mouse_filter = 2
 color = Color(0.49411765, 0.78431374, 0.8901961, 1)
+
+[node name="GeneratedWater" type="ColorRect" parent="." unique_id=1540495931]
+material = SubResource("ShaderMaterial_msvyt")
+offset_left = -11.0
+offset_top = 37.0
+offset_right = 1954.0
+offset_bottom = 1106.0
+mouse_filter = 2
 
 [node name="Basurero" type="Node2D" parent="." unique_id=538202841]
 position = Vector2(1816, 942)
@@ -94,9 +113,10 @@ metadata/_edit_lock_ = true
 metadata/_edit_lock_ = true
 
 [node name="agua" type="Sprite2D" parent="Decoracion" unique_id=1038790531]
+visible = false
 position = Vector2(963.9999, 538)
 scale = Vector2(4.312, 1.8930001)
-texture = ExtResource("5_vjmpl")
+texture = SubResource("CompressedTexture2D_r8a0m")
 script = ExtResource("11_g6qnw")
 metadata/_edit_lock_ = true
 
