@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cdisdf8rgahox"
-path="res://.godot/imported/Sky.jpg-3eda4083c7883858d83d8973d12c15ea.ctex"
+uid="uid://sgqhxu5quaav"
+path="res://.godot/imported/Fondo2DCielo.png-20c8c03db8c89aebe1996a98aec32526.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://minigame_puzzle/assets/Sky.jpg"
-dest_files=["res://.godot/imported/Sky.jpg-3eda4083c7883858d83d8973d12c15ea.ctex"]
+source_file="res://minigame_puzzle/assets/Fondo2DCielo.png"
+dest_files=["res://.godot/imported/Fondo2DCielo.png-20c8c03db8c89aebe1996a98aec32526.ctex"]
 
 [params]
 
