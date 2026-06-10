@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://b4vnrgj2f07g2" path="res://minigame_rio/assets/basura/bolsa.png" id="6_at5mt"]
 [ext_resource type="Texture2D" uid="uid://6f6poywa3m1g" path="res://minigame_rio/assets/basura/papel.png" id="7_obk83"]
 [ext_resource type="Texture2D" uid="uid://7vcec8dmyiph" path="res://minigame_rio/assets/basura/vaso.png" id="8_g6qnw"]
+[ext_resource type="Script" uid="uid://bgv08pt3nmr64" path="res://minigame_rio/WaterMove.gd" id="11_g6qnw"]
 [ext_resource type="AudioStream" uid="uid://t00vgos3fk8d" path="res://minigame_rio/assets/audio/rio.mp3" id="11_obk83"]
 [ext_resource type="AudioStream" uid="uid://drft0fi2jm8jq" path="res://minigame_rio/assets/audio/basura.mp3" id="12_g6qnw"]
 
@@ -93,9 +94,10 @@ metadata/_edit_lock_ = true
 metadata/_edit_lock_ = true
 
 [node name="agua" type="Sprite2D" parent="Decoracion" unique_id=1038790531]
-position = Vector2(969, 553.00006)
-scale = Vector2(4.0199995, 1.7820001)
+position = Vector2(963.9999, 538)
+scale = Vector2(4.312, 1.8930001)
 texture = ExtResource("5_vjmpl")
+script = ExtResource("11_g6qnw")
 metadata/_edit_lock_ = true
 
 [node name="RiverSound" type="AudioStreamPlayer" parent="." unique_id=442071721]
