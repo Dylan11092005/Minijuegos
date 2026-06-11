@@ -15,9 +15,9 @@ func _clear_scene():
 func _build_scene():
 	var screen = get_viewport_rect().size
 
-	# ── Fondo celeste ──────────────────────────────────────
+	# ── Fondo ──────────────────────────────────────────────
 	var bg = ColorRect.new()
-	bg.color = Color("#2ec4f5")
+	bg.color = Color("#30C0F0")
 	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(bg)
@@ -26,7 +26,7 @@ func _build_scene():
 	var panel_titulo = PanelContainer.new()
 	panel_titulo.custom_minimum_size = Vector2(screen.x * 0.57, 73)
 	panel_titulo.position = Vector2(screen.x / 2 - screen.x * 0.285, 10)
-	_set_panel_color(panel_titulo, Color("#1a1a2e", 0.9))
+	_set_panel_color(panel_titulo, Color("#2B2B2B"))
 	add_child(panel_titulo)
 
 	var lbl_title = Label.new()
@@ -34,7 +34,7 @@ func _build_scene():
 	lbl_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	lbl_title.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	lbl_title.add_theme_font_size_override("font_size", 58)
-	lbl_title.add_theme_color_override("font_color", Color.YELLOW)
+	lbl_title.add_theme_color_override("font_color", Color("#FFF020"))
 	lbl_title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	panel_titulo.add_child(lbl_title)
 
@@ -57,7 +57,6 @@ func _build_scene():
 	video.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	video.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	video.expand = true
-	# Sin audio: las instrucciones no llevan sonido por el momento.
 	video.volume_db = -80.0
 	vbox_video.add_child(video)
 
@@ -84,7 +83,7 @@ func _build_scene():
 	var panel_controles = PanelContainer.new()
 	panel_controles.size_flags_vertical = Control.SIZE_FILL
 	panel_controles.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_set_panel_color(panel_controles, Color("#1a1a2e", 0.9))
+	_set_panel_color(panel_controles, Color("#2B2B2B"))
 	vbox_right.add_child(panel_controles)
 
 	var vbox_controles = VBoxContainer.new()
@@ -96,7 +95,7 @@ func _build_scene():
 	lbl_controles_title.text = "Controles"
 	lbl_controles_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	lbl_controles_title.add_theme_font_size_override("font_size", 36)
-	lbl_controles_title.add_theme_color_override("font_color", Color.WHITE)
+	lbl_controles_title.add_theme_color_override("font_color", Color("#F5F5F5"))
 	lbl_controles_title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	vbox_controles.add_child(lbl_controles_title)
 
@@ -117,7 +116,7 @@ func _build_scene():
 
 		var lbl_control = Label.new()
 		lbl_control.text = control["action"]
-		lbl_control.add_theme_color_override("font_color", Color.WHITE)
+		lbl_control.add_theme_color_override("font_color", Color("#F5F5F5"))
 		lbl_control.add_theme_font_size_override("font_size", 26)
 		lbl_control.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		lbl_control.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -128,7 +127,7 @@ func _build_scene():
 	var panel_desc = PanelContainer.new()
 	panel_desc.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	panel_desc.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_set_panel_color(panel_desc, Color("#1a1a2e", 0.9))
+	_set_panel_color(panel_desc, Color("#2B2B2B"))
 	vbox_right.add_child(panel_desc)
 
 	var vbox_desc = VBoxContainer.new()
@@ -138,15 +137,24 @@ func _build_scene():
 
 	var lbl_desc = Label.new()
 	lbl_desc.text = minigame_data.description
-	lbl_desc.add_theme_color_override("font_color", Color.WHITE)
+	lbl_desc.add_theme_color_override("font_color", Color("#F5F5F5"))
 	lbl_desc.add_theme_font_size_override("font_size", 26)
 	lbl_desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	lbl_desc.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	vbox_desc.add_child(lbl_desc)
 
+	# ── Título "Instrucciones" ──────────────────────────────
+	var lbl_instr_title = Label.new()
+	lbl_instr_title.text = "Instrucciones"
+	lbl_instr_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	lbl_instr_title.add_theme_font_size_override("font_size", 36)
+	lbl_instr_title.add_theme_color_override("font_color", Color("#F5F5F5"))
+	lbl_instr_title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	vbox_desc.add_child(lbl_instr_title)
+
 	var lbl_instr = Label.new()
 	lbl_instr.text = minigame_data.instructions
-	lbl_instr.add_theme_color_override("font_color", Color("#cccccc"))
+	lbl_instr.add_theme_color_override("font_color", Color("#F5F5F5"))
 	lbl_instr.add_theme_font_size_override("font_size", 23)
 	lbl_instr.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	lbl_instr.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -156,10 +164,10 @@ func _build_scene():
 	var btn = Button.new()
 	btn.text = "¡Empezar!"
 	btn.custom_minimum_size = Vector2(260, 75)
-	btn.position = Vector2(screen.x / 2 - 130, screen.y - 90)
+	btn.position = Vector2(screen.x / 2 - 130, screen.y - 130)
 	btn.add_theme_font_size_override("font_size", 40)
-	btn.add_theme_color_override("font_color", Color.WHITE)
-	_set_button_color(btn, Color("#4caf50"), Color("#66bb6a"), Color("#388e3c"))
+	btn.add_theme_color_override("font_color", Color("#2B2B2B"))
+	_set_button_color(btn, Color("#60B060"), Color("#80C070"), Color("#406080"))
 	btn.pressed.connect(_on_start)
 	add_child(btn)
 
