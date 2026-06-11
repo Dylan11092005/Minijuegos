@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cwy0y686xa6ou" path="res://minigame_defo/hole.gd" id="1_cr06n"]
 [ext_resource type="Texture2D" uid="uid://cjpony6qcpc44" path="res://minigame_defo/sprites/huecoBueno.png" id="2_q7xbi"]
-[ext_resource type="Texture2D" uid="uid://cday4626onnal" path="res://minigame_defo/sprites/HuecoMalo.png" id="3_1eslj"]
+[ext_resource type="Texture2D" uid="uid://be6xh886pcyh2" path="res://minigame_defo/sprites/HuecoMalo.png" id="3_1eslj"]
 [ext_resource type="Texture2D" uid="uid://vo328xoitfkq" path="res://minigame_defo/sprites/semilla_puesta.png" id="4_rluvt"]
 [ext_resource type="Texture2D" uid="uid://byktwlbcoxe8q" path="res://minigame_defo/sprites/arbol.png" id="5_ba458"]
 
@@ -14,27 +14,27 @@ script = ExtResource("1_cr06n")
 
 [node name="SpriteEmpty" type="Sprite2D" parent="." unique_id=2040489358]
 z_index = 10
-position = Vector2(2.000002, -1)
-scale = Vector2(0.0102480445, 0.010096812)
+position = Vector2(0, -5)
+scale = Vector2(0.2629365, 0.25114217)
 texture = ExtResource("2_q7xbi")
 
 [node name="SpriteInvalid" type="Sprite2D" parent="." unique_id=74092622]
-position = Vector2(5, 0.9999981)
-scale = Vector2(0.014781474, 0.014561889)
+position = Vector2(-2, -11)
+scale = Vector2(0.24816212, 0.24875768)
 texture = ExtResource("3_1eslj")
 
 [node name="SpritePlanted" type="Sprite2D" parent="." unique_id=639120571]
-position = Vector2(3, -2.000002)
-scale = Vector2(0.009915865, 0.010103174)
+position = Vector2(-3, -6.9999847)
+scale = Vector2(0.26588792, 0.26224095)
 texture = ExtResource("4_rluvt")
 
 [node name="SpriteWatered" type="Sprite2D" parent="." unique_id=1334931950]
 z_index = 15
-position = Vector2(0.9999995, -110)
+position = Vector2(-1, -112)
 scale = Vector2(0.073806144, 0.06438661)
 texture = ExtResource("5_ba458")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=304074164]
 z_index = 15
-position = Vector2(2, -2)
+position = Vector2(-3, -4)
 shape = SubResource("CircleShape2D_k06nb")

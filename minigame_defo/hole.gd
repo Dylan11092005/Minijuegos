@@ -34,6 +34,18 @@ func update_visual():
 		sprite_watered.visible = true
 
 
+func reset_hole():
+	current_state = State.EMPTY
+	completed_emitted = false
+	update_visual()
+
+
+func set_invalid():
+	current_state = State.INVALID
+	completed_emitted = false
+	update_visual()
+
+
 func try_plant() -> bool:
 	if current_state == State.EMPTY:
 		current_state = State.PLANTED
