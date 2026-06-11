@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://ce2leo0ju6ooo"]
+
+[ext_resource type="Script" uid="uid://cu5lcv5u7x118" path="res://minigame_kit/DraggableItem.gd" id="1_1b3ch"]
+[ext_resource type="Texture2D" uid="uid://c5qj3gp0jw8y0" path="res://minigame_kit/assets/jeringa.png" id="2_1t6ae"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_23dae"]
+size = Vector2(964, 586)
+
+[node name="DraggableItem" type="Area2D" unique_id=185628576]
+script = ExtResource("1_1b3ch")
+item_texture = ExtResource("2_1t6ae")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=521007636]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1985551586]
+scale = Vector2(0.5, 0.5)
+shape = SubResource("RectangleShape2D_23dae")

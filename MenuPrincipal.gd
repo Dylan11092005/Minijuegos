@@ -39,8 +39,8 @@ func _on_button_2_pressed() -> void:
 	minigame_data.title        = "¡Limpia el río!"
 	minigame_data.description  = "Ayuda a limpiar el río"
 	minigame_data.instructions = "Selecciona una basura y arrastrala al basurero"
-	minigame_data.video_path   = "res://minigame_rio/assets/River_Instruction.ogv"
-	minigame_data.minigame_scene = "res://minigame_rio/RiverCleanupMinigame.tscn"
+	minigame_data.video_path   = "res://minigame_river/assets/River_Instruction.ogv"
+	minigame_data.minigame_scene = "res://minigame_river/RiverCleanupMinigame.tscn"
 	minigame_data.controls = [
 		{ "action": "Arrastrar basura", "icon": "res://ui_global/assets/ClickIcon.png" },
 	]

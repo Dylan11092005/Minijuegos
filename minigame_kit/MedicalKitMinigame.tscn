@@ -1,0 +1,382 @@
+[gd_scene format=3 uid="uid://w1rrtyv30d35"]
+
+[ext_resource type="Script" uid="uid://bhw2vxumlxv8o" path="res://minigame_kit/MedicalKitMinigame.gd" id="1_5uay0"]
+[ext_resource type="Texture2D" uid="uid://cv7gn3sd1iqsx" path="res://minigame_kit/assets/botiquin_fondo.png" id="1_gdecx"]
+[ext_resource type="Script" uid="uid://wdblut6421n2" path="res://minigame_kit/TargetSlot.gd" id="2_8j4xf"]
+[ext_resource type="PackedScene" uid="uid://ce2leo0ju6ooo" path="res://minigame_kit/DraggableItem.tscn" id="4_xfrch"]
+[ext_resource type="Texture2D" uid="uid://c5qj3gp0jw8y0" path="res://minigame_kit/assets/jeringa.png" id="5_nk4cs"]
+[ext_resource type="Texture2D" uid="uid://ccet13tly5oo1" path="res://minigame_kit/assets/cinta.png" id="7_wr6t0"]
+[ext_resource type="Texture2D" uid="uid://hhfrnpqe7vrr" path="res://minigame_kit/assets/mascarilla.png" id="8_38x1a"]
+[ext_resource type="Texture2D" uid="uid://bdgaha12t4m3v" path="res://minigame_kit/assets/tijeras.png" id="9_j7cxr"]
+[ext_resource type="Texture2D" uid="uid://gfe363jgjt8k" path="res://minigame_kit/assets/gazas.png" id="10_lwg32"]
+[ext_resource type="Texture2D" uid="uid://bddw1i8rooo2j" path="res://minigame_kit/assets/frasco.png" id="11_56ire"]
+[ext_resource type="Texture2D" uid="uid://dp3k1j53vct2m" path="res://minigame_kit/assets/termometro.png" id="12_6uu3t"]
+[ext_resource type="Texture2D" uid="uid://dw0ome1aqcp3x" path="res://minigame_kit/assets/curitas.png" id="13_oy2x5"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_gdecx"]
+size = Vector2(231.5, 133)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5uay0"]
+size = Vector2(137, 121)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_xfrch"]
+size = Vector2(248, 104)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_nk4cs"]
+size = Vector2(164, 106)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_pxkgt"]
+size = Vector2(137, 108)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ysyav"]
+size = Vector2(99, 115)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2o3y4"]
+size = Vector2(156.5, 109)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_le7sv"]
+size = Vector2(326, 66)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_nlkll"]
+size = Vector2(936, 586)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_h2yi0"]
+size = Vector2(964, 472)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wr6t0"]
+size = Vector2(612, 520)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_38x1a"]
+size = Vector2(584, 408)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_j7cxr"]
+size = Vector2(504, 436)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lwg32"]
+size = Vector2(280, 476)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_56ire"]
+size = Vector2(668, 340)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6uu3t"]
+size = Vector2(1316, 284)
+
+[node name="MedicalKitMinigame" type="Node2D" unique_id=1340498499]
+script = ExtResource("1_5uay0")
+metadata/_edit_lock_ = true
+
+[node name="Background" type="Sprite2D" parent="." unique_id=1968339323]
+position = Vector2(960, 540)
+scale = Vector2(0.517035, 0.50742406)
+texture = ExtResource("1_gdecx")
+metadata/_edit_lock_ = true
+
+[node name="Targets" type="Node2D" parent="." unique_id=1706724799]
+metadata/_edit_lock_ = true
+
+[node name="TargetJeringa" type="Area2D" parent="Targets" unique_id=1975171594]
+position = Vector2(887, 365)
+script = ExtResource("2_8j4xf")
+slot_id = "jeringa"
+placed_item = NodePath("../../PlacedItems/PlacedJeringa")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Targets/TargetJeringa" unique_id=1248368936]
+position = Vector2(-9, -3)
+shape = SubResource("RectangleShape2D_gdecx")
+metadata/_edit_lock_ = true
+
+[node name="TargetCinta" type="Area2D" parent="Targets" unique_id=991700300]
+script = ExtResource("2_8j4xf")
+slot_id = "cinta"
+placed_item = NodePath("../../PlacedItems/PlacedCinta")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Targets/TargetCinta" unique_id=359247885]
+position = Vector2(1104.5, 358.5)
+shape = SubResource("RectangleShape2D_5uay0")
+metadata/_edit_lock_ = true
+
+[node name="TargetMascarilla" type="Area2D" parent="Targets" unique_id=351818391]
+script = ExtResource("2_8j4xf")
+slot_id = "mascarilla"
+placed_item = NodePath("../../PlacedItems/PlacedMascarilla")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Targets/TargetMascarilla" unique_id=916739164]
+position = Vector2(868, 501)
+shape = SubResource("RectangleShape2D_xfrch")
+metadata/_edit_lock_ = true
+
+[node name="TargetTijeras" type="Area2D" parent="Targets" unique_id=1270618525]
+script = ExtResource("2_8j4xf")
+slot_id = "tijeras"
+placed_item = NodePath("../../PlacedItems/PlacedTijeras")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Targets/TargetTijeras" unique_id=723460013]
+position = Vector2(1098, 498)
+shape = SubResource("RectangleShape2D_nk4cs")
+metadata/_edit_lock_ = true
+
+[node name="TargetGasas" type="Area2D" parent="Targets" unique_id=606102184]
+script = ExtResource("2_8j4xf")
+slot_id = "gasas"
+placed_item = NodePath("../../PlacedItems/PlacedGasas")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Targets/TargetGasas" unique_id=1075496579]
+position = Vector2(808, 625)
+shape = SubResource("RectangleShape2D_pxkgt")
+metadata/_edit_lock_ = true
+
+[node name="TargetFrasco" type="Area2D" parent="Targets" unique_id=2074561270]
+script = ExtResource("2_8j4xf")
+slot_id = "frasco"
+placed_item = NodePath("../../PlacedItems/PlacedFrasco")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Targets/TargetFrasco" unique_id=1538874289]
+position = Vector2(951, 624.5)
+shape = SubResource("RectangleShape2D_ysyav")
+metadata/_edit_lock_ = true
+
+[node name="TargetTermometro" type="Area2D" parent="Targets" unique_id=253221234]
+script = ExtResource("2_8j4xf")
+slot_id = "termometro"
+placed_item = NodePath("../../PlacedItems/PlacedTermometro")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Targets/TargetTermometro" unique_id=1075216052]
+position = Vector2(1105.25, 625.5)
+shape = SubResource("RectangleShape2D_2o3y4")
+metadata/_edit_lock_ = true
+
+[node name="TargetCuritas" type="Area2D" parent="Targets" unique_id=1512632997]
+script = ExtResource("2_8j4xf")
+slot_id = "curitas"
+placed_item = NodePath("../../PlacedItems/PlacedCuritas")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Targets/TargetCuritas" unique_id=1757986393]
+position = Vector2(957, 731)
+shape = SubResource("RectangleShape2D_le7sv")
+metadata/_edit_lock_ = true
+
+[node name="Items" type="Node2D" parent="." unique_id=1828355746]
+metadata/_edit_lock_ = true
+
+[node name="ItemJeringa" parent="Items" unique_id=185628576 instance=ExtResource("4_xfrch")]
+position = Vector2(1612, 251)
+scale = Vector2(0.5, 0.5)
+item_id = "jeringa"
+
+[node name="Sprite2D" parent="Items/ItemJeringa" index="0" unique_id=521007636]
+position = Vector2(6, 23.999939)
+scale = Vector2(1.0410631, 1.0012499)
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" parent="Items/ItemJeringa" index="1" unique_id=1985551586]
+position = Vector2(-2, 6)
+shape = SubResource("RectangleShape2D_nlkll")
+metadata/_edit_lock_ = true
+
+[node name="ItemMascarilla" parent="Items" unique_id=1385324906 instance=ExtResource("4_xfrch")]
+position = Vector2(1629, 474)
+scale = Vector2(0.5, 0.5)
+item_id = "mascarilla"
+item_texture = ExtResource("8_38x1a")
+
+[node name="Sprite2D" parent="Items/ItemMascarilla" index="0" unique_id=521007636]
+position = Vector2(6, 23.999939)
+scale = Vector2(1.0410631, 1.0012499)
+texture = ExtResource("8_38x1a")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" parent="Items/ItemMascarilla" index="1" unique_id=1985551586]
+position = Vector2(5, 16)
+shape = SubResource("RectangleShape2D_h2yi0")
+metadata/_edit_lock_ = true
+
+[node name="ItemCinta" parent="Items" unique_id=2049284550 instance=ExtResource("4_xfrch")]
+position = Vector2(1643, 656)
+scale = Vector2(0.5, 0.5)
+item_id = "cinta"
+item_texture = ExtResource("7_wr6t0")
+
+[node name="Sprite2D" parent="Items/ItemCinta" index="0" unique_id=521007636]
+position = Vector2(6, -2)
+scale = Vector2(0.6931333, 0.6641563)
+texture = ExtResource("7_wr6t0")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" parent="Items/ItemCinta" index="1" unique_id=1985551586]
+position = Vector2(13, -4)
+shape = SubResource("RectangleShape2D_wr6t0")
+metadata/_edit_lock_ = true
+
+[node name="ItemTijeras" parent="Items" unique_id=493306129 instance=ExtResource("4_xfrch")]
+position = Vector2(1645, 822)
+scale = Vector2(0.5, 0.5)
+item_id = "tijeras"
+item_texture = ExtResource("9_j7cxr")
+
+[node name="Sprite2D" parent="Items/ItemTijeras" index="0" unique_id=521007636]
+position = Vector2(5.9999995, 0)
+scale = Vector2(0.8576416, 0.7900196)
+texture = ExtResource("9_j7cxr")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" parent="Items/ItemTijeras" index="1" unique_id=1985551586]
+position = Vector2(14, -6)
+shape = SubResource("RectangleShape2D_38x1a")
+metadata/_edit_lock_ = true
+
+[node name="ItemGasas" parent="Items" unique_id=1889521343 instance=ExtResource("4_xfrch")]
+position = Vector2(1491, 954)
+scale = Vector2(0.5, 0.5)
+item_id = "gasas"
+item_texture = ExtResource("10_lwg32")
+
+[node name="Sprite2D" parent="Items/ItemGasas" index="0" unique_id=521007636]
+position = Vector2(7.9999304, 3.0755997e-05)
+scale = Vector2(0.6984104, 0.6855049)
+texture = ExtResource("10_lwg32")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" parent="Items/ItemGasas" index="1" unique_id=1985551586]
+position = Vector2(6, -15)
+shape = SubResource("RectangleShape2D_j7cxr")
+metadata/_edit_lock_ = true
+
+[node name="ItemFrasco" parent="Items" unique_id=927971605 instance=ExtResource("4_xfrch")]
+position = Vector2(1691, 965)
+scale = Vector2(0.5, 0.5)
+item_id = "frasco"
+item_texture = ExtResource("11_56ire")
+
+[node name="Sprite2D" parent="Items/ItemFrasco" index="0" unique_id=521007636]
+position = Vector2(2.000063, -3.999999)
+scale = Vector2(0.668, 0.6380001)
+texture = ExtResource("11_56ire")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" parent="Items/ItemFrasco" index="1" unique_id=1985551586]
+position = Vector2(0, -3)
+shape = SubResource("RectangleShape2D_lwg32")
+metadata/_edit_lock_ = true
+
+[node name="ItemTermometro" parent="Items" unique_id=135085849 instance=ExtResource("4_xfrch")]
+position = Vector2(1201, 1004)
+scale = Vector2(0.5, 0.5)
+item_id = "termometro"
+item_texture = ExtResource("12_6uu3t")
+
+[node name="Sprite2D" parent="Items/ItemTermometro" index="0" unique_id=521007636]
+position = Vector2(-0.00012254715, 0.000118255615)
+rotation = 0.10471976
+scale = Vector2(0.68998533, 0.7297251)
+texture = ExtResource("12_6uu3t")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" parent="Items/ItemTermometro" index="1" unique_id=1985551586]
+position = Vector2(5, -9)
+shape = SubResource("RectangleShape2D_56ire")
+metadata/_edit_lock_ = true
+
+[node name="ItemCuritas" parent="Items" unique_id=839770982 instance=ExtResource("4_xfrch")]
+position = Vector2(817, 976)
+scale = Vector2(0.5, 0.5)
+item_id = "curitas"
+item_texture = ExtResource("13_oy2x5")
+
+[node name="Sprite2D" parent="Items/ItemCuritas" index="0" unique_id=521007636]
+position = Vector2(4, -3.0517578e-05)
+scale = Vector2(1.313691, 1.2378752)
+texture = ExtResource("13_oy2x5")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" parent="Items/ItemCuritas" index="1" unique_id=1985551586]
+position = Vector2(17, -17)
+shape = SubResource("RectangleShape2D_6uu3t")
+metadata/_edit_lock_ = true
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=416772801]
+
+[node name="ErrorsLabel" type="Label" parent="CanvasLayer" unique_id=627102475]
+offset_right = 40.0
+offset_bottom = 23.0
+text = "Errores: 0/3"
+
+[node name="BackButton" type="Button" parent="CanvasLayer" unique_id=1790135327]
+offset_right = 8.0
+offset_bottom = 8.0
+text = "Volver"
+
+[node name="PlacedItems" type="Node2D" parent="." unique_id=292820549]
+metadata/_edit_lock_ = true
+
+[node name="PlacedJeringa" type="Sprite2D" parent="PlacedItems" unique_id=1517922022]
+visible = false
+position = Vector2(884, 366.00003)
+scale = Vector2(0.528, 0.4895)
+texture = ExtResource("5_nk4cs")
+metadata/_edit_lock_ = true
+
+[node name="PlacedCinta" type="Sprite2D" parent="PlacedItems" unique_id=857436320]
+visible = false
+position = Vector2(1103.25, 360.75)
+scale = Vector2(0.33899993, 0.33900002)
+texture = ExtResource("7_wr6t0")
+metadata/_edit_lock_ = true
+
+[node name="PlacedMascarilla" type="Sprite2D" parent="PlacedItems" unique_id=839885271]
+visible = false
+position = Vector2(869.25, 505.5)
+scale = Vector2(0.5390001, 0.51000005)
+texture = ExtResource("8_38x1a")
+metadata/_edit_lock_ = true
+
+[node name="PlacedTijeras" type="Sprite2D" parent="PlacedItems" unique_id=2099659222]
+visible = false
+position = Vector2(1092.0001, 504)
+scale = Vector2(0.438, 0.42000002)
+texture = ExtResource("9_j7cxr")
+metadata/_edit_lock_ = true
+
+[node name="PlacedGasas" type="Sprite2D" parent="PlacedItems" unique_id=1172116843]
+visible = false
+position = Vector2(807.25, 632.9375)
+scale = Vector2(0.3389999, 0.35224998)
+texture = ExtResource("10_lwg32")
+metadata/_edit_lock_ = true
+
+[node name="PlacedFrasco" type="Sprite2D" parent="PlacedItems" unique_id=119793541]
+visible = false
+position = Vector2(953.25, 624.5)
+scale = Vector2(0.34300002, 0.31399992)
+texture = ExtResource("11_56ire")
+metadata/_edit_lock_ = true
+
+[node name="PlacedTermometro" type="Sprite2D" parent="PlacedItems" unique_id=265110056]
+visible = false
+position = Vector2(1097.0002, 625.0001)
+rotation = 0.12217305
+scale = Vector2(0.34117737, 0.37076938)
+texture = ExtResource("12_6uu3t")
+metadata/_edit_lock_ = true
+
+[node name="PlacedCuritas" type="Sprite2D" parent="PlacedItems" unique_id=2006965432]
+visible = false
+position = Vector2(950.00006, 740)
+scale = Vector2(0.64298093, 0.6535797)
+texture = ExtResource("13_oy2x5")
+metadata/_edit_lock_ = true
+
+[editable path="Items/ItemJeringa"]
+[editable path="Items/ItemMascarilla"]
+[editable path="Items/ItemCinta"]
+[editable path="Items/ItemTijeras"]
+[editable path="Items/ItemGasas"]
+[editable path="Items/ItemFrasco"]
+[editable path="Items/ItemTermometro"]
+[editable path="Items/ItemCuritas"]
