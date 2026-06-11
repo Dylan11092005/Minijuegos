@@ -15,6 +15,15 @@ func _clear_scene():
 func _build_scene():
 	var screen = get_viewport_rect().size
 
+	# ── Sonido de instrucciones en bucle ───────────────────
+	var audio = AudioStreamPlayer.new()
+	audio.name = "AudioInstrucciones"
+	audio.stream = load("res://ui_global/music/Sound_Instruction.mp3")
+	audio.volume_db = -15.0
+	add_child(audio)
+	audio.call_deferred("play")
+	audio.finished.connect(func(): audio.play())
+
 	# ── Fondo ──────────────────────────────────────────────
 	var bg = ColorRect.new()
 	bg.color = Color("#30C0F0")
@@ -52,13 +61,29 @@ func _build_scene():
 	vbox_video.alignment = BoxContainer.ALIGNMENT_CENTER
 	hbox.add_child(vbox_video)
 
+	var panel_video = PanelContainer.new()
+	panel_video.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	panel_video.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var style_video = StyleBoxFlat.new()
+	style_video.bg_color = Color("#2B2B2B")
+	style_video.corner_radius_top_left     = 12
+	style_video.corner_radius_top_right    = 12
+	style_video.corner_radius_bottom_left  = 12
+	style_video.corner_radius_bottom_right = 12
+	style_video.content_margin_left   = 30
+	style_video.content_margin_right  = 30
+	style_video.content_margin_top    = 30
+	style_video.content_margin_bottom = 30
+	panel_video.add_theme_stylebox_override("panel", style_video)
+	vbox_video.add_child(panel_video)
+
 	var video = VideoStreamPlayer.new()
 	video.custom_minimum_size = Vector2(screen.x * 0.46, screen.y * 0.58)
 	video.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	video.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	video.expand = true
 	video.volume_db = -80.0
-	vbox_video.add_child(video)
+	panel_video.add_child(video)
 
 	if minigame_data.video_path != "":
 		var stream = VideoStreamTheora.new()
@@ -195,4 +220,7 @@ func _set_button_color(btn: Button, normal: Color, hover: Color, pressed: Color)
 		btn.add_theme_stylebox_override(state[0], style)
 
 func _on_start():
+	var audio = get_node_or_null("AudioInstrucciones")
+	if audio:
+		audio.stop()
 	get_tree().change_scene_to_file(minigame_data.minigame_scene)
