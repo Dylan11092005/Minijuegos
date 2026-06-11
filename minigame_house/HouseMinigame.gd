@@ -147,6 +147,9 @@ var screw_textures = {
 }
 
 func _ready():
+	_init_game()
+
+func _init_game():
 	timer_hud = TIMER_HUD_SCENE.instantiate()
 	add_child(timer_hud)
 	timer_hud.tiempo_agotado.connect(_on_tiempo_agotado)
@@ -199,7 +202,7 @@ func _build_house():
 
 func _start_game():
 	game_active = true
-	audio_fondo.volume_db = -15.0  # Ajusta este valor a tu gusto
+	audio_fondo.volume_db = -15.0
 	audio_fondo.play()
 	timer_hud.iniciar(TOTAL_TIME, "Tiempo restante", "para la erupción")
 
@@ -209,7 +212,6 @@ func _process(_delta):
 func _on_screw_clicked(_screw):
 	if not game_active:
 		return
-	# Sonido al quitar tornillo
 	audio_tornillo.play()
 	removed_screws += 1
 	if removed_screws >= total_screws:
@@ -217,7 +219,6 @@ func _on_screw_clicked(_screw):
 
 func on_piece_detached(_piece: RigidBody2D):
 	detached_pieces += 1
-	# Sonido al caer la pieza
 	audio_caida.play()
 
 func _on_tiempo_agotado():
