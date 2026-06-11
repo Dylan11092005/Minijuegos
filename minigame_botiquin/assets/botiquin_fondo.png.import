@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://5f0qjplkjh1b"
-path="res://.godot/imported/agua.png-9fd2be9bb80b8d4fd871a4ab5b80bb30.ctex"
+uid="uid://cv7gn3sd1iqsx"
+path="res://.godot/imported/botiquin_fondo.png-537e7a503225965ab2df057f3810cc98.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://minigame_rio/assets/agua.png"
-dest_files=["res://.godot/imported/agua.png-9fd2be9bb80b8d4fd871a4ab5b80bb30.ctex"]
+source_file="res://minigame_botiquin/assets/botiquin_fondo.png"
+dest_files=["res://.godot/imported/botiquin_fondo.png-537e7a503225965ab2df057f3810cc98.ctex"]
 
 [params]
 

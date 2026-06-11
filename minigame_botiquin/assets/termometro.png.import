@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://5f0qjplkjh1b"
-path="res://.godot/imported/agua.png-9fd2be9bb80b8d4fd871a4ab5b80bb30.ctex"
+uid="uid://dp3k1j53vct2m"
+path="res://.godot/imported/termometro.png-7825a76ebaf05d21d4abc1ad393261e4.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://minigame_rio/assets/agua.png"
-dest_files=["res://.godot/imported/agua.png-9fd2be9bb80b8d4fd871a4ab5b80bb30.ctex"]
+source_file="res://minigame_botiquin/assets/termometro.png"
+dest_files=["res://.godot/imported/termometro.png-7825a76ebaf05d21d4abc1ad393261e4.ctex"]
 
 [params]
 

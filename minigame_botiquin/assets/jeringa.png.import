@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://5f0qjplkjh1b"
-path="res://.godot/imported/agua.png-9fd2be9bb80b8d4fd871a4ab5b80bb30.ctex"
+uid="uid://c5qj3gp0jw8y0"
+path="res://.godot/imported/jeringa.png-ce505a8a4fd95fa80a3d9b93300311f8.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://minigame_rio/assets/agua.png"
-dest_files=["res://.godot/imported/agua.png-9fd2be9bb80b8d4fd871a4ab5b80bb30.ctex"]
+source_file="res://minigame_botiquin/assets/jeringa.png"
+dest_files=["res://.godot/imported/jeringa.png-ce505a8a4fd95fa80a3d9b93300311f8.ctex"]
 
 [params]
 

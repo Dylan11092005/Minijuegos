@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://5f0qjplkjh1b"
-path="res://.godot/imported/agua.png-9fd2be9bb80b8d4fd871a4ab5b80bb30.ctex"
+uid="uid://dkg103j7yjxk6"
+path="res://.godot/imported/PiedraSelectora.png-9b8478f534d148852b9f69f0d9dc869a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://minigame_rio/assets/agua.png"
-dest_files=["res://.godot/imported/agua.png-9fd2be9bb80b8d4fd871a4ab5b80bb30.ctex"]
+source_file="res://selector_edad/assets/PiedraSelectora.png"
+dest_files=["res://.godot/imported/PiedraSelectora.png-9b8478f534d148852b9f69f0d9dc869a.ctex"]
 
 [params]
 

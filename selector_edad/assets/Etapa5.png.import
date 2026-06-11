@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://5f0qjplkjh1b"
-path="res://.godot/imported/agua.png-9fd2be9bb80b8d4fd871a4ab5b80bb30.ctex"
+uid="uid://bsnbogbia70kp"
+path="res://.godot/imported/Etapa5.png-3199e1057876db836f1787daf0bfe309.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://minigame_rio/assets/agua.png"
-dest_files=["res://.godot/imported/agua.png-9fd2be9bb80b8d4fd871a4ab5b80bb30.ctex"]
+source_file="res://selector_edad/assets/Etapa5.png"
+dest_files=["res://.godot/imported/Etapa5.png-3199e1057876db836f1787daf0bfe309.ctex"]
 
 [params]
 

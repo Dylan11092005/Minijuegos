@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://5f0qjplkjh1b"
-path="res://.godot/imported/agua.png-9fd2be9bb80b8d4fd871a4ab5b80bb30.ctex"
+uid="uid://dyviq26f0ppon"
+path="res://.godot/imported/right-button.png-d615bb1204ec622caa53c563bb10cfea.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://minigame_rio/assets/agua.png"
-dest_files=["res://.godot/imported/agua.png-9fd2be9bb80b8d4fd871a4ab5b80bb30.ctex"]
+source_file="res://ui_global/assets/right-button.png"
+dest_files=["res://.godot/imported/right-button.png-d615bb1204ec622caa53c563bb10cfea.ctex"]
 
 [params]
 

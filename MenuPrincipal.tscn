@@ -128,8 +128,14 @@ text = "Casilla 73"
 layout_mode = 2
 text = "Casilla 74"
 
+[node name="Button26" type="Button" parent="GridContainer" unique_id=1494058513]
+custom_minimum_size = Vector2(150, 50)
+layout_mode = 2
+text = "Selector de edad"
+
 [connection signal="pressed" from="GridContainer/Button" to="." method="_on_button_pressed"]
 [connection signal="pressed" from="GridContainer/Button2" to="." method="_on_button_2_pressed"]
 [connection signal="pressed" from="GridContainer/Button3" to="." method="_on_button_3_pressed"]
 [connection signal="pressed" from="GridContainer/Button4" to="." method="_on_button_4_pressed"]
 [connection signal="pressed" from="GridContainer/Button5" to="." method="_on_button_5_pressed"]
+[connection signal="pressed" from="GridContainer/Button26" to="." method="_on_button_26_pressed"]
