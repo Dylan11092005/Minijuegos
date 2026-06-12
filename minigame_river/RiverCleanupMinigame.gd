@@ -17,8 +17,8 @@ var timer_hud: CanvasLayer
 var panel_resultado: CanvasLayer
 
 
-@onready var basurero = get_node_or_null("Basurero")
-@onready var basuras = get_node_or_null("Basuras")
+@onready var garbagecollector = get_node_or_null("GarbageCollector")
+@onready var trash = get_node_or_null("Trash")
 @onready var back_button = get_node_or_null("CanvasLayer/BackButton")
 @onready var river_sound = get_node_or_null("RiverSound")
 @onready var trash_sound = get_node_or_null("TrashSound")
@@ -61,14 +61,14 @@ func _connect_back_button():
 
 
 func _setup_trash_items():
-	if basuras == null:
+	if trash == null:
 		print("No se encontró el nodo Basuras")
 		return
 
-	trash_total = basuras.get_child_count()
+	trash_total = trash.get_child_count()
 	trash_collected = 0
 
-	for trash in basuras.get_children():
+	for trash in trash.get_children():
 		if trash.has_signal("trash_dropped"):
 			trash.trash_dropped.connect(_on_trash_dropped)
 
@@ -82,10 +82,10 @@ func _on_trash_dropped(trash):
 	if not game_active:
 		return
 
-	if basurero == null:
+	if garbagecollector == null:
 		return
 
-	var distance_to_bin = trash.global_position.distance_to(basurero.global_position)
+	var distance_to_bin = trash.global_position.distance_to(garbagecollector.global_position)
 
 	if distance_to_bin <= drop_distance:
 		_collect_trash(trash)
