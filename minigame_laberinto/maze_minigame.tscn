@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://c57j6bn7yn537"]
 
-[ext_resource type="Script" uid="uid://cwc5fh661amni" path="res://minigame_laberinto/MazeMinigame.gd.gd" id="1_0oeam"]
+[ext_resource type="Script" uid="uid://cwc5fh661amni" path="res://minigame_laberinto/MazeMinigame.gd" id="1_4vvp6"]
 [ext_resource type="Texture2D" uid="uid://cotgw64un1hf0" path="res://minigame_laberinto/assets/escenario/fondo.png" id="2_g71b8"]
 [ext_resource type="Texture2D" uid="uid://cqjpnx4cl2s46" path="res://minigame_laberinto/assets/personajes/jugador.png" id="3_n510s"]
 [ext_resource type="Script" uid="uid://dcj3onotqhw30" path="res://minigame_laberinto/jugador.gd" id="4_g71b8"]
@@ -33,7 +33,7 @@ size = Vector2(103.1875, 138)
 size = Vector2(98, 133)
 
 [node name="MazeMinigame" type="Node2D" unique_id=659277626]
-script = ExtResource("1_0oeam")
+script = ExtResource("1_4vvp6")
 
 [node name="Fondo" type="Sprite2D" parent="." unique_id=257799321]
 position = Vector2(-3.9999986, -8)
