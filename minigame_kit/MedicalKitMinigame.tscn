@@ -311,11 +311,6 @@ metadata/_edit_lock_ = true
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=416772801]
 
-[node name="ErrorsLabel" type="Label" parent="CanvasLayer" unique_id=627102475]
-offset_right = 40.0
-offset_bottom = 23.0
-text = "Errores: 0/3"
-
 [node name="PlacedItems" type="Node2D" parent="." unique_id=292820549]
 metadata/_edit_lock_ = true
 

@@ -4,6 +4,7 @@ class_name MedicalKitMinigame
 
 const TIMER_HUD_SCENE = preload("res://ui_global/TimerUi.tscn")
 const PANEL_RESULTADO_SCENE = preload("res://ui_global/GameResult.tscn")
+const LIVES_UI_SCENE = preload("res://ui_global/LivesUi.tscn")
 
 
 @export var time_limit := 30.0
@@ -16,12 +17,11 @@ var errors := 0
 var game_active := false
 var timer_hud: CanvasLayer
 var panel_resultado: CanvasLayer
-var errors_panel: PanelContainer
+var lives_ui: LivesUi
 
 
 @onready var targets = get_node_or_null("Targets")
 @onready var items = get_node_or_null("Items")
-@onready var canvas_layer = get_node_or_null("CanvasLayer")
 @onready var errors_label = get_node_or_null("CanvasLayer/ErrorsLabel")
 @onready var back_button = get_node_or_null("CanvasLayer/BackButton")
 @onready var background_sound = get_node_or_null("BackgroundSound")
@@ -32,7 +32,7 @@ func _ready():
 	_setup_game_state()
 	_setup_timer_hud()
 	_setup_result_panel()
-	_setup_errors_panel()
+	_setup_lives_ui()
 	_setup_audio()
 
 	if not _has_required_nodes():
@@ -40,7 +40,7 @@ func _ready():
 
 	_connect_items()
 	_connect_back_button()
-	_update_errors_label()
+	_update_lives_ui()
 	_play_background_sound()
 	_start_game()
 
@@ -57,8 +57,6 @@ func _setup_timer_hud():
 	add_child(timer_hud)
 
 	timer_hud.time_up.connect(_on_time_finished)
-
-	# Más ancho para que no se corte el texto.
 	timer_hud.set_tamano_panel(720, 60)
 
 
@@ -67,44 +65,17 @@ func _setup_result_panel():
 	add_child(panel_resultado)
 
 
-func _setup_errors_panel():
-	if canvas_layer == null:
-		print("No se encontró CanvasLayer")
-		return
+func _setup_lives_ui():
+	if errors_label != null:
+		errors_label.visible = false
 
-	if errors_label == null:
-		print("No se encontró CanvasLayer/ErrorsLabel")
-		return
+	lives_ui = LIVES_UI_SCENE.instantiate()
+	add_child(lives_ui)
 
-	errors_panel = PanelContainer.new()
-	errors_panel.name = "ErrorsPanel"
-	errors_panel.position = Vector2(20, 85)
-	errors_panel.custom_minimum_size = Vector2(230, 52)
-	canvas_layer.add_child(errors_panel)
-
-	var panel_style = StyleBoxFlat.new()
-	panel_style.bg_color = Color(0.93, 0.78, 0.56, 0.95)
-	panel_style.border_color = Color(0.90, 0.47, 0.20, 1.0)
-	panel_style.set_border_width_all(3)
-	panel_style.set_corner_radius_all(18)
-	panel_style.set_content_margin(SIDE_LEFT, 16)
-	panel_style.set_content_margin(SIDE_RIGHT, 16)
-	panel_style.set_content_margin(SIDE_TOP, 8)
-	panel_style.set_content_margin(SIDE_BOTTOM, 8)
-
-	errors_panel.add_theme_stylebox_override("panel", panel_style)
-
-	var old_parent = errors_label.get_parent()
-	old_parent.remove_child(errors_label)
-	errors_panel.add_child(errors_label)
-
-	errors_label.text = "Errores: 0/3"
-	errors_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	errors_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	errors_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	errors_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	errors_label.add_theme_font_size_override("font_size", 24)
-	errors_label.add_theme_color_override("font_color", Color(0.12, 0.30, 0.52, 1.0))
+	lives_ui.set_max_lives(max_errors)
+	lives_ui.set_panel_corner(LivesUi.PanelCorner.TOP_RIGHT)
+	lives_ui.set_panel_margin(Vector2(35, 20))
+	lives_ui.actualizar_vidas(max_errors)
 
 
 func _setup_audio():
@@ -195,7 +166,7 @@ func _place_item(item: DraggableItem, target: TargetSlot):
 
 func _register_error(item: DraggableItem):
 	errors += 1
-	_update_errors_label()
+	_update_lives_ui()
 
 	item.return_to_start()
 
@@ -203,9 +174,12 @@ func _register_error(item: DraggableItem):
 		_lose_game()
 
 
-func _update_errors_label():
-	if errors_label != null:
-		errors_label.text = "Errores: " + str(errors) + "/" + str(max_errors)
+func _update_lives_ui():
+	if lives_ui == null:
+		return
+
+	var remaining_lives = max_errors - errors
+	lives_ui.actualizar_vidas(remaining_lives)
 
 
 func _play_background_sound():
