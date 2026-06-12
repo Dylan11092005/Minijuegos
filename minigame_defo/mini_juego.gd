@@ -121,7 +121,7 @@ func crear_timer():
 	add_child(timer_hud)
 	timer_hud.layer = 50
 	timer_hud.visible = true
-	timer_hud.tiempo_agotado.connect(_on_tiempo_agotado)
+	timer_hud.time_up.connect(_on_tiempo_agotado)
 	timer_hud.set_tamano_panel(500, 60)
 
 

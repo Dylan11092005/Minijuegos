@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bsnbogbia70kp"
-path="res://.godot/imported/Etapa5.png-3199e1057876db836f1787daf0bfe309.ctex"
+uid="uid://dkg103j7yjxk6"
+path="res://.godot/imported/PiedraSelectora.png-2d9f71220d61c219aea4b9daae79afe0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://selector_edad/assets/Etapa5.png"
-dest_files=["res://.godot/imported/Etapa5.png-3199e1057876db836f1787daf0bfe309.ctex"]
+source_file="res://age_selector/assets/PiedraSelectora.png"
+dest_files=["res://.godot/imported/PiedraSelectora.png-2d9f71220d61c219aea4b9daae79afe0.ctex"]
 
 [params]
 

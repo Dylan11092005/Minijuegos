@@ -1,192 +1,192 @@
 extends CanvasLayer
 
-@export var ruta_menu := "res://MenuPrincipal.tscn"
+@export var menu_path := "res://MenuPrincipal.tscn"
 
-@onready var contenedor = $Contenedor
-@onready var panel_fondo = $Contenedor/PanelFondo
-@onready var label_mensaje = $Contenedor/LabelMensaje
-@onready var boton_volver = $Contenedor/BotonVolver
-@onready var audio_victoria = $AudioVictoria
-@onready var audio_derrota = $AudioDerrota
+@onready var container = $Container
+@onready var background_panel = $Container/BackgroundPanel
+@onready var message_label = $Container/LabelMessage
+@onready var back_button = $Container/BtnVolver
+@onready var win_audio = $WinSound
+@onready var lose_audio = $LoseSound
 
-# Paleta oficial
-var color_verde := Color("#60B060")
-var color_verde_claro := Color("#80C070")
-var color_celeste_claro := Color("#C0E0FF")
-var color_celeste := Color("#30C0F0")
-var color_azul_oscuro := Color("#406080")
+# Color palette
+var color_green := Color("#60B060")
+var color_light_green := Color("#80C070")
+var color_light_blue := Color("#C0E0FF")
+var color_cyan := Color("#30C0F0")
+var color_dark_blue := Color("#406080")
 
-var color_cafe := Color("#907050")
-var color_rojo := Color("#F02020")
-var color_naranja := Color("#E08040")
-var color_amarillo := Color("#FFF020")
-var color_piel := Color("#E0B080")
+var color_brown := Color("#907050")
+var color_red := Color("#F02020")
+var color_orange := Color("#E08040")
+var color_yellow := Color("#FFF020")
+var color_skin := Color("#E0B080")
 
-var color_azul_gris := Color("#A0B0C0")
+var color_blue_gray := Color("#A0B0C0")
 var color_beige := Color("#F0D0A0")
-var color_blanco := Color("#F5F5F5")
-var color_negro := Color("#2B2B2B")
-var color_gris := Color("#B2B2B2")
+var color_white := Color("#F5F5F5")
+var color_black := Color("#2B2B2B")
+var color_gray := Color("#B2B2B2")
 
-var mensaje_actual := ""
+var current_message := ""
 
 
 func _ready():
 	visible = false
 	
-	configurar_contenedor()
-	configurar_panel()
-	configurar_label()
-	configurar_boton()
+	_setup_container()
+	_setup_panel()
+	_setup_label()
+	_setup_button()
 	
-	boton_volver.pressed.connect(_on_boton_volver_pressed)
+	back_button.pressed.connect(_on_back_button_pressed)
 
 
-func configurar_contenedor():
-	contenedor.position = Vector2.ZERO
-	contenedor.size = get_viewport().get_visible_rect().size
-	contenedor.mouse_filter = Control.MOUSE_FILTER_STOP
+func _setup_container():
+	container.position = Vector2.ZERO
+	container.size = get_viewport().get_visible_rect().size
+	container.mouse_filter = Control.MOUSE_FILTER_STOP
 
 
-func configurar_panel():
-	var pantalla := get_viewport().get_visible_rect().size
+func _setup_panel():
+	var screen := get_viewport().get_visible_rect().size
 	
-	panel_fondo.custom_minimum_size = Vector2(660, 280)
-	panel_fondo.position = Vector2(
-		(pantalla.x - 660) / 2,
-		(pantalla.y - 280) / 2
+	background_panel.custom_minimum_size = Vector2(660, 280)
+	background_panel.position = Vector2(
+		(screen.x - 660) / 2,
+		(screen.y - 280) / 2
 	)
-	panel_fondo.size = Vector2(660, 280)
+	background_panel.size = Vector2(660, 280)
 	
-	var estilo := StyleBoxFlat.new()
-	estilo.bg_color = color_beige
-	estilo.border_color = color_naranja
+	var style := StyleBoxFlat.new()
+	style.bg_color = color_beige
+	style.border_color = color_orange
 	
-	estilo.border_width_left = 8
-	estilo.border_width_right = 8
-	estilo.border_width_top = 8
-	estilo.border_width_bottom = 8
+	style.border_width_left = 8
+	style.border_width_right = 8
+	style.border_width_top = 8
+	style.border_width_bottom = 8
 	
-	estilo.corner_radius_top_left = 32
-	estilo.corner_radius_top_right = 32
-	estilo.corner_radius_bottom_left = 32
-	estilo.corner_radius_bottom_right = 32
+	style.corner_radius_top_left = 32
+	style.corner_radius_top_right = 32
+	style.corner_radius_bottom_left = 32
+	style.corner_radius_bottom_right = 32
 	
-	estilo.shadow_color = Color(0, 0, 0, 0.28)
-	estilo.shadow_size = 14
-	estilo.shadow_offset = Vector2(0, 8)
+	style.shadow_color = Color(0, 0, 0, 0.28)
+	style.shadow_size = 14
+	style.shadow_offset = Vector2(0, 8)
 	
-	panel_fondo.add_theme_stylebox_override("panel", estilo)
+	background_panel.add_theme_stylebox_override("panel", style)
 
 
-func configurar_label():
-	var pantalla := get_viewport().get_visible_rect().size
+func _setup_label():
+	var screen := get_viewport().get_visible_rect().size
 	
-	label_mensaje.position = Vector2(
-		(pantalla.x - 600) / 2,
-		(pantalla.y - 120) / 2 - 15
+	message_label.position = Vector2(
+		(screen.x - 600) / 2,
+		(screen.y - 120) / 2 - 15
 	)
 	
-	label_mensaje.size = Vector2(600, 120)
-	label_mensaje.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label_mensaje.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	label_mensaje.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	message_label.size = Vector2(600, 120)
+	message_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	message_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	message_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	
-	label_mensaje.add_theme_color_override("font_color", color_azul_oscuro)
-	label_mensaje.add_theme_font_size_override("font_size", 38)
+	message_label.add_theme_color_override("font_color", color_dark_blue)
+	message_label.add_theme_font_size_override("font_size", 38)
 	
-	var fuente = load("res://assets/fonts/Montserrat.ttf")
-	if fuente:
-		label_mensaje.add_theme_font_override("font", fuente)
+	var font = load("res://assets/fonts/Montserrat.ttf")
+	if font:
+		message_label.add_theme_font_override("font", font)
 
 
-func configurar_boton():
-	var pantalla := get_viewport().get_visible_rect().size
+func _setup_button():
+	var screen := get_viewport().get_visible_rect().size
 	
-	boton_volver.text = "Volver al menú"
-	boton_volver.position = Vector2(
-		(pantalla.x - 240) / 2,
-		(pantalla.y / 2) + 90
+	back_button.text = "Volver al menú"
+	back_button.position = Vector2(
+		(screen.x - 240) / 2,
+		(screen.y / 2) + 90
 	)
-	boton_volver.size = Vector2(240, 55)
+	back_button.size = Vector2(240, 55)
 	
-	var estilo_normal := StyleBoxFlat.new()
-	estilo_normal.bg_color = color_celeste
-	estilo_normal.border_color = color_azul_oscuro
+	var style_normal := StyleBoxFlat.new()
+	style_normal.bg_color = color_cyan
+	style_normal.border_color = color_dark_blue
 	
-	estilo_normal.border_width_left = 4
-	estilo_normal.border_width_right = 4
-	estilo_normal.border_width_top = 4
-	estilo_normal.border_width_bottom = 4
+	style_normal.border_width_left = 4
+	style_normal.border_width_right = 4
+	style_normal.border_width_top = 4
+	style_normal.border_width_bottom = 4
 	
-	estilo_normal.corner_radius_top_left = 18
-	estilo_normal.corner_radius_top_right = 18
-	estilo_normal.corner_radius_bottom_left = 18
-	estilo_normal.corner_radius_bottom_right = 18
+	style_normal.corner_radius_top_left = 18
+	style_normal.corner_radius_top_right = 18
+	style_normal.corner_radius_bottom_left = 18
+	style_normal.corner_radius_bottom_right = 18
 	
-	var estilo_hover := StyleBoxFlat.new()
-	estilo_hover.bg_color = color_celeste_claro
-	estilo_hover.border_color = color_azul_oscuro
+	var style_hover := StyleBoxFlat.new()
+	style_hover.bg_color = color_light_blue
+	style_hover.border_color = color_dark_blue
 	
-	estilo_hover.border_width_left = 4
-	estilo_hover.border_width_right = 4
-	estilo_hover.border_width_top = 4
-	estilo_hover.border_width_bottom = 4
+	style_hover.border_width_left = 4
+	style_hover.border_width_right = 4
+	style_hover.border_width_top = 4
+	style_hover.border_width_bottom = 4
 	
-	estilo_hover.corner_radius_top_left = 18
-	estilo_hover.corner_radius_top_right = 18
-	estilo_hover.corner_radius_bottom_left = 18
-	estilo_hover.corner_radius_bottom_right = 18
+	style_hover.corner_radius_top_left = 18
+	style_hover.corner_radius_top_right = 18
+	style_hover.corner_radius_bottom_left = 18
+	style_hover.corner_radius_bottom_right = 18
 	
-	var estilo_pressed := StyleBoxFlat.new()
-	estilo_pressed.bg_color = color_azul_oscuro
-	estilo_pressed.border_color = color_celeste
+	var style_pressed := StyleBoxFlat.new()
+	style_pressed.bg_color = color_dark_blue
+	style_pressed.border_color = color_cyan
 	
-	estilo_pressed.border_width_left = 4
-	estilo_pressed.border_width_right = 4
-	estilo_pressed.border_width_top = 4
-	estilo_pressed.border_width_bottom = 4
+	style_pressed.border_width_left = 4
+	style_pressed.border_width_right = 4
+	style_pressed.border_width_top = 4
+	style_pressed.border_width_bottom = 4
 	
-	estilo_pressed.corner_radius_top_left = 18
-	estilo_pressed.corner_radius_top_right = 18
-	estilo_pressed.corner_radius_bottom_left = 18
-	estilo_pressed.corner_radius_bottom_right = 18
+	style_pressed.corner_radius_top_left = 18
+	style_pressed.corner_radius_top_right = 18
+	style_pressed.corner_radius_bottom_left = 18
+	style_pressed.corner_radius_bottom_right = 18
 	
-	boton_volver.add_theme_stylebox_override("normal", estilo_normal)
-	boton_volver.add_theme_stylebox_override("hover", estilo_hover)
-	boton_volver.add_theme_stylebox_override("pressed", estilo_pressed)
+	back_button.add_theme_stylebox_override("normal", style_normal)
+	back_button.add_theme_stylebox_override("hover", style_hover)
+	back_button.add_theme_stylebox_override("pressed", style_pressed)
 	
-	boton_volver.add_theme_color_override("font_color", color_blanco)
-	boton_volver.add_theme_color_override("font_hover_color", color_azul_oscuro)
-	boton_volver.add_theme_color_override("font_pressed_color", color_blanco)
-	boton_volver.add_theme_font_size_override("font_size", 22)
+	back_button.add_theme_color_override("font_color", color_white)
+	back_button.add_theme_color_override("font_hover_color", color_dark_blue)
+	back_button.add_theme_color_override("font_pressed_color", color_white)
+	back_button.add_theme_font_size_override("font_size", 22)
 	
-	var fuente = load("res://assets/fonts/Montserrat.ttf")
-	if fuente:
-		boton_volver.add_theme_font_override("font", fuente)
+	var font = load("res://assets/fonts/Montserrat.ttf")
+	if font:
+		back_button.add_theme_font_override("font", font)
 
 
 func mostrar_ganaste():
-	mensaje_actual = "Felicidades,\nganaste el juego"
-	label_mensaje.text = mensaje_actual
-	label_mensaje.add_theme_color_override("font_color", color_azul_oscuro)
+	current_message = "Felicidades,\nganaste el juego"
+	message_label.text = current_message
+	message_label.add_theme_color_override("font_color", color_dark_blue)
 	visible = true
-	audio_victoria.volume_db = -5
-	audio_victoria.play()
+	win_audio.volume_db = -5
+	win_audio.play()
 
 
 func mostrar_perdiste():
-	mensaje_actual = "Qué mal,\nperdiste"
-	label_mensaje.text = mensaje_actual
-	label_mensaje.add_theme_color_override("font_color", color_azul_oscuro)
+	current_message = "Qué mal,\nperdiste"
+	message_label.text = current_message
+	message_label.add_theme_color_override("font_color", color_dark_blue)
 	visible = true
-	audio_derrota.volume_db = -10
-	audio_derrota.play()
+	lose_audio.volume_db = -10
+	lose_audio.play()
 
 
 func ocultar():
 	visible = false
 
 
-func _on_boton_volver_pressed():
-	get_tree().change_scene_to_file(ruta_menu)
+func _on_back_button_pressed():
+	get_tree().change_scene_to_file(menu_path)

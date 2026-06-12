@@ -70,7 +70,7 @@ const COLOR_CORRECT  = Color(0.251, 1.0, 0.502, 0.2)
 func _ready() -> void:
 	timer_hud = TIMER_HUD_SCENE.instantiate()
 	add_child(timer_hud)
-	timer_hud.tiempo_agotado.connect(_on_time_up)
+	timer_hud.time_up.connect(_on_time_up)
 	timer_hud.set_tamano_panel(600, 60)
 
 	result_panel = RESULT_PANEL_SCENE.instantiate()

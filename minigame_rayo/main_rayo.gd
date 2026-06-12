@@ -36,7 +36,7 @@ func _ready():
 	# Timer reutilizable
 	timer_hud = TIMER_HUD_SCENE.instantiate()
 	add_child(timer_hud)
-	timer_hud.tiempo_agotado.connect(_on_tiempo_agotado)
+	timer_hud.time_up.connect(_on_tiempo_agotado)
 	timer_hud.set_tamano_panel(500, 60)
 
 	# Panel de ganar/perder

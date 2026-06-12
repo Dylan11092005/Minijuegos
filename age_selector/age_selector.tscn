@@ -1,11 +1,11 @@
 [gd_scene format=3 uid="uid://cjr8rwja674f5"]
 
-[ext_resource type="Script" uid="uid://m61mx5tehtiy" path="res://selector_edad/AgeSelector.gd" id="1_xv3ck"]
-[ext_resource type="Texture2D" uid="uid://d3wovm11fy185" path="res://selector_edad/assets/Fondo.png" id="2_5bp0f"]
-[ext_resource type="Texture2D" uid="uid://b4td8kild0dgp" path="res://selector_edad/assets/Barra.png" id="2_ta6bi"]
-[ext_resource type="Texture2D" uid="uid://b8xv2nus7uul4" path="res://selector_edad/assets/Etapa1.png" id="3_5bp0f"]
-[ext_resource type="Texture2D" uid="uid://dkg103j7yjxk6" path="res://selector_edad/assets/PiedraSelectora.png" id="4_okh50"]
-[ext_resource type="Texture2D" uid="uid://cn11rxs3l4sdt" path="res://selector_edad/assets/Boton_continuar.png" id="5_vtiug"]
+[ext_resource type="Script" uid="uid://m61mx5tehtiy" path="res://age_selector/AgeSelector.gd" id="1_xv3ck"]
+[ext_resource type="Texture2D" uid="uid://d3wovm11fy185" path="res://age_selector/assets/Fondo.png" id="2_5bp0f"]
+[ext_resource type="Texture2D" uid="uid://b4td8kild0dgp" path="res://age_selector/assets/Barra.png" id="2_ta6bi"]
+[ext_resource type="Texture2D" uid="uid://b8xv2nus7uul4" path="res://age_selector/assets/Etapa1.png" id="3_5bp0f"]
+[ext_resource type="Texture2D" uid="uid://dkg103j7yjxk6" path="res://age_selector/assets/PiedraSelectora.png" id="4_okh50"]
+[ext_resource type="Texture2D" uid="uid://cn11rxs3l4sdt" path="res://age_selector/assets/Boton_continuar.png" id="5_vtiug"]
 
 [node name="AgeSelector" type="Control" unique_id=2085806543]
 layout_mode = 3

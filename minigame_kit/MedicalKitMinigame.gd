@@ -56,7 +56,7 @@ func _setup_timer_hud():
 	timer_hud = TIMER_HUD_SCENE.instantiate()
 	add_child(timer_hud)
 
-	timer_hud.tiempo_agotado.connect(_on_time_finished)
+	timer_hud.time_up.connect(_on_time_finished)
 
 	# Más ancho para que no se corte el texto.
 	timer_hud.set_tamano_panel(720, 60)

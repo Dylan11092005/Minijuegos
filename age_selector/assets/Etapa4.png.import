@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dqpn0ggfro31c"
-path="res://.godot/imported/Etapa2.png-860dcfd3d2928106a3785d8652334730.ctex"
+uid="uid://c8cqohl1s3k06"
+path="res://.godot/imported/Etapa4.png-1d3ea2741fd7314df02e57e8b7f5a319.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://selector_edad/assets/Etapa2.png"
-dest_files=["res://.godot/imported/Etapa2.png-860dcfd3d2928106a3785d8652334730.ctex"]
+source_file="res://age_selector/assets/Etapa4.png"
+dest_files=["res://.godot/imported/Etapa4.png-1d3ea2741fd7314df02e57e8b7f5a319.ctex"]
 
 [params]
 
