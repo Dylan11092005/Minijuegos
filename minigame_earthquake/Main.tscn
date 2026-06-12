@@ -8,9 +8,10 @@
 [node name="Main" type="Node" unique_id=184937608]
 script = ExtResource("1_yuua3")
 
-[node name="Camera2D" type="Camera2D" parent="." unique_id=1164967875]
-
 [node name="Background" parent="." unique_id=1434407386 instance=ExtResource("2_wiglt")]
+idle_scroll_speed = 30.0
+walk_scroll_speed = 120.0
+total_walk_distance = 3000.0
 
 [node name="Player" parent="." unique_id=76723888 instance=ExtResource("3_kwj2e")]
 

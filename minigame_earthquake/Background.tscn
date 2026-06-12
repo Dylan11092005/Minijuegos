@@ -1,41 +1,28 @@
 [gd_scene format=3 uid="uid://drg1sfdfxdsh8"]
 
 [ext_resource type="Script" uid="uid://cgqbug7s1jsmu" path="res://minigame_earthquake/Background.gd" id="1_b2yk5"]
-[ext_resource type="Texture2D" uid="uid://brlwesorheheu" path="res://minigame_earthquake/assets/backgrounds/bg_sky.png" id="2_a36ol"]
-[ext_resource type="Texture2D" uid="uid://y5vovbkm4cqi" path="res://minigame_earthquake/assets/backgrounds/bg_buildings.png" id="3_xrpr8"]
-[ext_resource type="Texture2D" uid="uid://d0p1wc8diy7cw" path="res://minigame_earthquake/assets/backgrounds/bg_ground.png" id="4_rhy2d"]
-[ext_resource type="Texture2D" uid="uid://056tytrt8004" path="res://minigame_earthquake/assets/sprites/table.png" id="5_kjun5"]
-[ext_resource type="Texture2D" uid="uid://ckldybg80hiua" path="res://minigame_earthquake/assets/backgrounds/safe_zone_sign.png" id="6_y7klt"]
 
 [node name="Background" type="Node2D" unique_id=1303420272]
 script = ExtResource("1_b2yk5")
-idle_scroll_speed = null
-walk_scroll_speed = null
-total_walk_distance = null
 
 [node name="ParallaxSky" type="ParallaxBackground" parent="." unique_id=1546806180]
 
 [node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxSky" unique_id=2015681803]
 
 [node name="Sprite2D" type="Sprite2D" parent="ParallaxSky/ParallaxLayer" unique_id=1396456506]
-texture = ExtResource("2_a36ol")
 
 [node name="ParallaxBuildings" type="ParallaxBackground" parent="." unique_id=2045186731]
 
 [node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBuildings" unique_id=1491069095]
 
 [node name="Sprite2D" type="Sprite2D" parent="ParallaxBuildings/ParallaxLayer" unique_id=1054298878]
-texture = ExtResource("3_xrpr8")
 
 [node name="ParallaxGround" type="ParallaxBackground" parent="." unique_id=404242378]
 
 [node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxGround" unique_id=1463538637]
 
 [node name="Sprite2D" type="Sprite2D" parent="ParallaxGround/ParallaxLayer" unique_id=337838253]
-texture = ExtResource("4_rhy2d")
 
 [node name="TableSprite" type="Sprite2D" parent="." unique_id=177603133]
-texture = ExtResource("5_kjun5")
 
 [node name="SafeZoneSign" type="Sprite2D" parent="." unique_id=736917438]
-texture = ExtResource("6_y7klt")

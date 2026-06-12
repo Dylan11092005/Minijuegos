@@ -1,103 +1,194 @@
+# Background.gd  — scroll VERTICAL para simular avance "de frente"
+#
+# Capas (de más lejos a más cerca):
+#   _layer_sky       → casi no se mueve   (SPEED_SKY       = 0.05)
+#   _layer_buildings → velocidad media    (SPEED_BUILDINGS  = 0.30)
+#   _layer_ground    → se mueve rápido    (SPEED_GROUND     = 1.00)
+#
+# Cada capa usa DOS copias apiladas verticalmente para un loop sin salto.
+# El scroll es hacia ABAJO → ilusión de avanzar "hacia el fondo".
+
 extends Node2D
 
-@export var idle_scroll_speed:   float = 30.0
-@export var walk_scroll_speed:   float = 120.0
-@export var total_walk_distance: float = 3000.0
+const SCREEN_W = 1152
+const SCREEN_H = 648
 
-var current_speed: float = 0.0
-var is_walking: bool = false
-var distance_traveled: float = 0.0
-var screen_size: Vector2
+const HORIZON_Y      = SCREEN_H * 0.42
+const HORIZON_X      = SCREEN_W * 0.50
+const SIGN_SCALE_MIN = 0.15
+const SIGN_SCALE_MAX = 1.05
+const SIGN_ARRIVAL_Y = SCREEN_H * 0.52
 
-var table_node: Node2D
-var safe_zone_node: Node2D
+const SPEED_SKY       = 0.05
+const SPEED_BUILDINGS = 0.30
+const SPEED_GROUND    = 1.00
 
-@onready var parallax_sky:       ParallaxBackground = $ParallaxSky
-@onready var parallax_buildings: ParallaxBackground = $ParallaxBuildings
-@onready var parallax_ground:    ParallaxBackground = $ParallaxGround
+var _layer_sky:       Node2D
+var _layer_buildings: Node2D
+var _layer_ground:    Node2D
+
+var _safe_sign: Node2D
+var _progress:  float = 0.0
+
+var _offset_sky:       float = 0.0
+var _offset_buildings: float = 0.0
+var _offset_ground:    float = 0.0
+
 
 func _ready() -> void:
-	screen_size = get_viewport().get_visible_rect().size
-	current_speed = idle_scroll_speed
-	_create_table()
-	_create_safe_zone()
+	z_as_relative = false
+	_build_background()
+	_build_safe_zone_sign()
 
-func _create_table() -> void:
-	table_node = Node2D.new()
-	table_node.position = Vector2(screen_size.x * 0.15, screen_size.y * 0.62)
-	add_child(table_node)
 
-	var top = ColorRect.new()
-	top.color = Color(0.55, 0.35, 0.15)
-	top.size = Vector2(180, 20)
-	top.position = Vector2(-90, -20)
-	table_node.add_child(top)
+# ---------------------------------------------------------------------------
+func _build_background() -> void:
+	_layer_sky = _make_vertical_layer(
+		"res://minigame_earthquake/assets/backgrounds/bg_sky.png",
+		Color(0.55, 0.80, 0.95),
+		-10,
+		0.0,
+		SCREEN_H * 0.55
+	)
 
-	var leg_left = ColorRect.new()
-	leg_left.color = Color(0.45, 0.28, 0.1)
-	leg_left.size = Vector2(15, 80)
-	leg_left.position = Vector2(-85, 0)
-	table_node.add_child(leg_left)
+	_layer_buildings = _make_vertical_layer(
+		"res://minigame_earthquake/assets/backgrounds/bg_buildings.png",
+		Color(0.55, 0.50, 0.45),
+		-9,
+		SCREEN_H * 0.22,
+		SCREEN_H * 0.60
+	)
 
-	var leg_right = ColorRect.new()
-	leg_right.color = Color(0.45, 0.28, 0.1)
-	leg_right.size = Vector2(15, 80)
-	leg_right.position = Vector2(70, 0)
-	table_node.add_child(leg_right)
+	_layer_ground = _make_vertical_layer(
+		"res://minigame_earthquake/assets/backgrounds/bg_ground.png",
+		Color(0.40, 0.38, 0.35),
+		-8,
+		SCREEN_H * 0.42,
+		SCREEN_H * 0.58
+	)
 
-func _create_safe_zone() -> void:
-	safe_zone_node = Node2D.new()
-	safe_zone_node.position = Vector2(screen_size.x * 2.0, screen_size.y * 0.35)
-	add_child(safe_zone_node)
 
-	var sign_bg = ColorRect.new()
-	sign_bg.color = Color(0.1, 0.6, 0.1)
-	sign_bg.size = Vector2(220, 60)
-	sign_bg.position = Vector2(-110, 0)
-	safe_zone_node.add_child(sign_bg)
+# Crea un Node2D contenedor con 2 copias de la textura apiladas verticalmente.
+# Copia A en y=0, copia B en y=tile_h → loop continuo sin saltos.
+func _make_vertical_layer(path: String, fallback: Color,
+		z: int, origin_y: float, target_h: float) -> Node2D:
 
-	var sign_text = Label.new()
-	sign_text.text = "ZONA SEGURA"
-	sign_text.add_theme_color_override("font_color", Color.WHITE)
-	sign_text.add_theme_font_size_override("font_size", 22)
-	sign_text.position = Vector2(-100, 10)
-	safe_zone_node.add_child(sign_text)
+	var container = Node2D.new()
+	container.z_index = z
+	container.z_as_relative = false
+	container.position = Vector2(0.0, origin_y)
+	add_child(container)
 
-	var pole = ColorRect.new()
-	pole.color = Color(0.6, 0.6, 0.6)
-	pole.size = Vector2(10, 100)
-	pole.position = Vector2(-5, 60)
-	safe_zone_node.add_child(pole)
+	var tex = load(path) as Texture2D
+	var tile_h: float = target_h
 
-func _process(delta: float) -> void:
-	_scroll_backgrounds(delta)
-	if is_walking:
-		_update_progress(delta)
+	for i in range(2):
+		var spr = Sprite2D.new()
+		spr.centered = false
+		spr.z_index = z
+		spr.z_as_relative = false
 
-func _scroll_backgrounds(delta: float) -> void:
-	parallax_sky.scroll_offset.x       -= current_speed * 0.2 * delta
-	parallax_buildings.scroll_offset.x -= current_speed * 0.5 * delta
-	parallax_ground.scroll_offset.x    -= current_speed * 1.0 * delta
-	if is_walking:
-		table_node.position.x     -= current_speed * delta
-		safe_zone_node.position.x -= current_speed * delta
+		if tex:
+			spr.texture = tex
+			var sx = max(float(SCREEN_W) / float(tex.get_width()),  1.0)
+			var sy = max(target_h        / float(tex.get_height()), 1.0)
+			var s  = max(sx, sy)
+			spr.scale = Vector2(s, s)
+			tile_h = tex.get_height() * s
+		else:
+			var cr = ColorRect.new()
+			cr.color = fallback
+			cr.size  = Vector2(SCREEN_W, target_h)
+			spr.add_child(cr)
+			tile_h = target_h
 
-func _update_progress(delta: float) -> void:
-	distance_traveled += current_speed * delta
-	var progress = clamp(distance_traveled / total_walk_distance, 0.0, 1.0)
-	get_node("/root/Main/Hud").update_progress(progress)
-	if safe_zone_node.position.x <= screen_size.x * 0.4:
-		_trigger_safe_zone()
+		spr.position = Vector2(0.0, tile_h * float(i))
+		container.add_child(spr)
 
-func _trigger_safe_zone() -> void:
-	is_walking = false
-	current_speed = 0.0
-	get_node("/root/Main/Player")._on_safe_zone_reached()
+	container.set_meta("origin_y", origin_y)
+	container.set_meta("tile_h",   tile_h)
+	return container
 
+
+# ---------------------------------------------------------------------------
+func scroll_step(speed: float, delta: float) -> void:
+	_offset_sky       += speed * SPEED_SKY       * delta
+	_offset_buildings += speed * SPEED_BUILDINGS * delta
+	_offset_ground    += speed * SPEED_GROUND    * delta
+
+	_apply_scroll(_layer_sky,       _offset_sky)
+	_apply_scroll(_layer_buildings, _offset_buildings)
+	_apply_scroll(_layer_ground,    _offset_ground)
+
+
+func _apply_scroll(layer: Node2D, offset: float) -> void:
+	if layer == null:
+		return
+	var tile_h:   float = layer.get_meta("tile_h")
+	var origin_y: float = layer.get_meta("origin_y")
+	# offset crece → capas bajan → ilusión de avanzar hacia el fondo
+	layer.position.y = origin_y + fmod(offset, tile_h)
+
+
+# ---------------------------------------------------------------------------
+func update_progress(p: float) -> void:
+	_progress = clamp(p, 0.0, 1.0)
+	_update_sign_transform()
+
+
+func _update_sign_transform() -> void:
+	if _safe_sign == null:
+		return
+	var t = _progress
+	var s = lerp(SIGN_SCALE_MIN, SIGN_SCALE_MAX, t)
+	_safe_sign.scale    = Vector2(s, s)
+	_safe_sign.position = Vector2(
+		HORIZON_X,
+		lerp(HORIZON_Y, SIGN_ARRIVAL_Y, t)
+	)
+
+
+# ---------------------------------------------------------------------------
+func _build_safe_zone_sign() -> void:
+	_safe_sign = Node2D.new()
+	_safe_sign.z_index = 2
+	_safe_sign.z_as_relative = false
+	add_child(_safe_sign)
+
+	var tex = load("res://minigame_earthquake/assets/backgrounds/safe_zone_sign.png") as Texture2D
+	if tex:
+		var spr = Sprite2D.new()
+		spr.texture = tex
+		spr.centered = true
+		_safe_sign.add_child(spr)
+	else:
+		var bg = ColorRect.new()
+		bg.color    = Color(0.1, 0.6, 0.1)
+		bg.size     = Vector2(260, 80)
+		bg.position = Vector2(-130, -80)
+		_safe_sign.add_child(bg)
+
+		var lbl = Label.new()
+		lbl.text = "ZONA SEGURA"
+		lbl.add_theme_color_override("font_color", Color.WHITE)
+		lbl.add_theme_font_size_override("font_size", 28)
+		lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		lbl.size     = Vector2(260, 80)
+		lbl.position = Vector2(-130, -80)
+		_safe_sign.add_child(lbl)
+
+		var pole = ColorRect.new()
+		pole.color    = Color(0.6, 0.6, 0.6)
+		pole.size     = Vector2(12, 120)
+		pole.position = Vector2(-6, 0)
+		_safe_sign.add_child(pole)
+
+	_update_sign_transform()
+
+
+# Compat con versiones anteriores
 func start_walking() -> void:
-	is_walking = true
-	current_speed = walk_scroll_speed
+	pass
 
 func stop_walking() -> void:
-	is_walking = false
-	current_speed = idle_scroll_speed
+	pass
