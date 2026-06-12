@@ -44,6 +44,10 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_t3qi7"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_4nob8"]
+
 [node name="Player" type="CharacterBody2D" unique_id=927608906]
 script = ExtResource("1_t3qi7")
 
@@ -56,5 +60,7 @@ visible = false
 texture = ExtResource("2_4nob8")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1493348427]
+shape = SubResource("CapsuleShape2D_t3qi7")
 
 [node name="ShapeCast2D" type="ShapeCast2D" parent="CollisionShape2D" unique_id=106949596]
+shape = SubResource("CapsuleShape2D_4nob8")

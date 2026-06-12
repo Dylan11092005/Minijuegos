@@ -1,51 +1,72 @@
 extends CanvasLayer
 
-# ─── Node references ──────────────────────────────────────────────────────────
-@onready var earthquake_label: Label                 = $EarthquakeLabel
-@onready var progress_bar:     TextureProgressBar    = $ProgressBar
-@onready var hold_button:      TextureButton          = $HoldButton
-@onready var lives_container:  HBoxContainer          = $LivesHBox
-@onready var win_panel:        Control                = $WinPanel
-@onready var gameover_panel:   Control                = $GameOverPanel
+var earthquake_label: Label
+var earthquake_bg: ColorRect
+var progress_bar: ProgressBar
+var hold_button: Button
+var screen_size: Vector2
 
-# ─── Ready ────────────────────────────────────────────────────────────────────
 func _ready() -> void:
+	screen_size = get_viewport().get_visible_rect().size
+	_create_earthquake_label()
+	_create_progress_bar()
+	_create_hold_button()
+
+func _create_earthquake_label() -> void:
+	earthquake_bg = ColorRect.new()
+	earthquake_bg.color = Color(0.8, 0.1, 0.1, 0.9)
+	earthquake_bg.size = Vector2(400, 70)
+	earthquake_bg.position = Vector2(screen_size.x * 0.5 - 200, 20)
+	earthquake_bg.visible = false
+	add_child(earthquake_bg)
+
+	earthquake_label = Label.new()
+	earthquake_label.text = "¡TERREMOTO!"
+	earthquake_label.add_theme_font_size_override("font_size", 48)
+	earthquake_label.add_theme_color_override("font_color", Color.WHITE)
+	earthquake_label.position = Vector2(screen_size.x * 0.5 - 180, 28)
 	earthquake_label.visible = false
-	win_panel.visible = false
-	gameover_panel.visible = false
-	progress_bar.value = 0.0
-	# Conectar eventos del botón
+	add_child(earthquake_label)
+
+func _create_progress_bar() -> void:
+	var bar_bg = ColorRect.new()
+	bar_bg.color = Color(0.2, 0.2, 0.2)
+	bar_bg.size = Vector2(screen_size.x * 0.7, 24)
+	bar_bg.position = Vector2(screen_size.x * 0.15, screen_size.y - 50)
+	add_child(bar_bg)
+
+	progress_bar = ProgressBar.new()
+	progress_bar.min_value = 0
+	progress_bar.max_value = 100
+	progress_bar.value = 0
+	progress_bar.size = Vector2(screen_size.x * 0.7, 24)
+	progress_bar.position = Vector2(screen_size.x * 0.15, screen_size.y - 50)
+	progress_bar.show_percentage = false
+	add_child(progress_bar)
+
+func _create_hold_button() -> void:
+	hold_button = Button.new()
+	hold_button.text = "MANTENER\nPRESIONADO"
+	hold_button.size = Vector2(160, 100)
+	hold_button.position = Vector2(30, screen_size.y - 160)
+	hold_button.add_theme_font_size_override("font_size", 16)
+	add_child(hold_button)
 	hold_button.button_down.connect(_on_hold_button_down)
 	hold_button.button_up.connect(_on_hold_button_up)
 
-# ─── Earthquake label ─────────────────────────────────────────────────────────
 func show_earthquake_label() -> void:
 	earthquake_label.visible = true
+	earthquake_bg.visible = true
 
 func hide_earthquake_label() -> void:
 	earthquake_label.visible = false
+	earthquake_bg.visible = false
 
-# ─── Lives ────────────────────────────────────────────────────────────────────
-func update_lives(current_lives: int) -> void:
-	# Muestra o esconde íconos de corazón según las vidas actuales
-	for i in range(lives_container.get_child_count()):
-		var heart = lives_container.get_child(i)
-		heart.modulate.a = 1.0 if i < current_lives else 0.3
-
-# ─── Progress bar ─────────────────────────────────────────────────────────────
 func update_progress(value: float) -> void:
-	# value entre 0.0 y 1.0
 	progress_bar.value = value * 100.0
 
-# ─── End screens ──────────────────────────────────────────────────────────────
-
-# ─── Button events ────────────────────────────────────────────────────────────
 func _on_hold_button_down() -> void:
 	get_node("/root/Main/Player").on_hold_button_pressed()
 
 func _on_hold_button_up() -> void:
 	get_node("/root/Main/Player").on_hold_button_released()
-
-# ─── Restart (conectar al botón de restart en WinPanel/GameOverPanel) ─────────
-func _on_restart_pressed() -> void:
-	get_tree().reload_current_scene()

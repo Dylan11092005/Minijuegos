@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bexod7nu5vlim" path="res://MainMenu.gd" id="1_0oe1n"]
 
-[node name="MainMenu" type="Control" unique_id=962077772]
+[node name="MainMenu" type="Control" unique_id=370660852]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
@@ -138,5 +138,6 @@ text = "Selector de edad"
 [connection signal="pressed" from="GridContainer/Button3" to="." method="_on_button_3_pressed"]
 [connection signal="pressed" from="GridContainer/Button4" to="." method="_on_button_4_pressed"]
 [connection signal="pressed" from="GridContainer/Button5" to="." method="_on_button_5_pressed"]
+[connection signal="pressed" from="GridContainer/Button9" to="." method="_on_button_9_pressed"]
 [connection signal="pressed" from="GridContainer/Button10" to="." method="_on_button_10_pressed"]
 [connection signal="pressed" from="GridContainer/Button26" to="." method="_on_button_26_pressed"]

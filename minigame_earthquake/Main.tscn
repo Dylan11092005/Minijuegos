@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://c1502o12m01un" path="res://minigame_earthquake/Player.tscn" id="3_kwj2e"]
 [ext_resource type="PackedScene" uid="uid://cqykt4enwb6ma" path="res://minigame_earthquake/HUD.tscn" id="4_e7s46"]
 
-[node name="Main" type="Node2D" unique_id=50754686]
+[node name="Main" type="Node" unique_id=184937608]
 script = ExtResource("1_yuua3")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1164967875]

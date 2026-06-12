@@ -1,41 +1,39 @@
 extends CharacterBody2D
 
-# ─── Config ───────────────────────────────────────────────────────────────────
-@export var walk_speed: float = 120.0
-
-# ─── State ────────────────────────────────────────────────────────────────────
 enum PlayerState { IDLE, HIDING, WALKING, WIN }
 var current_state: PlayerState = PlayerState.IDLE
 var is_holding_button: bool = false
 var earthquake_active: bool = false
 
-# ─── Node references ──────────────────────────────────────────────────────────
-@onready var girl_sprite:   AnimatedSprite2D = $GirlSprite
-@onready var hiding_sprite: Sprite2D         = $HidingSprite
-@onready var main_node:     Node2D           = get_parent()
+var girl_visual: ColorRect
+var hiding_visual: ColorRect
+var main_node: Node
+var screen_size: Vector2
 
 func _ready() -> void:
-	hiding_sprite.visible = false
-	girl_sprite.visible = true
-	_play_animation("idle")
-	# Conectar señales del juego
+	screen_size = get_viewport().get_visible_rect().size
+	_create_visuals()
+	await get_tree().process_frame
+	main_node = get_parent()
 	main_node.earthquake_started.connect(_on_earthquake_started)
 	main_node.earthquake_ended.connect(_on_earthquake_ended)
 
-func _physics_process(delta: float) -> void:
-	match current_state:
-		PlayerState.WALKING:
-			_do_walk(delta)
+func _create_visuals() -> void:
+	girl_visual = ColorRect.new()
+	girl_visual.color = Color(0.9, 0.5, 0.5)
+	girl_visual.size = Vector2(50, 100)
+	girl_visual.position = Vector2(-25, -100)
+	add_child(girl_visual)
 
-# ─── Movement ─────────────────────────────────────────────────────────────────
-func _do_walk(delta: float) -> void:
-	# La niña está fija en X; el fondo se mueve en background.gd
-	# Actualizar barra de progreso en HUD
-	var hud = get_node("/root/Main/HUD")
-	# El progreso lo maneja background.gd, acá sólo animamos
-	pass
+	hiding_visual = ColorRect.new()
+	hiding_visual.color = Color(0.5, 0.5, 0.9)
+	hiding_visual.size = Vector2(60, 40)
+	hiding_visual.position = Vector2(-30, -40)
+	hiding_visual.visible = false
+	add_child(hiding_visual)
 
-# ─── Button events (llamados desde hud.gd vía señal) ─────────────────────────
+	position = Vector2(screen_size.x * 0.25, screen_size.y * 0.62)
+
 func on_hold_button_pressed() -> void:
 	is_holding_button = true
 	if earthquake_active:
@@ -44,58 +42,38 @@ func on_hold_button_pressed() -> void:
 func on_hold_button_released() -> void:
 	is_holding_button = false
 	if earthquake_active and current_state == PlayerState.HIDING:
-		# Soltó el botón durante el terremoto → pierde vida
 		_exit_hiding_without_earthquake_end()
-		main_node.on_button_released_during_earthquake()
 
-# ─── State transitions ────────────────────────────────────────────────────────
 func _enter_hiding() -> void:
 	current_state = PlayerState.HIDING
-	girl_sprite.visible = false
-	hiding_sprite.visible = true
+	girl_visual.visible = false
+	hiding_visual.visible = true
 
 func _exit_hiding_without_earthquake_end() -> void:
-	# Quedó expuesta, vuelve a idle para la penalización
 	current_state = PlayerState.IDLE
-	hiding_sprite.visible = false
-	girl_sprite.visible = true
-	_play_animation("idle")
+	hiding_visual.visible = false
+	girl_visual.visible = true
 
 func _enter_walking() -> void:
 	current_state = PlayerState.WALKING
-	hiding_sprite.visible = false
-	girl_sprite.visible = true
-	_play_animation("walk")
-	# Avisar al fondo que empiece a scrollear rápido
+	hiding_visual.visible = false
+	girl_visual.visible = true
 	get_node("/root/Main/Background").start_walking()
 
 func _enter_win() -> void:
 	current_state = PlayerState.WIN
-	_play_animation("idle")
+	girl_visual.color = Color(0.2, 0.9, 0.2)
 
-# ─── Signal handlers ──────────────────────────────────────────────────────────
 func _on_earthquake_started() -> void:
 	earthquake_active = true
-	# Si ya está presionando el botón, entra a HIDING automáticamente
 	if is_holding_button:
 		_enter_hiding()
 
 func _on_earthquake_ended() -> void:
 	earthquake_active = false
-	if current_state == PlayerState.HIDING:
-		# Estaba bien escondida → ahora puede caminar
-		_enter_walking()
-	elif current_state == PlayerState.IDLE:
-		# No se escondió a tiempo pero sobrevivió (ya perdió vida antes)
+	if current_state == PlayerState.HIDING or current_state == PlayerState.IDLE:
 		_enter_walking()
 
-# ─── Safe zone ────────────────────────────────────────────────────────────────
 func _on_safe_zone_reached() -> void:
-	current_state = PlayerState.WIN
 	_enter_win()
 	main_node.on_player_reached_safe_zone()
-
-# ─── Animation helper ─────────────────────────────────────────────────────────
-func _play_animation(anim_name: String) -> void:
-	if girl_sprite.sprite_frames and girl_sprite.sprite_frames.has_animation(anim_name):
-		girl_sprite.play(anim_name)

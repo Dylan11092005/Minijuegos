@@ -9,9 +9,6 @@
 
 [node name="Background" type="Node2D" unique_id=1303420272]
 script = ExtResource("1_b2yk5")
-idle_scroll_speed = null
-walk_scroll_speed = null
-total_walk_distance = null
 
 [node name="ParallaxSky" type="ParallaxBackground" parent="." unique_id=1546806180]
 
