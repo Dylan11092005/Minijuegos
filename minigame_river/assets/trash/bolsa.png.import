@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cusetxwcjxlnd"
-path="res://.godot/imported/botella.png-1fd173be64f7ad7315b03e894afb778e.ctex"
+uid="uid://b4vnrgj2f07g2"
+path="res://.godot/imported/bolsa.png-4aae56ad4e51dd1c5b571ff3ab76656d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://minigame_river/assets/basura/botella.png"
-dest_files=["res://.godot/imported/botella.png-1fd173be64f7ad7315b03e894afb778e.ctex"]
+source_file="res://minigame_river/assets/trash/bolsa.png"
+dest_files=["res://.godot/imported/bolsa.png-4aae56ad4e51dd1c5b571ff3ab76656d.ctex"]
 
 [params]
 

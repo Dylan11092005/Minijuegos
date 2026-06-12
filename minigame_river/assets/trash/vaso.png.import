@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://7vcec8dmyiph"
-path="res://.godot/imported/vaso.png-106fad5335ab226b3ef21ac0e039cda2.ctex"
+path="res://.godot/imported/vaso.png-f0e4cafa264489c3d25b46415cebc6a7.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://minigame_river/assets/basura/vaso.png"
-dest_files=["res://.godot/imported/vaso.png-106fad5335ab226b3ef21ac0e039cda2.ctex"]
+source_file="res://minigame_river/assets/trash/vaso.png"
+dest_files=["res://.godot/imported/vaso.png-f0e4cafa264489c3d25b46415cebc6a7.ctex"]
 
 [params]
 

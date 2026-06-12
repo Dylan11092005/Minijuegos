@@ -8,6 +8,18 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	pass
 
+func _on_button_10_pressed() -> void:
+	var minigame_data = get_node("/root/MinigameData")
+	minigame_data.title = "¡Ordena el botiquín!"
+	minigame_data.description = "Ayuda a organizar correctamente los implementos médicos dentro del botiquín."
+	minigame_data.instructions = "Selecciona cada implemento médico y arrástralo hacia su espacio correcto dentro del botiquín antes de que se acabe el tiempo."
+	minigame_data.video_path = "res://minigame_kit/assets/kit_Instruction.ogv"
+	minigame_data.minigame_scene = "res://minigame_kit/MedicalKitMinigame.tscn"
+	minigame_data.controls = [
+		{ "action": "Arrastrar implemento", "icon": "res://ui_global/assets/ClickIcon.png" },
+	]
+	get_tree().change_scene_to_file("res://ui_global/MinigameIntro.tscn")
+
 func _on_button_4_pressed() -> void:
 	var minigame_data = get_node("/root/MinigameData")
 	minigame_data.title        = "¡Desmonta la casa!"
@@ -46,6 +58,8 @@ func _on_button_2_pressed() -> void:
 	]
 	get_tree().change_scene_to_file("res://ui_global/MinigameIntro.tscn")
 
+
+
 func _on_button_pressed() -> void:
 	var minigame_data = get_node("/root/MinigameData")
 	minigame_data.title        = "¡Ordena el mapa de riesgo escolar!"
@@ -69,6 +83,8 @@ func _on_button_5_pressed() -> void:
 		{ "action": "Arrastrar semillas y regadera", "icon": "res://ui_global/assets/ClickIcon.png" },
 	]
 	get_tree().change_scene_to_file("res://ui_global/MinigameIntro.tscn")
+	
+	
 
 func _on_button_26_pressed() -> void:
 	get_tree().change_scene_to_file("res://selector_edad/age_selector.tscn")
