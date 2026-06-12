@@ -32,11 +32,11 @@ var drag_offset: float = 0.0
 func _ready() -> void:
 	# Cargar texturas
 	panda_textures = [
-		load("res://selector_edad/assets/Etapa1.png"),
-		load("res://selector_edad/assets/Etapa2.png"),
-		load("res://selector_edad/assets/Etapa3.png"),
-		load("res://selector_edad/assets/Etapa4.png"),
-		load("res://selector_edad/assets/Etapa5.png"),
+		load("res://age_selector/assets/Etapa1.png"),
+		load("res://age_selector/assets/Etapa2.png"),
+		load("res://age_selector/assets/Etapa3.png"),
+		load("res://age_selector/assets/Etapa4.png"),
+		load("res://age_selector/assets/Etapa5.png"),
 	]
 	_update_display(MIN_AGE)
 	
