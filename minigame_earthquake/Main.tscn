@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://buboxvwru5nb"]
+
+[ext_resource type="Script" uid="uid://bujjgj43yvive" path="res://minigame_earthquake/Main.gd" id="1_yuua3"]
+[ext_resource type="PackedScene" uid="uid://drg1sfdfxdsh8" path="res://minigame_earthquake/Background.tscn" id="2_wiglt"]
+[ext_resource type="PackedScene" uid="uid://c1502o12m01un" path="res://minigame_earthquake/Player.tscn" id="3_kwj2e"]
+[ext_resource type="PackedScene" uid="uid://cqykt4enwb6ma" path="res://minigame_earthquake/HUD.tscn" id="4_e7s46"]
+
+[node name="Main" type="Node2D" unique_id=50754686]
+script = ExtResource("1_yuua3")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1164967875]
+
+[node name="Background" parent="." unique_id=1434407386 instance=ExtResource("2_wiglt")]
+
+[node name="Player" parent="." unique_id=76723888 instance=ExtResource("3_kwj2e")]
+
+[node name="Hud" parent="." unique_id=1086673464 instance=ExtResource("4_e7s46")]
+
+[node name="AudioEQ" type="AudioStreamPlayer" parent="." unique_id=1741263299]
