@@ -1,7 +1,7 @@
 extends Node2D
 
-const TIMER_HUD_SCENE       = preload("res://ui_global/timer_ui.tscn")
-const PANEL_RESULTADO_SCENE = preload("res://ui_global/ResultadoJuego.tscn")
+const TIMER_HUD_SCENE       = preload("res://ui_global/TimerUi.tscn")
+const PANEL_RESULTADO_SCENE = preload("res://ui_global/GameResult.tscn")
 
 const TOTAL_TIME = 15.0
 
