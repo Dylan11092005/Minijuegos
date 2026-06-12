@@ -42,44 +42,44 @@ offset_right = 1954.0
 offset_bottom = 1106.0
 mouse_filter = 2
 
-[node name="Basurero" type="Node2D" parent="." unique_id=538202841]
+[node name="GarbageCollector" type="Node2D" parent="." unique_id=538202841]
 position = Vector2(1816, 942)
 
-[node name="Sprite2D" type="Sprite2D" parent="Basurero" unique_id=856862876]
+[node name="Sprite2D" type="Sprite2D" parent="GarbageCollector" unique_id=856862876]
 z_index = 2
 position = Vector2(12.999939, 17.999985)
 scale = Vector2(0.4544925, 0.4725806)
 texture = ExtResource("2_uq7vv")
 
-[node name="Basuras" type="Node2D" parent="." unique_id=10957908]
+[node name="Trash" type="Node2D" parent="." unique_id=10957908]
 z_index = 1
 position = Vector2(3, -1)
 
-[node name="TrashItem" parent="Basuras" unique_id=1090431356 instance=ExtResource("3_108rc")]
+[node name="TrashItem" parent="Trash" unique_id=1090431356 instance=ExtResource("3_108rc")]
 position = Vector2(1129, 596)
 trash_texture = ExtResource("4_v4lh6")
 
-[node name="TrashItem2" parent="Basuras" unique_id=324431832 instance=ExtResource("3_108rc")]
+[node name="TrashItem2" parent="Trash" unique_id=324431832 instance=ExtResource("3_108rc")]
 position = Vector2(851, 254)
 trash_texture = ExtResource("5_8ne84")
 
-[node name="TrashItem3" parent="Basuras" unique_id=1530706150 instance=ExtResource("3_108rc")]
+[node name="TrashItem3" parent="Trash" unique_id=1530706150 instance=ExtResource("3_108rc")]
 position = Vector2(187, 260)
 trash_texture = ExtResource("6_at5mt")
 
-[node name="TrashItem4" parent="Basuras" unique_id=727513537 instance=ExtResource("3_108rc")]
+[node name="TrashItem4" parent="Trash" unique_id=727513537 instance=ExtResource("3_108rc")]
 position = Vector2(1713, 457)
 trash_texture = ExtResource("7_obk83")
 
-[node name="TrashItem7" parent="Basuras" unique_id=670870072 instance=ExtResource("3_108rc")]
+[node name="TrashItem7" parent="Trash" unique_id=670870072 instance=ExtResource("3_108rc")]
 position = Vector2(86, 510)
 trash_texture = ExtResource("7_obk83")
 
-[node name="TrashItem5" parent="Basuras" unique_id=919389235 instance=ExtResource("3_108rc")]
+[node name="TrashItem5" parent="Trash" unique_id=919389235 instance=ExtResource("3_108rc")]
 position = Vector2(1430, 302)
 trash_texture = ExtResource("8_g6qnw")
 
-[node name="TrashItem6" parent="Basuras" unique_id=1019013895 instance=ExtResource("3_108rc")]
+[node name="TrashItem6" parent="Trash" unique_id=1019013895 instance=ExtResource("3_108rc")]
 position = Vector2(641, 643)
 trash_texture = ExtResource("8_g6qnw")
 
@@ -87,14 +87,14 @@ trash_texture = ExtResource("8_g6qnw")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=119521711]
 
-[node name="Cesped" type="Sprite2D" parent="." unique_id=1620858574]
+[node name="Grass" type="Sprite2D" parent="." unique_id=1620858574]
 z_index = 1
 position = Vector2(953, 793.00006)
 scale = Vector2(2.936186, 1.6776667)
 texture = ExtResource("4_108rc")
 metadata/_edit_lock_ = true
 
-[node name="Cesped2" type="Sprite2D" parent="." unique_id=1529457348]
+[node name="Grass2" type="Sprite2D" parent="." unique_id=1529457348]
 z_index = 1
 position = Vector2(971.99994, 275)
 rotation = 3.1415927
@@ -102,10 +102,10 @@ scale = Vector2(2.936186, 1.6776667)
 texture = ExtResource("4_108rc")
 metadata/_edit_lock_ = true
 
-[node name="Decoracion" type="Node2D" parent="." unique_id=750047333]
+[node name="Decoration" type="Node2D" parent="." unique_id=750047333]
 metadata/_edit_lock_ = true
 
-[node name="agua" type="Sprite2D" parent="Decoracion" unique_id=1038790531]
+[node name="water" type="Sprite2D" parent="Decoration" unique_id=1038790531]
 visible = false
 position = Vector2(963.9999, 538)
 scale = Vector2(4.312, 1.8930001)
