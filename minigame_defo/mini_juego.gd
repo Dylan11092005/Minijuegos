@@ -9,8 +9,8 @@ var already_finished := false
 var vida := 100
 var dano_actual := 10
 
-const TIMER_HUD_SCENE = preload("res://ui_global/timer_ui.tscn")
-const PANEL_RESULTADO_SCENE = preload("res://ui_global/ResultadoJuego.tscn")
+const TIMER_HUD_SCENE = preload("res://ui_global/TimerUi.tscn")
+const PANEL_RESULTADO_SCENE = preload("res://ui_global/GameResult.tscn")
 
 const MUSICA_FONDO = preload("res://minigame_defo/Musica/Fondo.mp3")
 const SONIDO_PLANTAR = preload("res://minigame_defo/Musica/Plantar.mp3")

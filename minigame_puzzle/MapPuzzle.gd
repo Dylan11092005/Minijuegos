@@ -8,7 +8,7 @@ signal puzzle_completed
 signal puzzle_failed
 
 # =========================================================
-# CONFIGURACIÓN
+# CONFIGURATION
 # =========================================================
 @export var map_texture: Texture2D
 @export var background_texture: Texture2D
@@ -19,22 +19,22 @@ signal puzzle_failed
 const TOTAL_TIME = 30.0
 
 # =========================================================
-# ESCENAS GLOBALES
+# GLOBAL SCENES
 # =========================================================
-const TIMER_HUD_SCENE       = preload("res://ui_global/timer_ui.tscn")
-const PANEL_RESULTADO_SCENE = preload("res://ui_global/ResultadoJuego.tscn")
+const TIMER_HUD_SCENE       = preload("res://ui_global/TimerUi.tscn")
+const RESULT_PANEL_SCENE    = preload("res://ui_global/GameResult.tscn")
 
 # =========================================================
-# RESOLUCIÓN
+# RESOLUTION
 # =========================================================
 const SCREEN_SIZE = Vector2(1920, 1080)
 const MODAL_SIZE  = Vector2(1600, 920)
 
 # =========================================================
-# SONIDOS
+# SOUNDS
 # =========================================================
-@onready var audio_fondo    = $AudioFondo
-@onready var audio_deslizar = $AudioDeslizar
+@onready var audio_background = $BackgroundSound
+@onready var audio_slide      = $SlideSound
 
 # =========================================================
 # VARIABLES
@@ -54,10 +54,10 @@ var guide_preview:   TextureRect
 var puzzle_border:   Panel
 
 var timer_hud:       CanvasLayer
-var panel_resultado: CanvasLayer
+var result_panel:    CanvasLayer
 
 # =========================================================
-# COLORES
+# COLORS
 # =========================================================
 const COLOR_GOLD     = Color("#D4AF37")
 const COLOR_BORDER   = Color("#406080")
@@ -70,11 +70,11 @@ const COLOR_CORRECT  = Color(0.251, 1.0, 0.502, 0.2)
 func _ready() -> void:
 	timer_hud = TIMER_HUD_SCENE.instantiate()
 	add_child(timer_hud)
-	timer_hud.tiempo_agotado.connect(_on_tiempo_agotado)
+	timer_hud.tiempo_agotado.connect(_on_time_up)
 	timer_hud.set_tamano_panel(600, 60)
 
-	panel_resultado = PANEL_RESULTADO_SCENE.instantiate()
-	add_child(panel_resultado)
+	result_panel = RESULT_PANEL_SCENE.instantiate()
+	add_child(result_panel)
 
 	_build_ui()
 
@@ -114,14 +114,14 @@ func _start_game() -> void:
 	_animate_modal()
 
 	# Música de fondo suave en loop
-	audio_fondo.volume_db = -15.0
-	audio_deslizar.volume_db = -10.0 
-	audio_fondo.play()
+	audio_background.volume_db = -15.0
+	audio_slide.volume_db      = -10.0
+	audio_background.play()
 
 	timer_hud.iniciar(TOTAL_TIME, "Tiempo restante", "para completar el mapa")
 
 # =========================================================
-# CREAR PIEZAS
+# CREATE PIECES
 # =========================================================
 func _create_pieces() -> void:
 	var image: Image = map_texture.get_image()
@@ -181,7 +181,7 @@ func _shuffle_pieces() -> void:
 	_apply_positions()
 
 # =========================================================
-# POSICIONES
+# APPLY POSITIONS
 # =========================================================
 func _apply_positions() -> void:
 	var start_x = 70
@@ -203,7 +203,7 @@ func _apply_positions() -> void:
 	_update_puzzle_border()
 
 # =========================================================
-# ACTUALIZAR BORDE EXTERIOR DEL PUZZLE
+# UPDATE PUZZLE BORDER
 # =========================================================
 func _update_puzzle_border() -> void:
 	if puzzle_border == null:
@@ -246,7 +246,7 @@ func _input(event: InputEvent) -> void:
 			_refresh_highlights()
 
 # =========================================================
-# DETECTAR PIEZA
+# GET PIECE AT
 # =========================================================
 func _get_piece_at(pos: Vector2) -> int:
 	for i in pieces.size():
@@ -258,7 +258,7 @@ func _get_piece_at(pos: Vector2) -> int:
 	return -1
 
 # =========================================================
-# SWAP
+# SWAP PIECES
 # =========================================================
 func _swap_pieces(a: int, b: int) -> void:
 	var temp_pos             = pieces[a]["current_pos"]
@@ -266,10 +266,10 @@ func _swap_pieces(a: int, b: int) -> void:
 	pieces[b]["current_pos"] = temp_pos
 	_apply_positions()
 	# Sonido al intercambiar piezas
-	audio_deslizar.play()
+	audio_slide.play()
 
 # =========================================================
-# HIGHLIGHTS
+# REFRESH HIGHLIGHTS
 # =========================================================
 func _refresh_highlights() -> void:
 	for i in pieces.size():
@@ -286,7 +286,7 @@ func _refresh_highlights() -> void:
 			highlight.color = Color.TRANSPARENT
 
 # =========================================================
-# WIN CHECK
+# CHECK WIN
 # =========================================================
 func _check_win() -> void:
 	for piece in pieces:
@@ -299,22 +299,22 @@ func _check_win() -> void:
 # =========================================================
 func _win() -> void:
 	game_active = false
-	audio_fondo.stop()
+	audio_background.stop()
 	timer_hud.detener()
-	panel_resultado.mostrar_ganaste()
+	result_panel.mostrar_ganaste()
 	emit_signal("puzzle_completed")
 
 func _lose() -> void:
 	game_active = false
-	audio_fondo.stop()
+	audio_background.stop()
 	timer_hud.detener()
-	panel_resultado.mostrar_perdiste()
+	result_panel.mostrar_perdiste()
 	emit_signal("puzzle_failed")
 
 # =========================================================
-# CALLBACK TIMER
+# TIMER CALLBACK
 # =========================================================
-func _on_tiempo_agotado() -> void:
+func _on_time_up() -> void:
 	if game_active:
 		_lose()
 
@@ -395,7 +395,7 @@ func _build_ui() -> void:
 	guide_preview.move_to_front()
 
 # =========================================================
-# ANIMACIÓN MODAL
+# ANIMATE MODAL
 # =========================================================
 func _animate_modal() -> void:
 	modal.scale = Vector2(0.8, 0.8)
@@ -403,7 +403,7 @@ func _animate_modal() -> void:
 	tween.tween_property(modal, "scale", Vector2.ONE, 0.2)
 
 # =========================================================
-# CLEAR
+# CLEAR PIECES
 # =========================================================
 func _clear_pieces() -> void:
 	for piece in pieces:

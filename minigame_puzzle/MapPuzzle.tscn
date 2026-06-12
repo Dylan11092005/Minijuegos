@@ -11,8 +11,8 @@ script = ExtResource("1_1b4qa")
 map_texture = ExtResource("2_2pb2e")
 background_texture = ExtResource("3_hi2aj")
 
-[node name="AudioFondo" type="AudioStreamPlayer" parent="." unique_id=224652397]
+[node name="BackgroundSound" type="AudioStreamPlayer" parent="." unique_id=224652397]
 stream = ExtResource("4_hi2aj")
 
-[node name="AudioDeslizar" type="AudioStreamPlayer" parent="." unique_id=310225832]
+[node name="SlideSound" type="AudioStreamPlayer" parent="." unique_id=310225832]
 stream = ExtResource("5_tjatc")

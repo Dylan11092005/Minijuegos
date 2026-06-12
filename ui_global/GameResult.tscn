@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dsdbaxj6xesxn"]
 
-[ext_resource type="Script" uid="uid://7wk2j2cui3vk" path="res://ui_global/resultado_juego.gd" id="1_dq4m0"]
+[ext_resource type="Script" uid="uid://7wk2j2cui3vk" path="res://ui_global/GameResult.gd" id="1_dq4m0"]
 [ext_resource type="AudioStream" uid="uid://chdy44sxabuoh" path="res://ui_global/music/MusicaVictoria.mp3" id="2_tilk3"]
 [ext_resource type="AudioStream" uid="uid://c4ynbpm8q7nw" path="res://ui_global/music/JuegoPerdido.mp3" id="3_ti5tt"]
 

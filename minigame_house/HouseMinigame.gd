@@ -4,14 +4,14 @@ extends Node2D
 @onready var house_container = $HouseContainer
 
 # ── Sonidos ──────────────────────────────────────────────
-@onready var audio_fondo     = $AudioFondo
-@onready var audio_tornillo  = $AudioTornillo
-@onready var audio_caida     = $AudioCaida
+@onready var audio_fondo     = $BackgroundSound
+@onready var audio_tornillo  = $ScrewSound
+@onready var audio_caida     = $FallSound
 
 const SCREW_SCENE = preload("res://minigame_house/Screw.tscn")
 const PIECE_SCENE = preload("res://minigame_house/Piece.tscn")
-const TIMER_HUD_SCENE = preload("res://ui_global/timer_ui.tscn")
-const PANEL_RESULTADO_SCENE = preload("res://ui_global/ResultadoJuego.tscn")
+const TIMER_HUD_SCENE = preload("res://ui_global/TimerUi.tscn")
+const PANEL_RESULTADO_SCENE = preload("res://ui_global/GameResult.tscn")
 
 const TOTAL_TIME = 40.0
 var total_pieces: int = 0

@@ -73,11 +73,11 @@ one_shot = true
 
 [node name="HouseContainer" type="Node2D" parent="." unique_id=1332241059]
 
-[node name="AudioFondo" type="AudioStreamPlayer" parent="." unique_id=213290253]
+[node name="BackgroundSound" type="AudioStreamPlayer" parent="." unique_id=213290253]
 stream = ExtResource("3_84h05")
 
-[node name="AudioTornillo" type="AudioStreamPlayer" parent="." unique_id=1528503988]
+[node name="ScrewSound" type="AudioStreamPlayer" parent="." unique_id=1528503988]
 stream = ExtResource("4_gawxg")
 
-[node name="AudioCaida" type="AudioStreamPlayer" parent="." unique_id=884774488]
+[node name="FallSound" type="AudioStreamPlayer" parent="." unique_id=884774488]
 stream = ExtResource("5_jaypx")
