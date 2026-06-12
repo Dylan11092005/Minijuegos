@@ -1,0 +1,916 @@
+[gd_scene format=3 uid="uid://c57j6bn7yn537"]
+
+[ext_resource type="Script" uid="uid://cwc5fh661amni" path="res://minigame_laberinto/MazeMinigame.gd.gd" id="1_0oeam"]
+[ext_resource type="Texture2D" uid="uid://cotgw64un1hf0" path="res://minigame_laberinto/assets/escenario/fondo.png" id="2_g71b8"]
+[ext_resource type="Texture2D" uid="uid://cqjpnx4cl2s46" path="res://minigame_laberinto/assets/personajes/jugador.png" id="3_n510s"]
+[ext_resource type="Script" uid="uid://dcj3onotqhw30" path="res://minigame_laberinto/jugador.gd" id="4_g71b8"]
+[ext_resource type="Texture2D" uid="uid://yppdnyqm0swu" path="res://minigame_laberinto/assets/escenario/zona_segura.png" id="4_mht8p"]
+[ext_resource type="Texture2D" uid="uid://k2xxppxs5sbm" path="res://minigame_laberinto/assets/escenario/pared.png" id="6_n510s"]
+[ext_resource type="Texture2D" uid="uid://bgdw5j7giyysf" path="res://minigame_laberinto/assets/personajes/amigo1.png" id="7_vp2i8"]
+[ext_resource type="Texture2D" uid="uid://wbdcpt7qj204" path="res://minigame_laberinto/assets/personajes/amigo2.png" id="8_6op3i"]
+[ext_resource type="PackedScene" uid="uid://m3dt448yc1u" path="res://ui_global/timer_ui.tscn" id="9_kjcdp"]
+[ext_resource type="AudioStream" uid="uid://cfmnqqrcvqffb" path="res://ui_global/music/Tiempo.mp3" id="10_a4bxp"]
+[ext_resource type="PackedScene" uid="uid://dsdbaxj6xesxn" path="res://ui_global/ResultadoJuego.tscn" id="11_a4bxp"]
+[ext_resource type="AudioStream" uid="uid://r361hmn2tkmn" path="res://minigame_laberinto/assets/audio/laberinto.mp3" id="12_hwi0u"]
+[ext_resource type="AudioStream" uid="uid://ctp2n1rcpkl85" path="res://minigame_laberinto/assets/audio/rescate.mp3" id="13_4vvp6"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_n510s"]
+size = Vector2(73.25, 70.5625)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_g71b8"]
+size = Vector2(93.50595, 46.433754)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kjcdp"]
+size = Vector2(56, 68)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_a4bxp"]
+size = Vector2(68, 68)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vp2i8"]
+size = Vector2(103.1875, 138)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6op3i"]
+size = Vector2(98, 133)
+
+[node name="MazeMinigame" type="Node2D" unique_id=659277626]
+script = ExtResource("1_0oeam")
+
+[node name="Fondo" type="Sprite2D" parent="." unique_id=257799321]
+position = Vector2(-3.9999986, -8)
+scale = Vector2(1.3252763, 1.0064459)
+texture = ExtResource("2_g71b8")
+centered = false
+
+[node name="Jugador" type="CharacterBody2D" parent="." unique_id=913334731]
+z_index = 10
+script = ExtResource("4_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Jugador" unique_id=178929763]
+position = Vector2(355, 318)
+scale = Vector2(0.08404541, 0.05460615)
+texture = ExtResource("3_n510s")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Jugador" unique_id=1369583057]
+position = Vector2(352, 315)
+shape = SubResource("RectangleShape2D_n510s")
+debug_color = Color(0.3334951, 0.5400944, 0.82822275, 0.41960785)
+
+[node name="Paredes" type="Node" parent="." unique_id=1197950124]
+
+[node name="Pared1" type="StaticBody2D" parent="Paredes" unique_id=1724368321]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared1" unique_id=1778236063]
+position = Vector2(236, 272.23962)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared1" unique_id=2057636187]
+position = Vector2(240.00002, 282.00003)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared71" type="StaticBody2D" parent="Paredes" unique_id=1132366757]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared71" unique_id=1973764369]
+position = Vector2(1110, 797)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared71" unique_id=630201986]
+position = Vector2(1110, 806.00006)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared70" type="StaticBody2D" parent="Paredes" unique_id=735184172]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared70" unique_id=656771999]
+position = Vector2(1112, 720)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared70" unique_id=318749038]
+position = Vector2(1108, 719.00006)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared69" type="StaticBody2D" parent="Paredes" unique_id=836335786]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared69" unique_id=1874017389]
+position = Vector2(1212, 610)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared69" unique_id=300300419]
+position = Vector2(1214.0001, 622.00006)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared68" type="StaticBody2D" parent="Paredes" unique_id=525586032]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared68" unique_id=162547754]
+position = Vector2(852, 623)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared68" unique_id=1928827711]
+position = Vector2(850, 627)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared67" type="StaticBody2D" parent="Paredes" unique_id=562800831]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared67" unique_id=903709515]
+position = Vector2(1448, 597)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared67" unique_id=1743411951]
+position = Vector2(1446, 606.00006)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared66" type="StaticBody2D" parent="Paredes" unique_id=594689119]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared66" unique_id=1797338909]
+position = Vector2(856, 520)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared66" unique_id=1596944418]
+position = Vector2(857, 532.00006)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared65" type="StaticBody2D" parent="Paredes" unique_id=1975272651]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared65" unique_id=862973380]
+position = Vector2(975, 520)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared65" unique_id=11959057]
+position = Vector2(973, 529)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared64" type="StaticBody2D" parent="Paredes" unique_id=1281680438]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared64" unique_id=1022477341]
+position = Vector2(581, 818)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared64" unique_id=1558287652]
+position = Vector2(580, 829)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared63" type="StaticBody2D" parent="Paredes" unique_id=167182450]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared63" unique_id=1722130346]
+position = Vector2(581, 582)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared63" unique_id=2084528616]
+position = Vector2(581, 595)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared62" type="StaticBody2D" parent="Paredes" unique_id=1441334533]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared62" unique_id=284699180]
+position = Vector2(581, 506)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared62" unique_id=388193715]
+position = Vector2(578, 517)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared61" type="StaticBody2D" parent="Paredes" unique_id=745899054]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared61" unique_id=665749710]
+position = Vector2(460, 491)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared61" unique_id=1590992567]
+position = Vector2(462, 500.00003)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared60" type="StaticBody2D" parent="Paredes" unique_id=235110272]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared60" unique_id=1444632896]
+position = Vector2(349, 491)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared60" unique_id=1512752924]
+position = Vector2(350, 501)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared59" type="StaticBody2D" parent="Paredes" unique_id=470223325]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared59" unique_id=171258121]
+position = Vector2(466, 740)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared59" unique_id=1405963771]
+position = Vector2(467, 748)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared58" type="StaticBody2D" parent="Paredes" unique_id=1045263025]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared58" unique_id=1063141884]
+position = Vector2(574, 746)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared58" unique_id=285960887]
+position = Vector2(577, 746)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared57" type="StaticBody2D" parent="Paredes" unique_id=784215123]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared57" unique_id=1118202039]
+position = Vector2(1734, 579)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared57" unique_id=820933307]
+position = Vector2(1732, 588.00006)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared56" type="StaticBody2D" parent="Paredes" unique_id=486506417]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared56" unique_id=2122825247]
+position = Vector2(1734, 659)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared56" unique_id=2101622727]
+position = Vector2(1729, 669)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared55" type="StaticBody2D" parent="Paredes" unique_id=1149254349]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared55" unique_id=1488372314]
+position = Vector2(1732, 494)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared55" unique_id=670179678]
+position = Vector2(1730, 506)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared54" type="StaticBody2D" parent="Paredes" unique_id=1081125121]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared54" unique_id=57467856]
+position = Vector2(1733, 419)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared54" unique_id=33489906]
+position = Vector2(1732, 429)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared53" type="StaticBody2D" parent="Paredes" unique_id=861432997]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared53" unique_id=1111363558]
+position = Vector2(1732, 731)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared53" unique_id=1602124850]
+position = Vector2(1729.9999, 742)
+scale = Vector2(0.056396447, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared52" type="StaticBody2D" parent="Paredes" unique_id=1192163898]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared52" unique_id=1527096917]
+position = Vector2(1732, 813)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared52" unique_id=114264076]
+position = Vector2(1728, 822)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared51" type="StaticBody2D" parent="Paredes" unique_id=611809376]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared51" unique_id=2111866327]
+position = Vector2(1731, 886)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared51" unique_id=487411972]
+position = Vector2(1731.0001, 896.00006)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared50" type="StaticBody2D" parent="Paredes" unique_id=1859777193]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared50" unique_id=1773975677]
+position = Vector2(1621, 887)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared50" unique_id=1613832147]
+position = Vector2(1620, 896.00006)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared49" type="StaticBody2D" parent="Paredes" unique_id=718241656]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared49" unique_id=1040880533]
+position = Vector2(1492, 890)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared49" unique_id=927208295]
+position = Vector2(1492, 901.00006)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared48" type="StaticBody2D" parent="Paredes" unique_id=242340582]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared48" unique_id=1207020797]
+position = Vector2(1352, 892)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared48" unique_id=1632067066]
+position = Vector2(1355, 902)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared47" type="StaticBody2D" parent="Paredes" unique_id=437801044]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared47" unique_id=681381451]
+position = Vector2(1233, 892)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared47" unique_id=60737443]
+position = Vector2(1232, 903)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared46" type="StaticBody2D" parent="Paredes" unique_id=1966086099]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared46" unique_id=77318056]
+position = Vector2(1112, 895)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared46" unique_id=1581616689]
+position = Vector2(1109, 904)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared45" type="StaticBody2D" parent="Paredes" unique_id=619425373]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared45" unique_id=1688237453]
+position = Vector2(990, 898)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared45" unique_id=517992770]
+position = Vector2(987.00006, 908.00006)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared44" type="StaticBody2D" parent="Paredes" unique_id=858739713]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared44" unique_id=507886182]
+position = Vector2(848, 899)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared44" unique_id=2081625910]
+position = Vector2(850, 909)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared43" type="StaticBody2D" parent="Paredes" unique_id=2112783467]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared43" unique_id=100861912]
+position = Vector2(719, 899)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared43" unique_id=380228153]
+position = Vector2(716, 909.00006)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared42" type="StaticBody2D" parent="Paredes" unique_id=579931397]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared42" unique_id=1813435686]
+position = Vector2(590, 900)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared42" unique_id=1156866724]
+position = Vector2(589, 910.00006)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared41" type="StaticBody2D" parent="Paredes" unique_id=579227826]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared41" unique_id=1720450503]
+position = Vector2(468, 900)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared41" unique_id=619881345]
+position = Vector2(468.00003, 911)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared40" type="StaticBody2D" parent="Paredes" unique_id=182529240]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared40" unique_id=1611949171]
+position = Vector2(346, 901)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared40" unique_id=379798515]
+position = Vector2(349, 913.00006)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared39" type="StaticBody2D" parent="Paredes" unique_id=729218344]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared39" unique_id=589267726]
+position = Vector2(228, 901.5662)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared39" unique_id=1527673104]
+position = Vector2(229, 913.00006)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared38" type="StaticBody2D" parent="Paredes" unique_id=21114523]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared38" unique_id=1236084052]
+position = Vector2(233, 822)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared38" unique_id=1000051634]
+position = Vector2(231.00002, 831)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared37" type="StaticBody2D" parent="Paredes" unique_id=1067521124]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared37" unique_id=343569616]
+position = Vector2(232, 740)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared37" unique_id=1922573386]
+position = Vector2(233, 752.00006)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared36" type="StaticBody2D" parent="Paredes" unique_id=210392127]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared36" unique_id=354214918]
+position = Vector2(234, 652)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared36" unique_id=203389673]
+position = Vector2(233.00002, 663)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared35" type="StaticBody2D" parent="Paredes" unique_id=1862600366]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared35" unique_id=2121395874]
+position = Vector2(233, 564)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared35" unique_id=1435863905]
+position = Vector2(234.00002, 576.00006)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared34" type="StaticBody2D" parent="Paredes" unique_id=619884214]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared34" unique_id=145035069]
+position = Vector2(856, 711)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared34" unique_id=687731109]
+position = Vector2(856.00006, 721.00006)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared33" type="StaticBody2D" parent="Paredes" unique_id=1538336202]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared33" unique_id=1605561160]
+position = Vector2(1212, 517)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared33" unique_id=1206079562]
+position = Vector2(1212, 527.00006)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared32" type="StaticBody2D" parent="Paredes" unique_id=2101264892]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared32" unique_id=987765257]
+position = Vector2(1596, 593)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared32" unique_id=1476530696]
+position = Vector2(1596, 600.00006)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared31" type="StaticBody2D" parent="Paredes" unique_id=372805910]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared31" unique_id=1941232062]
+position = Vector2(1447, 511)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared31" unique_id=1692138806]
+position = Vector2(1445, 523.00006)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared29" type="StaticBody2D" parent="Paredes" unique_id=2091786068]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared29" unique_id=1072372671]
+position = Vector2(1732, 345)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared29" unique_id=964682794]
+position = Vector2(1728.0001, 354)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared30" type="StaticBody2D" parent="Paredes" unique_id=298098735]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared30" unique_id=146147504]
+position = Vector2(1630, 408)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared30" unique_id=2033171584]
+position = Vector2(1631, 415.00003)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared28" type="StaticBody2D" parent="Paredes" unique_id=903138575]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared28" unique_id=483060495]
+position = Vector2(1729, 266)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared28" unique_id=123756584]
+position = Vector2(1729, 279)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared27" type="StaticBody2D" parent="Paredes" unique_id=1589380270]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared27" unique_id=899022102]
+position = Vector2(1731, 191)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared27" unique_id=2008099520]
+position = Vector2(1728, 196)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared26" type="StaticBody2D" parent="Paredes" unique_id=124798147]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared26" unique_id=101930576]
+position = Vector2(1527, 344)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared26" unique_id=754618694]
+position = Vector2(1530, 354.00003)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared25" type="StaticBody2D" parent="Paredes" unique_id=546598698]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared25" unique_id=1034642866]
+position = Vector2(1407, 344)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared25" unique_id=1880278617]
+position = Vector2(1407.8125, 354)
+scale = Vector2(0.05704747, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared24" type="StaticBody2D" parent="Paredes" unique_id=164063413]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared24" unique_id=1569200989]
+position = Vector2(1289, 344)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared24" unique_id=301299194]
+position = Vector2(1287, 356.00003)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared23" type="StaticBody2D" parent="Paredes" unique_id=469357887]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared23" unique_id=435593981]
+position = Vector2(1167, 344)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared23" unique_id=2048055421]
+position = Vector2(1170, 356)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared22" type="StaticBody2D" parent="Paredes" unique_id=505744971]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared22" unique_id=261296532]
+position = Vector2(1049, 344)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared22" unique_id=1595138994]
+position = Vector2(1048, 358)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared21" type="StaticBody2D" parent="Paredes" unique_id=277499257]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared21" unique_id=1407038543]
+position = Vector2(774, 350)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared21" unique_id=820546314]
+position = Vector2(776, 360)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared20" type="StaticBody2D" parent="Paredes" unique_id=1536716526]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared20" unique_id=1303307763]
+position = Vector2(644, 350)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared20" unique_id=387563858]
+position = Vector2(647, 362.00003)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared19" type="StaticBody2D" parent="Paredes" unique_id=352498815]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared19" unique_id=154939518]
+position = Vector2(525, 334)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared19" unique_id=1149104048]
+position = Vector2(530, 345.00003)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared18" type="StaticBody2D" parent="Paredes" unique_id=566545422]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared18" unique_id=304108715]
+position = Vector2(529.0952, 263)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared18" unique_id=1427584385]
+position = Vector2(525, 276.00003)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared17" type="StaticBody2D" parent="Paredes" unique_id=2031897697]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared17" unique_id=1194714549]
+position = Vector2(233, 492)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared17" unique_id=1522677338]
+position = Vector2(232, 501)
+scale = Vector2(0.05810548, 0.085205086)
+texture = ExtResource("6_n510s")
+
+[node name="Pared16" type="StaticBody2D" parent="Paredes" unique_id=1524872545]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared16" unique_id=976264936]
+position = Vector2(1620, 191)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared16" unique_id=259879262]
+position = Vector2(1622.0001, 191.00002)
+scale = Vector2(0.060221363, 0.0753174)
+texture = ExtResource("6_n510s")
+
+[node name="Pared15" type="StaticBody2D" parent="Paredes" unique_id=949901849]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared15" unique_id=1148241732]
+position = Vector2(234, 422)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared15" unique_id=1122041424]
+position = Vector2(235, 431)
+scale = Vector2(0.060221363, 0.0803833)
+texture = ExtResource("6_n510s")
+
+[node name="Pared14" type="StaticBody2D" parent="Paredes" unique_id=895699786]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared14" unique_id=1888536699]
+position = Vector2(1507, 190.9585)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared14" unique_id=816902146]
+position = Vector2(1508.0001, 192.6875)
+scale = Vector2(0.060221363, 0.07678223)
+texture = ExtResource("6_n510s")
+
+[node name="Pared13" type="StaticBody2D" parent="Paredes" unique_id=1264389184]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared13" unique_id=1366602021]
+position = Vector2(1395, 191)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared13" unique_id=432884270]
+position = Vector2(1392, 194.71875)
+scale = Vector2(0.060221363, 0.08258057)
+texture = ExtResource("6_n510s")
+
+[node name="Pared12" type="StaticBody2D" parent="Paredes" unique_id=87879136]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared12" unique_id=2042197401]
+position = Vector2(1288, 191)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared12" unique_id=1366551314]
+position = Vector2(1285, 196.00002)
+scale = Vector2(0.06111657, 0.085144036)
+texture = ExtResource("6_n510s")
+
+[node name="Pared11" type="StaticBody2D" parent="Paredes" unique_id=1976252889]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared11" unique_id=538270997]
+position = Vector2(1173, 190)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared11" unique_id=842128609]
+position = Vector2(1170, 195.4375)
+scale = Vector2(0.060221363, 0.08312989)
+texture = ExtResource("6_n510s")
+
+[node name="Pared10" type="StaticBody2D" parent="Paredes" unique_id=680712416]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared10" unique_id=883916751]
+position = Vector2(1062, 190)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared10" unique_id=2029238032]
+position = Vector2(1058.0001, 197)
+scale = Vector2(0.060221363, 0.07873537)
+texture = ExtResource("6_n510s")
+
+[node name="Pared9" type="StaticBody2D" parent="Paredes" unique_id=1301970390]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared9" unique_id=123990090]
+position = Vector2(937, 189)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared9" unique_id=816177465]
+position = Vector2(943, 199.00002)
+scale = Vector2(0.060221363, 0.0822754)
+texture = ExtResource("6_n510s")
+
+[node name="Pared8" type="StaticBody2D" parent="Paredes" unique_id=1546634650]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared8" unique_id=533030683]
+position = Vector2(820.9524, 188.52995)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared8" unique_id=2000485860]
+position = Vector2(821.00006, 200.99998)
+scale = Vector2(0.060221363, 0.08618165)
+texture = ExtResource("6_n510s")
+
+[node name="Pared7" type="StaticBody2D" parent="Paredes" unique_id=264027027]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared7" unique_id=2137716496]
+position = Vector2(702, 191)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared7" unique_id=605471410]
+position = Vector2(699, 199)
+scale = Vector2(0.060221363, 0.08117675)
+texture = ExtResource("6_n510s")
+
+[node name="Pared6" type="StaticBody2D" parent="Paredes" unique_id=1040476868]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared6" unique_id=290091561]
+position = Vector2(584, 191)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared6" unique_id=1505433949]
+position = Vector2(466.99994, 202.4375)
+scale = Vector2(0.052897155, 0.08898923)
+texture = ExtResource("6_n510s")
+
+[node name="Pared5" type="StaticBody2D" parent="Paredes" unique_id=1104143657]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared5" unique_id=68884578]
+position = Vector2(475, 192.91699)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared5" unique_id=151759742]
+position = Vector2(358.00003, 204)
+scale = Vector2(0.057454444, 0.085083)
+texture = ExtResource("6_n510s")
+
+[node name="Pared4" type="StaticBody2D" parent="Paredes" unique_id=1823292012]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared4" unique_id=868676278]
+position = Vector2(237, 194)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared4" unique_id=1003142967]
+position = Vector2(241, 205.84375)
+scale = Vector2(0.060058583, 0.084289566)
+texture = ExtResource("6_n510s")
+
+[node name="Pared3" type="StaticBody2D" parent="Paredes" unique_id=718711081]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared3" unique_id=177183485]
+position = Vector2(360, 194)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared3" unique_id=1161742738]
+position = Vector2(576.00006, 200.00002)
+scale = Vector2(0.05912271, 0.083252)
+texture = ExtResource("6_n510s")
+
+[node name="Pared2" type="StaticBody2D" parent="Paredes" unique_id=1489030691]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared2" unique_id=62401017]
+position = Vector2(236, 348)
+shape = SubResource("RectangleShape2D_g71b8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared2" unique_id=75463003]
+position = Vector2(237.99998, 361.00003)
+scale = Vector2(0.05940756, 0.08361816)
+texture = ExtResource("6_n510s")
+
+[node name="Amigos" type="Node2D" parent="." unique_id=1546051555]
+
+[node name="Amigo1" type="Area2D" parent="Amigos" unique_id=458404327]
+
+[node name="Sprite2D" type="Sprite2D" parent="Amigos/Amigo1" unique_id=378560463]
+position = Vector2(1632, 346)
+scale = Vector2(0.08215347, 0.053955108)
+texture = ExtResource("7_vp2i8")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Amigos/Amigo1" unique_id=992646568]
+position = Vector2(1633, 342)
+shape = SubResource("RectangleShape2D_kjcdp")
+
+[node name="Amigo2" type="Area2D" parent="Amigos" unique_id=1492820054]
+
+[node name="Sprite2D" type="Sprite2D" parent="Amigos/Amigo2" unique_id=435406139]
+position = Vector2(494.99997, 822)
+scale = Vector2(0.09997561, 0.05680339)
+texture = ExtResource("8_6op3i")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Amigos/Amigo2" unique_id=1421942007]
+position = Vector2(497, 816)
+shape = SubResource("RectangleShape2D_a4bxp")
+
+[node name="ZonaSegura" type="Area2D" parent="." unique_id=1708743996]
+z_index = 5
+
+[node name="Sprite2D" type="Sprite2D" parent="ZonaSegura" unique_id=671612100]
+position = Vector2(1553, 835)
+scale = Vector2(0.21826158, 0.255371)
+texture = ExtResource("4_mht8p")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ZonaSegura" unique_id=697554632]
+position = Vector2(1555.5938, 741)
+shape = SubResource("RectangleShape2D_vp2i8")
+
+[node name="BloqueoZona" type="StaticBody2D" parent="ZonaSegura" unique_id=1511409242]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ZonaSegura/BloqueoZona" unique_id=395268936]
+position = Vector2(1559, 743.5)
+shape = SubResource("RectangleShape2D_6op3i")
+
+[node name="PanelAmigos" type="Panel" parent="." unique_id=1968050297]
+offset_left = 1614.0
+offset_top = 75.0
+offset_right = 1723.0
+offset_bottom = 115.0
+
+[node name="EmojiAmigo" type="Label" parent="PanelAmigos" unique_id=1062993329]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 4.0
+offset_right = 32.0
+offset_bottom = 33.0
+text = "👥"
+
+[node name="LabelAmigos" type="Label" parent="PanelAmigos" unique_id=708635192]
+layout_mode = 0
+offset_left = 49.0
+offset_top = 6.0
+offset_right = 89.0
+offset_bottom = 29.0
+text = "0 / 2"
+
+[node name="TimerUI" parent="." unique_id=1042888595 instance=ExtResource("9_kjcdp")]
+
+[node name="AudioTiempo" type="AudioStreamPlayer" parent="." unique_id=1209940864]
+stream = ExtResource("10_a4bxp")
+
+[node name="ResultadoJuego" parent="." unique_id=2106536257 instance=ExtResource("11_a4bxp")]
+
+[node name="AudioMusica" type="AudioStreamPlayer2D" parent="." unique_id=1640750025]
+stream = ExtResource("12_hwi0u")
+
+[node name="AudioRescate" type="AudioStreamPlayer2D" parent="." unique_id=978384693]
+stream = ExtResource("13_4vvp6")
