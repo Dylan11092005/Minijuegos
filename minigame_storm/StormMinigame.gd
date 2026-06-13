@@ -1,157 +1,195 @@
+class_name StormMinigame
 extends Node2D
 
-const TIMER_HUD_SCENE       = preload("res://ui_global/TimerUi.tscn")
-const PANEL_RESULTADO_SCENE = preload("res://ui_global/GameResult.tscn")
+const TIMER_UI_SCENE := preload("res://ui_global/TimerUi.tscn")
+const GAME_RESULT_SCENE := preload("res://ui_global/GameResult.tscn")
+const LIVES_UI_SCENE := preload("res://ui_global/LivesUi.tscn")
 
-const TOTAL_TIME = 15.0
+const TOTAL_TIME := 15.0
+const LIGHTNING_SPAWN_MARGIN := 80
 
-@export var rayo_scene: PackedScene
+@export var lightning_scene: PackedScene
 
-var juego_terminado := false
-var mensaje_actual  := ""
+var _game_finished := false
 
-@onready var player       = $PlayerRayo
-@onready var timer_spawn  = $TimerSpawnRayos
-@onready var hud_vidas    = $UI/HUD
-@onready var fondo_tormenta = $FondoTormenta
-@onready var audio_lluvia = $AudioLluvia
-@onready var audio_rayo   = $AudioRayo
+@onready var _player = $StormPlayer
+@onready var _lightning_spawn_timer: Timer = $LightningSpawnTimer
+@onready var _storm_background: Node2D = $StormBackground
+@onready var _rain_audio: AudioStreamPlayer = $RainAudio
+@onready var _thunder_audio: AudioStreamPlayer = $ThunderAudio
 
-var timer_hud: CanvasLayer
-var panel_resultado: CanvasLayer
+var _timer_ui: Node
+var _game_result: Node
+var _lives_ui: Node
 
 
-# =========================================================
-# READY
-# =========================================================
 func _ready():
 	randomize()
 
-	juego_terminado = false
-	mensaje_actual  = ""
+	_game_finished = false
 
-	if player:
-		player.vidas = 3
+	if _player:
+		_player.lives = 3
 
-	# Timer reutilizable
-	timer_hud = TIMER_HUD_SCENE.instantiate()
-	add_child(timer_hud)
-	timer_hud.time_up.connect(_on_tiempo_agotado)
-	timer_hud.set_tamano_panel(500, 60)
-
-	# Panel de ganar/perder
-	panel_resultado = PANEL_RESULTADO_SCENE.instantiate()
-	add_child(panel_resultado)
-
-	timer_hud.iniciar(TOTAL_TIME, "Tiempo restante", "para sobrevivir")
-
-	# Actualizar corazones al iniciar
-	actualizar_hud_vidas()
-
-	# Sonido de lluvia
-	if audio_lluvia:
-		audio_lluvia.volume_db = -12
-		audio_lluvia.play()
-		audio_lluvia.finished.connect(_on_audio_lluvia_finished)
-
-	# Sonido de relámpago del fondo
-	if fondo_tormenta:
-		fondo_tormenta.relampago_aparecio.connect(_on_relampago_fondo)
-
-	if audio_rayo:
-		audio_rayo.volume_db = -3
+	_setup_timer_ui()
+	_setup_lives_ui()
+	_setup_game_result()
+	_setup_audio()
+	_connect_background_lightning()
+	_update_lives_ui()
 
 
-# =========================================================
-# PROCESS
-# =========================================================
 func _process(_delta):
-	actualizar_hud_vidas()
+	_update_lives_ui()
 
-	if player.vidas <= 0 and not juego_terminado:
-		perder()
-
-
-# =========================================================
-# ACTUALIZAR CORAZONES
-# =========================================================
-func actualizar_hud_vidas():
-	if hud_vidas and player:
-		hud_vidas.actualizar_hud(0, player.vidas, "")
+	if _player.lives <= 0 and not _game_finished:
+		_lose_game()
 
 
-# =========================================================
-# SPAWN RAYOS
-# =========================================================
-func _on_timer_spawn_rayos_timeout():
-	if juego_terminado:
+func _setup_timer_ui():
+	_timer_ui = TIMER_UI_SCENE.instantiate()
+	add_child(_timer_ui)
+
+	if _timer_ui.has_signal("time_expired"):
+		_timer_ui.time_expired.connect(_on_time_expired)
+	elif _timer_ui.has_signal("tiempo_agotado"):
+		_timer_ui.tiempo_agotado.connect(_on_time_expired)
+
+	if _timer_ui.has_method("set_panel_size"):
+		_timer_ui.set_panel_size(500, 60)
+	elif _timer_ui.has_method("set_tamano_panel"):
+		_timer_ui.set_tamano_panel(500, 60)
+
+	if _timer_ui.has_method("start_timer"):
+		_timer_ui.start_timer(TOTAL_TIME, "Time remaining", "to survive")
+	elif _timer_ui.has_method("iniciar"):
+		_timer_ui.iniciar(TOTAL_TIME, "Time remaining", "to survive")
+
+
+func _setup_lives_ui():
+	_lives_ui = LIVES_UI_SCENE.instantiate()
+	add_child(_lives_ui)
+
+	if _lives_ui.has_method("set_max_lives"):
+		_lives_ui.set_max_lives(3)
+
+
+func _setup_game_result():
+	_game_result = GAME_RESULT_SCENE.instantiate()
+	add_child(_game_result)
+
+
+func _setup_audio():
+	if _rain_audio:
+		_rain_audio.volume_db = -12
+		_rain_audio.play()
+		_rain_audio.finished.connect(_on_rain_audio_finished)
+
+	if _thunder_audio:
+		_thunder_audio.volume_db = -3
+
+
+func _connect_background_lightning():
+	if _storm_background and _storm_background.has_signal("lightning_flashes"):
+		_storm_background.lightning_flashes.connect(_on_background_lightning_flashes)
+
+
+func _on_lightning_spawn_timer_timeout():
+	if _game_finished:
 		return
 
-	if rayo_scene == null:
-		print("ERROR: No se asignó la escena Rayo.tscn en MainRayo.")
+	if lightning_scene == null:
+		print("ERROR: Lightning.tscn was not assigned in StormMinigame.")
 		return
 
-	var ancho_pantalla := get_viewport_rect().size.x
+	var screen_width := get_viewport_rect().size.x
 
-	var rayo = rayo_scene.instantiate()
-	rayo.position.x = randi_range(80, int(ancho_pantalla - 80))
-	rayo.position.y = -80
-	add_child(rayo)
+	var lightning = lightning_scene.instantiate()
+	lightning.position.x = randi_range(
+		LIGHTNING_SPAWN_MARGIN,
+		int(screen_width - LIGHTNING_SPAWN_MARGIN)
+	)
+	lightning.position.y = -80
+
+	add_child(lightning)
 
 
-# =========================================================
-# AUDIO
-# =========================================================
-func _on_relampago_fondo():
-	if juego_terminado:
+func _on_background_lightning_flashes():
+	if _game_finished:
 		return
 
-	if audio_rayo:
-		audio_rayo.stop()
-		audio_rayo.play()
+	if _thunder_audio:
+		_thunder_audio.stop()
+		_thunder_audio.play()
 
 
-func _on_audio_lluvia_finished():
-	if not juego_terminado:
-		audio_lluvia.play()
+func _on_rain_audio_finished():
+	if not _game_finished:
+		_rain_audio.play()
 
 
-# =========================================================
-# CALLBACK TIMER AGOTADO
-# =========================================================
-func _on_tiempo_agotado():
-	if not juego_terminado:
-		ganar()
+func _on_time_expired():
+	if not _game_finished:
+		_win_game()
 
 
-# =========================================================
-# GANAR / PERDER
-# =========================================================
-func ganar():
-	juego_terminado = true
+func _update_lives_ui():
+	if _lives_ui == null or _player == null:
+		return
 
-	timer_spawn.stop()
-
-	if timer_hud:
-		timer_hud.detener()
-
-	if audio_lluvia:
-		audio_lluvia.stop()
-
-	if panel_resultado:
-		panel_resultado.mostrar_ganaste()
+	if _lives_ui.has_method("actualizar_vidas"):
+		_lives_ui.actualizar_vidas(_player.lives)
 
 
-func perder():
-	juego_terminado = true
+func _stop_timer_ui():
+	if _timer_ui == null:
+		return
 
-	timer_spawn.stop()
+	if _timer_ui.has_method("stop_timer"):
+		_timer_ui.stop_timer()
+	elif _timer_ui.has_method("detener"):
+		_timer_ui.detener()
 
-	if timer_hud:
-		timer_hud.detener()
 
-	if audio_lluvia:
-		audio_lluvia.stop()
+func _show_win_result():
+	if _game_result == null:
+		return
 
-	if panel_resultado:
-		panel_resultado.mostrar_perdiste()
+	if _game_result.has_method("show_win"):
+		_game_result.show_win()
+	elif _game_result.has_method("mostrar_ganaste"):
+		_game_result.mostrar_ganaste()
+
+
+func _show_lose_result():
+	if _game_result == null:
+		return
+
+	if _game_result.has_method("show_lose"):
+		_game_result.show_lose()
+	elif _game_result.has_method("mostrar_perdiste"):
+		_game_result.mostrar_perdiste()
+
+
+func _win_game():
+	_game_finished = true
+
+	_lightning_spawn_timer.stop()
+	_stop_timer_ui()
+
+	if _rain_audio:
+		_rain_audio.stop()
+
+	_show_win_result()
+
+
+func _lose_game():
+	_game_finished = true
+
+	_lightning_spawn_timer.stop()
+	_stop_timer_ui()
+
+	if _rain_audio:
+		_rain_audio.stop()
+
+	_show_lose_result()

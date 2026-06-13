@@ -1,57 +1,113 @@
+class_name StormPlayer
 extends CharacterBody2D
 
-@export var speed := 600
-var vidas := 3
-var puede_recibir_daño := true
+const SCREEN_MARGIN := 70.0
+const GROUND_OFFSET := 120.0
+const DAMAGE_COOLDOWN := 0.8
+const BLINK_TIME := 0.08
+const BLINK_REPETITIONS := 4
+const WALK_ANIMATION_SPEED := 10.0
+const WALK_BOUNCE_HEIGHT := 4.0
+const WALK_TILT_AMOUNT := 5.0
+const WALK_SQUASH_AMOUNT := 0.04
+
+@export var speed := 600.0
+
+var lives := 3
+var _can_take_damage := true
+var _walk_time := 0.0
+var _base_scale := Vector2.ONE
+
+@onready var _sprite: Sprite2D = $Sprite2D
+
 
 func _ready():
-	vidas = 3
+	lives = 3
+
+	if _sprite:
+		_base_scale = _sprite.scale
 
 
 func _physics_process(delta):
-	var direccion := 0
+	var direction := _get_movement_direction()
 
-	# Movimiento con flechas
-	if Input.is_action_pressed("ui_left"):
-		direccion -= 1
-
-	if Input.is_action_pressed("ui_right"):
-		direccion += 1
-
-	# Movimiento con A y D
-	if Input.is_key_pressed(KEY_A):
-		direccion -= 1
-
-	if Input.is_key_pressed(KEY_D):
-		direccion += 1
-
-	velocity.x = direccion * speed
+	velocity.x = direction * speed
 	velocity.y = 0
 
 	move_and_slide()
 
-	# Límites para pantalla 1280 x 720
-	position.x = clamp(position.x, 100, 1760)
-	position.y = 820
+	_keep_player_inside_screen()
+	_update_walk_animation(delta, direction)
 
 
-func recibir_daño():
-	if puede_recibir_daño == false:
+func take_damage():
+	if not _can_take_damage:
 		return
 
-	vidas -= 1
-	vidas = max(vidas, 0)
+	lives -= 1
+	lives = max(lives, 0)
 
-	puede_recibir_daño = false
-	parpadear_daño()
+	_can_take_damage = false
+	_blink_damage()
 
-	await get_tree().create_timer(0.8).timeout
-	puede_recibir_daño = true
+	await get_tree().create_timer(DAMAGE_COOLDOWN).timeout
+	_can_take_damage = true
 
 
-func parpadear_daño():
-	for i in range(4):
+func _get_movement_direction() -> int:
+	var direction := 0
+
+	if Input.is_action_pressed("ui_left"):
+		direction -= 1
+
+	if Input.is_action_pressed("ui_right"):
+		direction += 1
+
+	if Input.is_key_pressed(KEY_A):
+		direction -= 1
+
+	if Input.is_key_pressed(KEY_D):
+		direction += 1
+
+	return direction
+
+
+func _keep_player_inside_screen():
+	var screen_size := get_viewport_rect().size
+
+	position.x = clamp(position.x, SCREEN_MARGIN, screen_size.x - SCREEN_MARGIN)
+	position.y = screen_size.y - GROUND_OFFSET
+
+
+func _update_walk_animation(delta, direction: int):
+	if _sprite == null:
+		return
+
+	if direction != 0:
+		_walk_time += delta * WALK_ANIMATION_SPEED
+
+		_sprite.flip_h = direction < 0
+
+		var bounce: float = sin(_walk_time) * WALK_BOUNCE_HEIGHT
+		var tilt: float = sin(_walk_time) * WALK_TILT_AMOUNT
+		var squash: float = abs(sin(_walk_time)) * WALK_SQUASH_AMOUNT
+
+		_sprite.position.y = bounce
+		_sprite.rotation_degrees = tilt * direction
+		_sprite.scale = Vector2(
+			_base_scale.x + squash,
+			_base_scale.y - squash
+		)
+	else:
+		_sprite.position.y = lerp(_sprite.position.y, 0.0, 0.15)
+		_sprite.rotation_degrees = lerp(_sprite.rotation_degrees, 0.0, 0.15)
+		_sprite.scale = _sprite.scale.lerp(_base_scale, 0.15)
+
+
+func _blink_damage():
+	for index in range(BLINK_REPETITIONS):
 		visible = false
-		await get_tree().create_timer(0.08).timeout
+		await get_tree().create_timer(BLINK_TIME).timeout
+
 		visible = true
-		await get_tree().create_timer(0.08).timeout
+		await get_tree().create_timer(BLINK_TIME).timeout

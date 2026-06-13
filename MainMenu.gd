@@ -38,7 +38,7 @@ func _on_button_3_pressed() -> void:
 	minigame_data.description  = "Te protegiste mientras pasaba la tormenta eléctrica."
 	minigame_data.instructions = "Muevete de derecha a izquiera esquivando los rayos"
 	minigame_data.video_path   = "res://minigame_rayo/assets/Thunder_Instruction.ogv"
-	minigame_data.minigame_scene = "res://minigame_rayo/MainRayo.tscn"
+	minigame_data.minigame_scene = "res://minigame_storm/StormMinigame.tscn"
 	minigame_data.controls = [
 		{ "action": "Moverse derecha", "icon": "res://ui_global/assets/left-button.png" },
 		{ "action": "Moverse izquierda", "icon": "res://ui_global/assets/right-button.png" },
