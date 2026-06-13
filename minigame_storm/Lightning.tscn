@@ -6,7 +6,7 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hkgip"]
 size = Vector2(104.5, 127)
 
-[node name="Rayo" type="Area2D" unique_id=330485081]
+[node name="Lightning" type="Area2D" unique_id=330485081]
 script = ExtResource("1_hkgip")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=262050738]

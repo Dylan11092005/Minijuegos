@@ -12,8 +12,9 @@ const LIGHTNING_SPAWN_MARGIN := 80
 @export var lightning_scene: PackedScene
 
 var _game_finished := false
+var _time_left := TOTAL_TIME
 
-@onready var _player: StormPlayer = $StormPlayer
+@onready var _player = $StormPlayer
 @onready var _lightning_spawn_timer: Timer = $LightningSpawnTimer
 @onready var _storm_background: Node2D = $StormBackground
 @onready var _rain_audio: AudioStreamPlayer = $RainAudio
@@ -28,6 +29,7 @@ func _ready():
 	randomize()
 
 	_game_finished = false
+	_time_left = TOTAL_TIME
 
 	if _player:
 		_player.lives = 3
@@ -39,13 +41,23 @@ func _ready():
 	_connect_background_lightning()
 	_update_lives_ui()
 
-	_lightning_spawn_timer.start()
+	if _lightning_spawn_timer:
+		_lightning_spawn_timer.start()
 
 
-func _process(_delta):
+func _process(delta):
+	if _game_finished:
+		return
+
+	_time_left -= delta
+
+	if _time_left <= 0:
+		_win_game()
+		return
+
 	_update_lives_ui()
 
-	if _player.lives <= 0 and not _game_finished:
+	if _player and _player.lives <= 0:
 		_lose_game()
 
 
@@ -73,13 +85,20 @@ func _setup_lives_ui():
 	_lives_ui = LIVES_UI_SCENE.instantiate()
 	add_child(_lives_ui)
 
-	_lives_ui.set_max_lives(3)
-	_lives_ui.actualizar_vidas(3)
+	if _lives_ui.has_method("set_max_lives"):
+		_lives_ui.set_max_lives(3)
+
+	if _lives_ui.has_method("actualizar_vidas"):
+		_lives_ui.actualizar_vidas(3)
 
 
 func _setup_game_result():
 	_game_result = GAME_RESULT_SCENE.instantiate()
 	add_child(_game_result)
+
+	# Para que el resultado quede por encima del timer y las vidas.
+	if _game_result is CanvasLayer:
+		_game_result.layer = 50
 
 
 func _setup_audio():
@@ -101,8 +120,7 @@ func _connect_background_lightning():
 			"lightning_flashes",
 			Callable(self, "_on_background_lightning_flashes")
 		)
-	else:
-		print("ERROR: StormBackground does not have the signal lightning_flashes.")
+
 
 func _on_lightning_spawn_timer_timeout():
 	if _game_finished:
@@ -148,7 +166,8 @@ func _update_lives_ui():
 	if _lives_ui == null or _player == null:
 		return
 
-	_lives_ui.actualizar_vidas(_player.lives)
+	if _lives_ui.has_method("actualizar_vidas"):
+		_lives_ui.actualizar_vidas(_player.lives)
 
 
 func _stop_timer_ui():
@@ -161,27 +180,55 @@ func _stop_timer_ui():
 		_timer_ui.detener()
 
 
+func _show_win_result():
+	if _game_result == null:
+		return
+
+	if _game_result.has_method("show_win"):
+		_game_result.show_win()
+	elif _game_result.has_method("mostrar_ganaste"):
+		_game_result.mostrar_ganaste()
+
+
+func _show_lose_result():
+	if _game_result == null:
+		return
+
+	if _game_result.has_method("show_lose"):
+		_game_result.show_lose()
+	elif _game_result.has_method("mostrar_perdiste"):
+		_game_result.mostrar_perdiste()
+
+
 func _win_game():
+	if _game_finished:
+		return
+
 	_game_finished = true
 
-	_lightning_spawn_timer.stop()
+	if _lightning_spawn_timer:
+		_lightning_spawn_timer.stop()
+
 	_stop_timer_ui()
 
 	if _rain_audio:
 		_rain_audio.stop()
 
-	if _game_result and _game_result.has_method("show_win"):
-		_game_result.show_win()
+	_show_win_result()
 
 
 func _lose_game():
+	if _game_finished:
+		return
+
 	_game_finished = true
 
-	_lightning_spawn_timer.stop()
+	if _lightning_spawn_timer:
+		_lightning_spawn_timer.stop()
+
 	_stop_timer_ui()
 
 	if _rain_audio:
 		_rain_audio.stop()
 
-	if _game_result and _game_result.has_method("show_lose"):
-		_game_result.show_lose()
+	_show_lose_result()
