@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://cqykt4enwb6ma"]
+
+[ext_resource type="Script" uid="uid://gta7yedlbu0c" path="res://minigame_earthquake/Hud.gd" id="1_hyoy0"]
+
+[node name="Hud" type="CanvasLayer" unique_id=1756208885]
+script = ExtResource("1_hyoy0")
+
+[node name="EarthquakeLabel" type="Label" parent="." unique_id=896174640]
+visible = false
+offset_right = 40.0
+offset_bottom = 23.0
+text = "¡TERREMOTO!"
+
+[node name="ProgressBar" type="TextureProgressBar" parent="." unique_id=1199526384]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="HoldButton" type="TextureButton" parent="." unique_id=47146347]
+offset_right = 40.0
+offset_bottom = 40.0

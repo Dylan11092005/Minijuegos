@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://c1502o12m01un"]
+
+[ext_resource type="Script" uid="uid://cng85o42oabdd" path="res://minigame_earthquake/Player.gd" id="1_t3qi7"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_t3qi7"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_4nob8"]
+
+[node name="Player" type="CharacterBody2D" unique_id=927608906]
+script = ExtResource("1_t3qi7")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1493348427]
+shape = SubResource("CapsuleShape2D_t3qi7")
+
+[node name="ShapeCast2D" type="ShapeCast2D" parent="CollisionShape2D" unique_id=106949596]
+shape = SubResource("CapsuleShape2D_4nob8")
