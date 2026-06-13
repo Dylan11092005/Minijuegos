@@ -91,3 +91,7 @@ func _on_button_26_pressed() -> void:
 
 func _on_button_9_pressed() -> void:
 	get_tree().change_scene_to_file("res://minigame_earthquake/Main.tscn")
+
+
+func _on_button_6_pressed() -> void:
+	get_tree().change_scene_to_file("res://minigame_laberinto/maze_minigame.tscn")

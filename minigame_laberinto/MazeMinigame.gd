@@ -11,7 +11,7 @@ func _ready() -> void:
 	actualizar_ui_amigos()
 
 	$TimerUI.iniciar(30, "Evacúa en", "segundos")
-	$TimerUI.tiempo_agotado.connect(_on_tiempo_agotado)
+	$TimerUI.time_up.connect(_on_tiempo_agotado)
 
 func _on_amigo1_rescatado(body):
 	if body.name == "Jugador":
