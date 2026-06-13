@@ -3,15 +3,16 @@
 # Lógica visual:
 #   - Cielo fijo arriba
 #   - Camino estático abajo
-#   - bg_city.png (casas + cartel) arranca grande, cubriendo toda la pantalla,
-#     y se acerca aún más conforme avanza el progreso, cortándose por los
-#     bordes/esquinas, simulando que la muñeca se acerca a la ciudad.
+#   - bg_city.png (casas + cartel) arranca pequeña/lejana y va haciendo zoom
+#     conforme avanza el progreso, además de "bajar" un poco para dar la
+#     sensación de que el personaje entra en la ciudad (la imagen pasa
+#     por encima/tapa parte de la pantalla).
 #
 # Capas (z):
 #   -12  ColorRect azul (relleno cielo)
 #   -10  bg_sky.png     (textura cielo, estática)
 #   -8   bg_ground.png  (camino, estático)
-#   -6   bg_city.png    (ciudad + cartel, zoom hacia arriba)
+#   -6   bg_city.png    (ciudad + cartel, zoom + descenso)
 
 extends Node2D
 
@@ -131,7 +132,7 @@ func _build_city() -> void:
 		_city_node.set_meta("tex_h", _sh * 0.35)
 
 
-# ── ZOOM ──────────────────────────────────────────────────────────────────────
+# ── ZOOM + DESCENSO ────────────────────────────────────────────────────────────
 func _update_zoom() -> void:
 	if _city_node == null:
 		return
@@ -143,10 +144,10 @@ func _update_zoom() -> void:
 	# TODO el ancho y TODO el alto de la pantalla (sin dejar huecos)
 	var zoom_cover = max(_sw / tex_w, _sh / tex_h)
 
-	# zoom_min: ya empieza grande, cubriendo toda la pantalla (toca los límites)
-	# zoom_max: se acerca más todavía (recorta más por los bordes/esquinas)
-	var zoom_min = zoom_cover * 0.4
-	var zoom_max = zoom_cover * 1.6
+	# zoom_min: tamaño inicial (ciudad pequeña/lejana)
+	# zoom_max: tamaño final (acercamiento, puede cubrir o exceder pantalla)
+	var zoom_min = zoom_cover * 0.6
+	var zoom_max = zoom_cover * 1.2
 
 	var zoom = lerp(zoom_min, zoom_max, _progress)
 
@@ -154,9 +155,16 @@ func _update_zoom() -> void:
 	var img_h = tex_h * zoom
 
 	# Centrada horizontalmente
-	# BASE de la imagen siempre en el horizonte → crece hacia ARRIBA
 	var pos_x = (_sw - img_w) * 0.5
-	var pos_y = _horizon_y - img_h
+
+	# BASE de la imagen anclada al horizonte, crece hacia arriba...
+	var base_pos_y = _horizon_y - img_h
+
+	# ...pero además "baja" conforme avanza el progreso, dando sensación
+	# de que la ciudad desciende y empieza a tapar/pasar por encima del personaje
+	var descend_offset = lerp(0.0, _sh * 0.35, _progress)
+
+	var pos_y = base_pos_y + descend_offset
 
 	_city_node.position = Vector2(pos_x, pos_y)
 	_city_node.scale    = Vector2(zoom, zoom)

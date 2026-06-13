@@ -2,8 +2,8 @@
 
 extends Node2D
 
-const PLAYER_SCALE = Vector2(1.6, 1.6)
-const TABLE_SCALE  = Vector2(1.4, 1.4)
+const PLAYER_SCALE = Vector2(1.3, 1.3)
+const TABLE_SCALE  = Vector2(1.2, 1.2)
 const WALK_FRAME_TIME = 0.12
 
 signal safe_zone_reached
@@ -41,11 +41,11 @@ func _ready() -> void:
 	_sh = float(win_size.y)
 
 	_player_x = _sw * 0.50
-	_player_y = _sh * 0.78
+	_player_y = _sh * 0.70
 
 	# Mesa más a la derecha: antes era 55px, ahora 18% del ancho
 	_table_x  = _sw * 0.18
-	_table_y  = _sh * 0.72
+	_table_y  = _sh * 0.68
 
 	_hiding_x = _table_x + 30.0
 	_hiding_y = _player_y + 18.0
@@ -150,10 +150,23 @@ func _set_state(new_state: PlayerState) -> void:
 			_girl_sprite.position = Vector2(_hiding_x, _hiding_y)
 			_table_sprite.z_index = 6
 		PlayerState.WIN:
+			_walk_frame = 0
+			_walk_timer = 0.0
 			if _idle_texture: _girl_sprite.texture = _idle_texture
-			_girl_sprite.modulate = Color(0.5, 1.0, 0.5)
+			_girl_sprite.modulate = Color.WHITE
 			_girl_sprite.position = Vector2(_player_x, _player_y)
 			_table_sprite.z_index = 4
+
+
+# ── API pública ───────────────────────────────────────────────────────────────
+# Llamado desde Main cuando el juego termina (ganado), para forzar la pose Idle
+# y detener la animación de caminar.
+func set_win() -> void:
+	_set_state(PlayerState.WIN)
+
+# Llamado desde Main cuando el juego termina (perdido), para detener la animación.
+func set_idle() -> void:
+	_set_state(PlayerState.IDLE)
 
 
 func on_hold_button_pressed() -> void:
