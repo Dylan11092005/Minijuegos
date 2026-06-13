@@ -7,91 +7,87 @@
 [ext_resource type="PackedScene" uid="uid://cws6fxthegns5" path="res://minigame_defo/regadera.tscn" id="6_b0edn"]
 
 [node name="MiniJuego" type="Node2D" unique_id=681249820]
-position = Vector2(-966, -705)
+position = Vector2(-722, -682)
 script = ExtResource("1_5bjp5")
 metadata/_edit_vertical_guides_ = [-31552.0]
 
 [node name="Fondo" type="Sprite2D" parent="." unique_id=1365374616 groups=["hueco_bueno"]]
 z_index = -10
-position = Vector2(1001.00006, 628.00006)
-scale = Vector2(0.55364585, 0.55277777)
+position = Vector2(1711, 1272.5)
+scale = Vector2(0.5203125, 0.55509263)
 texture = ExtResource("2_4td8a")
 
 [node name="Hole" parent="." unique_id=1337232162 instance=ExtResource("4_nnfgc")]
-position = Vector2(116, 818)
+position = Vector2(1782, 1470)
 
 [node name="Hole2" parent="." unique_id=767867980 instance=ExtResource("4_nnfgc")]
-position = Vector2(348, 815)
+position = Vector2(1299, 1746)
 current_state = 1
 
 [node name="Hole3" parent="." unique_id=1169389429 instance=ExtResource("4_nnfgc")]
-position = Vector2(589, 816)
+position = Vector2(2248, 1746)
 
 [node name="Hole4" parent="." unique_id=1962408512 instance=ExtResource("4_nnfgc")]
-position = Vector2(129, 1096)
+position = Vector2(1101, 1473)
 
 [node name="Hole5" parent="." unique_id=1024740953 instance=ExtResource("4_nnfgc")]
-position = Vector2(354, 1095)
+position = Vector2(2513, 1741)
 current_state = 1
 
 [node name="Hole6" parent="." unique_id=2095591413 instance=ExtResource("4_nnfgc")]
-position = Vector2(576, 1090)
+position = Vector2(903, 1737)
 
 [node name="Hole7" parent="." unique_id=1112990445 instance=ExtResource("4_nnfgc")]
 z_index = 10
-position = Vector2(847, 1086)
+position = Vector2(906, 1474)
 
 [node name="Hole8" parent="." unique_id=1435251270 instance=ExtResource("4_nnfgc")]
 z_index = 10
-position = Vector2(1079, 1088)
+position = Vector2(1302, 1471)
 
 [node name="Hole9" parent="." unique_id=1915709598 instance=ExtResource("4_nnfgc")]
 z_index = 10
-position = Vector2(1311, 1082)
+position = Vector2(1587, 1745)
 current_state = 1
 
 [node name="Hole10" parent="." unique_id=298363531 instance=ExtResource("4_nnfgc")]
-position = Vector2(848, 823)
+position = Vector2(1098, 1742)
 current_state = 1
 
 [node name="Hole11" parent="." unique_id=1697384397 instance=ExtResource("4_nnfgc")]
-position = Vector2(1080, 819)
+position = Vector2(1579, 1475)
 
 [node name="Hole12" parent="." unique_id=284136602 instance=ExtResource("4_nnfgc")]
-position = Vector2(1302, 826)
+position = Vector2(1983, 1469)
 
 [node name="Hole13" parent="." unique_id=1780911071 instance=ExtResource("4_nnfgc")]
-position = Vector2(1552, 819)
+position = Vector2(2244, 1472)
 current_state = 1
 
 [node name="Hole14" parent="." unique_id=1310704007 instance=ExtResource("4_nnfgc")]
-position = Vector2(1832, 824)
+position = Vector2(2506, 1464)
 
 [node name="Hole15" parent="." unique_id=1288643996 instance=ExtResource("4_nnfgc")]
 z_index = 10
-position = Vector2(1560, 1099)
+position = Vector2(1780, 1743)
 current_state = 1
 
 [node name="Hole16" parent="." unique_id=175784627 instance=ExtResource("4_nnfgc")]
 z_index = 10
-position = Vector2(1840, 1099)
+position = Vector2(1977, 1741)
 
 [node name="SpawnPoint" type="Marker2D" parent="." unique_id=1850664924]
 z_index = 10
-position = Vector2(1658, 456)
+position = Vector2(2260, 1068)
 
 [node name="SpawnPoint2" type="Marker2D" parent="." unique_id=50334236]
 z_index = 10
-position = Vector2(299, 418)
-
-[node name="Camera2D" type="Camera2D" parent="." unique_id=2012207941]
-position = Vector2(1000, 630)
-zoom = Vector2(0.6, 0.6)
+position = Vector2(1022, 1100)
 
 [node name="Regadera" parent="." unique_id=541666541 instance=ExtResource("6_b0edn")]
 z_index = 10
-position = Vector2(301, 425)
+position = Vector2(1105, 1141)
 
 [node name="Semilla" parent="." unique_id=1212064156 instance=ExtResource("3_xbmpo")]
 z_index = 10
-position = Vector2(1656, 447)
+position = Vector2(2275, 1144)

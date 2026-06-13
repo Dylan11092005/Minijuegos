@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://c8og8es3snmo6"]
+
+[ext_resource type="Script" uid="uid://db3sdgv4pves7" path="res://ui_global/LivesUi.gd" id="1_tiqat"]
+
+[node name="LivesUi" type="Node2D" unique_id=2021914970]
+script = ExtResource("1_tiqat")

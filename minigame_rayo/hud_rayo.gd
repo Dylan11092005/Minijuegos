@@ -3,7 +3,7 @@ extends Node2D
 var ANCHO := 1280.0
 var ALTO := 720.0
 
-var tiempo_actual := 30
+
 var vidas_actuales := 3
 var mensaje := ""
 
@@ -16,7 +16,7 @@ func _process(delta):
 
 
 func actualizar_hud(tiempo: int, vidas: int, nuevo_mensaje: String = ""):
-	tiempo_actual = tiempo
+
 	vidas_actuales = clamp(vidas, 0, 3)
 	mensaje = nuevo_mensaje
 	queue_redraw()
@@ -26,7 +26,7 @@ func _draw():
 	ANCHO = get_viewport_rect().size.x
 	ALTO = get_viewport_rect().size.y
 
-	dibujar_panel_tiempo()
+
 	dibujar_panel_vidas()
 	dibujar_corazones()
 	dibujar_mensaje()
@@ -35,77 +35,6 @@ func _draw():
 # =========================================================
 # PANEL DEL TIEMPO
 # =========================================================
-
-func dibujar_panel_tiempo():
-	var size := Vector2(280, 66)
-	var pos := Vector2((ANCHO - size.x) / 2.0, 20)
-
-	# Sombra
-	dibujar_rect_redondeado(
-		pos + Vector2(6, 7),
-		size,
-		20,
-		Color(0, 0, 0, 0.42)
-	)
-
-	# Fondo principal
-	dibujar_rect_redondeado(
-		pos,
-		size,
-		20,
-		Color(0.045, 0.055, 0.13, 0.95)
-	)
-
-	# Brillo interno
-	dibujar_rect_redondeado(
-		pos + Vector2(5, 5),
-		size - Vector2(10, 10),
-		16,
-		Color(0.13, 0.16, 0.32, 0.45)
-	)
-
-	# Borde
-	dibujar_borde_redondeado(
-		pos,
-		size,
-		20,
-		Color(0.62, 0.78, 1.0, 0.48),
-		3
-	)
-
-	# Línea superior decorativa
-	draw_line(
-		pos + Vector2(35, 9),
-		pos + Vector2(size.x - 35, 9),
-		Color(0.85, 0.92, 1.0, 0.28),
-		2
-	)
-
-	var font := ThemeDB.fallback_font
-	var texto := "TIEMPO  " + str(tiempo_actual)
-
-	# Sombra del texto
-	draw_string(
-		font,
-		pos + Vector2(2, 44),
-		texto,
-		HORIZONTAL_ALIGNMENT_CENTER,
-		size.x,
-		27,
-		Color(0, 0, 0, 0.60)
-	)
-
-	# Texto principal
-	draw_string(
-		font,
-		pos + Vector2(0, 42),
-		texto,
-		HORIZONTAL_ALIGNMENT_CENTER,
-		size.x,
-		27,
-		Color(0.95, 0.97, 1.0)
-	)
-
 
 # =========================================================
 # PANEL DE VIDAS

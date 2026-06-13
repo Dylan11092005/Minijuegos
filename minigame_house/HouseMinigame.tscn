@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://cgdkn0qo0drho"]
 
 [ext_resource type="Script" uid="uid://dshms2m10iev1" path="res://minigame_house/HouseMinigame.gd" id="1_dhsa5"]
-[ext_resource type="Texture2D" uid="uid://be6wilqgox7yf" path="res://minigame_house/assets/Wood.jpg" id="2_to2ju"]
+[ext_resource type="Texture2D" uid="uid://7xe8fby0htxe" path="res://minigame_house/assets/Fondo2D.png" id="2_84h05"]
 [ext_resource type="AudioStream" uid="uid://djbshm2balub3" path="res://minigame_house/music/FondoHouse.wav" id="3_84h05"]
 [ext_resource type="AudioStream" uid="uid://yncv337f8nqy" path="res://minigame_house/music/QuitarTornillo.wav" id="4_gawxg"]
 [ext_resource type="AudioStream" uid="uid://cm6m1yyhbc3di" path="res://minigame_house/music/CaidaPieza.wav" id="5_jaypx"]
@@ -13,9 +13,9 @@ bg_color = Color(0.3342767, 0.271695, 0.21732834, 1)
 script = ExtResource("1_dhsa5")
 
 [node name="Background" type="Sprite2D" parent="." unique_id=586096648]
-position = Vector2(994.51605, 592.46344)
-scale = Vector2(0.9429033, 0.7831707)
-texture = ExtResource("2_to2ju")
+position = Vector2(1121.0271, 677.6312)
+scale = Vector2(1.6388493, 1.7665852)
+texture = ExtResource("2_84h05")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1640180912]
 
@@ -73,11 +73,11 @@ one_shot = true
 
 [node name="HouseContainer" type="Node2D" parent="." unique_id=1332241059]
 
-[node name="AudioFondo" type="AudioStreamPlayer" parent="." unique_id=213290253]
+[node name="BackgroundSound" type="AudioStreamPlayer" parent="." unique_id=213290253]
 stream = ExtResource("3_84h05")
 
-[node name="AudioTornillo" type="AudioStreamPlayer" parent="." unique_id=1528503988]
+[node name="ScrewSound" type="AudioStreamPlayer" parent="." unique_id=1528503988]
 stream = ExtResource("4_gawxg")
 
-[node name="AudioCaida" type="AudioStreamPlayer" parent="." unique_id=884774488]
+[node name="FallSound" type="AudioStreamPlayer" parent="." unique_id=884774488]
 stream = ExtResource("5_jaypx")

@@ -1,0 +1,35 @@
+[gd_scene format=3 uid="uid://dsdbaxj6xesxn"]
+
+[ext_resource type="Script" uid="uid://7wk2j2cui3vk" path="res://ui_global/GameResult.gd" id="1_dq4m0"]
+[ext_resource type="AudioStream" uid="uid://chdy44sxabuoh" path="res://ui_global/music/MusicaVictoria.mp3" id="2_tilk3"]
+[ext_resource type="AudioStream" uid="uid://c4ynbpm8q7nw" path="res://ui_global/music/JuegoPerdido.mp3" id="3_ti5tt"]
+
+[node name="GameResult" type="CanvasLayer" unique_id=2106536257]
+script = ExtResource("1_dq4m0")
+
+[node name="Container" type="Control" parent="." unique_id=1736358406]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1280.0
+offset_bottom = 648.0
+
+[node name="BackgroundPanel" type="Panel" parent="Container" unique_id=811803372]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="LabelMessage" type="Label" parent="Container" unique_id=980075962]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="BtnVolver" type="Button" parent="Container" unique_id=807214878]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="WinSound" type="AudioStreamPlayer" parent="." unique_id=1615529580]
+stream = ExtResource("2_tilk3")
+
+[node name="LoseSound" type="AudioStreamPlayer" parent="." unique_id=1301002894]
+stream = ExtResource("3_ti5tt")

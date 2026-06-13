@@ -1,0 +1,121 @@
+[gd_scene format=3 uid="uid://cpbtcq3m0037w"]
+
+[ext_resource type="Script" uid="uid://bf660g618hqrv" path="res://minigame_river/RiverCleanupMinigame.gd" id="1_ge4tx"]
+[ext_resource type="Texture2D" uid="uid://dvvbqjqqo2tvj" path="res://minigame_river/assets/basurero.png" id="2_uq7vv"]
+[ext_resource type="Shader" uid="uid://bamvh5yhcaqwh" path="res://minigame_river/RiverCleanupMinigame.gdshader" id="2_wn5pj"]
+[ext_resource type="PackedScene" uid="uid://ce3pi21xcyeqx" path="res://minigame_river/TrashItem.tscn" id="3_108rc"]
+[ext_resource type="Texture2D" uid="uid://bpyn3y3v3xnbl" path="res://minigame_river/assets/aguaTileable.png" id="3_wn5pj"]
+[ext_resource type="Texture2D" uid="uid://bk8ag62y7k8f3" path="res://minigame_river/assets/cesped1.png" id="4_108rc"]
+[ext_resource type="Texture2D" uid="uid://cusetxwcjxlnd" path="res://minigame_river/assets/trash/botella.png" id="4_v4lh6"]
+[ext_resource type="Texture2D" uid="uid://bdb0xccj5iac3" path="res://minigame_river/assets/trash/lata.png" id="5_8ne84"]
+[ext_resource type="Texture2D" uid="uid://b4vnrgj2f07g2" path="res://minigame_river/assets/trash/bolsa.png" id="6_at5mt"]
+[ext_resource type="Texture2D" uid="uid://6f6poywa3m1g" path="res://minigame_river/assets/trash/papel.png" id="7_obk83"]
+[ext_resource type="Texture2D" uid="uid://7vcec8dmyiph" path="res://minigame_river/assets/trash/vaso.png" id="8_g6qnw"]
+[ext_resource type="Script" uid="uid://bgv08pt3nmr64" path="res://minigame_river/WaterMove.gd" id="11_g6qnw"]
+[ext_resource type="AudioStream" uid="uid://t00vgos3fk8d" path="res://minigame_river/assets/music/rio.mp3" id="11_obk83"]
+[ext_resource type="AudioStream" uid="uid://drft0fi2jm8jq" path="res://minigame_river/assets/music/basura.mp3" id="12_g6qnw"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_msvyt"]
+shader = ExtResource("2_wn5pj")
+shader_parameter/water_texture = ExtResource("3_wn5pj")
+shader_parameter/speed = 0.08
+shader_parameter/wave_strength = 0.01
+shader_parameter/wave_speed = 1.2
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_r8a0m"]
+load_path = "res://.godot/imported/agua.png-9fd2be9bb80b8d4fd871a4ab5b80bb30.ctex"
+
+[node name="RiverCleanupMinigame" type="Node2D" unique_id=937733243]
+script = ExtResource("1_ge4tx")
+
+[node name="Background" type="ColorRect" parent="." unique_id=138958735]
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
+color = Color(0.49411765, 0.78431374, 0.8901961, 1)
+
+[node name="GeneratedWater" type="ColorRect" parent="." unique_id=1540495931]
+material = SubResource("ShaderMaterial_msvyt")
+offset_left = -11.0
+offset_top = 37.0
+offset_right = 1954.0
+offset_bottom = 1106.0
+mouse_filter = 2
+
+[node name="GarbageCollector" type="Node2D" parent="." unique_id=538202841]
+position = Vector2(1816, 942)
+
+[node name="Sprite2D" type="Sprite2D" parent="GarbageCollector" unique_id=856862876]
+z_index = 2
+position = Vector2(12.999939, 17.999985)
+scale = Vector2(0.4544925, 0.4725806)
+texture = ExtResource("2_uq7vv")
+
+[node name="Trash" type="Node2D" parent="." unique_id=10957908]
+z_index = 1
+position = Vector2(3, -1)
+
+[node name="TrashItem" parent="Trash" unique_id=1090431356 instance=ExtResource("3_108rc")]
+position = Vector2(1129, 596)
+trash_texture = ExtResource("4_v4lh6")
+
+[node name="TrashItem2" parent="Trash" unique_id=324431832 instance=ExtResource("3_108rc")]
+position = Vector2(851, 254)
+trash_texture = ExtResource("5_8ne84")
+
+[node name="TrashItem3" parent="Trash" unique_id=1530706150 instance=ExtResource("3_108rc")]
+position = Vector2(187, 260)
+trash_texture = ExtResource("6_at5mt")
+
+[node name="TrashItem4" parent="Trash" unique_id=727513537 instance=ExtResource("3_108rc")]
+position = Vector2(1713, 457)
+trash_texture = ExtResource("7_obk83")
+
+[node name="TrashItem7" parent="Trash" unique_id=670870072 instance=ExtResource("3_108rc")]
+position = Vector2(86, 510)
+trash_texture = ExtResource("7_obk83")
+
+[node name="TrashItem5" parent="Trash" unique_id=919389235 instance=ExtResource("3_108rc")]
+position = Vector2(1430, 302)
+trash_texture = ExtResource("8_g6qnw")
+
+[node name="TrashItem6" parent="Trash" unique_id=1019013895 instance=ExtResource("3_108rc")]
+position = Vector2(641, 643)
+trash_texture = ExtResource("8_g6qnw")
+
+[node name="GameTimer" type="Timer" parent="." unique_id=405383887]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=119521711]
+
+[node name="Grass" type="Sprite2D" parent="." unique_id=1620858574]
+z_index = 1
+position = Vector2(953, 793.00006)
+scale = Vector2(2.936186, 1.6776667)
+texture = ExtResource("4_108rc")
+metadata/_edit_lock_ = true
+
+[node name="Grass2" type="Sprite2D" parent="." unique_id=1529457348]
+z_index = 1
+position = Vector2(971.99994, 275)
+rotation = 3.1415927
+scale = Vector2(2.936186, 1.6776667)
+texture = ExtResource("4_108rc")
+metadata/_edit_lock_ = true
+
+[node name="Decoration" type="Node2D" parent="." unique_id=750047333]
+metadata/_edit_lock_ = true
+
+[node name="water" type="Sprite2D" parent="Decoration" unique_id=1038790531]
+visible = false
+position = Vector2(963.9999, 538)
+scale = Vector2(4.312, 1.8930001)
+texture = SubResource("CompressedTexture2D_r8a0m")
+script = ExtResource("11_g6qnw")
+metadata/_edit_lock_ = true
+
+[node name="RiverSound" type="AudioStreamPlayer" parent="." unique_id=442071721]
+stream = ExtResource("11_obk83")
+autoplay = true
+
+[node name="TrashSound" type="AudioStreamPlayer" parent="." unique_id=804693863]
+stream = ExtResource("12_g6qnw")

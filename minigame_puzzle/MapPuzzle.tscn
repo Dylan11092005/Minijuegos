@@ -2,17 +2,17 @@
 
 [ext_resource type="Script" uid="uid://j6ljlpg0egd8" path="res://minigame_puzzle/MapPuzzle.gd" id="1_1b4qa"]
 [ext_resource type="Texture2D" uid="uid://bitygl120yl8t" path="res://minigame_puzzle/assets/Mapa_Riesgo.png" id="2_2pb2e"]
-[ext_resource type="Texture2D" uid="uid://cdisdf8rgahox" path="res://minigame_puzzle/assets/Sky.jpg" id="3_2pb2e"]
+[ext_resource type="Texture2D" uid="uid://cf42svfxvby0l" path="res://minigame_puzzle/assets/Sky2D.png" id="3_hi2aj"]
 [ext_resource type="AudioStream" uid="uid://cromwnira2gsc" path="res://minigame_puzzle/music/FondoPuzzle.wav" id="4_hi2aj"]
 [ext_resource type="AudioStream" uid="uid://r5hal7l8i81k" path="res://minigame_puzzle/music/DeslizarPieza.wav" id="5_tjatc"]
 
 [node name="MapPuzzle" type="Node2D" unique_id=2024003352]
 script = ExtResource("1_1b4qa")
 map_texture = ExtResource("2_2pb2e")
-background_texture = ExtResource("3_2pb2e")
+background_texture = ExtResource("3_hi2aj")
 
-[node name="AudioFondo" type="AudioStreamPlayer" parent="." unique_id=224652397]
+[node name="BackgroundSound" type="AudioStreamPlayer" parent="." unique_id=224652397]
 stream = ExtResource("4_hi2aj")
 
-[node name="AudioDeslizar" type="AudioStreamPlayer" parent="." unique_id=310225832]
+[node name="SlideSound" type="AudioStreamPlayer" parent="." unique_id=310225832]
 stream = ExtResource("5_tjatc")
