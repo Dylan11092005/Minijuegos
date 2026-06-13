@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://dnqamtvfyd7xr"]
 
-[ext_resource type="Script" uid="uid://52v4crgvw727" path="res://minigame_rayo/rayo.gd" id="1_hkgip"]
-[ext_resource type="Texture2D" uid="uid://d2wltm311tqi8" path="res://minigame_rayo/assets/minigame_rayo/rayito.png" id="2_hkgip"]
+[ext_resource type="Script" uid="uid://52v4crgvw727" path="res://minigame_storm/Lightning.gd" id="1_hkgip"]
+[ext_resource type="Texture2D" uid="uid://d2wltm311tqi8" path="res://minigame_storm/assets/images/lightning.png" id="2_hkgip"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hkgip"]
 size = Vector2(104.5, 127)

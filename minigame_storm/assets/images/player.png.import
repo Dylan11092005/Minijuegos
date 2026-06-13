@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dadi2h85ijxph"
-path="res://.godot/imported/rayito 2.0.png-1e172ccc0c3192e6a323fbdb28c02bb8.ctex"
+uid="uid://qynw3eqli7w2"
+path="res://.godot/imported/player.png-c680436887359f4c8760058d5a02b0a6.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://minigame_rayo/assets/minigame_rayo/rayito 2.0.png"
-dest_files=["res://.godot/imported/rayito 2.0.png-1e172ccc0c3192e6a323fbdb28c02bb8.ctex"]
+source_file="res://minigame_storm/assets/images/player.png"
+dest_files=["res://.godot/imported/player.png-c680436887359f4c8760058d5a02b0a6.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://43gf5s4osodi"
-path="res://.godot/imported/rayo.png-3241ad238b3f458dddc7cf9429eea96a.ctex"
+uid="uid://d2wltm311tqi8"
+path="res://.godot/imported/lightning.png-bcdf0be7ca3f491784636c834665c90f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://minigame_rayo/assets/minigame_rayo/rayo.png"
-dest_files=["res://.godot/imported/rayo.png-3241ad238b3f458dddc7cf9429eea96a.ctex"]
+source_file="res://minigame_storm/assets/images/lightning.png"
+dest_files=["res://.godot/imported/lightning.png-bcdf0be7ca3f491784636c834665c90f.ctex"]
 
 [params]
 
