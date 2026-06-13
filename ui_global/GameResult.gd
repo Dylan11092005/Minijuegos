@@ -166,12 +166,8 @@ func _setup_label():
 	message_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	message_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	
-	# Letras más grandes, gruesas y bonitas
 	message_label.add_theme_color_override("font_color", COLOR_DARK_BLUE)
-	message_label.add_theme_color_override("font_outline_color", COLOR_WHITE)
-	message_label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.18))
-	
-	message_label.add_theme_constant_override("outline_size", 3)
+	message_label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.12))
 	message_label.add_theme_constant_override("shadow_offset_x", 2)
 	message_label.add_theme_constant_override("shadow_offset_y", 2)
 	message_label.add_theme_font_size_override("font_size", 46)
@@ -234,7 +230,7 @@ func _setup_button():
 	back_button.add_theme_color_override("font_color", COLOR_WHITE)
 	back_button.add_theme_color_override("font_hover_color", COLOR_DARK_BLUE)
 	back_button.add_theme_color_override("font_pressed_color", COLOR_WHITE)
-	back_button.add_theme_color_override("font_outline_color", COLOR_DARK_BLUE)
+	back_button.add_theme_font_size_override("font_size", 24)
 	
 	back_button.add_theme_constant_override("outline_size", 2)
 	back_button.add_theme_font_size_override("font_size", 24)

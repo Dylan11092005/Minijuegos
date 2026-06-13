@@ -16,6 +16,7 @@ script = ExtResource("3_bxpq0")
 position = Vector2(740, 620)
 
 [node name="LightningSpawnTimer" type="Timer" parent="." unique_id=921495330]
+wait_time = 0.55
 autostart = true
 
 [node name="RainAudio" type="AudioStreamPlayer" parent="." unique_id=1221711485]

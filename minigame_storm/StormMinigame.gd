@@ -65,21 +65,10 @@ func _setup_timer_ui():
 	_timer_ui = TIMER_UI_SCENE.instantiate()
 	add_child(_timer_ui)
 
-	if _timer_ui.has_signal("time_expired"):
-		_timer_ui.connect("time_expired", Callable(self, "_on_time_expired"))
-	elif _timer_ui.has_signal("tiempo_agotado"):
-		_timer_ui.connect("tiempo_agotado", Callable(self, "_on_time_expired"))
+	_timer_ui.time_up.connect(_on_time_up)
 
-	if _timer_ui.has_method("set_panel_size"):
-		_timer_ui.set_panel_size(500, 60)
-	elif _timer_ui.has_method("set_tamano_panel"):
-		_timer_ui.set_tamano_panel(500, 60)
-
-	if _timer_ui.has_method("start_timer"):
-		_timer_ui.start_timer(TOTAL_TIME, "Tiempo restante", "para sobrevivir")
-	elif _timer_ui.has_method("iniciar"):
-		_timer_ui.iniciar(TOTAL_TIME, "Tiempo restante", "para sobrevivir")
-
+	_timer_ui.set_tamano_panel(500, 60)
+	_timer_ui.iniciar(TOTAL_TIME, "Tiempo restante", "para sobrevivir")
 
 func _setup_lives_ui():
 	_lives_ui = LIVES_UI_SCENE.instantiate()
@@ -133,14 +122,22 @@ func _on_lightning_spawn_timer_timeout():
 
 	var screen_width: float = get_viewport_rect().size.x
 
-	var lightning = scene_to_spawn.instantiate()
-	lightning.position.x = randi_range(
-		LIGHTNING_SPAWN_MARGIN,
-		int(screen_width - LIGHTNING_SPAWN_MARGIN)
-	)
-	lightning.position.y = -80
+	# Cantidad de rayos por aparición.
+	# Normalmente cae 1, pero a veces caen 2.
+	var lightning_amount := randi_range(1, 2)
 
-	add_child(lightning)
+	for index in range(lightning_amount):
+		var lightning = scene_to_spawn.instantiate()
+
+		lightning.position.x = randi_range(
+			LIGHTNING_SPAWN_MARGIN,
+			int(screen_width - LIGHTNING_SPAWN_MARGIN)
+		)
+
+		# Se separan un poquito para que no nazcan exactamente iguales.
+		lightning.position.y = -80 - (index * 90)
+
+		add_child(lightning)
 
 
 func _on_background_lightning_flashes():

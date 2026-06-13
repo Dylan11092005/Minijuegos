@@ -2,7 +2,11 @@ extends CharacterBody2D
 class_name StormPlayer
 
 const SCREEN_MARGIN := 70.0
-const GROUND_OFFSET := 150.0
+
+# Más grande = el jugador queda más arriba.
+# Antes estaba en 150.0. Ahora lo subimos más.
+const GROUND_OFFSET := 220.0
+
 const DAMAGE_COOLDOWN := 0.8
 const BLINK_TIME := 0.08
 const BLINK_REPETITIONS := 4
@@ -87,13 +91,16 @@ func _update_walk_animation(delta, direction: int):
 	if direction != 0:
 		_walk_time += delta * WALK_ANIMATION_SPEED
 
-		_sprite.flip_h = direction < 0
+		# CORREGIDO:
+		# Si antes al ir a la derecha se veía de espalda,
+		# esta línea lo invierte para que quede al lado correcto.
+		_sprite.flip_h = direction > 0
 
-		var bounce: float = sin(_walk_time) * WALK_BOUNCE_HEIGHT
+		var bounce: float = abs(sin(_walk_time)) * WALK_BOUNCE_HEIGHT
 		var tilt: float = sin(_walk_time) * WALK_TILT_AMOUNT
 		var squash: float = abs(sin(_walk_time)) * WALK_SQUASH_AMOUNT
 
-		_sprite.position.y = bounce
+		_sprite.position.y = -bounce
 		_sprite.rotation_degrees = tilt * direction
 		_sprite.scale = Vector2(
 			_base_scale.x + squash,
