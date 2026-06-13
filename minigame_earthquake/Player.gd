@@ -42,15 +42,18 @@ func _ready() -> void:
 
 	_player_x = _sw * 0.50
 	_player_y = _sh * 0.78
-	_table_x  = 55.0
+
+	# Mesa más a la derecha: antes era 55px, ahora 18% del ancho
+	_table_x  = _sw * 0.18
 	_table_y  = _sh * 0.72
+
 	_hiding_x = _table_x + 30.0
 	_hiding_y = _player_y + 18.0
 
 	_load_textures()
 	_build_table()
 	_build_girl()
-	_set_state(PlayerState.IDLE)
+	_set_state(PlayerState.WALKING)
 
 	await get_tree().process_frame
 	var main = get_parent()
@@ -137,6 +140,7 @@ func _set_state(new_state: PlayerState) -> void:
 		PlayerState.WALKING:
 			_walk_frame = 0
 			_walk_timer = 0.0
+			if _idle_texture: _girl_sprite.texture = _idle_texture
 			_girl_sprite.modulate = Color.WHITE
 			_girl_sprite.position = Vector2(_player_x, _player_y)
 			_table_sprite.z_index = 4
@@ -154,18 +158,23 @@ func _set_state(new_state: PlayerState) -> void:
 
 func on_hold_button_pressed() -> void:
 	_is_holding_button = true
-	if _earthquake_active and current_state != PlayerState.HIDING:
+	if current_state != PlayerState.WIN:
 		_set_state(PlayerState.HIDING)
 
 func on_hold_button_released() -> void:
 	_is_holding_button = false
-	if _earthquake_active and current_state == PlayerState.HIDING:
-		_set_state(PlayerState.IDLE)
+	if current_state == PlayerState.HIDING:
+		if _earthquake_active:
+			_set_state(PlayerState.IDLE)
+		else:
+			_set_state(PlayerState.WALKING)
 
 func _on_earthquake_started() -> void:
 	_earthquake_active = true
-	if _is_holding_button: _set_state(PlayerState.HIDING)
-	else: _set_state(PlayerState.IDLE)
+	if _is_holding_button:
+		_set_state(PlayerState.HIDING)
+	else:
+		_set_state(PlayerState.IDLE)
 
 func _on_earthquake_ended() -> void:
 	_earthquake_active = false
