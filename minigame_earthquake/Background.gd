@@ -146,7 +146,7 @@ func _update_zoom() -> void:
 
 	# zoom_min: tamaño inicial (ciudad pequeña/lejana)
 	# zoom_max: tamaño final (acercamiento, puede cubrir o exceder pantalla)
-	var zoom_min = zoom_cover * 0.6
+	var zoom_min = zoom_cover * 1
 	var zoom_max = zoom_cover * 1.2
 
 	var zoom = lerp(zoom_min, zoom_max, _progress)

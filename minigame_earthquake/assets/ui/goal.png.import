@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://p4hahs4madls"
-path="res://.godot/imported/bg_city.png-da4ab1db47ac0cf34c4c5e848471d549.ctex"
+uid="uid://dvv4f3c2qlrjd"
+path="res://.godot/imported/goal.png-f919cf3a7a7201f3401bbb8706048065.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://minigame_earthquake/assets/backgrounds/bg_city.png"
-dest_files=["res://.godot/imported/bg_city.png-da4ab1db47ac0cf34c4c5e848471d549.ctex"]
+source_file="res://minigame_earthquake/assets/ui/goal.png"
+dest_files=["res://.godot/imported/goal.png-f919cf3a7a7201f3401bbb8706048065.ctex"]
 
 [params]
 
