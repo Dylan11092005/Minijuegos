@@ -1,11 +1,12 @@
-class_name StormPlayer
 extends CharacterBody2D
+class_name StormPlayer
 
 const SCREEN_MARGIN := 70.0
-const GROUND_OFFSET := 120.0
+const GROUND_OFFSET := 150.0
 const DAMAGE_COOLDOWN := 0.8
 const BLINK_TIME := 0.08
 const BLINK_REPETITIONS := 4
+
 const WALK_ANIMATION_SPEED := 10.0
 const WALK_BOUNCE_HEIGHT := 4.0
 const WALK_TILT_AMOUNT := 5.0
