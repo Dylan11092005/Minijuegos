@@ -1,0 +1,32 @@
+[gd_scene format=3 uid="uid://dxqrim86yf70m"]
+
+[ext_resource type="Texture2D" uid="uid://c3n870e51uarq" path="res://minigame_hillside_barrier/assets/images/Background.png" id="1_s7jqc"]
+[ext_resource type="Script" uid="uid://cg8a6hmfeylx0" path="res://minigame_hillside_barrier/HillsideBarrierMinigame.gd" id="1_tguba"]
+
+[node name="HillsideBarrierMinigame" type="Node2D" unique_id=1440286696]
+script = ExtResource("1_tguba")
+
+[node name="BackgroundImage" type="TextureRect" parent="." unique_id=1730088592]
+z_index = -20
+offset_right = 1945.0
+offset_bottom = 1090.0
+scale = Vector2(0.99, 0.99)
+texture = ExtResource("1_s7jqc")
+expand_mode = 1
+
+[node name="PlantingSpots" type="Node2D" parent="." unique_id=1956179677]
+
+[node name="TreeSaplings" type="Node2D" parent="." unique_id=1792561405]
+
+[node name="TreeSpawnPoint" type="Marker2D" parent="." unique_id=1687862948]
+position = Vector2(1450, 980)
+
+[node name="TimeSound" type="AudioStreamPlayer" parent="." unique_id=2013248923]
+
+[node name="BackgroundAudio" type="AudioStreamPlayer" parent="." unique_id=531716317]
+
+[node name="PlantAudio" type="AudioStreamPlayer" parent="." unique_id=902359879]
+
+[node name="ErrorAudio" type="AudioStreamPlayer" parent="." unique_id=1580588395]
+
+[node name="LandslideAudio" type="AudioStreamPlayer" parent="." unique_id=148550725]
