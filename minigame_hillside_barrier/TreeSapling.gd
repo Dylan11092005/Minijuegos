@@ -6,14 +6,17 @@ class_name HillsideTreeSapling
 # CONSTANTS
 # =========================================================
 
-const TREE_RADIUS := 42.0
+const TREE_RADIUS := 55.0
 const RETURN_SPEED := 18.0
 
-const COLOR_TRUNK := Color("#7A4A24")
+const COLOR_TRUNK := Color("#8B4F24")
 const COLOR_TRUNK_DARK := Color("#4A2B16")
+const COLOR_TRUNK_LIGHT := Color("#B06A35")
+
 const COLOR_LEAVES := Color("#5EAD3A")
-const COLOR_LEAVES_LIGHT := Color("#83C94A")
-const COLOR_LEAVES_DARK := Color("#3E7A2A")
+const COLOR_LEAVES_LIGHT := Color("#8BD84A")
+const COLOR_LEAVES_DARK := Color("#2F6B25")
+const COLOR_OUTLINE := Color("#24551F")
 
 
 # =========================================================
@@ -41,11 +44,11 @@ var _returning := false
 func _ready():
 	_start_position = position
 
+	z_index = 30
 	monitoring = true
 	monitorable = true
 	input_pickable = true
 
-	# Tree layer 2, detects spots layer 4.
 	collision_layer = 2
 	collision_mask = 4
 
@@ -81,19 +84,36 @@ func _input(event):
 
 
 func _draw():
-	# Trunk
-	draw_rect(Rect2(Vector2(-8, -2), Vector2(16, 42)), COLOR_TRUNK)
-	draw_line(Vector2(-8, -2), Vector2(-8, 40), COLOR_TRUNK_DARK, 2.0)
-	draw_line(Vector2(8, -2), Vector2(8, 40), COLOR_TRUNK_DARK, 2.0)
+# Sombra suave debajo del árbol
+	draw_set_transform(Vector2(0, 0), 0.0, Vector2(1.8, 0.45))
+	draw_circle(Vector2(0, 0), 18, Color(0, 0, 0, 0.22))
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+	# Tronco principal
+	draw_rect(Rect2(Vector2(-8, -58), Vector2(16, 58)), COLOR_TRUNK)
+	draw_line(Vector2(-8, -58), Vector2(-8, 0), COLOR_TRUNK_DARK, 2.5)
+	draw_line(Vector2(8, -58), Vector2(8, 0), COLOR_TRUNK_DARK, 2.5)
+	draw_line(Vector2(-2, -52), Vector2(-2, -6), COLOR_TRUNK_LIGHT, 2.0)
+	# Raíces pequeñas
+	draw_line(Vector2(-4, -5), Vector2(-24, 10), COLOR_TRUNK_DARK, 3.0)
+	draw_line(Vector2(4, -5), Vector2(24, 10), COLOR_TRUNK_DARK, 3.0)
+	draw_line(Vector2(0, -4), Vector2(0, 12), COLOR_TRUNK_DARK, 3.0)
 
-	# Leaves
-	draw_circle(Vector2(0, -28), 28, COLOR_LEAVES)
-	draw_circle(Vector2(-20, -16), 22, COLOR_LEAVES_DARK)
-	draw_circle(Vector2(20, -16), 22, COLOR_LEAVES)
-	draw_circle(Vector2(0, -5), 24, COLOR_LEAVES_LIGHT)
+	# Copa del árbol con borde oscuro
+	draw_circle(Vector2(0, -100), 34, COLOR_OUTLINE)
+	draw_circle(Vector2(-28, -78), 29, COLOR_OUTLINE)
+	draw_circle(Vector2(28, -78), 29, COLOR_OUTLINE)
+	draw_circle(Vector2(0, -65), 31, COLOR_OUTLINE)
 
-	# Outline
-	draw_arc(Vector2(0, -20), 36, 0, TAU, 64, Color("#2D5A24"), 3.0, true)
+	# Copa del árbol interior
+	draw_circle(Vector2(0, -100), 30, COLOR_LEAVES)
+	draw_circle(Vector2(-28, -78), 25, COLOR_LEAVES_DARK)
+	draw_circle(Vector2(28, -78), 25, COLOR_LEAVES)
+	draw_circle(Vector2(0, -65), 27, COLOR_LEAVES_LIGHT)
+
+	# Brillos de hojas
+	draw_circle(Vector2(-8, -108), 8, Color("#A7EE63"))
+	draw_circle(Vector2(15, -86), 7, Color("#9BE75A"))
+	draw_circle(Vector2(-13, -67), 6, Color("#A7EE63"))
 
 
 # =========================================================
@@ -109,13 +129,13 @@ func _on_input_event(_viewport, event, _shape_idx):
 			_dragging = true
 			_returning = false
 			_drag_offset = global_position - get_global_mouse_position()
-			z_index = 20
+			z_index = 50
 			get_viewport().set_input_as_handled()
 
 
 func _drop_tree():
 	_dragging = false
-	z_index = 0
+	z_index = 30
 
 	var target_spot: Area2D = _get_target_spot()
 
@@ -126,14 +146,16 @@ func _drop_tree():
 
 		if minigame and minigame.has_method("register_failed_drop"):
 			minigame.register_failed_drop(self)
-			
+
+
 func _get_target_spot() -> Area2D:
 	for area in get_overlapping_areas():
 		if area.has_method("can_place_tree") and area.can_place_tree():
 			return area
 
 	return null
-	
+
+
 func _place_on_spot(spot: Area2D):
 	_placed = true
 	_returning = false
@@ -169,5 +191,5 @@ func _ensure_collision_shape():
 	var circle_shape := CircleShape2D.new()
 	circle_shape.radius = TREE_RADIUS
 
-	collision_shape.position = Vector2(0, -8)
+	collision_shape.position = Vector2(0, -60)
 	collision_shape.shape = circle_shape

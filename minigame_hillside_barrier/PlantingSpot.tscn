@@ -1,9 +1,139 @@
 [gd_scene format=3 uid="uid://bbm3gphmanipd"]
 
+[sub_resource type="GDScript" id="GDScript_iil01"]
+script/source = "extends Area2D
+
+
+
+# =========================================================
+# CONSTANTS
+# =========================================================
+
+const SPOT_RADIUS := 45.0
+
+const COLOR_EMPTY := Color(\"#72FF8A\")
+const COLOR_EMPTY_GLOW := Color(\"#72FF8A\")
+const COLOR_FILLED := Color(\"#4CAF50\")
+const COLOR_FILLED_DARK := Color(\"#2F6B32\")
+
+
+# =========================================================
+# PUBLIC VARIABLES
+# =========================================================
+
+@export var spot_index := 0
+@export var debug_visible := true
+
+var is_filled := false
+
+
+# =========================================================
+# PRIVATE VARIABLES
+# =========================================================
+
+var _time_elapsed := 0.0
+
+
+# =========================================================
+# LIFECYCLE METHODS
+# =========================================================
+
+func _ready():
+	monitoring = true
+	monitorable = true
+
+	collision_layer = 4
+	collision_mask = 2
+
+	_ensure_collision_shape()
+	queue_redraw()
+
+
+func _process(delta):
+	_time_elapsed += delta
+	queue_redraw()
+
+
+func _draw():
+	if not debug_visible:
+		return
+
+	if is_filled:
+		draw_circle(
+			Vector2.ZERO,
+			SPOT_RADIUS,
+			Color(COLOR_FILLED.r, COLOR_FILLED.g, COLOR_FILLED.b, 0.20)
+		)
+
+		draw_arc(
+			Vector2.ZERO,
+			SPOT_RADIUS,
+			0,
+			TAU,
+			72,
+			COLOR_FILLED_DARK,
+			4.0,
+			true
+		)
+	else:
+		var pulse := 1.0 + sin(_time_elapsed * 4.0 + spot_index) * 0.08
+		var radius := SPOT_RADIUS * pulse
+
+		draw_circle(
+			Vector2.ZERO,
+			radius + 10,
+			Color(COLOR_EMPTY_GLOW.r, COLOR_EMPTY_GLOW.g, COLOR_EMPTY_GLOW.b, 0.12)
+		)
+
+		draw_arc(
+			Vector2.ZERO,
+			radius,
+			0,
+			TAU,
+			72,
+			Color(COLOR_EMPTY.r, COLOR_EMPTY.g, COLOR_EMPTY.b, 0.75),
+			4.0,
+			true
+		)
+
+
+# =========================================================
+# PUBLIC METHODS
+# =========================================================
+
+func can_place_tree() -> bool:
+	return not is_filled
+
+
+func place_tree():
+	is_filled = true
+	monitoring = false
+	queue_redraw()
+
+
+# =========================================================
+# PRIVATE METHODS
+# =========================================================
+
+func _ensure_collision_shape():
+	var collision_shape := get_node_or_null(\"CollisionShape2D\") as CollisionShape2D
+
+	if collision_shape == null:
+		collision_shape = CollisionShape2D.new()
+		collision_shape.name = \"CollisionShape2D\"
+		add_child(collision_shape)
+
+	var circle_shape := CircleShape2D.new()
+	circle_shape.radius = SPOT_RADIUS
+
+	collision_shape.shape = circle_shape
+"
+
 [sub_resource type="CircleShape2D" id="CircleShape2D_iil01"]
 radius = 45.0
 
 [node name="PlantingSpot" type="Area2D" unique_id=1681454119]
+script = SubResource("GDScript_iil01")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1288554384]
 shape = SubResource("CircleShape2D_iil01")

@@ -1,9 +1,12 @@
 [gd_scene format=3 uid="uid://c68yocpjs7fe1"]
 
+[ext_resource type="Script" uid="uid://cvapcskk2ohjn" path="res://minigame_hillside_barrier/TreeSapling.gd" id="1_bm6y4"]
+
 [sub_resource type="CircleShape2D" id="CircleShape2D_t1of6"]
 radius = 42.0
 
 [node name="TreeSapling" type="Area2D" unique_id=197664341]
+script = ExtResource("1_bm6y4")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=831714547]
 shape = SubResource("CircleShape2D_t1of6")
