@@ -27,5 +27,5 @@ volume_db = -40.536
 stream = ExtResource("8_d8f6g")
 volume_db = -46.561
 
-[connection signal="timeout" from="LightningSpawnTimer" to="." method="_on_lightning_spawn_timer_timeout"]
 [connection signal="timeout" from="LightningSpawnTimer" to="." method="_on_timer_spawn_rayos_timeout"]
+[connection signal="timeout" from="LightningSpawnTimer" to="." method="_on_lightning_spawn_timer_timeout"]
