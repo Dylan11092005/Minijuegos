@@ -9,16 +9,17 @@ const C_BLUE   = Color("#3E5F8F")
 const C_CYAN   = Color("#39B5E6")
 const C_WHITE  = Color("#FFFFFF")
 const C_RED    = Color("#D63A3A")
+const C_RED_DARK = Color("#A82A2A")
 
 var _sw: float
 var _sh: float
 
-const BAR_H             = 28
+const BAR_H             = 44
 const BAR_MARGIN_BOTTOM = 40
-const BAR_MARGIN_SIDE   = 420
+const BAR_MARGIN_SIDE   = 520
 
 const BUTTON_SIZE = 140.0
-const ICON_SIZE   = 48.0
+const ICON_SIZE   = 56.0
 
 var _eq_banner:    Node
 var _progress_bar: ProgressBar
@@ -167,14 +168,14 @@ func _build_progress_bar() -> void:
 	add_child(_progress_bar)
 
 
-# ── Botón de esconderse: blanco con borde rojo, texto arriba e icono abajo ───
+# ── Botón de esconderse: rojo con borde blanco, texto blanco arriba e icono abajo ──
 func _build_hold_button() -> void:
 	var btn_pos = Vector2(
-		_sw - BUTTON_SIZE - 60.0,
+		_sw - BUTTON_SIZE - 220.0,
 		(_sh - BUTTON_SIZE) * 0.5
 	)
 
-	# Fondo circular blanco con borde rojo y sombra suave
+	# Fondo circular rojo con borde blanco y sombra suave
 	var shadow = Panel.new()
 	shadow.size     = Vector2(BUTTON_SIZE, BUTTON_SIZE)
 	shadow.position = btn_pos + Vector2(0, 6)
@@ -195,8 +196,8 @@ func _build_hold_button() -> void:
 	panel.z_index  = 0
 
 	var panel_style := StyleBoxFlat.new()
-	panel_style.bg_color                   = C_WHITE
-	panel_style.border_color               = C_RED
+	panel_style.bg_color                   = C_RED
+	panel_style.border_color               = C_WHITE
 	panel_style.border_width_left          = 5
 	panel_style.border_width_right         = 5
 	panel_style.border_width_top           = 5
@@ -232,7 +233,7 @@ func _build_hold_button() -> void:
 	lbl.text                  = "Esconderse"
 	lbl.horizontal_alignment  = HORIZONTAL_ALIGNMENT_CENTER
 	lbl.add_theme_font_size_override("font_size", 16)
-	lbl.add_theme_color_override("font_color", C_RED)
+	lbl.add_theme_color_override("font_color", C_WHITE)
 	lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	vbox.add_child(lbl)
 
@@ -296,10 +297,10 @@ func show_win() -> void:
 
 
 func _on_hold_down() -> void:
-	# Feedback visual: fondo gris + efecto "presionado" (escala + desplazamiento)
+	# Feedback visual: rojo más oscuro + efecto "presionado" (desplazamiento)
 	if _hold_button.has_meta("panel_style"):
 		var ps = _hold_button.get_meta("panel_style") as StyleBoxFlat
-		ps.bg_color = Color("#E0E0E0")
+		ps.bg_color = C_RED_DARK
 
 	var panel = _hold_button.get_meta("panel") as Panel
 	var vbox  = _hold_button.get_meta("vbox") as VBoxContainer
@@ -319,10 +320,10 @@ func _on_hold_down() -> void:
 
 
 func _on_hold_up() -> void:
-	# Restaurar fondo blanco y posición original
+	# Restaurar rojo original y posición
 	if _hold_button.has_meta("panel_style"):
 		var ps = _hold_button.get_meta("panel_style") as StyleBoxFlat
-		ps.bg_color = C_WHITE
+		ps.bg_color = C_RED
 
 	var panel = _hold_button.get_meta("panel") as Panel
 	var vbox  = _hold_button.get_meta("vbox") as VBoxContainer
