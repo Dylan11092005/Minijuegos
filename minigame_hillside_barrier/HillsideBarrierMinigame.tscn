@@ -1,11 +1,403 @@
 [gd_scene format=3 uid="uid://dxqrim86yf70m"]
 
-[ext_resource type="Script" uid="uid://d2sg3ojlx6c5x" path="res://minigame_hillside_barrier/HillsideBackground.gd" id="1_s7jqc"]
+[ext_resource type="Texture2D" uid="uid://c3n870e51uarq" path="res://minigame_hillside_barrier/assets/images/Background.png" id="1_s7jqc"]
+
+[sub_resource type="GDScript" id="GDScript_tguba"]
+script/source = "extends Node2D
+class_name HillsideBackground
+
+
+# =========================================================
+# CONSTANTS
+# =========================================================
+
+const BASE_SIZE := Vector2(1280, 720)
+
+const COLOR_SKY_TOP := Color(\"#7FDDF5\")
+const COLOR_SKY_BOTTOM := Color(\"#D9F7FF\")
+const COLOR_CLOUD := Color(\"#FFFFFF\")
+
+const COLOR_MOUNTAIN_BACK := Color(\"#9BB8C8\")
+const COLOR_MOUNTAIN_FRONT := Color(\"#6F9CB0\")
+const COLOR_MOUNTAIN_SHADOW := Color(\"#557D91\")
+const COLOR_SNOW := Color(\"#EAF8FF\")
+
+const COLOR_GRASS_LIGHT := Color(\"#9BE364\")
+const COLOR_GRASS := Color(\"#66B842\")
+const COLOR_GRASS_DARK := Color(\"#3F8C32\")
+
+const COLOR_DIRT_LIGHT := Color(\"#B97845\")
+const COLOR_DIRT := Color(\"#8E5832\")
+const COLOR_DIRT_DARK := Color(\"#5C351F\")
+const COLOR_DIRT_LINE := Color(\"#C98954\")
+
+const COLOR_ROCK := Color(\"#8B8B82\")
+const COLOR_ROCK_DARK := Color(\"#55554E\")
+const COLOR_ROCK_LIGHT := Color(\"#AFAFA3\")
+
+const COLOR_WOOD := Color(\"#D9A45F\")
+const COLOR_WOOD_LIGHT := Color(\"#F0C27A\")
+const COLOR_WOOD_DARK := Color(\"#9A6338\")
+
+const COLOR_HOUSE := Color(\"#F4D7A0\")
+const COLOR_ROOF := Color(\"#B8543B\")
+
+const COLOR_TREE_TRUNK := Color(\"#7A4A24\")
+const COLOR_TREE_DARK := Color(\"#3E7A2A\")
+const COLOR_TREE := Color(\"#5EAD3A\")
+const COLOR_TREE_LIGHT := Color(\"#83C94A\")
+
+
+# =========================================================
+# PRIVATE VARIABLES
+# =========================================================
+
+var _time_elapsed := 0.0
+
+
+# =========================================================
+# LIFECYCLE METHODS
+# =========================================================
+
+func _ready():
+	z_index = -20
+	queue_redraw()
+
+
+func _process(delta):
+	_time_elapsed += delta
+	queue_redraw()
+
+
+func _draw():
+	var screen := get_viewport_rect().size
+	var scale_factor := Vector2(screen.x / BASE_SIZE.x, screen.y / BASE_SIZE.y)
+
+	draw_set_transform(Vector2.ZERO, 0.0, scale_factor)
+
+	_draw_sky()
+	_draw_clouds()
+	_draw_mountains()
+	_draw_village()
+	_draw_hillside()
+	_draw_landslide_motion()
+	_draw_rocks()
+	_draw_decorative_trees()
+	_draw_bottom_tree_tray()
+
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+
+
+# =========================================================
+# DRAW METHODS
+# =========================================================
+
+func _draw_sky():
+	draw_rect(Rect2(Vector2.ZERO, BASE_SIZE), COLOR_SKY_BOTTOM)
+
+	for index in range(16):
+		var color := COLOR_SKY_TOP.lerp(COLOR_SKY_BOTTOM, float(index) / 16.0)
+		draw_rect(
+			Rect2(
+				Vector2(0, index * BASE_SIZE.y / 16.0),
+				Vector2(BASE_SIZE.x, BASE_SIZE.y / 16.0)
+			),
+			color
+		)
+
+
+func _draw_clouds():
+	var move_offset := fmod(_time_elapsed * 18.0, 1450.0)
+
+	_draw_cloud(Vector2(180 + move_offset, 80), 1.0)
+	_draw_cloud(Vector2(560 + move_offset * 0.65, 125), 0.8)
+	_draw_cloud(Vector2(960 + move_offset * 0.45, 70), 0.9)
+
+	_draw_cloud(Vector2(180 + move_offset - 1450.0, 80), 1.0)
+	_draw_cloud(Vector2(560 + move_offset * 0.65 - 1450.0, 125), 0.8)
+	_draw_cloud(Vector2(960 + move_offset * 0.45 - 1450.0, 70), 0.9)
+
+
+func _draw_cloud(pos: Vector2, scale_value: float):
+	var cloud_color := Color(COLOR_CLOUD.r, COLOR_CLOUD.g, COLOR_CLOUD.b, 0.92)
+
+	draw_circle(pos + Vector2(0, 0) * scale_value, 28 * scale_value, cloud_color)
+	draw_circle(pos + Vector2(32, -10) * scale_value, 36 * scale_value, cloud_color)
+	draw_circle(pos + Vector2(72, 2) * scale_value, 26 * scale_value, cloud_color)
+	draw_circle(pos + Vector2(105, 5) * scale_value, 20 * scale_value, cloud_color)
+
+	draw_rect(
+		Rect2(
+			pos + Vector2(-5, 0) * scale_value,
+			Vector2(125, 25) * scale_value
+		),
+		cloud_color
+	)
+
+
+func _draw_mountains():
+	var mountain_back := PackedVector2Array([
+		Vector2(-40, 445),
+		Vector2(220, 215),
+		Vector2(430, 445)
+	])
+
+	var mountain_front := PackedVector2Array([
+		Vector2(250, 455),
+		Vector2(520, 180),
+		Vector2(820, 455)
+	])
+
+	draw_colored_polygon(mountain_back, COLOR_MOUNTAIN_BACK)
+	draw_colored_polygon(mountain_front, COLOR_MOUNTAIN_FRONT)
+
+	draw_colored_polygon(PackedVector2Array([
+		Vector2(220, 215),
+		Vector2(175, 300),
+		Vector2(235, 270),
+		Vector2(285, 315)
+	]), COLOR_SNOW)
+
+	draw_colored_polygon(PackedVector2Array([
+		Vector2(520, 180),
+		Vector2(465, 285),
+		Vector2(530, 250),
+		Vector2(585, 300)
+	]), COLOR_SNOW)
+
+	draw_polyline(PackedVector2Array([
+		Vector2(-40, 445),
+		Vector2(220, 215),
+		Vector2(430, 445),
+		Vector2(-40, 445)
+	]), COLOR_MOUNTAIN_SHADOW, 3.0)
+
+	draw_polyline(PackedVector2Array([
+		Vector2(250, 455),
+		Vector2(520, 180),
+		Vector2(820, 455),
+		Vector2(250, 455)
+	]), COLOR_MOUNTAIN_SHADOW, 3.0)
+
+
+func _draw_village():
+	_draw_house(Vector2(65, 555), 0.85)
+	_draw_house(Vector2(140, 525), 0.9)
+	_draw_house(Vector2(225, 565), 0.8)
+	_draw_house(Vector2(305, 530), 0.85)
+
+	draw_line(Vector2(30, 625), Vector2(365, 535), Color(\"#D6C29A\"), 16.0)
+	draw_line(Vector2(30, 625), Vector2(365, 535), Color(\"#B99A6A\"), 4.0)
+
+
+func _draw_house(pos: Vector2, scale_value: float):
+	draw_rect(Rect2(pos, Vector2(48, 34) * scale_value), COLOR_HOUSE)
+
+	draw_colored_polygon(PackedVector2Array([
+		pos + Vector2(-6, 0) * scale_value,
+		pos + Vector2(24, -24) * scale_value,
+		pos + Vector2(54, 0) * scale_value
+	]), COLOR_ROOF)
+
+	draw_rect(
+		Rect2(pos + Vector2(18, 14) * scale_value, Vector2(12, 20) * scale_value),
+		COLOR_TREE_TRUNK
+	)
+
+	draw_rect(
+		Rect2(pos + Vector2(6, 8) * scale_value, Vector2(10, 10) * scale_value),
+		Color(\"#7EC8E3\")
+	)
+
+
+func _draw_hillside():
+	# Parte verde de la colina
+	draw_colored_polygon(PackedVector2Array([
+		Vector2(0, 720),
+		Vector2(0, 625),
+		Vector2(230, 545),
+		Vector2(405, 440),
+		Vector2(570, 330),
+		Vector2(760, 245),
+		Vector2(950, 145),
+		Vector2(1280, 25),
+		Vector2(1280, 720)
+	]), COLOR_GRASS)
+
+	# Franja verde clara como en la referencia
+	draw_colored_polygon(PackedVector2Array([
+		Vector2(80, 650),
+		Vector2(250, 555),
+		Vector2(430, 455),
+		Vector2(600, 345),
+		Vector2(780, 270),
+		Vector2(975, 165),
+		Vector2(1280, 55),
+		Vector2(1280, 105),
+		Vector2(980, 210),
+		Vector2(790, 315),
+		Vector2(620, 390),
+		Vector2(455, 500),
+		Vector2(260, 605)
+	]), COLOR_GRASS_LIGHT)
+
+	# Zona café del deslizamiento
+	draw_colored_polygon(PackedVector2Array([
+		Vector2(350, 720),
+		Vector2(455, 520),
+		Vector2(610, 395),
+		Vector2(760, 305),
+		Vector2(930, 205),
+		Vector2(1280, 70),
+		Vector2(1280, 720)
+	]), COLOR_DIRT)
+
+	# Sombra de tierra
+	draw_colored_polygon(PackedVector2Array([
+		Vector2(550, 720),
+		Vector2(660, 525),
+		Vector2(790, 425),
+		Vector2(980, 315),
+		Vector2(1280, 185),
+		Vector2(1280, 720)
+	]), Color(COLOR_DIRT_DARK.r, COLOR_DIRT_DARK.g, COLOR_DIRT_DARK.b, 0.78))
+
+	# Borde superior verde
+	draw_polyline(PackedVector2Array([
+		Vector2(230, 545),
+		Vector2(405, 440),
+		Vector2(570, 330),
+		Vector2(760, 245),
+		Vector2(950, 145),
+		Vector2(1280, 25)
+	]), COLOR_GRASS_DARK, 9.0)
+
+	# Líneas cartoon en la tierra
+	_draw_dirt_curve(Vector2(520, 550), Vector2(660, 435), Vector2(825, 350))
+	_draw_dirt_curve(Vector2(650, 610), Vector2(790, 495), Vector2(980, 400))
+	_draw_dirt_curve(Vector2(760, 300), Vector2(930, 245), Vector2(1130, 165))
+	_draw_dirt_curve(Vector2(900, 585), Vector2(1010, 500), Vector2(1220, 430))
+
+
+func _draw_dirt_curve(start: Vector2, middle: Vector2, end: Vector2):
+	var points := PackedVector2Array()
+
+	for index in range(18):
+		var t := float(index) / 17.0
+		var a := start.lerp(middle, t)
+		var b := middle.lerp(end, t)
+		points.append(a.lerp(b, t))
+
+	draw_polyline(points, Color(COLOR_DIRT_LINE.r, COLOR_DIRT_LINE.g, COLOR_DIRT_LINE.b, 0.55), 4.0)
+
+
+func _draw_landslide_motion():
+	var offset := fmod(_time_elapsed * 35.0, 80.0)
+
+	for index in range(7):
+		var base_x := 530.0 + index * 95.0
+		var base_y := 500.0 - index * 38.0 + offset
+
+		var alpha := 0.18 + sin(_time_elapsed * 2.0 + index) * 0.06
+		var color := Color(0.94, 0.76, 0.47, alpha)
+
+		draw_line(
+			Vector2(base_x, base_y),
+			Vector2(base_x + 85, base_y - 45),
+			color,
+			4.0
+		)
+
+	for index in range(10):
+		var dust_x := 480.0 + index * 75.0 + sin(_time_elapsed + index) * 8.0
+		var dust_y := 570.0 - index * 25.0 + fmod(_time_elapsed * 12.0 + index * 8.0, 40.0)
+
+		draw_circle(
+			Vector2(dust_x, dust_y),
+			4.0 + sin(_time_elapsed * 3.0 + index) * 1.5,
+			Color(\"#D8A06A\", 0.25)
+		)
+
+
+func _draw_rocks():
+	_draw_rock(Vector2(500, 515), 24)
+	_draw_rock(Vector2(625, 430), 18)
+	_draw_rock(Vector2(755, 350), 22)
+	_draw_rock(Vector2(875, 275), 15)
+	_draw_rock(Vector2(1005, 220), 20)
+	_draw_rock(Vector2(1135, 320), 17)
+	_draw_rock(Vector2(940, 520), 25)
+	_draw_rock(Vector2(720, 590), 18)
+	_draw_rock(Vector2(1090, 130), 13)
+
+
+func _draw_rock(pos: Vector2, size: float):
+	var points := PackedVector2Array([
+		pos + Vector2(-size, size * 0.35),
+		pos + Vector2(-size * 0.50, -size * 0.55),
+		pos + Vector2(size * 0.25, -size),
+		pos + Vector2(size, -size * 0.15),
+		pos + Vector2(size * 0.55, size * 0.70)
+	])
+
+	draw_colored_polygon(points, COLOR_ROCK)
+
+	draw_polyline(PackedVector2Array([
+		points[0],
+		points[1],
+		points[2],
+		points[3],
+		points[4],
+		points[0]
+	]), COLOR_ROCK_DARK, 3.0)
+
+	draw_line(
+		pos + Vector2(-size * 0.35, -size * 0.25),
+		pos + Vector2(size * 0.25, -size * 0.55),
+		COLOR_ROCK_LIGHT,
+		2.0
+	)
+
+
+func _draw_decorative_trees():
+	_draw_tree(Vector2(1110, 640), 1.1)
+	_draw_tree(Vector2(1210, 595), 1.0)
+	_draw_tree(Vector2(1030, 665), 0.9)
+	_draw_tree(Vector2(1185, 480), 0.85)
+	_draw_tree(Vector2(985, 625), 0.8)
+
+
+func _draw_tree(pos: Vector2, scale_value: float):
+	var sway := sin(_time_elapsed * 2.0 + pos.x * 0.01) * 4.0
+
+	draw_rect(
+		Rect2(pos + Vector2(-7, -55) * scale_value, Vector2(14, 55) * scale_value),
+		COLOR_TREE_TRUNK
+	)
+
+	draw_circle(pos + Vector2(sway, -82) * scale_value, 31 * scale_value, COLOR_TREE)
+	draw_circle(pos + Vector2(-22 + sway, -62) * scale_value, 24 * scale_value, COLOR_TREE_DARK)
+	draw_circle(pos + Vector2(22 + sway, -62) * scale_value, 24 * scale_value, COLOR_TREE)
+	draw_circle(pos + Vector2(sway, -50) * scale_value, 22 * scale_value, COLOR_TREE_LIGHT)
+
+
+func _draw_bottom_tree_tray():
+	draw_rect(Rect2(Vector2(520, 650), Vector2(520, 58)), COLOR_WOOD)
+	draw_rect(Rect2(Vector2(520, 650), Vector2(520, 12)), COLOR_WOOD_LIGHT)
+	draw_rect(Rect2(Vector2(520, 698), Vector2(520, 10)), COLOR_WOOD_DARK)
+
+	for index in range(5):
+		var x := 565 + index * 95
+		draw_circle(Vector2(x, 680), 20, Color(\"#8A5A2E\"))
+		draw_circle(Vector2(x, 675), 18, Color(\"#B77A42\"))
+"
 
 [node name="HillsideBarrierMinigame" type="Node2D" unique_id=1440286696]
 
-[node name="HillsideBackground" type="Node2D" parent="." unique_id=2043912201]
-script = ExtResource("1_s7jqc")
+[node name="BackgroundImage" type="Sprite2D" parent="." unique_id=281331064]
+position = Vector2(1152, 648)
+texture = ExtResource("1_s7jqc")
+script = SubResource("GDScript_tguba")
 
 [node name="PlantingSpots" type="Node2D" parent="." unique_id=1956179677]
 

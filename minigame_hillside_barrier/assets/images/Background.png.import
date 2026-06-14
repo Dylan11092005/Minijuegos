@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c3n870e51uarq"
-path="res://.godot/imported/fondo.png-0e81e539cf9b53e1e050dc9936ad93c4.ctex"
+path="res://.godot/imported/Background.png-e5c4ab23e9ca89ad743c8ed8b5d70e58.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://minigame_hillside_barrier/assets/images/fondo.png"
-dest_files=["res://.godot/imported/fondo.png-0e81e539cf9b53e1e050dc9936ad93c4.ctex"]
+source_file="res://minigame_hillside_barrier/assets/images/Background.png"
+dest_files=["res://.godot/imported/Background.png-e5c4ab23e9ca89ad743c8ed8b5d70e58.ctex"]
 
 [params]
 
