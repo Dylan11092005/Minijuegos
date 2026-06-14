@@ -23,7 +23,7 @@ layout_mode = 0
 offset_right = 40.0
 offset_bottom = 23.0
 
-[node name="BtnVolver" type="Button" parent="Container" unique_id=807214878]
+[node name="BackButton" type="Button" parent="Container" unique_id=807214878]
 layout_mode = 0
 offset_right = 8.0
 offset_bottom = 8.0

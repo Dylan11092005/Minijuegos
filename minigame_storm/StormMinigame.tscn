@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://cy5oiqt5qhuct"]
+
+[ext_resource type="Script" uid="uid://5ye170pbx26r" path="res://minigame_storm/StormMinigame.gd" id="1_tgmua"]
+[ext_resource type="Script" uid="uid://b5alxsrj2ybtt" path="res://minigame_storm/StormBackground.gd" id="3_bxpq0"]
+[ext_resource type="PackedScene" uid="uid://cxlnhhgbk1c0" path="res://minigame_storm/StormPlayer.tscn" id="4_cbk4w"]
+[ext_resource type="AudioStream" uid="uid://dcouj2bayvlga" path="res://minigame_storm/assets/sounds/rain.mp3" id="7_o0p4n"]
+[ext_resource type="AudioStream" uid="uid://eb5qpqoqg48h" path="res://minigame_storm/assets/sounds/thunder.mp3" id="8_d8f6g"]
+
+[node name="StormMinigame" type="Node2D" unique_id=130022186]
+script = ExtResource("1_tgmua")
+
+[node name="StormBackground" type="Node2D" parent="." unique_id=1342631120]
+script = ExtResource("3_bxpq0")
+
+[node name="StormPlayer" parent="." unique_id=1999096692 instance=ExtResource("4_cbk4w")]
+position = Vector2(740, 620)
+
+[node name="LightningSpawnTimer" type="Timer" parent="." unique_id=921495330]
+wait_time = 0.55
+autostart = true
+
+[node name="RainAudio" type="AudioStreamPlayer" parent="." unique_id=1221711485]
+stream = ExtResource("7_o0p4n")
+volume_db = -40.536
+
+[node name="ThunderAudio" type="AudioStreamPlayer" parent="." unique_id=649442358]
+stream = ExtResource("8_d8f6g")
+volume_db = -46.561
+
+[connection signal="timeout" from="LightningSpawnTimer" to="." method="_on_lightning_spawn_timer_timeout"]
+[connection signal="timeout" from="LightningSpawnTimer" to="." method="_on_timer_spawn_rayos_timeout"]
