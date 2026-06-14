@@ -1,3 +1,9 @@
 [gd_scene format=3 uid="uid://c68yocpjs7fe1"]
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_t1of6"]
+radius = 42.0
+
 [node name="TreeSapling" type="Area2D" unique_id=197664341]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=831714547]
+shape = SubResource("CircleShape2D_t1of6")
