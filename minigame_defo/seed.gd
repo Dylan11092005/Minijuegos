@@ -4,12 +4,12 @@ var is_active = false
 var start_position = Vector2.ZERO
 var offset = Vector2.ZERO
 
-# Más grande = más fácil sembrar en huecos buenos
-@export var distancia_para_sembrar := 90.0
+# Bigger value = easier to plant in good holes
+@export var planting_distance := 90.0
 
-# Más grande = más fácil que detecte el hueco malo al soltar
-# No afecta al pasar encima, solo al soltar
-@export var distancia_para_hueco_malo := 55.0
+# Bigger value = easier to detect a bad hole when releasing the seed
+# It does not affect passing over the hole, only when releasing
+@export var bad_hole_distance := 55.0
 
 
 func _ready():
@@ -35,63 +35,64 @@ func _process(_delta):
 func _input(event):
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT and not event.pressed and is_active:
-			revisar_donde_solto_semilla()
-			desactivar_semilla()
+			check_seed_release_position()
+			deactivate_seed()
 
 		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed and is_active:
-			desactivar_semilla()
+			deactivate_seed()
 
 
-func revisar_donde_solto_semilla():
-	# Primero revisa si la semilla está tocando un hueco malo al soltar
+func check_seed_release_position():
 	var areas = get_overlapping_areas()
 
 	for area in areas:
 		if area.is_in_group("holes"):
 			if area.current_state == area.State.INVALID:
-				print("Semilla puesta en hueco malo por contacto")
-				get_tree().call_group("game_manager", "recibir_dano_por_hueco_malo")
+				print("Seed placed in a bad hole by contact")
+				apply_bad_hole_damage()
 				return
 
-	# Si no lo detectó por contacto, revisa por distancia
 	var holes = get_tree().get_nodes_in_group("holes")
 
-	var hueco_malo_cercano = null
-	var distancia_malo_menor := 999999.0
+	var closest_bad_hole = null
+	var shortest_bad_distance := 999999.0
 
-	var hueco_bueno_cercano = null
-	var distancia_bueno_menor := 999999.0
+	var closest_good_hole = null
+	var shortest_good_distance := 999999.0
 
 	for hole in holes:
-		var distancia = global_position.distance_to(hole.global_position)
+		var distance = global_position.distance_to(hole.global_position)
 
 		if hole.current_state == hole.State.INVALID:
-			if distancia < distancia_malo_menor:
-				distancia_malo_menor = distancia
-				hueco_malo_cercano = hole
-		elif hole.current_state == hole.State.EMPTY:
-			if distancia < distancia_bueno_menor:
-				distancia_bueno_menor = distancia
-				hueco_bueno_cercano = hole
+			if distance < shortest_bad_distance:
+				shortest_bad_distance = distance
+				closest_bad_hole = hole
 
-	# Si soltaste cerca de un hueco malo, quita vida
-	if hueco_malo_cercano != null and distancia_malo_menor <= distancia_para_hueco_malo:
-		print("Semilla puesta en hueco malo por distancia")
-		get_tree().call_group("game_manager", "recibir_dano_por_hueco_malo")
+		elif hole.current_state == hole.State.EMPTY:
+			if distance < shortest_good_distance:
+				shortest_good_distance = distance
+				closest_good_hole = hole
+
+	if closest_bad_hole != null and shortest_bad_distance <= bad_hole_distance:
+		print("Seed placed in a bad hole by distance")
+		apply_bad_hole_damage()
 		return
 
-	# Si no fue hueco malo, intenta sembrar en hueco bueno
-	if hueco_bueno_cercano != null and distancia_bueno_menor <= distancia_para_sembrar:
-		var sembrado = hueco_bueno_cercano.try_plant()
+	if closest_good_hole != null and shortest_good_distance <= planting_distance:
+		var planted = closest_good_hole.try_plant()
 
-		if sembrado:
-			print("Semilla plantada")
+		if planted:
+			print("Seed planted")
 			return
 
-	print("No se soltó sobre un hueco válido")
+	print("The seed was not released over a valid hole")
 
 
-func desactivar_semilla():
+func apply_bad_hole_damage():
+	get_tree().call_group("game_manager", "receive_bad_hole_damage")
+
+
+func deactivate_seed():
 	is_active = false
 	global_position = start_position
 	z_index = 50
