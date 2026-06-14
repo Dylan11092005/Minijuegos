@@ -76,9 +76,11 @@ func _on_button_5_pressed() -> void:
 	var minigame_data = get_node("/root/MinigameData")
 	minigame_data.title        = "¡Reforesta el bosque!"
 	minigame_data.description  = "Tu comunidad deforesto el bosque, ayuda a reforestarlo."
-	minigame_data.instructions = "Selecciona las semilas y arrastralas a los hoyos buenos, y luego riegalas"
-	minigame_data.video_path   = "res://minigame_defo/sprites/Tree_Instruction.ogv"
-	minigame_data.minigame_scene = "res://minigame_defo/mini_juego.tscn"
+	minigame_data.instructions = "Selecciona una semilla y arrástrala hacia un hoyo bueno. 
+	Evita los hoyos malos, porque te quitarán vida si sueltas la semilla sobre ellos. 
+	Cuando todas las semillas estén plantadas, usa la regadera para regarlas antes de que se acabe el tiempo."
+	minigame_data.video_path   = "res://minigame_defo/sprites/Tree_instruction2.ogv"
+	minigame_data.minigame_scene = "res://minigame_defo/mini_game.tscn"
 	minigame_data.controls = [
 		{ "action": "Arrastrar semillas y regadera", "icon": "res://ui_global/assets/ClickIcon.png" },
 	]

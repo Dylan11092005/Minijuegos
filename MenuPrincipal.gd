@@ -10,9 +10,6 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	pass
 
-func _on_button_5_toggled() -> void:
-	get_tree().change_scene_to_file("res://Juegodeforestóelbosque/MiniJuego.tscn")
-	
 func _on_button_4_pressed() -> void:
 	get_tree().change_scene_to_file("res://minigame_house/HouseMinigame.tscn")
 
@@ -26,7 +23,7 @@ func _on_button_pressed() -> void:
 	get_tree().change_scene_to_file("res://minigame_puzzle/MapPuzzle.tscn")
 	
 func _on_button_5_pressed() -> void:
-	get_tree().change_scene_to_file("res://minigame_defo/mini_juego.tscn")
+	get_tree().change_scene_to_file("res://minigame_defo/mini_game.tscn")
 	
 func _on_button_23_toggled() -> void:
 	get_tree().change_scene_to_file("res://minigame_laberinto/maze_minigame.tscn")
