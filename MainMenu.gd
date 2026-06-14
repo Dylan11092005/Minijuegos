@@ -92,8 +92,16 @@ func _on_button_26_pressed() -> void:
 	get_tree().change_scene_to_file("res://age_selector/age_selector.tscn")
 
 func _on_button_9_pressed() -> void:
-	get_tree().change_scene_to_file("res://minigame_earthquake/Main.tscn")
-
+	var minigame_data = get_node("/root/MinigameData")
+	minigame_data.title = "¡Llega a la zona segura!"
+	minigame_data.description = "TERREMOTO, Te metiste debajo de la mesa para protegerte."
+	minigame_data.instructions = "Manten presionado el botón rojo cuando ocurra un terromoto para ocultarte debajo de la mesa."
+	minigame_data.video_path = "res://minigame_earthquake/assets/EarthquakeInstructions.ogv"
+	minigame_data.minigame_scene = "res://minigame_earthquake/Main.tscn"
+	minigame_data.controls = [
+	{ "action": "Manten presionado el botón", "icon": "res://ui_global/assets/ClickIcon.png" },
+]
+	get_tree().change_scene_to_file("res://ui_global/MinigameIntro.tscn")
 
 func _on_button_6_pressed() -> void:
 	var minigame_data = get_node("/root/MinigameData")
