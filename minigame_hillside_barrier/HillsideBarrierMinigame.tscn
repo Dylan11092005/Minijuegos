@@ -395,6 +395,7 @@ func _draw_bottom_tree_tray():
 [node name="HillsideBarrierMinigame" type="Node2D" unique_id=1440286696]
 
 [node name="BackgroundImage" type="Sprite2D" parent="." unique_id=281331064]
+z_index = -20
 position = Vector2(1152, 648)
 texture = ExtResource("1_s7jqc")
 script = SubResource("GDScript_tguba")
