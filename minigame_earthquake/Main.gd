@@ -79,7 +79,7 @@ signal earthquake_ended
 @export var walk_speed_variance: float = 15.0      # antes: 30.0
 
 # ---- Ajustes de volumen (dB relativos al valor configurado en cada nodo) ----
-@export var music_volume_offset_db:   float = -30.0
+@export var music_volume_offset_db:   float = -20.0
 @export var warning_volume_offset_db: float = -17.0
 @export var eq_volume_offset_db:      float = -17.0
 
