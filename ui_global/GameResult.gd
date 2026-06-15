@@ -80,7 +80,7 @@ func show_win():
 	visible = true
 	
 	if win_audio:
-		win_audio.volume_db = -5
+		win_audio.volume_db = -20
 		win_audio.play()
 
 

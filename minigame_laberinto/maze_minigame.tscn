@@ -8,9 +8,9 @@
 [ext_resource type="Texture2D" uid="uid://k2xxppxs5sbm" path="res://minigame_laberinto/assets/escenario/pared.png" id="6_n510s"]
 [ext_resource type="Texture2D" uid="uid://bgdw5j7giyysf" path="res://minigame_laberinto/assets/personajes/amigo1.png" id="7_vp2i8"]
 [ext_resource type="Texture2D" uid="uid://wbdcpt7qj204" path="res://minigame_laberinto/assets/personajes/amigo2.png" id="8_6op3i"]
-[ext_resource type="PackedScene" uid="uid://m3dt448yc1u" path="res://ui_global/timer_ui.tscn" id="9_kjcdp"]
+[ext_resource type="PackedScene" uid="uid://m3dt448yc1u" path="res://ui_global/TimerUi.tscn" id="9_kjcdp"]
 [ext_resource type="AudioStream" uid="uid://cfmnqqrcvqffb" path="res://ui_global/music/Tiempo.mp3" id="10_a4bxp"]
-[ext_resource type="PackedScene" uid="uid://dsdbaxj6xesxn" path="res://ui_global/ResultadoJuego.tscn" id="11_a4bxp"]
+[ext_resource type="PackedScene" uid="uid://dsdbaxj6xesxn" path="res://ui_global/GameResult.tscn" id="11_a4bxp"]
 [ext_resource type="AudioStream" uid="uid://r361hmn2tkmn" path="res://minigame_laberinto/assets/audio/laberinto.mp3" id="12_hwi0u"]
 [ext_resource type="AudioStream" uid="uid://ctp2n1rcpkl85" path="res://minigame_laberinto/assets/audio/rescate.mp3" id="13_4vvp6"]
 

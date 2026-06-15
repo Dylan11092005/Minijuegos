@@ -1,0 +1,121 @@
+[gd_scene format=3 uid="uid://de23ex3t4mp8o"]
+
+[ext_resource type="Texture2D" uid="uid://jwwy135j4bdv" path="res://minigame_river_clean/assets/background/RiverBackground.png" id="1_43aah"]
+[ext_resource type="Script" uid="uid://dgvuqmnq8ojf4" path="res://minigame_river_clean/RiverCleanMinigame.gd" id="1_atuvn"]
+[ext_resource type="Texture2D" uid="uid://jj7wphwib506" path="res://minigame_river_clean/assets/trash/TrashBottle.png" id="3_0fj38"]
+[ext_resource type="Texture2D" uid="uid://b1pw6g0ojhv3f" path="res://minigame_river_clean/assets/tools/CleaningGlove.png" id="3_sxihc"]
+[ext_resource type="Texture2D" uid="uid://djucxbl2024ap" path="res://minigame_river_clean/assets/trash/TrashPaper.png" id="4_bdfur"]
+[ext_resource type="Texture2D" uid="uid://b4rhld0de2mla" path="res://minigame_river_clean/assets/trash/TrashBox.png" id="5_p63nh"]
+[ext_resource type="Texture2D" uid="uid://c1uh4eum6gwob" path="res://minigame_river_clean/assets/trash/TrashCan.png" id="6_7j2wh"]
+[ext_resource type="Texture2D" uid="uid://dkhaow61nnouq" path="res://minigame_river_clean/assets/trash/TrashBag.png" id="7_hx8n7"]
+[ext_resource type="Texture2D" uid="uid://dwfaf2wc4fwbu" path="res://minigame_river_clean/assets/tools/CleanEffect.png" id="9_p63nh"]
+[ext_resource type="AudioStream" uid="uid://lipmvupxeg1d" path="res://minigame_river_clean/assets/audio/RiverMusic.mp3" id="10_hx8n7"]
+[ext_resource type="AudioStream" uid="uid://bylw0nbvb4fxp" path="res://minigame_river_clean/assets/audio/cleam.mp3" id="11_k8wwk"]
+[ext_resource type="PackedScene" uid="uid://m3dt448yc1u" path="res://ui_global/TimerUi.tscn" id="12_ne8od"]
+[ext_resource type="PackedScene" uid="uid://dsdbaxj6xesxn" path="res://ui_global/GameResult.tscn" id="13_3n02i"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8y2w3"]
+size = Vector2(50.375, 54.25)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_sxihc"]
+size = Vector2(86, 82)
+
+[node name="RiverCleanMinigame" type="Node2D" unique_id=2009519007]
+script = ExtResource("1_atuvn")
+
+[node name="Background" type="Sprite2D" parent="." unique_id=237744008]
+position = Vector2(963.5001, 541.75)
+scale = Vector2(1.1572968, 1.1652498)
+texture = ExtResource("1_43aah")
+
+[node name="TrashBottle" type="Area2D" parent="." unique_id=322679250]
+visible = false
+
+[node name="Sprite2D" type="Sprite2D" parent="TrashBottle" unique_id=166494292]
+position = Vector2(550, 454.12503)
+scale = Vector2(0.17717718, 0.1913333)
+texture = ExtResource("3_0fj38")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TrashBottle" unique_id=2045200613]
+position = Vector2(549.5, 454.5)
+shape = SubResource("RectangleShape2D_8y2w3")
+
+[node name="TrashPaper" type="Area2D" parent="." unique_id=2143838779]
+visible = false
+
+[node name="Sprite2D" type="Sprite2D" parent="TrashPaper" unique_id=141267138]
+position = Vector2(1004, 360)
+scale = Vector2(0.17717718, 0.1913333)
+texture = ExtResource("4_bdfur")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TrashPaper" unique_id=339201423]
+position = Vector2(1001, 366)
+shape = SubResource("RectangleShape2D_8y2w3")
+
+[node name="TrashBox" type="Area2D" parent="." unique_id=1498079208]
+visible = false
+
+[node name="Sprite2D" type="Sprite2D" parent="TrashBox" unique_id=1460459526]
+position = Vector2(1209, 692)
+scale = Vector2(0.17717718, 0.1913333)
+texture = ExtResource("5_p63nh")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TrashBox" unique_id=1189268763]
+position = Vector2(1212, 690)
+shape = SubResource("RectangleShape2D_8y2w3")
+
+[node name="TrashCan" type="Area2D" parent="." unique_id=1358057237]
+visible = false
+
+[node name="Sprite2D" type="Sprite2D" parent="TrashCan" unique_id=1904895807]
+position = Vector2(176.79355, 421.274)
+scale = Vector2(0.17019904, 0.18063398)
+texture = ExtResource("6_7j2wh")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TrashCan" unique_id=383778218]
+position = Vector2(177, 418)
+shape = SubResource("RectangleShape2D_8y2w3")
+
+[node name="TrashBag" type="Area2D" parent="." unique_id=594617608]
+visible = false
+
+[node name="Sprite2D" type="Sprite2D" parent="TrashBag" unique_id=788154111]
+position = Vector2(1631, 504)
+scale = Vector2(0.17717718, 0.1913333)
+texture = ExtResource("7_hx8n7")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TrashBag" unique_id=1826625135]
+position = Vector2(1633, 504)
+shape = SubResource("RectangleShape2D_8y2w3")
+
+[node name="CleaningGlove" type="Area2D" parent="." unique_id=243690598]
+
+[node name="Sprite2D" type="Sprite2D" parent="CleaningGlove" unique_id=819940685]
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("3_sxihc")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CleaningGlove" unique_id=1275853686]
+position = Vector2(1, -2)
+shape = SubResource("RectangleShape2D_sxihc")
+
+[node name="CleanEffect" type="Sprite2D" parent="." unique_id=443562461]
+position = Vector2(-5.4999995, -7.953121)
+scale = Vector2(0.122349106, 0.15023452)
+texture = ExtResource("9_p63nh")
+
+[node name="MusicPlayer" type="AudioStreamPlayer2D" parent="." unique_id=237628319]
+stream = ExtResource("10_hx8n7")
+autoplay = true
+
+[node name="CleanSound" type="AudioStreamPlayer2D" parent="." unique_id=2139897978]
+stream = ExtResource("11_k8wwk")
+
+[node name="TimerUI" parent="." unique_id=1042888595 instance=ExtResource("12_ne8od")]
+
+[node name="GameResult" parent="." unique_id=2106536257 instance=ExtResource("13_3n02i")]
+
+[connection signal="area_entered" from="TrashBottle" to="." method="_on_trash_bottle_area_entered"]
+[connection signal="area_entered" from="TrashPaper" to="." method="_on_trash_paper_area_entered"]
+[connection signal="area_entered" from="TrashBox" to="." method="_on_trash_box_area_entered"]
+[connection signal="area_entered" from="TrashCan" to="." method="_on_trash_can_area_entered"]
+[connection signal="area_entered" from="TrashBag" to="." method="_on_trash_bag_area_entered"]

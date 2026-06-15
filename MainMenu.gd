@@ -76,9 +76,11 @@ func _on_button_5_pressed() -> void:
 	var minigame_data = get_node("/root/MinigameData")
 	minigame_data.title        = "¡Reforesta el bosque!"
 	minigame_data.description  = "Tu comunidad deforesto el bosque, ayuda a reforestarlo."
-	minigame_data.instructions = "Selecciona las semilas y arrastralas a los hoyos buenos, y luego riegalas"
-	minigame_data.video_path   = "res://minigame_defo/sprites/Tree_Instruction.ogv"
-	minigame_data.minigame_scene = "res://minigame_defo/mini_juego.tscn"
+	minigame_data.instructions = "Selecciona una semilla y arrástrala hacia un hoyo bueno. 
+	Evita los hoyos malos, porque te quitarán vida si sueltas la semilla sobre ellos. 
+	Cuando todas las semillas estén plantadas, usa la regadera para regarlas antes de que se acabe el tiempo."
+	minigame_data.video_path   = "res://minigame_defo/sprites/Tree_instruction2.ogv"
+	minigame_data.minigame_scene = "res://minigame_defo/mini_game.tscn"
 	minigame_data.controls = [
 		{ "action": "Arrastrar semillas y regadera", "icon": "res://ui_global/assets/ClickIcon.png" },
 	]
@@ -90,8 +92,57 @@ func _on_button_26_pressed() -> void:
 	get_tree().change_scene_to_file("res://age_selector/age_selector.tscn")
 
 func _on_button_9_pressed() -> void:
-	get_tree().change_scene_to_file("res://minigame_earthquake/Main.tscn")
-
+	var minigame_data = get_node("/root/MinigameData")
+	minigame_data.title = "¡Llega a la zona segura!"
+	minigame_data.description = "TERREMOTO, Te metiste debajo de la mesa para protegerte."
+	minigame_data.instructions = "Manten presionado el botón rojo cuando ocurra un terromoto para ocultarte debajo de la mesa."
+	minigame_data.video_path = "res://minigame_earthquake/assets/EarthquakeInstructions.ogv"
+	minigame_data.minigame_scene = "res://minigame_earthquake/Main.tscn"
+	minigame_data.controls = [
+	{ "action": "Manten presionado el botón", "icon": "res://ui_global/assets/ClickIcon.png" },
+]
+	get_tree().change_scene_to_file("res://ui_global/MinigameIntro.tscn")
 
 func _on_button_6_pressed() -> void:
-	get_tree().change_scene_to_file("res://minigame_laberinto/maze_minigame.tscn")
+	var minigame_data = get_node("/root/MinigameData")
+	minigame_data.title = "¡Rescata a tus amigos!"
+	minigame_data.description = "Ayuda a tus amigos a llegar a la zona segura durante la inundación."
+	minigame_data.instructions = "Muévete por el laberinto, rescata a los dos amigos y llega a la zona segura antes de que se acabe el tiempo."
+	minigame_data.video_path = "res://minigame_laberinto/assets/maze_Instructions.ogv"
+	minigame_data.minigame_scene = "res://minigame_laberinto/maze_minigame.tscn"
+	minigame_data.controls = [
+	{ "action": "Moverse arriba", "icon": "res://ui_global/assets/up-button.png" },
+	{ "action": "Moverse abajo", "icon": "res://ui_global/assets/down-button.png" },
+	{ "action": "Moverse izquierda", "icon": "res://ui_global/assets/left-button.png" },
+	{ "action": "Moverse derecha", "icon": "res://ui_global/assets/right-button.png" },
+]
+	get_tree().change_scene_to_file("res://ui_global/MinigameIntro.tscn")
+
+
+func _on_button_12_pressed() -> void:
+	var minigame_data = get_node("/root/MinigameData")
+	minigame_data.title = "¡Limpia el río!"
+	minigame_data.description = "Las fábricas han contaminado el río de tu comunidad."
+	minigame_data.instructions = "Mueve el cursor rápidamente sobre los desechos que aparecen en el agua para eliminarlos antes de que se acabe el tiempo."
+	minigame_data.video_path = "res://minigame_river_clean/assets/video/RiverCleanInstructions.ogv"
+	minigame_data.minigame_scene = "res://minigame_river_clean/RiverCleanMinigame.tscn"
+	minigame_data.controls = [
+	{ "action": "Mover cursor", "icon": "res://ui_global/assets/ClickIcon.png" },
+	]
+	get_tree().change_scene_to_file("res://ui_global/MinigameIntro.tscn")
+func _on_button_11_pressed() -> void:
+	var minigame_data = get_node_or_null("/root/MinigameData")
+
+	if minigame_data == null:
+		print("ERROR: No existe MinigameData en AutoLoad")
+		get_tree().change_scene_to_file("res://minigame_identify_river/main.tscn")
+		return
+	minigame_data.title = "¡Identifica el río diferente!"
+	minigame_data.description = "Observa los ríos y encuentra cuál tiene una característica distinta antes de que se acabe el tiempo."
+	minigame_data.instructions = "Mira cuidadosamente cada grupo de ríos. Haz clic sobre el río diferente para avanzar de ronda. Ganas si completas las tres rondas antes de quedarte sin oportunidades o sin tiempo."
+	minigame_data.video_path = ""
+	minigame_data.minigame_scene = "res://minigame_identify_river/main.tscn"
+	minigame_data.controls = [
+	{ "action": "Seleccionar río", "icon": "" }
+	]
+	get_tree().change_scene_to_file("res://ui_global/MinigameIntro.tscn")

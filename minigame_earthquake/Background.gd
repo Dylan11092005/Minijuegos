@@ -1,192 +1,183 @@
-# Background.gd  — scroll VERTICAL para simular avance "de frente"
+# Background.gd
 #
-# Capas (de más lejos a más cerca):
-#   _layer_sky       → casi no se mueve   (SPEED_SKY       = 0.05)
-#   _layer_buildings → velocidad media    (SPEED_BUILDINGS  = 0.30)
-#   _layer_ground    → se mueve rápido    (SPEED_GROUND     = 1.00)
+# Lógica visual:
+#   - Cielo fijo arriba
+#   - Camino estático abajo
+#   - bg_city.png (casas + cartel) arranca pequeña/lejana y va haciendo zoom
+#     conforme avanza el progreso, además de "bajar" un poco para dar la
+#     sensación de que el personaje entra en la ciudad (la imagen pasa
+#     por encima/tapa parte de la pantalla).
 #
-# Cada capa usa DOS copias apiladas verticalmente para un loop sin salto.
-# El scroll es hacia ABAJO → ilusión de avanzar "hacia el fondo".
+# Capas (z):
+#   -12  ColorRect azul (relleno cielo)
+#   -10  bg_sky.png     (textura cielo, estática)
+#   -8   bg_ground.png  (camino, estático)
+#   -6   bg_city.png    (ciudad + cartel, zoom + descenso)
 
 extends Node2D
 
-const SCREEN_W = 1152
-const SCREEN_H = 648
+var _sw: float
+var _sh: float
+var _horizon_y: float
 
-const HORIZON_Y      = SCREEN_H * 0.42
-const HORIZON_X      = SCREEN_W * 0.50
-const SIGN_SCALE_MIN = 0.15
-const SIGN_SCALE_MAX = 1.05
-const SIGN_ARRIVAL_Y = SCREEN_H * 0.52
+var _city_node: Node2D
 
-const SPEED_SKY       = 0.05
-const SPEED_BUILDINGS = 0.30
-const SPEED_GROUND    = 1.00
-
-var _layer_sky:       Node2D
-var _layer_buildings: Node2D
-var _layer_ground:    Node2D
-
-var _safe_sign: Node2D
-var _progress:  float = 0.0
-
-var _offset_sky:       float = 0.0
-var _offset_buildings: float = 0.0
-var _offset_ground:    float = 0.0
+var _progress: float = 0.0
 
 
 func _ready() -> void:
 	z_as_relative = false
-	_build_background()
-	_build_safe_zone_sign()
+
+	var win = DisplayServer.window_get_size()
+	_sw = float(win.x)
+	_sh = float(win.y)
+	_horizon_y = _sh * 0.52
+
+	_build_sky()
+	_build_ground()
+	_build_city()
+	_update_zoom()
 
 
-# ---------------------------------------------------------------------------
-func _build_background() -> void:
-	_layer_sky = _make_vertical_layer(
-		"res://minigame_earthquake/assets/backgrounds/bg_sky.png",
-		Color(0.55, 0.80, 0.95),
-		-10,
-		0.0,
-		SCREEN_H * 0.55
-	)
+# ── CIELO ────────────────────────────────────────────────────────────────────
+func _build_sky() -> void:
+	var fill           = ColorRect.new()
+	fill.color         = Color(0.42, 0.78, 0.98)
+	fill.size          = Vector2(_sw, _sh)
+	fill.position      = Vector2.ZERO
+	fill.z_index       = -12
+	fill.z_as_relative = false
+	add_child(fill)
 
-	_layer_buildings = _make_vertical_layer(
-		"res://minigame_earthquake/assets/backgrounds/bg_buildings.png",
-		Color(0.55, 0.50, 0.45),
-		-9,
-		SCREEN_H * 0.22,
-		SCREEN_H * 0.60
-	)
-
-	_layer_ground = _make_vertical_layer(
-		"res://minigame_earthquake/assets/backgrounds/bg_ground.png",
-		Color(0.40, 0.38, 0.35),
-		-8,
-		SCREEN_H * 0.42,
-		SCREEN_H * 0.58
-	)
-
-
-# Crea un Node2D contenedor con 2 copias de la textura apiladas verticalmente.
-# Copia A en y=0, copia B en y=tile_h → loop continuo sin saltos.
-func _make_vertical_layer(path: String, fallback: Color,
-		z: int, origin_y: float, target_h: float) -> Node2D:
-
-	var container = Node2D.new()
-	container.z_index = z
-	container.z_as_relative = false
-	container.position = Vector2(0.0, origin_y)
-	add_child(container)
-
-	var tex = load(path) as Texture2D
-	var tile_h: float = target_h
-
-	for i in range(2):
-		var spr = Sprite2D.new()
-		spr.centered = false
-		spr.z_index = z
+	var tex = load("res://minigame_earthquake/assets/backgrounds/bg_sky.png") as Texture2D
+	if tex:
+		var spr           = Sprite2D.new()
+		spr.centered      = false
+		spr.texture       = tex
+		spr.position      = Vector2.ZERO
+		spr.z_index       = -10
 		spr.z_as_relative = false
-
-		if tex:
-			spr.texture = tex
-			var sx = max(float(SCREEN_W) / float(tex.get_width()),  1.0)
-			var sy = max(target_h        / float(tex.get_height()), 1.0)
-			var s  = max(sx, sy)
-			spr.scale = Vector2(s, s)
-			tile_h = tex.get_height() * s
-		else:
-			var cr = ColorRect.new()
-			cr.color = fallback
-			cr.size  = Vector2(SCREEN_W, target_h)
-			spr.add_child(cr)
-			tile_h = target_h
-
-		spr.position = Vector2(0.0, tile_h * float(i))
-		container.add_child(spr)
-
-	container.set_meta("origin_y", origin_y)
-	container.set_meta("tile_h",   tile_h)
-	return container
+		var sx = _sw        / float(tex.get_width())
+		var sy = _horizon_y / float(tex.get_height())
+		spr.scale = Vector2(max(sx, sy), max(sx, sy))
+		add_child(spr)
 
 
-# ---------------------------------------------------------------------------
-func scroll_step(speed: float, delta: float) -> void:
-	_offset_sky       += speed * SPEED_SKY       * delta
-	_offset_buildings += speed * SPEED_BUILDINGS * delta
-	_offset_ground    += speed * SPEED_GROUND    * delta
+# ── CAMINO (estático) ─────────────────────────────────────────────────────────
+func _build_ground() -> void:
+	var ground_h = _sh - _horizon_y
+	var tex = load("res://minigame_earthquake/assets/backgrounds/bg_ground.png") as Texture2D
 
-	_apply_scroll(_layer_sky,       _offset_sky)
-	_apply_scroll(_layer_buildings, _offset_buildings)
-	_apply_scroll(_layer_ground,    _offset_ground)
+	if tex:
+		var spr           = Sprite2D.new()
+		spr.centered      = false
+		spr.texture       = tex
+		spr.position      = Vector2(0.0, _horizon_y)
+		spr.z_index       = -8
+		spr.z_as_relative = false
+		var sx = _sw      / float(tex.get_width())
+		var sy = ground_h / float(tex.get_height())
+		spr.scale = Vector2(max(sx, sy), max(sx, sy))
+		add_child(spr)
+	else:
+		var cr            = ColorRect.new()
+		cr.color          = Color(0.58, 0.46, 0.32)
+		cr.size           = Vector2(_sw, ground_h)
+		cr.position       = Vector2(0.0, _horizon_y)
+		cr.z_index        = -8
+		cr.z_as_relative  = false
+		add_child(cr)
 
 
-func _apply_scroll(layer: Node2D, offset: float) -> void:
-	if layer == null:
+# ── CIUDAD + CARTEL (un solo asset) ──────────────────────────────────────────
+func _build_city() -> void:
+	_city_node               = Node2D.new()
+	_city_node.z_index       = -6
+	_city_node.z_as_relative = false
+	add_child(_city_node)
+
+	# Intenta cargar bg_city.png primero, si no bg_buildings.png como fallback
+	var tex = load("res://minigame_earthquake/assets/backgrounds/bg_city.png") as Texture2D
+	if tex == null:
+		tex = load("res://minigame_earthquake/assets/backgrounds/bg_buildings.png") as Texture2D
+
+	if tex:
+		var spr           = Sprite2D.new()
+		spr.centered      = false   # origen en esquina superior-izquierda
+		spr.texture       = tex
+		spr.z_index       = -6
+		spr.z_as_relative = false
+		_city_node.add_child(spr)
+		_city_node.set_meta("tex_w", float(tex.get_width()))
+		_city_node.set_meta("tex_h", float(tex.get_height()))
+	else:
+		# Fallback visual si no hay asset
+		var cr      = ColorRect.new()
+		cr.color    = Color(0.55, 0.50, 0.45)
+		cr.size     = Vector2(_sw, _sh * 0.35)
+		cr.z_index       = -6
+		cr.z_as_relative = false
+		_city_node.add_child(cr)
+		var lbl     = Label.new()
+		lbl.text    = "CIUDAD  •  ZONA SEGURA"
+		lbl.add_theme_color_override("font_color", Color.WHITE)
+		lbl.add_theme_font_size_override("font_size", 24)
+		lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		lbl.size     = Vector2(_sw, 48)
+		lbl.position = Vector2(0, _sh * 0.35 * 0.3)
+		lbl.z_index       = -6
+		lbl.z_as_relative = false
+		_city_node.add_child(lbl)
+		_city_node.set_meta("tex_w", _sw)
+		_city_node.set_meta("tex_h", _sh * 0.35)
+
+
+# ── ZOOM + DESCENSO ────────────────────────────────────────────────────────────
+func _update_zoom() -> void:
+	if _city_node == null:
 		return
-	var tile_h:   float = layer.get_meta("tile_h")
-	var origin_y: float = layer.get_meta("origin_y")
-	# offset crece → capas bajan → ilusión de avanzar hacia el fondo
-	layer.position.y = origin_y + fmod(offset, tile_h)
+
+	var tex_w: float = _city_node.get_meta("tex_w")
+	var tex_h: float = _city_node.get_meta("tex_h")
+
+	# zoom_cover: el mínimo necesario para que la imagen cubra
+	# TODO el ancho y TODO el alto de la pantalla (sin dejar huecos)
+	var zoom_cover = max(_sw / tex_w, _sh / tex_h)
+
+	# zoom_min: tamaño inicial (ciudad pequeña/lejana)
+	# zoom_max: tamaño final (acercamiento, puede cubrir o exceder pantalla)
+	var zoom_min = zoom_cover * 1
+	var zoom_max = zoom_cover * 1.2
+
+	var zoom = lerp(zoom_min, zoom_max, _progress)
+
+	var img_w = tex_w * zoom
+	var img_h = tex_h * zoom
+
+	# Centrada horizontalmente
+	var pos_x = (_sw - img_w) * 0.5
+
+	# BASE de la imagen anclada al horizonte, crece hacia arriba...
+	var base_pos_y = _horizon_y - img_h
+
+	# ...pero además "baja" conforme avanza el progreso, dando sensación
+	# de que la ciudad desciende y empieza a tapar/pasar por encima del personaje
+	var descend_offset = lerp(0.0, _sh * 0.35, _progress)
+
+	var pos_y = base_pos_y + descend_offset
+
+	_city_node.position = Vector2(pos_x, pos_y)
+	_city_node.scale    = Vector2(zoom, zoom)
 
 
-# ---------------------------------------------------------------------------
+# ── API pública ───────────────────────────────────────────────────────────────
+func scroll_step(_speed: float, _delta: float) -> void:
+	pass   # sin scroll
+
 func update_progress(p: float) -> void:
 	_progress = clamp(p, 0.0, 1.0)
-	_update_sign_transform()
+	_update_zoom()
 
-
-func _update_sign_transform() -> void:
-	if _safe_sign == null:
-		return
-	var t = _progress
-	var s = lerp(SIGN_SCALE_MIN, SIGN_SCALE_MAX, t)
-	_safe_sign.scale    = Vector2(s, s)
-	_safe_sign.position = Vector2(
-		HORIZON_X,
-		lerp(HORIZON_Y, SIGN_ARRIVAL_Y, t)
-	)
-
-
-# ---------------------------------------------------------------------------
-func _build_safe_zone_sign() -> void:
-	_safe_sign = Node2D.new()
-	_safe_sign.z_index = 2
-	_safe_sign.z_as_relative = false
-	add_child(_safe_sign)
-
-	var tex = load("res://minigame_earthquake/assets/backgrounds/safe_zone_sign.png") as Texture2D
-	if tex:
-		var spr = Sprite2D.new()
-		spr.texture = tex
-		spr.centered = true
-		_safe_sign.add_child(spr)
-	else:
-		var bg = ColorRect.new()
-		bg.color    = Color(0.1, 0.6, 0.1)
-		bg.size     = Vector2(260, 80)
-		bg.position = Vector2(-130, -80)
-		_safe_sign.add_child(bg)
-
-		var lbl = Label.new()
-		lbl.text = "ZONA SEGURA"
-		lbl.add_theme_color_override("font_color", Color.WHITE)
-		lbl.add_theme_font_size_override("font_size", 28)
-		lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		lbl.size     = Vector2(260, 80)
-		lbl.position = Vector2(-130, -80)
-		_safe_sign.add_child(lbl)
-
-		var pole = ColorRect.new()
-		pole.color    = Color(0.6, 0.6, 0.6)
-		pole.size     = Vector2(12, 120)
-		pole.position = Vector2(-6, 0)
-		_safe_sign.add_child(pole)
-
-	_update_sign_transform()
-
-
-# Compat con versiones anteriores
 func start_walking() -> void:
 	pass
 

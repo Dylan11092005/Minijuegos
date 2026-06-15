@@ -1,0 +1,95 @@
+[gd_scene format=3 uid="uid://bhj7f83qasm8s"]
+
+[ext_resource type="Script" uid="uid://caflbc53k5cx" path="res://minigame_defo/mini_game.gd" id="1_al8k3"]
+[ext_resource type="Texture2D" uid="uid://bkeknrhvfkvwg" path="res://minigame_defo/sprites/Jardin.png" id="2_m73hk"]
+[ext_resource type="PackedScene" uid="uid://d2ikalu7sjcnd" path="res://minigame_defo/hole.tscn" id="3_22sn1"]
+[ext_resource type="PackedScene" uid="uid://cws6fxthegns5" path="res://minigame_defo/watering can.tscn" id="4_g3u6n"]
+[ext_resource type="PackedScene" uid="uid://ldd4h7dm67ei" path="res://minigame_defo/seed.tscn" id="5_mfvwy"]
+
+[node name="MiniJuego" type="Node2D" unique_id=681249820]
+position = Vector2(-722, -682)
+script = ExtResource("1_al8k3")
+metadata/_edit_vertical_guides_ = [-31552.0]
+
+[node name="Fondo" type="Sprite2D" parent="." unique_id=1365374616 groups=["hueco_bueno"]]
+z_index = -10
+position = Vector2(1699.5001, 1235.9999)
+scale = Vector2(0.5127604, 0.5212963)
+texture = ExtResource("2_m73hk")
+
+[node name="Hole" parent="." unique_id=1337232162 instance=ExtResource("3_22sn1")]
+position = Vector2(1780, 1434)
+
+[node name="Hole2" parent="." unique_id=767867980 instance=ExtResource("3_22sn1")]
+z_index = 10
+position = Vector2(1310, 1676)
+current_state = 1
+
+[node name="Hole3" parent="." unique_id=1169389429 instance=ExtResource("3_22sn1")]
+z_index = 10
+position = Vector2(2243, 1679)
+
+[node name="Hole4" parent="." unique_id=1962408512 instance=ExtResource("3_22sn1")]
+position = Vector2(1105, 1437)
+
+[node name="Hole5" parent="." unique_id=1024740953 instance=ExtResource("3_22sn1")]
+z_index = 10
+position = Vector2(2494, 1676)
+current_state = 1
+
+[node name="Hole6" parent="." unique_id=2095591413 instance=ExtResource("3_22sn1")]
+z_index = 10
+position = Vector2(898, 1680)
+
+[node name="Hole7" parent="." unique_id=1112990445 instance=ExtResource("3_22sn1")]
+position = Vector2(895, 1430)
+
+[node name="Hole8" parent="." unique_id=1435251270 instance=ExtResource("3_22sn1")]
+position = Vector2(1310, 1435)
+
+[node name="Hole9" parent="." unique_id=1915709598 instance=ExtResource("3_22sn1")]
+z_index = 10
+position = Vector2(1576, 1675)
+current_state = 1
+
+[node name="Hole10" parent="." unique_id=298363531 instance=ExtResource("3_22sn1")]
+position = Vector2(1101, 1682)
+current_state = 1
+
+[node name="Hole11" parent="." unique_id=1697384397 instance=ExtResource("3_22sn1")]
+position = Vector2(1579, 1431)
+
+[node name="Hole12" parent="." unique_id=284136602 instance=ExtResource("3_22sn1")]
+position = Vector2(1988, 1427)
+
+[node name="Hole13" parent="." unique_id=1780911071 instance=ExtResource("3_22sn1")]
+position = Vector2(2236, 1425)
+current_state = 1
+
+[node name="Hole14" parent="." unique_id=1310704007 instance=ExtResource("3_22sn1")]
+position = Vector2(2490, 1415)
+
+[node name="Hole15" parent="." unique_id=1288643996 instance=ExtResource("3_22sn1")]
+z_index = 10
+position = Vector2(1778, 1675)
+current_state = 1
+
+[node name="Hole16" parent="." unique_id=175784627 instance=ExtResource("3_22sn1")]
+z_index = 10
+position = Vector2(1992, 1674)
+
+[node name="SpawnPoint" type="Marker2D" parent="." unique_id=1850664924]
+z_index = 10
+position = Vector2(2260, 1068)
+
+[node name="SpawnPoint2" type="Marker2D" parent="." unique_id=50334236]
+z_index = 10
+position = Vector2(1022, 1100)
+
+[node name="Regadera" parent="." unique_id=541666541 instance=ExtResource("4_g3u6n")]
+z_index = 10
+position = Vector2(1105, 1120)
+
+[node name="Semilla" parent="." unique_id=1212064156 instance=ExtResource("5_mfvwy")]
+z_index = 10
+position = Vector2(2363, 1090)
