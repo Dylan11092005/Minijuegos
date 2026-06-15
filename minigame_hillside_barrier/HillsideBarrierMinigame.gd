@@ -34,30 +34,44 @@ const ROCKS_SOUND := preload("res://minigame_hillside_barrier/assets/sounds/rock
 # CONSTANTS
 # =========================================================
 
-const TOTAL_TIME := 60.0
+const TOTAL_TIME := 65.0
 const MAX_LIVES := 3
 const ROCKS_TO_BLOCK := 8
 
 const TIMER_PANEL_WIDTH := 500.0
 const TIMER_PANEL_HEIGHT := 60.0
 
-# Árboles más grandes en la madera.
+# Árboles en la madera.
 const TREE_TABLE_SCALE := Vector2(0.90, 0.90)
 
-# Velocidad de las rocas. Si van muy rápido, baja a 100.
-const ROCK_SPEED := 125.0
+# Tamaño normal y rápido de rocas.
+# Piedras más rápidas en general.
+const NORMAL_ROCK_SPEED_RANGE := Vector2(145.0, 170.0)
+const FAST_ROCK_SPEED_RANGE := Vector2(190.0, 225.0)
 
-# Zonas aleatorias donde puede aparecer la roca.
-const ROCK_START_X_RANGE := Vector2(1180, 1780)
-const ROCK_START_Y_RANGE := Vector2(100, 320)
+# Casi la mitad de las piedras pueden salir rápidas.
+const FAST_ROCK_CHANCE := 0.45
 
-# Zonas aleatorias donde puede terminar la roca.
-const ROCK_END_X_RANGE := Vector2(500, 1050)
-const ROCK_END_Y_RANGE := Vector2(820, 950)
+# Zonas más amplias donde puede aparecer la roca.
+const ROCK_START_X_RANGE := Vector2(1050, 1850)
+const ROCK_START_Y_RANGE := Vector2(70, 360)
 
-# En qué parte del camino aparece el punto para plantar.
-# Más alto = el punto aparece más abajo en el camino.
-const SPOT_PROGRESS_RANGE := Vector2(0.50, 0.72)
+# Zonas más amplias donde puede terminar la roca.
+const ROCK_END_X_RANGE := Vector2(420, 1180)
+const ROCK_END_Y_RANGE := Vector2(780, 980)
+
+# Más variedad en dónde aparece el punto de siembra dentro del camino.
+const SPOT_PROGRESS_RANGE := Vector2(0.35, 0.78)
+
+# Pequeño movimiento lateral para que el punto no salga siempre tan recto.
+const SPOT_SIDE_OFFSET_RANGE := Vector2(-45.0, 45.0)
+
+# Límites para que los puntos no se salgan de la ladera.
+const SPOT_X_LIMITS := Vector2(520, 1500)
+const SPOT_Y_LIMITS := Vector2(300, 780)
+
+# Separación mínima entre puntos cuando salen 2 rocas.
+const MIN_SPOT_DISTANCE := 220.0
 
 # Posiciones de los árboles sobre la tabla de abajo.
 const TREE_TABLE_POSITIONS := [
@@ -68,7 +82,6 @@ const TREE_TABLE_POSITIONS := [
 	Vector2(1650, 1000),
 	Vector2(1800, 1000)
 ]
-
 # =========================================================
 # PRIVATE VARIABLES
 # =========================================================
@@ -79,8 +92,16 @@ var _round_active := false
 var _lives := MAX_LIVES
 var _blocked_rocks := 0
 
-var _current_spot: Node = null
-var _current_tree: Node = null
+var _wave_number := 0
+var _wave_active_rocks := 0
+var _double_wave_numbers: Array = []
+# Guarda los datos de cada roca activa.
+# rock_id -> { "spot": Node, "tree": Node }
+var _active_challenges: Dictionary = {}
+
+# Guarda qué punto pertenece a qué roca.
+# spot_id -> rock_id
+var _spot_to_rock_id: Dictionary = {}
 
 var _timer_ui: Node
 var _lives_ui: Node
@@ -90,7 +111,6 @@ var _progress_layer: CanvasLayer
 var _progress_label: Label
 
 var _rng := RandomNumberGenerator.new()
-
 
 # =========================================================
 # NODE REFERENCES
@@ -107,6 +127,7 @@ var _rng := RandomNumberGenerator.new()
 @onready var _error_audio: AudioStreamPlayer = get_node_or_null("ErrorAudio") as AudioStreamPlayer
 @onready var _landslide_audio: AudioStreamPlayer = get_node_or_null("LandslideAudio") as AudioStreamPlayer
 
+
 # =========================================================
 # LIFECYCLE METHODS
 # =========================================================
@@ -118,8 +139,12 @@ func _ready():
 	_round_active = false
 	_lives = MAX_LIVES
 	_blocked_rocks = 0
-	_current_spot = null
-	_current_tree = null
+	_wave_number = 0
+	_wave_active_rocks = 0
+	_setup_double_waves()
+
+	_active_challenges.clear()
+	_spot_to_rock_id.clear()
 
 	_setup_timer_ui()
 	_setup_lives_ui()
@@ -292,8 +317,9 @@ func _setup_audio():
 	if _landslide_audio:
 		_landslide_audio.volume_db = -3
 
+
 # =========================================================
-# RANDOM ROCK ROUTE
+# RANDOM ROCK ROUTES
 # =========================================================
 
 func _get_random_rock_route() -> Dictionary:
@@ -308,18 +334,94 @@ func _get_random_rock_route() -> Dictionary:
 	)
 
 	var spot_progress := _rng.randf_range(SPOT_PROGRESS_RANGE.x, SPOT_PROGRESS_RANGE.y)
-	var spot_position := start_position.lerp(end_position, spot_progress)
+
+	var path_position := start_position.lerp(end_position, spot_progress)
+
+	var direction := (end_position - start_position).normalized()
+	var perpendicular := Vector2(-direction.y, direction.x)
+
+	var side_offset := _rng.randf_range(
+		SPOT_SIDE_OFFSET_RANGE.x,
+		SPOT_SIDE_OFFSET_RANGE.y
+	)
+
+	var spot_position := path_position + perpendicular * side_offset
+
+	spot_position.x = clamp(spot_position.x, SPOT_X_LIMITS.x, SPOT_X_LIMITS.y)
+	spot_position.y = clamp(spot_position.y, SPOT_Y_LIMITS.x, SPOT_Y_LIMITS.y)
+
+	var rock_speed := _get_random_rock_speed()
 
 	print("ROCA NUEVA")
 	print("Inicio: ", start_position)
 	print("Punto: ", spot_position)
 	print("Final: ", end_position)
+	print("Velocidad: ", rock_speed)
 
 	return {
 		"start": start_position,
 		"spot": spot_position,
-		"end": end_position
+		"end": end_position,
+		"speed": rock_speed
 	}
+
+
+func _get_random_rock_speed() -> float:
+	var should_be_fast := _rng.randf() <= FAST_ROCK_CHANCE
+
+	if should_be_fast:
+		return _rng.randf_range(FAST_ROCK_SPEED_RANGE.x, FAST_ROCK_SPEED_RANGE.y)
+
+	return _rng.randf_range(NORMAL_ROCK_SPEED_RANGE.x, NORMAL_ROCK_SPEED_RANGE.y)
+
+func _setup_double_waves():
+	_double_wave_numbers.clear()
+
+	var possible_waves: Array = [2, 3, 4, 5, 6]
+	possible_waves.shuffle()
+
+	_double_wave_numbers.append(possible_waves[0])
+	_double_wave_numbers.append(possible_waves[1])
+	_double_wave_numbers.sort()
+
+	print("Oleadas dobles: ", _double_wave_numbers)
+	
+	
+func _get_wave_rock_amount() -> int:
+	# En cada partida se eligen 2 oleadas dobles al azar.
+	if _double_wave_numbers.has(_wave_number):
+		return 2
+
+	return 1
+
+
+func _generate_wave_routes(amount: int) -> Array:
+	var routes: Array = []
+	var attempts := 0
+
+	while routes.size() < amount and attempts < 50:
+		attempts += 1
+
+		var new_route: Dictionary = _get_random_rock_route()
+		var new_spot: Vector2 = new_route["spot"]
+
+		var valid_position := true
+
+		for existing_route in routes:
+			var existing_spot: Vector2 = existing_route["spot"]
+
+			if new_spot.distance_to(existing_spot) < MIN_SPOT_DISTANCE:
+				valid_position = false
+				break
+
+		if valid_position:
+			routes.append(new_route)
+
+	# Si por alguna razón no logró separar bien las rutas, rellena normal.
+	while routes.size() < amount:
+		routes.append(_get_random_rock_route())
+
+	return routes
 
 
 # =========================================================
@@ -341,15 +443,46 @@ func _start_next_round():
 		print("ERROR: No existe el nodo Rocks")
 		return
 
+	_wave_number += 1
+
+	var remaining_rocks: int = ROCKS_TO_BLOCK - _blocked_rocks
+	var wanted_rocks: int = _get_wave_rock_amount()
+	var rocks_in_wave: int = int(min(wanted_rocks, remaining_rocks))
+
 	_round_active = true
-	_current_tree = null
-	_current_spot = null
+	_wave_active_rocks = 0
+
+	_active_challenges.clear()
+	_spot_to_rock_id.clear()
 
 	_clear_children(_planting_spots)
 
-	var route: Dictionary = _get_random_rock_route()
+	var routes: Array = _generate_wave_routes(rocks_in_wave)
+	var spawned_rock_data: Array = []
 
-	_spawn_rock(route["start"], route["end"])
+	for route in routes:
+		var start_position: Vector2 = route["start"]
+		var end_position: Vector2 = route["end"]
+		var rock_speed: float = route["speed"]
+
+		var rock: Node = _spawn_rock(start_position, end_position, rock_speed)
+
+		if rock == null:
+			continue
+
+		var rock_id: int = rock.get_instance_id()
+
+		_active_challenges[rock_id] = {
+			"spot": null,
+			"tree": null
+		}
+
+		_wave_active_rocks += 1
+
+		spawned_rock_data.append({
+			"rock_id": rock_id,
+			"spot": route["spot"]
+		})
 
 	await get_tree().create_timer(0.8).timeout
 
@@ -359,12 +492,30 @@ func _start_next_round():
 	if not _round_active:
 		return
 
-	_spawn_planting_spot(route["spot"], _rng.randi_range(0, 999))
+	for rock_data in spawned_rock_data:
+		var rock_id: int = rock_data["rock_id"]
+
+		if not _active_challenges.has(rock_id):
+			continue
+
+		var spot_position: Vector2 = rock_data["spot"]
+		var spot_index: int = _rng.randi_range(0, 999)
+
+		var spot: Node = _spawn_planting_spot(spot_position, spot_index)
+
+		if spot == null:
+			continue
+
+		var data: Dictionary = _active_challenges[rock_id]
+		data["spot"] = spot
+		_active_challenges[rock_id] = data
+
+		_spot_to_rock_id[spot.get_instance_id()] = rock_id
 
 
-func _spawn_planting_spot(spot_position: Vector2, spot_index: int):
+func _spawn_planting_spot(spot_position: Vector2, spot_index: int) -> Node:
 	if _planting_spots == null:
-		return
+		return null
 
 	var spot = PLANTING_SPOT_SCENE.instantiate()
 
@@ -373,13 +524,14 @@ func _spawn_planting_spot(spot_position: Vector2, spot_index: int):
 	spot.set("visible_marker", true)
 
 	_planting_spots.add_child(spot)
-	_current_spot = spot
+
+	return spot
 
 
-func _spawn_rock(start_position: Vector2, end_position: Vector2):
+func _spawn_rock(start_position: Vector2, end_position: Vector2, rock_speed: float) -> Node:
 	if _rocks == null:
 		print("ERROR: No existe el nodo Rocks")
-		return
+		return null
 
 	if _rocks_audio:
 		_rocks_audio.stop()
@@ -393,29 +545,16 @@ func _spawn_rock(start_position: Vector2, end_position: Vector2):
 	rock.setup(
 		start_position,
 		end_position,
-		ROCK_SPEED,
+		rock_speed,
 		self
 	)
+
+	return rock
 
 
 # =========================================================
 # TREE METHODS
 # =========================================================
-
-func register_successful_tree(tree: Node, _spot: Node, table_position: Vector2):
-	if _game_finished:
-		return
-
-	_current_tree = tree
-
-	# Árbol infinito:
-	# cuando plantas uno, aparece otro en la madera.
-	_spawn_table_tree(table_position)
-
-	if _plant_audio:
-		_plant_audio.stop()
-		_plant_audio.play()
-
 
 func register_tree_grabbed(_tree: Node):
 	if _game_finished:
@@ -424,6 +563,29 @@ func register_tree_grabbed(_tree: Node):
 	if _move1_audio:
 		_move1_audio.stop()
 		_move1_audio.play()
+
+
+func register_successful_tree(tree: Node, spot: Node, table_position: Vector2):
+	if _game_finished:
+		return
+
+	_spawn_table_tree(table_position)
+
+	if spot != null and is_instance_valid(spot):
+		var spot_id: int = spot.get_instance_id()
+
+		if _spot_to_rock_id.has(spot_id):
+			var rock_id: int = _spot_to_rock_id[spot_id]
+
+			if _active_challenges.has(rock_id):
+				var data: Dictionary = _active_challenges[rock_id]
+				data["tree"] = tree
+				_active_challenges[rock_id] = data
+
+	if _plant_audio:
+		_plant_audio.stop()
+		_plant_audio.play()
+
 
 func register_failed_drop(_tree: Node):
 	if _game_finished:
@@ -446,51 +608,39 @@ func register_failed_drop(_tree: Node):
 # ROCK METHODS
 # =========================================================
 
-func register_rock_blocked(_rock: Node, tree: Node):
+func register_rock_blocked(rock: Node, tree: Node):
 	if _game_finished:
 		return
 
-	if _rocks_audio:
-		_rocks_audio.stop()
+	var rock_id: int = rock.get_instance_id()
 
-	# Solo aquí suma el puntaje.
-	# Plantar el árbol NO suma.
+	if not _active_challenges.has(rock_id):
+		return
+
 	_blocked_rocks += 1
 	_update_progress_ui()
 
-	if tree != null and is_instance_valid(tree):
-		tree.queue_free()
-
-	if _current_spot != null and is_instance_valid(_current_spot):
-		_current_spot.queue_free()
-
-	_current_spot = null
-	_current_tree = null
-	_round_active = false
+	_resolve_rock_challenge(rock, tree)
 
 	if _blocked_rocks >= ROCKS_TO_BLOCK:
 		_win_game()
-	else:
+		return
+
+	if _wave_active_rocks <= 0:
 		await get_tree().create_timer(1.0).timeout
 		_start_next_round()
 
 
-func register_rock_reached_bottom(_rock: Node):
+func register_rock_reached_bottom(rock: Node):
 	if _game_finished:
 		return
 
-	if _rocks_audio:
-		_rocks_audio.stop()
+	var rock_id: int = rock.get_instance_id()
 
-	if _current_spot != null and is_instance_valid(_current_spot):
-		_current_spot.queue_free()
+	if not _active_challenges.has(rock_id):
+		return
 
-	if _current_tree != null and is_instance_valid(_current_tree):
-		_current_tree.queue_free()
-
-	_current_spot = null
-	_current_tree = null
-	_round_active = false
+	_resolve_rock_challenge(rock, null)
 
 	_lives -= 1
 	_lives = max(_lives, 0)
@@ -503,9 +653,47 @@ func register_rock_reached_bottom(_rock: Node):
 
 	if _lives <= 0:
 		_lose_game()
-	else:
+		return
+
+	if _wave_active_rocks <= 0:
 		await get_tree().create_timer(1.0).timeout
 		_start_next_round()
+
+
+func _resolve_rock_challenge(rock: Node, collided_tree: Node):
+	var rock_id: int = rock.get_instance_id()
+
+	if not _active_challenges.has(rock_id):
+		return
+
+	var data: Dictionary = _active_challenges[rock_id]
+
+	var spot: Node = data.get("spot", null) as Node
+	var saved_tree: Node = data.get("tree", null) as Node
+
+	if spot != null and is_instance_valid(spot):
+		_spot_to_rock_id.erase(spot.get_instance_id())
+		spot.queue_free()
+
+	var tree_to_remove: Node = collided_tree
+
+	if tree_to_remove == null:
+		tree_to_remove = saved_tree
+
+	if tree_to_remove != null and is_instance_valid(tree_to_remove):
+		tree_to_remove.queue_free()
+
+	_active_challenges.erase(rock_id)
+
+	_wave_active_rocks -= 1
+	_wave_active_rocks = max(_wave_active_rocks, 0)
+
+	if _wave_active_rocks <= 0:
+		_round_active = false
+
+		if _rocks_audio:
+			_rocks_audio.stop()
+
 
 # =========================================================
 # UI METHODS
@@ -575,6 +763,8 @@ func _win_game():
 		_rocks_audio.stop()
 
 	_stop_timer_ui()
+	_clear_children(_planting_spots)
+	_clear_children(_rocks)
 
 	if _background_audio:
 		_background_audio.stop()
@@ -599,6 +789,8 @@ func _lose_game():
 		_rocks_audio.stop()
 
 	_stop_timer_ui()
+	_clear_children(_planting_spots)
+	_clear_children(_rocks)
 
 	if _background_audio:
 		_background_audio.stop()
