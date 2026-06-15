@@ -146,3 +146,25 @@ func _on_button_11_pressed() -> void:
 	{ "action": "Seleccionar río", "icon": "" }
 	]
 	get_tree().change_scene_to_file("res://ui_global/MinigameIntro.tscn")
+	
+func _on_button_7_pressed() -> void:
+	var minigame_data = get_node_or_null("/root/MinigameData")
+
+	if minigame_data == null:
+		print("ERROR: No existe MinigameData en AutoLoad")
+		get_tree().change_scene_to_file("res://minigame_hillside_barrier/HillsideBarrierMinigame.tscn")
+		return
+
+	minigame_data.title = "¡Protege la ladera!"
+	minigame_data.description = "Coloca arbolitos en puntos estratégicos para formar barreras naturales y detener las rocas antes de que provoquen un deslizamiento."
+	minigame_data.instructions = "Observa la dirección en la que cae cada roca. Cuando aparezca el punto de siembra, arrastra un árbol desde la madera de selección y colócalo en el camino de la roca. Si la roca choca con el árbol, ambos desaparecen y sumas una roca detenida. Ganas si detienes la cantidad necesaria de rocas antes de que se acabe el tiempo. Pierdes si el tiempo llega a cero o si las rocas pasan sin ser detenidas y pierdes todas tus vidas."
+	minigame_data.video_path ="res://minigame_hillside_barrier/assets/instruction.ogv"
+	minigame_data.minigame_scene = "res://minigame_hillside_barrier/HillsideBarrierMinigame.tscn"
+	minigame_data.controls = [
+		{ "action": "Arrastrar árbol", "icon": "res://ui_global/assets/ClickIcon.png" },
+		{ "action": "Soltar árbol en el punto de siembra", "icon": "res://ui_global/assets/ClickIcon.png" }
+	]
+
+	get_tree().change_scene_to_file("res://ui_global/MinigameIntro.tscn")
+	
+	
