@@ -9,10 +9,10 @@ class_name HillsideTreeSapling
 const RETURN_SPEED := 18.0
 
 # Tamaño cuando ya está plantado para detener la roca.
-const PLANTED_SCALE := Vector2(1.10, 1.10)
+const PLANTED_SCALE := Vector2(1.45, 1.45)
 
-# Baja el árbol para que la raíz quede sobre el punto de siembra.
-const PLANTED_POSITION_OFFSET := Vector2(0, 75)
+# Baja el árbol para que la raíz quede sobre el punto.
+const PLANTED_POSITION_OFFSET := Vector2(0, 105)
 
 const IDLE_ANIMATION_SPEED := 3.0
 const IDLE_BOUNCE_AMOUNT := 4.0
@@ -47,8 +47,8 @@ var _base_sprite_scale := Vector2.ONE
 # NODE REFERENCES
 # =========================================================
 
-@onready var _sprite: Sprite2D = $Sprite2D
-@onready var _collision_shape: CollisionShape2D = $CollisionShape2D
+@onready var _sprite: Sprite2D = get_node_or_null("Sprite2D") as Sprite2D
+@onready var _collision_shape: CollisionShape2D = get_node_or_null("CollisionShape2D") as CollisionShape2D
 
 
 # =========================================================
@@ -101,14 +101,6 @@ func _input(event):
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT and not event.pressed and _dragging:
 			_drop_tree()
-
-
-# =========================================================
-# PUBLIC METHODS
-# =========================================================
-
-func get_start_position() -> Vector2:
-	return _start_position
 
 
 # =========================================================

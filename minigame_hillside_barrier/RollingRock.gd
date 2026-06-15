@@ -6,7 +6,7 @@ class_name HillsideRollingRock
 # CONSTANTS
 # =========================================================
 
-const HIT_DISTANCE := 95.0
+const HIT_DISTANCE := 105.0
 const ROTATION_SPEED := 7.5
 
 const COLOR_ROCK := Color("#8A8A82")
@@ -81,7 +81,7 @@ func _draw():
 	# Borde
 	draw_arc(Vector2.ZERO, 34, 0, TAU, 64, COLOR_ROCK_DARK, 4.0, true)
 
-	# Detalles de roca
+	# Detalles
 	draw_circle(Vector2(-10, -10), 9, COLOR_ROCK_LIGHT)
 	draw_circle(Vector2(12, 9), 7, COLOR_ROCK_DARK)
 	draw_line(Vector2(-18, 6), Vector2(15, -14), COLOR_ROCK_DARK, 3.0)

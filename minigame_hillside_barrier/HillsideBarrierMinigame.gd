@@ -32,17 +32,28 @@ const ROLLING_ROCK_SCENE := preload("res://minigame_hillside_barrier/RollingRock
 
 const TOTAL_TIME := 45.0
 const MAX_LIVES := 3
-const ROCKS_TO_BLOCK := 6
+const ROCKS_TO_BLOCK := 8
 
 const TIMER_PANEL_WIDTH := 500.0
 const TIMER_PANEL_HEIGHT := 60.0
 
-const TREE_TABLE_SCALE := Vector2(0.68, 0.68)
-const ROCK_SPEED := 120.0
+# Árboles más grandes en la madera.
+const TREE_TABLE_SCALE := Vector2(0.90, 0.90)
 
-# Posibles lugares donde pueden aparecer los puntos.
-# El juego escoge algunos al azar de esta lista.
+# Velocidad de las rocas. Si van muy rápido, baja a 100.
+const ROCK_SPEED := 125.0
 
+# Zonas aleatorias donde puede aparecer la roca.
+const ROCK_START_X_RANGE := Vector2(1180, 1780)
+const ROCK_START_Y_RANGE := Vector2(100, 320)
+
+# Zonas aleatorias donde puede terminar la roca.
+const ROCK_END_X_RANGE := Vector2(500, 1050)
+const ROCK_END_Y_RANGE := Vector2(820, 950)
+
+# En qué parte del camino aparece el punto para plantar.
+# Más alto = el punto aparece más abajo en el camino.
+const SPOT_PROGRESS_RANGE := Vector2(0.50, 0.72)
 
 # Posiciones de los árboles sobre la tabla de abajo.
 const TREE_TABLE_POSITIONS := [
@@ -53,22 +64,6 @@ const TREE_TABLE_POSITIONS := [
 	Vector2(1650, 1000),
 	Vector2(1800, 1000)
 ]
-# Cada ruta tiene:
-# start = donde aparece la roca
-# spot = donde aparece el punto para sembrar
-# end = donde llega la roca si no se detiene
-# Zonas aleatorias donde puede aparecer la roca arriba.
-const ROCK_START_X_RANGE := Vector2(1200, 1760)
-const ROCK_START_Y_RANGE := Vector2(120, 330)
-
-# Zonas aleatorias donde puede terminar la roca abajo.
-const ROCK_END_X_RANGE := Vector2(560, 980)
-const ROCK_END_Y_RANGE := Vector2(820, 930)
-
-# En qué parte del camino aparece el punto para plantar.
-# 0.45 = mitad del camino
-# 0.65 = un poco más abajo
-const SPOT_PROGRESS_RANGE := Vector2(0.45, 0.65)
 
 # =========================================================
 # PRIVATE VARIABLES
@@ -90,6 +85,8 @@ var _game_result: Node
 var _progress_layer: CanvasLayer
 var _progress_label: Label
 
+var _rng := RandomNumberGenerator.new()
+
 
 # =========================================================
 # NODE REFERENCES
@@ -110,7 +107,7 @@ var _progress_label: Label
 # =========================================================
 
 func _ready():
-	randomize()
+	_rng.randomize()
 
 	_game_finished = false
 	_round_active = false
@@ -124,6 +121,7 @@ func _ready():
 	_setup_game_result()
 	_setup_progress_ui()
 	_setup_planting_spots()
+	_setup_rocks()
 	_setup_table_trees()
 	_setup_audio()
 
@@ -229,6 +227,14 @@ func _setup_planting_spots():
 	_clear_children(_planting_spots)
 
 
+func _setup_rocks():
+	if _rocks == null:
+		print("ERROR: No existe el nodo Rocks")
+		return
+
+	_clear_children(_rocks)
+
+
 func _setup_table_trees():
 	if _tree_saplings == null:
 		print("ERROR: No existe el nodo TreeSaplings")
@@ -253,6 +259,7 @@ func _spawn_table_tree(table_position: Vector2):
 
 	_tree_saplings.add_child(tree)
 
+
 func _setup_audio():
 	if _background_audio:
 		_background_audio.volume_db = -14
@@ -272,28 +279,39 @@ func _setup_audio():
 
 
 # =========================================================
-# ROUND METHODS
+# RANDOM ROCK ROUTE
 # =========================================================
+
 func _get_random_rock_route() -> Dictionary:
 	var start_position := Vector2(
-		randf_range(ROCK_START_X_RANGE.x, ROCK_START_X_RANGE.y),
-		randf_range(ROCK_START_Y_RANGE.x, ROCK_START_Y_RANGE.y)
+		_rng.randf_range(ROCK_START_X_RANGE.x, ROCK_START_X_RANGE.y),
+		_rng.randf_range(ROCK_START_Y_RANGE.x, ROCK_START_Y_RANGE.y)
 	)
 
 	var end_position := Vector2(
-		randf_range(ROCK_END_X_RANGE.x, ROCK_END_X_RANGE.y),
-		randf_range(ROCK_END_Y_RANGE.x, ROCK_END_Y_RANGE.y)
+		_rng.randf_range(ROCK_END_X_RANGE.x, ROCK_END_X_RANGE.y),
+		_rng.randf_range(ROCK_END_Y_RANGE.x, ROCK_END_Y_RANGE.y)
 	)
 
-	var spot_progress := randf_range(SPOT_PROGRESS_RANGE.x, SPOT_PROGRESS_RANGE.y)
+	var spot_progress := _rng.randf_range(SPOT_PROGRESS_RANGE.x, SPOT_PROGRESS_RANGE.y)
 	var spot_position := start_position.lerp(end_position, spot_progress)
+
+	print("ROCA NUEVA")
+	print("Inicio: ", start_position)
+	print("Punto: ", spot_position)
+	print("Final: ", end_position)
 
 	return {
 		"start": start_position,
 		"spot": spot_position,
 		"end": end_position
 	}
-	
+
+
+# =========================================================
+# ROUND METHODS
+# =========================================================
+
 func _start_next_round():
 	if _game_finished:
 		return
@@ -305,13 +323,18 @@ func _start_next_round():
 		_win_game()
 		return
 
+	if _rocks == null:
+		print("ERROR: No existe el nodo Rocks")
+		return
+
 	_round_active = true
 	_current_tree = null
+	_current_spot = null
 
 	_clear_children(_planting_spots)
+
 	var route: Dictionary = _get_random_rock_route()
 
-	_spawn_rock(route["start"], route["end"])
 	_spawn_rock(route["start"], route["end"])
 
 	await get_tree().create_timer(0.8).timeout
@@ -322,7 +345,7 @@ func _start_next_round():
 	if not _round_active:
 		return
 
-	_spawn_planting_spot(route["spot"], randi_range(0, 100))
+	_spawn_planting_spot(route["spot"], _rng.randi_range(0, 999))
 
 
 func _spawn_planting_spot(spot_position: Vector2, spot_index: int):
@@ -367,8 +390,8 @@ func register_successful_tree(tree: Node, _spot: Node, table_position: Vector2):
 
 	_current_tree = tree
 
-	# Aparece otro árbol nuevo en la tabla.
-	# Así los árboles son prácticamente infinitos.
+	# Árbol infinito:
+	# cuando plantas uno, aparece otro en la madera.
 	_spawn_table_tree(table_position)
 
 	if _plant_audio:
@@ -401,6 +424,8 @@ func register_rock_blocked(_rock: Node, tree: Node):
 	if _game_finished:
 		return
 
+	# Solo aquí suma el puntaje.
+	# Plantar el árbol NO suma.
 	_blocked_rocks += 1
 	_update_progress_ui()
 
@@ -559,5 +584,8 @@ func _lose_game():
 # =========================================================
 
 func _clear_children(parent: Node):
+	if parent == null:
+		return
+
 	for child in parent.get_children():
 		child.queue_free()
