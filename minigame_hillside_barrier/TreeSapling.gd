@@ -7,9 +7,12 @@ class_name HillsideTreeSapling
 # =========================================================
 
 const RETURN_SPEED := 18.0
-const TABLE_SCALE := Vector2(0.55, 0.55)
-const PLANTED_SCALE := Vector2(0.90, 0.90)
-const PLANTED_POSITION_OFFSET := Vector2(0, 55)
+
+# Tamaño cuando ya está plantado para detener la roca.
+const PLANTED_SCALE := Vector2(1.10, 1.10)
+
+# Baja el árbol para que la raíz quede sobre el punto de siembra.
+const PLANTED_POSITION_OFFSET := Vector2(0, 75)
 
 const IDLE_ANIMATION_SPEED := 3.0
 const IDLE_BOUNCE_AMOUNT := 4.0
@@ -28,6 +31,8 @@ var minigame: Node = null
 # =========================================================
 
 var _start_position := Vector2.ZERO
+var _start_scale := Vector2.ONE
+
 var _dragging := false
 var _placed := false
 var _drag_offset := Vector2.ZERO
@@ -52,9 +57,9 @@ var _base_sprite_scale := Vector2.ONE
 
 func _ready():
 	_start_position = position
+	_start_scale = scale
 
 	z_index = 30
-	scale = TABLE_SCALE
 
 	monitoring = true
 	monitorable = true
@@ -85,6 +90,7 @@ func _process(delta):
 
 		if position.distance_to(_start_position) < 2.0:
 			position = _start_position
+			scale = _start_scale
 			_returning = false
 
 
@@ -95,6 +101,14 @@ func _input(event):
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT and not event.pressed and _dragging:
 			_drop_tree()
+
+
+# =========================================================
+# PUBLIC METHODS
+# =========================================================
+
+func get_start_position() -> Vector2:
+	return _start_position
 
 
 # =========================================================
@@ -157,10 +171,7 @@ func _place_on_spot(spot: Area2D):
 	add_to_group("planted_trees")
 	_returning = false
 
-	# Baja un poco el árbol para que la raíz quede sobre el punto.
 	global_position = spot.global_position + PLANTED_POSITION_OFFSET
-
-	# En la tabla es pequeño, al sembrarlo crece.
 	scale = PLANTED_SCALE
 	z_index = 45
 
@@ -175,7 +186,8 @@ func _place_on_spot(spot: Area2D):
 		_sprite.scale = _base_sprite_scale
 
 	if minigame and minigame.has_method("register_successful_tree"):
-		minigame.register_successful_tree(self, spot)
+		minigame.register_successful_tree(self, spot, _start_position)
+
 
 func _return_to_start():
 	_returning = true
