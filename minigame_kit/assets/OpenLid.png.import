@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cv7gn3sd1iqsx"
-path="res://.godot/imported/botiquin_fondo.png-f8c7ea571bf31417b1544f37c1a001c8.ctex"
+uid="uid://b6onqveap3j5d"
+path="res://.godot/imported/OpenLid.png-854d1a06169845994570b3f1846d1d25.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://minigame_kit/assets/botiquin_fondo.png"
-dest_files=["res://.godot/imported/botiquin_fondo.png-f8c7ea571bf31417b1544f37c1a001c8.ctex"]
+source_file="res://minigame_kit/assets/OpenLid.png"
+dest_files=["res://.godot/imported/OpenLid.png-854d1a06169845994570b3f1846d1d25.ctex"]
 
 [params]
 
