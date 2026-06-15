@@ -127,8 +127,9 @@ func _on_button_12_pressed() -> void:
 	minigame_data.video_path = "res://minigame_river_clean/assets/video/RiverCleanInstructions.ogv"
 	minigame_data.minigame_scene = "res://minigame_river_clean/RiverCleanMinigame.tscn"
 	minigame_data.controls = [
-		{ "action": "Mover cursor", "icon": "res://ui_global/assets/ClickIcon.png" },
+	{ "action": "Mover cursor", "icon": "res://ui_global/assets/ClickIcon.png" },
 	]
+	get_tree().change_scene_to_file("res://ui_global/MinigameIntro.tscn")
 func _on_button_11_pressed() -> void:
 	var minigame_data = get_node_or_null("/root/MinigameData")
 
@@ -148,5 +149,4 @@ func _on_button_11_pressed() -> void:
 		{ "action": "Seleccionar río", "icon": "" }
 	]
 
->>>>>>> Stashed changes
 	get_tree().change_scene_to_file("res://ui_global/MinigameIntro.tscn")
