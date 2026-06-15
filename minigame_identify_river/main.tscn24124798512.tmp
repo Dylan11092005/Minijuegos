@@ -1,0 +1,49 @@
+[gd_scene format=3 uid="uid://28cy3ns25qkn"]
+
+[ext_resource type="Script" uid="uid://dsrcb3iqomr73" path="res://minigame_identify_river/main.gd" id="1_fosne"]
+[ext_resource type="Texture2D" uid="uid://53xpu6jo6ii1" path="res://minigame_identify_river/assets/BackgroundRiver.png" id="1_osiry"]
+[ext_resource type="PackedScene" uid="uid://bwr0e6jsk7mnx" path="res://minigame_identify_river/RiverOption.tscn" id="2_fosne"]
+
+[node name="Main" type="Node2D" unique_id=2086178937]
+script = ExtResource("1_fosne")
+time_limit = null
+chances_limit = null
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1467667007]
+position = Vector2(967, 546.00006)
+scale = Vector2(2.6081076, 1.9537365)
+texture = ExtResource("1_osiry")
+
+[node name="RiverOption" parent="." unique_id=859265718 instance=ExtResource("2_fosne")]
+position = Vector2(599, 619)
+
+[node name="RiverOption2" parent="." unique_id=824495168 instance=ExtResource("2_fosne")]
+z_index = 5
+position = Vector2(291, 454)
+
+[node name="RiverOption5" parent="." unique_id=1948768797 instance=ExtResource("2_fosne")]
+z_index = 5
+position = Vector2(906, 287)
+
+[node name="RiverOption6" parent="." unique_id=1667999233 instance=ExtResource("2_fosne")]
+z_index = 5
+position = Vector2(594, 282)
+
+[node name="RiverOption7" parent="." unique_id=28917627 instance=ExtResource("2_fosne")]
+z_index = 5
+position = Vector2(282, 277)
+
+[node name="RiverOption8" parent="." unique_id=199579073 instance=ExtResource("2_fosne")]
+z_index = 5
+position = Vector2(904, 452)
+
+[node name="RiverOption9" parent="." unique_id=848365438 instance=ExtResource("2_fosne")]
+z_index = 5
+position = Vector2(598, 456)
+
+[node name="RiverOption3" parent="." unique_id=448051850 instance=ExtResource("2_fosne")]
+z_index = 5
+position = Vector2(288, 616)
+
+[node name="RiverOption4" parent="." unique_id=574298556 instance=ExtResource("2_fosne")]
+position = Vector2(909, 618)

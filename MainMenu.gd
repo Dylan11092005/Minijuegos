@@ -105,7 +105,7 @@ func _on_button_9_pressed() -> void:
 
 func _on_button_6_pressed() -> void:
 	var minigame_data = get_node("/root/MinigameData")
-	minigame_data.title = "¡Rescata a tus amigos!"
+	minigame_data.title = "¡Rescata a tus amigos y llega a la zona segura!"
 	minigame_data.description = "Ayuda a tus amigos a llegar a la zona segura durante la inundación."
 	minigame_data.instructions = "Muévete por el laberinto, rescata a los dos amigos y llega a la zona segura antes de que se acabe el tiempo."
 	minigame_data.video_path = "res://minigame_laberinto/assets/maze_Instructions.ogv"
@@ -131,18 +131,39 @@ func _on_button_12_pressed() -> void:
 	]
 	get_tree().change_scene_to_file("res://ui_global/MinigameIntro.tscn")
 func _on_button_11_pressed() -> void:
+	var minigame_data = get_node("/root/MinigameData")
+
+	minigame_data.title = "¡Identifica el río diferente!"
+	minigame_data.description = "Identificaste que el río está creciendo. Observa los ríos y encuentra cuál tiene una característica distinta."
+	minigame_data.instructions = "Mira cuidadosamente cada grupo de ríos. Haz clic sobre el río diferente para avanzar de ronda. Ganas si completas las tres rondas antes de quedarte sin vidas o sin tiempo."
+
+	minigame_data.video_path = "res://minigame_identify_river/assets/videoriver.ogv"
+	minigame_data.minigame_scene = "res://minigame_identify_river/main.tscn"
+
+	minigame_data.controls = [
+		{ "action": "Seleccionar río", "icon": "res://ui_global/assets/ClickIcon.png" },
+	]
+
+	get_tree().change_scene_to_file("res://ui_global/MinigameIntro.tscn")
+	
+func _on_button_7_pressed() -> void:
 	var minigame_data = get_node_or_null("/root/MinigameData")
 
 	if minigame_data == null:
 		print("ERROR: No existe MinigameData en AutoLoad")
-		get_tree().change_scene_to_file("res://minigame_identify_river/main.tscn")
+		get_tree().change_scene_to_file("res://minigame_hillside_barrier/HillsideBarrierMinigame.tscn")
 		return
-	minigame_data.title = "¡Identifica el río diferente!"
-	minigame_data.description = "Observa los ríos y encuentra cuál tiene una característica distinta antes de que se acabe el tiempo."
-	minigame_data.instructions = "Mira cuidadosamente cada grupo de ríos. Haz clic sobre el río diferente para avanzar de ronda. Ganas si completas las tres rondas antes de quedarte sin oportunidades o sin tiempo."
-	minigame_data.video_path = ""
-	minigame_data.minigame_scene = "res://minigame_identify_river/main.tscn"
+
+	minigame_data.title = "¡Protege la ladera!"
+	minigame_data.description = "Coloca arbolitos en puntos estratégicos para formar barreras naturales y detener las rocas antes de que provoquen un deslizamiento."
+	minigame_data.instructions = "Observa la dirección en la que cae cada roca. Cuando aparezca el punto de siembra, arrastra un árbol desde la madera de selección y colócalo en el camino de la roca. Si la roca choca con el árbol, ambos desaparecen y sumas una roca detenida. Ganas si detienes la cantidad necesaria de rocas antes de que se acabe el tiempo. Pierdes si el tiempo llega a cero o si las rocas pasan sin ser detenidas y pierdes todas tus vidas."
+	minigame_data.video_path ="res://minigame_hillside_barrier/assets/instruction.ogv"
+	minigame_data.minigame_scene = "res://minigame_hillside_barrier/HillsideBarrierMinigame.tscn"
 	minigame_data.controls = [
-	{ "action": "Seleccionar río", "icon": "" }
+		{ "action": "Arrastrar árbol", "icon": "res://ui_global/assets/ClickIcon.png" },
+		{ "action": "Soltar árbol en el punto de siembra", "icon": "res://ui_global/assets/ClickIcon.png" }
 	]
+
 	get_tree().change_scene_to_file("res://ui_global/MinigameIntro.tscn")
+	
+	

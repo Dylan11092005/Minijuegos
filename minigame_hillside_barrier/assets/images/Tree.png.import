@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dhq5gof15og2b"
-path="res://.godot/imported/friends.png-efc37bba0e4f5638ea733721191c9ac1.ctex"
+uid="uid://diaw61g1e0dig"
+path="res://.godot/imported/Tree.png-fcadfcdf4b6669022f3f3766e01fd3e5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://minigame_laberinto/assets/personajes/friends.png"
-dest_files=["res://.godot/imported/friends.png-efc37bba0e4f5638ea733721191c9ac1.ctex"]
+source_file="res://minigame_hillside_barrier/assets/images/Tree.png"
+dest_files=["res://.godot/imported/Tree.png-fcadfcdf4b6669022f3f3766e01fd3e5.ctex"]
 
 [params]
 

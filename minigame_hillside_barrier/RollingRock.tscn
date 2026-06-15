@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://5b54f0q3ytn5"]
+
+[ext_resource type="Script" uid="uid://dct0brcjruine" path="res://minigame_hillside_barrier/RollingRock.gd" id="1_tpwnr"]
+[ext_resource type="Texture2D" uid="uid://bfbiku40kakbo" path="res://minigame_hillside_barrier/assets/images/RockSpriteSheet.png" id="2_5qe7e"]
+
+[node name="RollingRock" type="Node2D" unique_id=58543915]
+script = ExtResource("1_tpwnr")
+
+[node name="RockSprite" type="Sprite2D" parent="." unique_id=1967361252]
+texture = ExtResource("2_5qe7e")
+region_enabled = true

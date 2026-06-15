@@ -8,20 +8,40 @@
 script = ExtResource("1_fosne")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1467667007]
-position = Vector2(967, 546.00006)
-scale = Vector2(2.6081076, 1.9537365)
+position = Vector2(960, 571)
+scale = Vector2(1.3422748, 1.0445719)
 texture = ExtResource("1_osiry")
 
 [node name="RiverOption" parent="." unique_id=859265718 instance=ExtResource("2_fosne")]
-position = Vector2(1086, 422)
+position = Vector2(597, 615)
 
 [node name="RiverOption2" parent="." unique_id=824495168 instance=ExtResource("2_fosne")]
 z_index = 5
-position = Vector2(815, 599)
+position = Vector2(287, 435)
+
+[node name="RiverOption5" parent="." unique_id=1948768797 instance=ExtResource("2_fosne")]
+z_index = 5
+position = Vector2(903, 260)
+
+[node name="RiverOption6" parent="." unique_id=1667999233 instance=ExtResource("2_fosne")]
+z_index = 5
+position = Vector2(598, 260)
+
+[node name="RiverOption7" parent="." unique_id=28917627 instance=ExtResource("2_fosne")]
+z_index = 5
+position = Vector2(288, 257)
+
+[node name="RiverOption8" parent="." unique_id=199579073 instance=ExtResource("2_fosne")]
+z_index = 5
+position = Vector2(906, 433)
+
+[node name="RiverOption9" parent="." unique_id=848365438 instance=ExtResource("2_fosne")]
+z_index = 5
+position = Vector2(594, 435)
 
 [node name="RiverOption3" parent="." unique_id=448051850 instance=ExtResource("2_fosne")]
 z_index = 5
-position = Vector2(556, 368)
+position = Vector2(288, 616)
 
 [node name="RiverOption4" parent="." unique_id=574298556 instance=ExtResource("2_fosne")]
-position = Vector2(1092, 225)
+position = Vector2(903, 616)

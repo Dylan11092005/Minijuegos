@@ -2,19 +2,20 @@
 
 [sub_resource type="GDScript" id="GDScript_iil01"]
 script/source = "extends Area2D
-
+class_name HillsidePlantingSpot
 
 
 # =========================================================
 # CONSTANTS
 # =========================================================
 
-const SPOT_RADIUS := 45.0
+const SPOT_RADIUS := 38.0
 
-const COLOR_EMPTY := Color(\"#72FF8A\")
-const COLOR_EMPTY_GLOW := Color(\"#72FF8A\")
-const COLOR_FILLED := Color(\"#4CAF50\")
-const COLOR_FILLED_DARK := Color(\"#2F6B32\")
+const COLOR_GREEN := Color(\"#74FF7A\")
+const COLOR_GREEN_SOFT := Color(\"#B7FF9C\")
+const COLOR_YELLOW := Color(\"#FFE66D\")
+const COLOR_WHITE := Color(\"#FFFFFF\")
+const COLOR_DARK := Color(\"#2E7D32\")
 
 
 # =========================================================
@@ -22,7 +23,7 @@ const COLOR_FILLED_DARK := Color(\"#2F6B32\")
 # =========================================================
 
 @export var spot_index := 0
-@export var debug_visible := true
+@export var visible_marker := true
 
 var is_filled := false
 
@@ -55,46 +56,59 @@ func _process(delta):
 
 
 func _draw():
-	if not debug_visible:
+	if not visible_marker:
 		return
 
 	if is_filled:
-		draw_circle(
-			Vector2.ZERO,
-			SPOT_RADIUS,
-			Color(COLOR_FILLED.r, COLOR_FILLED.g, COLOR_FILLED.b, 0.20)
-		)
+		return
 
-		draw_arc(
-			Vector2.ZERO,
-			SPOT_RADIUS,
-			0,
-			TAU,
-			72,
-			COLOR_FILLED_DARK,
-			4.0,
-			true
-		)
-	else:
-		var pulse := 1.0 + sin(_time_elapsed * 4.0 + spot_index) * 0.08
-		var radius := SPOT_RADIUS * pulse
+	var pulse := 1.0 + sin(_time_elapsed * 4.0 + spot_index) * 0.08
+	var radius := SPOT_RADIUS * pulse
 
-		draw_circle(
-			Vector2.ZERO,
-			radius + 10,
-			Color(COLOR_EMPTY_GLOW.r, COLOR_EMPTY_GLOW.g, COLOR_EMPTY_GLOW.b, 0.12)
-		)
+	# Brillo exterior suave
+	draw_circle(
+		Vector2.ZERO,
+		radius + 10,
+		Color(COLOR_GREEN.r, COLOR_GREEN.g, COLOR_GREEN.b, 0.18)
+	)
 
-		draw_arc(
-			Vector2.ZERO,
-			radius,
-			0,
-			TAU,
-			72,
-			Color(COLOR_EMPTY.r, COLOR_EMPTY.g, COLOR_EMPTY.b, 0.75),
-			4.0,
-			true
-		)
+	# Aro principal
+	draw_arc(
+		Vector2.ZERO,
+		radius,
+		0,
+		TAU,
+		80,
+		COLOR_GREEN,
+		5.0,
+		true
+	)
+
+	# Aro interno amarillo para que parezca punto de siembra
+	draw_arc(
+		Vector2.ZERO,
+		radius - 10,
+		0,
+		TAU,
+		80,
+		COLOR_YELLOW,
+		3.0,
+		true
+	)
+
+	# Centro suave
+	draw_circle(
+		Vector2.ZERO,
+		radius - 18,
+		Color(COLOR_GREEN_SOFT.r, COLOR_GREEN_SOFT.g, COLOR_GREEN_SOFT.b, 0.35)
+	)
+
+	# Pequeño brillo blanco arriba
+	draw_circle(
+		Vector2(-10, -12),
+		5,
+		Color(COLOR_WHITE.r, COLOR_WHITE.g, COLOR_WHITE.b, 0.65)
+	)
 
 
 # =========================================================
@@ -108,6 +122,7 @@ func can_place_tree() -> bool:
 func place_tree():
 	is_filled = true
 	monitoring = false
+	visible_marker = false
 	queue_redraw()
 
 

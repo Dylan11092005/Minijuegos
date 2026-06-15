@@ -1,28 +1,42 @@
 extends Node2D
 
 @export var time_limit := 30.0
-@export var chances_limit := 3
+@export var lives_limit := 3
 
 const TIMER_HUD_SCENE = preload("res://ui_global/TimerUi.tscn")
 const GAME_RESULT_SCENE = preload("res://ui_global/GameResult.tscn")
+const LIVES_UI_SCENE = preload("res://ui_global/LivesUi.tscn")
+
+const BASS_MUSIC = preload("res://minigame_identify_river/assets/bass.mp3")
+const FOREST_MUSIC = preload("res://minigame_identify_river/assets/forest.mp3")
+const CORRECT_SOUND = preload("res://minigame_identify_river/assets/Correct.mp3")
+const LOSER_SOUND = preload("res://minigame_identify_river/assets/Loser.mp3")
 
 var game_active := false
 var already_finished := false
 
 var current_round := 1
 var max_rounds := 3
-var chances := 3
+var lives := 3
 
 var river_options: Array[RiverOption] = []
 
 var timer_hud: CanvasLayer
 var game_result_panel: CanvasLayer
 
+var lives_ui: Node
+var lives_layer: CanvasLayer
+
+var round_ui: RoundUi
+var round_layer: CanvasLayer
+
 var ui_layer: CanvasLayer
-var round_label: Label
-var chances_label: Label
 var feedback_label: Label
-var back_button: Button
+
+var bass_music_player: AudioStreamPlayer
+var forest_music_player: AudioStreamPlayer
+var correct_sound_player: AudioStreamPlayer
+var loser_sound_player: AudioStreamPlayer
 
 
 func _ready() -> void:
@@ -32,7 +46,10 @@ func _ready() -> void:
 	get_river_options()
 	create_timer()
 	create_game_result_panel()
+	create_lives_ui()
+	create_round_ui()
 	create_simple_ui()
+	create_audio()
 	connect_river_options()
 
 	start_game()
@@ -64,32 +81,132 @@ func create_game_result_panel() -> void:
 	game_result_panel.layer = 60
 
 
+func create_lives_ui() -> void:
+	var new_lives_ui = LIVES_UI_SCENE.instantiate()
+
+	if new_lives_ui is CanvasLayer:
+		lives_ui = new_lives_ui
+		add_child(lives_ui)
+		lives_ui.layer = 55
+	else:
+		lives_layer = CanvasLayer.new()
+		lives_layer.layer = 55
+		add_child(lives_layer)
+
+		lives_ui = new_lives_ui
+		lives_layer.add_child(lives_ui)
+
+	if lives_ui.has_method("set_panel_corner"):
+		lives_ui.call("set_panel_corner", LivesUi.PanelCorner.TOP_RIGHT)
+
+	if lives_ui.has_method("set_panel_margin"):
+		lives_ui.call("set_panel_margin", Vector2(35, 20))
+
+	setup_lives_ui()
+
+
+func setup_lives_ui() -> void:
+	if lives_ui == null:
+		return
+
+	if lives_ui.has_method("set_max_lives"):
+		lives_ui.call("set_max_lives", lives_limit)
+	elif lives_ui.has_method("set_total_lives"):
+		lives_ui.call("set_total_lives", lives_limit)
+	elif lives_ui.has_method("set_max_vidas"):
+		lives_ui.call("set_max_vidas", lives_limit)
+
+	update_lives_ui()
+
+
+func update_lives_ui() -> void:
+	if lives_ui == null:
+		return
+
+	if lives_ui.has_method("actualizar_vidas"):
+		lives_ui.call("actualizar_vidas", lives)
+	elif lives_ui.has_method("update_lives"):
+		lives_ui.call("update_lives", lives)
+	elif lives_ui.has_method("set_lives"):
+		lives_ui.call("set_lives", lives)
+	elif lives_ui.has_method("set_current_lives"):
+		lives_ui.call("set_current_lives", lives)
+	else:
+		print("ERROR: LivesUi no tiene método para actualizar vidas.")
+
+
+func create_round_ui() -> void:
+	round_layer = CanvasLayer.new()
+	round_layer.layer = 54
+	add_child(round_layer)
+
+	round_ui = RoundUi.new()
+	round_layer.add_child(round_ui)
+
+	round_ui.set_panel_corner(RoundUi.PanelCorner.TOP_RIGHT)
+	round_ui.set_panel_margin(Vector2(35, 140))
+	round_ui.update_round(current_round, max_rounds)
+
+
 func create_simple_ui() -> void:
 	ui_layer = CanvasLayer.new()
 	ui_layer.layer = 40
 	add_child(ui_layer)
 
-	round_label = Label.new()
-	round_label.position = Vector2(40, 95)
-	round_label.add_theme_font_size_override("font_size", 28)
-	ui_layer.add_child(round_label)
-
-	chances_label = Label.new()
-	chances_label.position = Vector2(40, 135)
-	chances_label.add_theme_font_size_override("font_size", 28)
-	ui_layer.add_child(chances_label)
-
 	feedback_label = Label.new()
-	feedback_label.position = Vector2(420, 95)
-	feedback_label.add_theme_font_size_override("font_size", 32)
+	feedback_label.position = Vector2(500, 650)
+	feedback_label.add_theme_font_size_override("font_size", 34)
 	ui_layer.add_child(feedback_label)
 
-	back_button = Button.new()
-	back_button.text = "Volver"
-	back_button.position = Vector2(40, 650)
-	back_button.size = Vector2(140, 45)
-	back_button.pressed.connect(_on_back_pressed)
-	ui_layer.add_child(back_button)
+
+func create_audio() -> void:
+	bass_music_player = AudioStreamPlayer.new()
+	bass_music_player.stream = BASS_MUSIC
+	bass_music_player.volume_db = -14
+	add_child(bass_music_player)
+
+	forest_music_player = AudioStreamPlayer.new()
+	forest_music_player.stream = FOREST_MUSIC
+	forest_music_player.volume_db = -8
+	add_child(forest_music_player)
+
+	correct_sound_player = AudioStreamPlayer.new()
+	correct_sound_player.stream = CORRECT_SOUND
+	correct_sound_player.volume_db = 0
+	add_child(correct_sound_player)
+
+	loser_sound_player = AudioStreamPlayer.new()
+	loser_sound_player.stream = LOSER_SOUND
+	loser_sound_player.volume_db = 0
+	add_child(loser_sound_player)
+
+	play_background_music()
+
+
+func play_background_music() -> void:
+	if bass_music_player != null:
+		bass_music_player.play()
+
+	if forest_music_player != null:
+		forest_music_player.play()
+
+
+func stop_background_music() -> void:
+	if bass_music_player != null:
+		bass_music_player.stop()
+
+	if forest_music_player != null:
+		forest_music_player.stop()
+
+
+func play_correct_sound() -> void:
+	if correct_sound_player != null:
+		correct_sound_player.play()
+
+
+func play_loser_sound() -> void:
+	if loser_sound_player != null:
+		loser_sound_player.play()
 
 
 func connect_river_options() -> void:
@@ -103,10 +220,14 @@ func start_game() -> void:
 	already_finished = false
 
 	current_round = 1
-	chances = chances_limit
+	lives = lives_limit
 
 	feedback_label.text = ""
 	update_ui()
+	update_lives_ui()
+
+	if bass_music_player != null and not bass_music_player.playing:
+		play_background_music()
 
 	start_round()
 
@@ -121,9 +242,10 @@ func start_round() -> void:
 
 	reset_all_rivers()
 	update_ui()
+	update_lives_ui()
 
 	timer_hud.detener()
-	timer_hud.iniciar(time_limit, "Tiempo", "para identificar el río diferente")
+	timer_hud.iniciar(time_limit, "Tiempo", "identifica el río diferente")
 
 	var different_index := randi() % river_options.size()
 
@@ -151,8 +273,8 @@ func get_different_river_state() -> RiverOption.State:
 
 
 func update_ui() -> void:
-	round_label.text = "Ronda: " + str(current_round) + " / " + str(max_rounds)
-	chances_label.text = "Oportunidades: " + str(chances)
+	if round_ui != null:
+		round_ui.update_round(current_round, max_rounds)
 
 
 func _on_river_selected(is_different: bool) -> void:
@@ -160,7 +282,8 @@ func _on_river_selected(is_different: bool) -> void:
 		return
 
 	if is_different:
-		feedback_label.text = "¡Correcto!"
+		play_correct_sound()
+
 		timer_hud.detener()
 		disable_all_rivers()
 
@@ -169,14 +292,20 @@ func _on_river_selected(is_different: bool) -> void:
 		else:
 			game_active = false
 			current_round += 1
+			update_ui()
 			await get_tree().create_timer(1.0).timeout
 			start_round()
 	else:
-		chances -= 1
-		feedback_label.text = "Incorrecto, intenta de nuevo."
-		update_ui()
+		play_loser_sound()
 
-		if chances <= 0:
+		lives -= 1
+
+		if lives < 0:
+			lives = 0
+
+		update_lives_ui()
+
+		if lives <= 0:
 			lose_game()
 
 
@@ -187,6 +316,7 @@ func disable_all_rivers() -> void:
 
 func _on_time_up() -> void:
 	if game_active and not already_finished:
+		play_loser_sound()
 		lose_game()
 
 
@@ -199,8 +329,7 @@ func win_game() -> void:
 
 	timer_hud.detener()
 	disable_all_rivers()
-
-	feedback_label.text = "¡Ganaste!"
+	stop_background_music()
 
 	if game_result_panel != null:
 		game_result_panel.mostrar_ganaste()
@@ -215,12 +344,12 @@ func lose_game() -> void:
 
 	timer_hud.detener()
 	disable_all_rivers()
-
-	feedback_label.text = "Perdiste."
+	stop_background_music()
 
 	if game_result_panel != null:
 		game_result_panel.mostrar_perdiste()
 
 
 func _on_back_pressed() -> void:
+	stop_background_music()
 	get_tree().change_scene_to_file("res://MenuPrincipal.tscn")
