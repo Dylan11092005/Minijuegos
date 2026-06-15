@@ -7,32 +7,32 @@
 [ext_resource type="Texture2D" uid="uid://clvrt5asnfpwt" path="res://minigame_identify_river/assets/river_high.png" id="5_tip1u"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_rq0hv"]
-size = Vector2(271, 187.125)
+size = Vector2(307.5, 209.5625)
 
 [node name="RiverOption" type="Area2D" unique_id=859265718]
-position = Vector2(332, 9)
+position = Vector2(0, 1)
 script = ExtResource("1_ef4yx")
 
 [node name="SpriteNormal" type="Sprite2D" parent="." unique_id=1589868215]
-position = Vector2(-328.00003, -8.999996)
-scale = Vector2(0.17869475, 0.16252303)
+position = Vector2(4.3125267, 0.21524048)
+scale = Vector2(0.1818888, 0.2615894)
 texture = ExtResource("2_ggf24")
 
 [node name="SpriteDark" type="Sprite2D" parent="." unique_id=987491592]
-position = Vector2(-334, -9)
-scale = Vector2(0.17713548, 0.16325676)
+position = Vector2(5, -1.9073486e-06)
+scale = Vector2(0.19898, 0.22083262)
 texture = ExtResource("3_jhcnx")
 
 [node name="SpriteFoam" type="Sprite2D" parent="." unique_id=1168850359]
-position = Vector2(-332, -11.999998)
-scale = Vector2(0.17644487, 0.16049434)
+position = Vector2(2.0000005, 10)
+scale = Vector2(0.2043322, 0.18008676)
 texture = ExtResource("4_7ag02")
 
 [node name="SpriteHigh" type="Sprite2D" parent="." unique_id=1943030549]
-position = Vector2(-332.00003, -15.999997)
-scale = Vector2(0.1778288, 0.16196908)
+position = Vector2(6, -8)
+scale = Vector2(0.1938868, 0.18779857)
 texture = ExtResource("5_tip1u")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1807602295]
-position = Vector2(-330.5, -16.4375)
+position = Vector2(5, -1)
 shape = SubResource("RectangleShape2D_rq0hv")

@@ -21,9 +21,13 @@ expand_mode = 1
 [node name="TreeSpawnPoint" type="Marker2D" parent="." unique_id=1687862948]
 position = Vector2(1450, 980)
 
+[node name="Rocks" type="Node2D" parent="." unique_id=963371407]
+
 [node name="TimeSound" type="AudioStreamPlayer" parent="." unique_id=2013248923]
 
 [node name="BackgroundAudio" type="AudioStreamPlayer" parent="." unique_id=531716317]
+
+[node name="Move1Audio" type="AudioStreamPlayer" parent="." unique_id=867437794]
 
 [node name="PlantAudio" type="AudioStreamPlayer" parent="." unique_id=902359879]
 

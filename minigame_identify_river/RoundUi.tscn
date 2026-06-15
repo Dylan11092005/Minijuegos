@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://cmm35qqmlew5h"]
+
+[ext_resource type="Script" uid="uid://cdsjyd42c8u1h" path="res://minigame_identify_river/round_ui.gd" id="1_ho8y6"]
+
+[node name="RoundUi" type="Node2D" unique_id=1745544888]
+script = ExtResource("1_ho8y6")
