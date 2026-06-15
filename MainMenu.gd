@@ -147,6 +147,3 @@ func _on_button_11_pressed() -> void:
 	minigame_data.controls = [
 		{ "action": "Seleccionar río", "icon": "" }
 	]
-
->>>>>>> Stashed changes
-	get_tree().change_scene_to_file("res://ui_global/MinigameIntro.tscn")
