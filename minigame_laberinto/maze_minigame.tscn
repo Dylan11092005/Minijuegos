@@ -717,19 +717,19 @@ shape = SubResource("RectangleShape2D_a4bxp")
 z_index = 5
 
 [node name="Sprite2D" type="Sprite2D" parent="ZonaSegura" unique_id=671612100]
-position = Vector2(1300, 546)
+position = Vector2(1328, 553.00006)
 rotation = 6.2831855
 scale = Vector2(0.43335557, 0.44873443)
 texture = ExtResource("4_mht8p")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ZonaSegura" unique_id=697554632]
-position = Vector2(1306.7031, 547)
+position = Vector2(1329, 548)
 shape = SubResource("RectangleShape2D_vp2i8")
 
 [node name="BloqueoZona" type="StaticBody2D" parent="ZonaSegura" unique_id=1511409242]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ZonaSegura/BloqueoZona" unique_id=395268936]
-position = Vector2(1308.5, 551)
+position = Vector2(1334, 552)
 shape = SubResource("RectangleShape2D_6op3i")
 
 [node name="TimerUI" parent="." unique_id=1042888595 instance=ExtResource("9_kjcdp")]

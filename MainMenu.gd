@@ -105,7 +105,7 @@ func _on_button_9_pressed() -> void:
 
 func _on_button_6_pressed() -> void:
 	var minigame_data = get_node("/root/MinigameData")
-	minigame_data.title = "¡Rescata a tus amigos!"
+	minigame_data.title = "¡Rescata a tus amigos y llega a la zona segura!"
 	minigame_data.description = "Ayuda a tus amigos a llegar a la zona segura durante la inundación."
 	minigame_data.instructions = "Muévete por el laberinto, rescata a los dos amigos y llega a la zona segura antes de que se acabe el tiempo."
 	minigame_data.video_path = "res://minigame_laberinto/assets/maze_Instructions.ogv"
