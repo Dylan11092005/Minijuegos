@@ -1,0 +1,38 @@
+[gd_scene format=3 uid="uid://bwr0e6jsk7mnx"]
+
+[ext_resource type="Script" uid="uid://bi5vr10tmhgw5" path="res://minigame_identify_river/river_option.gd" id="1_ef4yx"]
+[ext_resource type="Texture2D" uid="uid://dihkjrukm0wp8" path="res://minigame_identify_river/assets/river_normal.png" id="2_ggf24"]
+[ext_resource type="Texture2D" uid="uid://cld60f40coud" path="res://minigame_identify_river/assets/river_dark.png" id="3_jhcnx"]
+[ext_resource type="Texture2D" uid="uid://c73snsunpesh5" path="res://minigame_identify_river/assets/river_foam.png" id="4_7ag02"]
+[ext_resource type="Texture2D" uid="uid://clvrt5asnfpwt" path="res://minigame_identify_river/assets/river_high.png" id="5_tip1u"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_rq0hv"]
+size = Vector2(271, 187.125)
+
+[node name="RiverOption" type="Area2D" unique_id=859265718]
+position = Vector2(332, 9)
+script = ExtResource("1_ef4yx")
+
+[node name="SpriteNormal" type="Sprite2D" parent="." unique_id=1589868215]
+position = Vector2(-328.00003, -8.999996)
+scale = Vector2(0.17869475, 0.16252303)
+texture = ExtResource("2_ggf24")
+
+[node name="SpriteDark" type="Sprite2D" parent="." unique_id=987491592]
+position = Vector2(-334, -9)
+scale = Vector2(0.17713548, 0.16325676)
+texture = ExtResource("3_jhcnx")
+
+[node name="SpriteFoam" type="Sprite2D" parent="." unique_id=1168850359]
+position = Vector2(-332, -11.999998)
+scale = Vector2(0.17644487, 0.16049434)
+texture = ExtResource("4_7ag02")
+
+[node name="SpriteHigh" type="Sprite2D" parent="." unique_id=1943030549]
+position = Vector2(-332.00003, -15.999997)
+scale = Vector2(0.1778288, 0.16196908)
+texture = ExtResource("5_tip1u")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1807602295]
+position = Vector2(-330.5, -16.4375)
+shape = SubResource("RectangleShape2D_rq0hv")
