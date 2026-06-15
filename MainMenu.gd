@@ -129,4 +129,24 @@ func _on_button_12_pressed() -> void:
 	minigame_data.controls = [
 		{ "action": "Mover cursor", "icon": "res://ui_global/assets/ClickIcon.png" },
 	]
+func _on_button_11_pressed() -> void:
+	var minigame_data = get_node_or_null("/root/MinigameData")
+
+	if minigame_data == null:
+		print("ERROR: No existe MinigameData en AutoLoad")
+		get_tree().change_scene_to_file("res://minigame_identify_river/main.tscn")
+		return
+
+	minigame_data.title = "¡Identifica el río diferente!"
+	minigame_data.description = "Observa los ríos y encuentra cuál tiene una característica distinta antes de que se acabe el tiempo."
+	minigame_data.instructions = "Mira cuidadosamente cada grupo de ríos. Haz clic sobre el río diferente para avanzar de ronda. Ganas si completas las tres rondas antes de quedarte sin oportunidades o sin tiempo."
+
+	minigame_data.video_path = ""
+	minigame_data.minigame_scene = "res://minigame_identify_river/main.tscn"
+
+	minigame_data.controls = [
+		{ "action": "Seleccionar río", "icon": "" }
+	]
+
+>>>>>>> Stashed changes
 	get_tree().change_scene_to_file("res://ui_global/MinigameIntro.tscn")

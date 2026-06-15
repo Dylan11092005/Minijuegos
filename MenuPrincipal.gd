@@ -28,6 +28,3 @@ func _on_button_5_pressed() -> void:
 func _on_button_23_toggled() -> void:
 	get_tree().change_scene_to_file("res://minigame_laberinto/maze_minigame.tscn")
 		
-func _on_button_12_pressed() -> void:
-	get_tree().change_scene_to_file("res://minigame_river_clean/RiverCleanMinigame.tscn")
-	
