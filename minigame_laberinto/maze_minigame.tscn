@@ -90,10 +90,10 @@ size = Vector2(56, 68)
 size = Vector2(68, 68)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_vp2i8"]
-size = Vector2(170.59375, 113)
+size = Vector2(168, 93)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6op3i"]
-size = Vector2(163, 100.5)
+size = Vector2(161.5, 100.5)
 
 [node name="MazeMinigame" type="Node2D" unique_id=659277626]
 script = ExtResource("1_4vvp6")
@@ -387,8 +387,8 @@ position = Vector2(932, 628)
 shape = SubResource("RectangleShape2D_g71b8")
 
 [node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared34" unique_id=687731109]
-position = Vector2(930, 629)
-scale = Vector2(0.20359068, 0.22612312)
+position = Vector2(925.99994, 624)
+scale = Vector2(0.24142571, 0.31530866)
 texture = ExtResource("6_n510s")
 
 [node name="Pared33" type="StaticBody2D" parent="Paredes" unique_id=1538336202]
@@ -475,11 +475,6 @@ scale = Vector2(0.05810548, 0.085205086)
 position = Vector2(1156, 341)
 shape = SubResource("RectangleShape2D_g71b8")
 
-[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared23" unique_id=2048055421]
-position = Vector2(1136, 335)
-scale = Vector2(0.16955721, 0.287219)
-texture = ExtResource("6_n510s")
-
 [node name="Pared22" type="StaticBody2D" parent="Paredes" unique_id=505744971]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared22" unique_id=261296532]
@@ -487,8 +482,8 @@ position = Vector2(1049, 344)
 shape = SubResource("RectangleShape2D_g71b8")
 
 [node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared22" unique_id=1595138994]
-position = Vector2(1057.4629, 334.84372)
-scale = Vector2(0.1870109, 0.29096422)
+position = Vector2(1093.0001, 338)
+scale = Vector2(0.26503932, 0.37078652)
 texture = ExtResource("6_n510s")
 
 [node name="Pared21" type="StaticBody2D" parent="Paredes" unique_id=277499257]
@@ -723,13 +718,13 @@ scale = Vector2(0.43335557, 0.44873443)
 texture = ExtResource("4_mht8p")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ZonaSegura" unique_id=697554632]
-position = Vector2(1329, 548)
+position = Vector2(1332, 551.5)
 shape = SubResource("RectangleShape2D_vp2i8")
 
 [node name="BloqueoZona" type="StaticBody2D" parent="ZonaSegura" unique_id=1511409242]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ZonaSegura/BloqueoZona" unique_id=395268936]
-position = Vector2(1334, 552)
+position = Vector2(1333.25, 552)
 shape = SubResource("RectangleShape2D_6op3i")
 
 [node name="TimerUI" parent="." unique_id=1042888595 instance=ExtResource("9_kjcdp")]
