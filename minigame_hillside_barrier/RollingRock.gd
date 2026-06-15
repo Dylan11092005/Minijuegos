@@ -9,9 +9,17 @@ class_name HillsideRollingRock
 const HIT_DISTANCE := 105.0
 const ROTATION_SPEED := 7.5
 
-const COLOR_ROCK := Color("#8A8A82")
-const COLOR_ROCK_DARK := Color("#4F4F49")
-const COLOR_ROCK_LIGHT := Color("#B8B8AA")
+const FRAME_COUNT := 3
+
+# La imagen mide 1536 x 864, entonces cada frame mide 512 de ancho.
+const FRAME_WIDTH := 512
+const FRAME_HEIGHT := 864
+
+# Tamaño visual de la piedra en el juego.
+const ROCK_SCALE := Vector2(0.18, 0.18)
+
+# Velocidad de la animación de los 3 frames.
+const ANIMATION_SPEED := 10.0
 
 
 # =========================================================
@@ -25,7 +33,17 @@ var _distance := 1.0
 var _progress := 0.0
 var _active := false
 
+var _animation_time := 0.0
+var _current_frame := 0
+
 var _minigame: Node = null
+
+
+# =========================================================
+# NODE REFERENCES
+# =========================================================
+
+@onready var _rock_sprite: Sprite2D = get_node_or_null("RockSprite") as Sprite2D
 
 
 # =========================================================
@@ -43,12 +61,16 @@ func setup(p_start: Vector2, p_end: Vector2, p_speed: float, p_minigame: Node):
 	_progress = 0.0
 	_active = true
 
-	queue_redraw()
+	_setup_sprite()
 
 
 # =========================================================
 # LIFECYCLE METHODS
 # =========================================================
+
+func _ready():
+	_setup_sprite()
+
 
 func _process(delta):
 	if not _active:
@@ -58,7 +80,12 @@ func _process(delta):
 	_progress = clamp(_progress, 0.0, 1.0)
 
 	position = _start_position.lerp(_end_position, _progress)
+
+	# Giro general de la piedra.
 	rotation += ROTATION_SPEED * delta
+
+	# Cambio entre las 3 imágenes.
+	_update_animation(delta)
 
 	_check_tree_collision()
 
@@ -71,25 +98,44 @@ func _process(delta):
 		queue_free()
 
 
-func _draw():
-	# Sombra
-	draw_circle(Vector2(8, 10), 34, Color(0, 0, 0, 0.22))
+# =========================================================
+# SPRITE METHODS
+# =========================================================
 
-	# Roca principal
-	draw_circle(Vector2.ZERO, 34, COLOR_ROCK)
+func _setup_sprite():
+	if _rock_sprite == null:
+		return
 
-	# Borde
-	draw_arc(Vector2.ZERO, 34, 0, TAU, 64, COLOR_ROCK_DARK, 4.0, true)
+	_rock_sprite.centered = true
+	_rock_sprite.region_enabled = true
+	_rock_sprite.region_rect = Rect2(0, 0, FRAME_WIDTH, FRAME_HEIGHT)
+	_rock_sprite.scale = ROCK_SCALE
+	_rock_sprite.z_index = 35
 
-	# Detalles
-	draw_circle(Vector2(-10, -10), 9, COLOR_ROCK_LIGHT)
-	draw_circle(Vector2(12, 9), 7, COLOR_ROCK_DARK)
-	draw_line(Vector2(-18, 6), Vector2(15, -14), COLOR_ROCK_DARK, 3.0)
-	draw_line(Vector2(-5, 22), Vector2(20, 8), COLOR_ROCK_DARK, 2.5)
+
+func _update_animation(delta):
+	if _rock_sprite == null:
+		return
+
+	_animation_time += delta * ANIMATION_SPEED
+
+	var new_frame: int = int(_animation_time) % FRAME_COUNT
+
+	if new_frame == _current_frame:
+		return
+
+	_current_frame = new_frame
+
+	_rock_sprite.region_rect = Rect2(
+		_current_frame * FRAME_WIDTH,
+		0,
+		FRAME_WIDTH,
+		FRAME_HEIGHT
+	)
 
 
 # =========================================================
-# PRIVATE METHODS
+# COLLISION METHODS
 # =========================================================
 
 func _check_tree_collision():

@@ -132,6 +132,10 @@ func _on_input_event(_viewport, event, _shape_idx):
 			_returning = false
 			_drag_offset = global_position - get_global_mouse_position()
 			z_index = 80
+
+			if minigame and minigame.has_method("register_tree_grabbed"):
+				minigame.register_tree_grabbed(self)
+
 			get_viewport().set_input_as_handled()
 
 

@@ -23,14 +23,11 @@ position = Vector2(1450, 980)
 
 [node name="Rocks" type="Node2D" parent="." unique_id=963371407]
 
-[node name="RockSpawnTimer" type="Timer" parent="." unique_id=384852993]
-wait_time = 3.0
-one_shot = true
-autostart = true
-
 [node name="TimeSound" type="AudioStreamPlayer" parent="." unique_id=2013248923]
 
 [node name="BackgroundAudio" type="AudioStreamPlayer" parent="." unique_id=531716317]
+
+[node name="Move1Audio" type="AudioStreamPlayer" parent="." unique_id=867437794]
 
 [node name="PlantAudio" type="AudioStreamPlayer" parent="." unique_id=902359879]
 

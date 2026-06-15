@@ -25,12 +25,16 @@ const TREE_SAPLING_SCENE := preload("res://minigame_hillside_barrier/TreeSapling
 const PLANTING_SPOT_SCENE := preload("res://minigame_hillside_barrier/PlantingSpot.tscn")
 const ROLLING_ROCK_SCENE := preload("res://minigame_hillside_barrier/RollingRock.tscn")
 
+const BACKGROUND_SOUND := preload("res://minigame_hillside_barrier/assets/sounds/Background.mp3")
+const MOVE1_SOUND := preload("res://minigame_hillside_barrier/assets/sounds/move1.mp3")
+const MOVE2_SOUND := preload("res://minigame_hillside_barrier/assets/sounds/move2.mp3")
+const ROCKS_SOUND := preload("res://minigame_hillside_barrier/assets/sounds/rocks.mp3")
 
 # =========================================================
 # CONSTANTS
 # =========================================================
 
-const TOTAL_TIME := 45.0
+const TOTAL_TIME := 60.0
 const MAX_LIVES := 3
 const ROCKS_TO_BLOCK := 8
 
@@ -97,10 +101,11 @@ var _rng := RandomNumberGenerator.new()
 @onready var _rocks: Node2D = get_node_or_null("Rocks") as Node2D
 
 @onready var _background_audio: AudioStreamPlayer = get_node_or_null("BackgroundAudio") as AudioStreamPlayer
+@onready var _move1_audio: AudioStreamPlayer = get_node_or_null("Move1Audio") as AudioStreamPlayer
 @onready var _plant_audio: AudioStreamPlayer = get_node_or_null("PlantAudio") as AudioStreamPlayer
+@onready var _rocks_audio: AudioStreamPlayer = get_node_or_null("RocksAudio") as AudioStreamPlayer
 @onready var _error_audio: AudioStreamPlayer = get_node_or_null("ErrorAudio") as AudioStreamPlayer
 @onready var _landslide_audio: AudioStreamPlayer = get_node_or_null("LandslideAudio") as AudioStreamPlayer
-
 
 # =========================================================
 # LIFECYCLE METHODS
@@ -262,21 +267,30 @@ func _spawn_table_tree(table_position: Vector2):
 
 func _setup_audio():
 	if _background_audio:
+		_background_audio.stream = BACKGROUND_SOUND
 		_background_audio.volume_db = -14
 		_background_audio.play()
 
 		if not _background_audio.finished.is_connected(_on_background_audio_finished):
 			_background_audio.finished.connect(_on_background_audio_finished)
 
+	if _move1_audio:
+		_move1_audio.stream = MOVE1_SOUND
+		_move1_audio.volume_db = -5
+
 	if _plant_audio:
+		_plant_audio.stream = MOVE2_SOUND
 		_plant_audio.volume_db = -4
+
+	if _rocks_audio:
+		_rocks_audio.stream = ROCKS_SOUND
+		_rocks_audio.volume_db = -2
 
 	if _error_audio:
 		_error_audio.volume_db = -6
 
 	if _landslide_audio:
 		_landslide_audio.volume_db = -3
-
 
 # =========================================================
 # RANDOM ROCK ROUTE
@@ -367,6 +381,10 @@ func _spawn_rock(start_position: Vector2, end_position: Vector2):
 		print("ERROR: No existe el nodo Rocks")
 		return
 
+	if _rocks_audio:
+		_rocks_audio.stop()
+		_rocks_audio.play()
+
 	var rock = ROLLING_ROCK_SCENE.instantiate()
 	rock.z_index = 35
 
@@ -399,6 +417,14 @@ func register_successful_tree(tree: Node, _spot: Node, table_position: Vector2):
 		_plant_audio.play()
 
 
+func register_tree_grabbed(_tree: Node):
+	if _game_finished:
+		return
+
+	if _move1_audio:
+		_move1_audio.stop()
+		_move1_audio.play()
+
 func register_failed_drop(_tree: Node):
 	if _game_finished:
 		return
@@ -423,6 +449,9 @@ func register_failed_drop(_tree: Node):
 func register_rock_blocked(_rock: Node, tree: Node):
 	if _game_finished:
 		return
+
+	if _rocks_audio:
+		_rocks_audio.stop()
 
 	# Solo aquí suma el puntaje.
 	# Plantar el árbol NO suma.
@@ -450,6 +479,9 @@ func register_rock_reached_bottom(_rock: Node):
 	if _game_finished:
 		return
 
+	if _rocks_audio:
+		_rocks_audio.stop()
+
 	if _current_spot != null and is_instance_valid(_current_spot):
 		_current_spot.queue_free()
 
@@ -474,7 +506,6 @@ func register_rock_reached_bottom(_rock: Node):
 	else:
 		await get_tree().create_timer(1.0).timeout
 		_start_next_round()
-
 
 # =========================================================
 # UI METHODS
@@ -540,6 +571,9 @@ func _win_game():
 	_game_finished = true
 	_round_active = false
 
+	if _rocks_audio:
+		_rocks_audio.stop()
+
 	_stop_timer_ui()
 
 	if _background_audio:
@@ -560,6 +594,9 @@ func _lose_game():
 
 	_game_finished = true
 	_round_active = false
+
+	if _rocks_audio:
+		_rocks_audio.stop()
 
 	_stop_timer_ui()
 
