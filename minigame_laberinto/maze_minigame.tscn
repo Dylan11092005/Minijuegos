@@ -15,7 +15,7 @@
 [ext_resource type="AudioStream" uid="uid://ctp2n1rcpkl85" path="res://minigame_laberinto/assets/audio/rescate.mp3" id="13_4vvp6"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_n510s"]
-size = Vector2(73.25, 85.28125)
+size = Vector2(74, 66)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_g71b8"]
 size = Vector2(104.37649, 46.433754)
@@ -90,10 +90,10 @@ size = Vector2(56, 68)
 size = Vector2(68, 68)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_vp2i8"]
-size = Vector2(103.1875, 113)
+size = Vector2(170.59375, 113)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6op3i"]
-size = Vector2(98, 100.5)
+size = Vector2(163, 100.5)
 
 [node name="MazeMinigame" type="Node2D" unique_id=659277626]
 script = ExtResource("1_4vvp6")
@@ -114,7 +114,7 @@ scale = Vector2(0.20367795, 0.15554336)
 texture = ExtResource("3_n510s")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Jugador" unique_id=1369583057]
-position = Vector2(322, 394.35938)
+position = Vector2(324, 389)
 shape = SubResource("RectangleShape2D_n510s")
 debug_color = Color(0.3334951, 0.5400944, 0.82822275, 0.41960785)
 
@@ -723,36 +723,14 @@ scale = Vector2(0.43335557, 0.44873443)
 texture = ExtResource("4_mht8p")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ZonaSegura" unique_id=697554632]
-position = Vector2(1304, 546)
+position = Vector2(1306.7031, 547)
 shape = SubResource("RectangleShape2D_vp2i8")
 
 [node name="BloqueoZona" type="StaticBody2D" parent="ZonaSegura" unique_id=1511409242]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ZonaSegura/BloqueoZona" unique_id=395268936]
-position = Vector2(1306, 552)
+position = Vector2(1308.5, 551)
 shape = SubResource("RectangleShape2D_6op3i")
-
-[node name="PanelAmigos" type="Panel" parent="." unique_id=1968050297]
-offset_left = 1614.0
-offset_top = 75.0
-offset_right = 1723.0
-offset_bottom = 115.0
-
-[node name="EmojiAmigo" type="Label" parent="PanelAmigos" unique_id=1062993329]
-layout_mode = 0
-offset_left = 5.0
-offset_top = 4.0
-offset_right = 32.0
-offset_bottom = 33.0
-text = "👥"
-
-[node name="LabelAmigos" type="Label" parent="PanelAmigos" unique_id=708635192]
-layout_mode = 0
-offset_left = 49.0
-offset_top = 6.0
-offset_right = 89.0
-offset_bottom = 29.0
-text = "0 / 2"
 
 [node name="TimerUI" parent="." unique_id=1042888595 instance=ExtResource("9_kjcdp")]
 
