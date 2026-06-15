@@ -21,6 +21,13 @@ expand_mode = 1
 [node name="TreeSpawnPoint" type="Marker2D" parent="." unique_id=1687862948]
 position = Vector2(1450, 980)
 
+[node name="Rocks" type="Node2D" parent="." unique_id=963371407]
+
+[node name="RockSpawnTimer" type="Timer" parent="." unique_id=384852993]
+wait_time = 3.0
+one_shot = true
+autostart = true
+
 [node name="TimeSound" type="AudioStreamPlayer" parent="." unique_id=2013248923]
 
 [node name="BackgroundAudio" type="AudioStreamPlayer" parent="." unique_id=531716317]

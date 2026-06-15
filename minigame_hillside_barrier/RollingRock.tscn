@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://5b54f0q3ytn5"]
+
+[ext_resource type="Script" uid="uid://dct0brcjruine" path="res://minigame_hillside_barrier/RollingRock.gd" id="1_tpwnr"]
+
+[node name="RollingRock" type="Node2D" unique_id=58543915]
+script = ExtResource("1_tpwnr")
