@@ -14,6 +14,9 @@ const PLANTED_SCALE := Vector2(1.45, 1.45)
 # Baja el árbol para que la raíz quede sobre el punto.
 const PLANTED_POSITION_OFFSET := Vector2(0, 105)
 
+const ROCK_HIT_OFFSET := Vector2(0, -95)
+const ROCK_HIT_RADIUS := 100.0
+
 const IDLE_ANIMATION_SPEED := 3.0
 const IDLE_BOUNCE_AMOUNT := 4.0
 const IDLE_SCALE_AMOUNT := 0.04
@@ -187,3 +190,11 @@ func _place_on_spot(spot: Area2D):
 
 func _return_to_start():
 	_returning = true
+
+
+func get_rock_hit_position() -> Vector2:
+	return global_position + ROCK_HIT_OFFSET
+
+
+func get_rock_hit_radius() -> float:
+	return ROCK_HIT_RADIUS
