@@ -6,7 +6,7 @@ class_name HillsideRollingRock
 # CONSTANTS
 # =========================================================
 
-const HIT_DISTANCE := 150.0
+const HIT_DISTANCE := 100.0
 const ROTATION_SPEED := 7.5
 
 const FRAME_COUNT := 3
@@ -156,13 +156,11 @@ func _check_tree_collision():
 		if tree.has_method("get_rock_hit_radius"):
 			hit_radius = tree.get_rock_hit_radius()
 
-		var distance_to_path: float = _distance_point_to_segment(
-			tree_hit_position,
-			_previous_global_position,
-			global_position
-		)
+		# Ahora revisa la distancia real de la roca al punto del árbol.
+		# Esto evita que desaparezca apenas se planta.
+		var distance_to_tree: float = global_position.distance_to(tree_hit_position)
 
-		if distance_to_path <= hit_radius:
+		if distance_to_tree <= hit_radius:
 			_active = false
 
 			if _minigame and _minigame.has_method("register_rock_blocked"):

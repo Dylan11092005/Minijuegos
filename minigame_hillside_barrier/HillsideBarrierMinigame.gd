@@ -61,12 +61,13 @@ const ROCK_START_Y_RANGE := Vector2(60, 390)
 const ROCK_END_X_RANGE := Vector2(360, 1280)
 const ROCK_END_Y_RANGE := Vector2(780, 1010)
 
-# Más variedad en dónde aparece el punto de siembra dentro del camino.
-# 0.50 = más cerca del inicio, 0.92 = más abajo.
-const SPOT_PROGRESS_RANGE := Vector2(0.50, 0.92)
+# El punto puede aparecer en distintas partes del camino,
+# pero siempre sobre la ruta real de la roca.
+const SPOT_PROGRESS_RANGE := Vector2(0.55, 0.88)
 
-# Movimiento lateral para que el punto no salga siempre tan recto.
-const SPOT_SIDE_OFFSET_RANGE := Vector2(-80.0, 80.0)
+# IMPORTANTE:
+# No mover el punto hacia los lados, porque si no la roca puede pasar al lado.
+const SPOT_SIDE_OFFSET_RANGE := Vector2(0.0, 0.0)
 
 # Límites para que los puntos no se salgan de la ladera.
 const SPOT_X_LIMITS := Vector2(430, 1580)
@@ -341,23 +342,9 @@ func _get_random_rock_route() -> Dictionary:
 	)
 
 	var spot_progress := _rng.randf_range(SPOT_PROGRESS_RANGE.x, SPOT_PROGRESS_RANGE.y)
-	var path_position := start_position.lerp(end_position, spot_progress)
 
-	var direction := (end_position - start_position).normalized()
-	var perpendicular := Vector2(-direction.y, direction.x)
-
-	var side_offset := _rng.randf_range(
-		SPOT_SIDE_OFFSET_RANGE.x,
-		SPOT_SIDE_OFFSET_RANGE.y
-	)
-
-	var spot_position := path_position + perpendicular * side_offset
-
-	# Variación extra pequeña para que no se vea tan repetido.
-	spot_position += Vector2(
-		_rng.randf_range(-35.0, 35.0),
-		_rng.randf_range(-25.0, 25.0)
-	)
+	# El punto queda EXACTAMENTE en el camino de la roca.
+	var spot_position := start_position.lerp(end_position, spot_progress)
 
 	spot_position.x = clamp(spot_position.x, SPOT_X_LIMITS.x, SPOT_X_LIMITS.y)
 	spot_position.y = clamp(spot_position.y, SPOT_Y_LIMITS.x, SPOT_Y_LIMITS.y)

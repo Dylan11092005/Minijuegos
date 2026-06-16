@@ -15,7 +15,7 @@ const PLANTED_SCALE := Vector2(1.45, 1.45)
 const PLANTED_POSITION_OFFSET := Vector2(0, 105)
 
 const ROCK_HIT_OFFSET := Vector2(0, -95)
-const ROCK_HIT_RADIUS := 100.0
+const ROCK_HIT_RADIUS := 95.0
 
 const IDLE_ANIMATION_SPEED := 3.0
 const IDLE_BOUNCE_AMOUNT := 4.0
@@ -49,6 +49,7 @@ var _base_sprite_scale := Vector2.ONE
 
 var _cooling_down := false
 
+var _rock_hit_position := Vector2.ZERO
 # =========================================================
 # NODE REFERENCES
 # =========================================================
@@ -182,6 +183,9 @@ func _place_on_spot(spot: Area2D):
 	add_to_group("planted_trees")
 	_returning = false
 
+	# Guardamos el punto exacto donde la roca debe chocar.
+	_rock_hit_position = spot.global_position
+
 	global_position = spot.global_position + PLANTED_POSITION_OFFSET
 	scale = PLANTED_SCALE
 	z_index = 45
@@ -203,13 +207,6 @@ func _place_on_spot(spot: Area2D):
 func _return_to_start():
 	_returning = true
 
-
-func get_rock_hit_position() -> Vector2:
-	return global_position + ROCK_HIT_OFFSET
-
-
-func get_rock_hit_radius() -> float:
-	return ROCK_HIT_RADIUS
 
 func start_cooldown(seconds: float):
 	_cooling_down = true
@@ -234,3 +231,11 @@ func start_cooldown(seconds: float):
 	monitorable = true
 
 	modulate = READY_COLOR
+
+
+func get_rock_hit_position() -> Vector2:
+	return _rock_hit_position
+
+
+func get_rock_hit_radius() -> float:
+	return ROCK_HIT_RADIUS
