@@ -26,11 +26,7 @@ func _on_button_10_pressed() -> void:
 
 	minigame_data.controls = [
 		{
-			"action": "Abrir los seguros",
-			"icon": "res://ui_global/assets/ClickIcon.png"
-		},
-		{
-			"action": "Arrastrar los implementos",
+			"action": "Abrir los seguros y arrastrar los implementos",
 			"icon": "res://ui_global/assets/ClickIcon.png"
 		},
 	]
@@ -56,8 +52,7 @@ func _on_button_3_pressed() -> void:
 	minigame_data.video_path   = "res://minigame_storm/assets/Thunder_Instruction.ogv"
 	minigame_data.minigame_scene = "res://minigame_storm/StormMinigame.tscn"
 	minigame_data.controls = [
-		{ "action": "Moverse derecha", "icon": "res://ui_global/assets/left-button.png" },
-		{ "action": "Moverse izquierda", "icon": "res://ui_global/assets/right-button.png" },
+		{ "action": "Moverse derecha, moverse izquierda", "icon": "res://ui_global/assets/Left_Right.png" },
 	]
 	get_tree().change_scene_to_file("res://ui_global/MinigameIntro.tscn")
 
@@ -121,16 +116,13 @@ func _on_button_9_pressed() -> void:
 
 func _on_button_6_pressed() -> void:
 	var minigame_data = get_node("/root/MinigameData")
-	minigame_data.title = "¡Rescata a tus amigos y llega a la zona segura!"
+	minigame_data.title = "¡Rescata a tus amigos!"
 	minigame_data.description = "Ayuda a tus amigos a llegar a la zona segura durante la inundación."
 	minigame_data.instructions = "Muévete por el laberinto, rescata a los dos amigos y llega a la zona segura antes de que se acabe el tiempo."
 	minigame_data.video_path = "res://minigame_laberinto/assets/maze_Instructions.ogv"
 	minigame_data.minigame_scene = "res://minigame_laberinto/maze_minigame.tscn"
 	minigame_data.controls = [
-	{ "action": "Moverse arriba", "icon": "res://ui_global/assets/up-button.png" },
-	{ "action": "Moverse abajo", "icon": "res://ui_global/assets/down-button.png" },
-	{ "action": "Moverse izquierda", "icon": "res://ui_global/assets/left-button.png" },
-	{ "action": "Moverse derecha", "icon": "res://ui_global/assets/right-button.png" },
+	{ "action": "Moverse arriba, abajo, izquiera y derecha", "icon": "res://ui_global/assets/Movement.png" },
 ]
 	get_tree().change_scene_to_file("res://ui_global/MinigameIntro.tscn")
 
@@ -143,7 +135,7 @@ func _on_button_12_pressed() -> void:
 	minigame_data.video_path = "res://minigame_river_clean/assets/video/RiverCleanInstructions.ogv"
 	minigame_data.minigame_scene = "res://minigame_river_clean/RiverCleanMinigame.tscn"
 	minigame_data.controls = [
-	{ "action": "Mover cursor", "icon": "res://ui_global/assets/ClickIcon.png" },
+	{ "action": "Mover guante", "icon": "res://ui_global/assets/ClickIcon.png" },
 	]
 	get_tree().change_scene_to_file("res://ui_global/MinigameIntro.tscn")
 func _on_button_11_pressed() -> void:
@@ -176,8 +168,7 @@ func _on_button_7_pressed() -> void:
 	minigame_data.video_path ="res://minigame_hillside_barrier/assets/instruction.ogv"
 	minigame_data.minigame_scene = "res://minigame_hillside_barrier/HillsideBarrierMinigame.tscn"
 	minigame_data.controls = [
-		{ "action": "Arrastrar árbol", "icon": "res://ui_global/assets/ClickIcon.png" },
-		{ "action": "Soltar árbol en el punto de siembra", "icon": "res://ui_global/assets/ClickIcon.png" }
+		{ "action": "Arrastrar y soltar árbol", "icon": "res://ui_global/assets/ClickIcon.png" },
 	]
 
 	get_tree().change_scene_to_file("res://ui_global/MinigameIntro.tscn")
