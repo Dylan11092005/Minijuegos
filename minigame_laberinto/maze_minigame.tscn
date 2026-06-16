@@ -20,6 +20,9 @@ size = Vector2(59, 51)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_g71b8"]
 size = Vector2(104.37649, 46.433754)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5mky7"]
+size = Vector2(252, 33)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_po644"]
 size = Vector2(32, 97)
 
@@ -37,6 +40,9 @@ size = Vector2(600, 32)
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_m5ydi"]
 height = 162.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2iwhr"]
+size = Vector2(248, 20)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_iys6f"]
 size = Vector2(582, 43)
@@ -145,8 +151,8 @@ scale = Vector2(0.05810548, 0.085205086)
 [node name="Pared71" type="StaticBody2D" parent="Paredes" unique_id=1132366757]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared71" unique_id=1973764369]
-position = Vector2(816, 945)
-shape = SubResource("RectangleShape2D_g71b8")
+position = Vector2(886, 950.5)
+shape = SubResource("RectangleShape2D_5mky7")
 
 [node name="Pared70" type="StaticBody2D" parent="Paredes" unique_id=735184172]
 
@@ -236,12 +242,6 @@ shape = SubResource("RectangleShape2D_awhdy")
 position = Vector2(1458, 633)
 shape = SubResource("RectangleShape2D_dp4ks")
 
-[node name="Pared55" type="StaticBody2D" parent="Paredes" unique_id=1149254349]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared55" unique_id=1488372314]
-position = Vector2(942, 947)
-shape = SubResource("RectangleShape2D_g71b8")
-
 [node name="Pared54" type="StaticBody2D" parent="Paredes" unique_id=1081125121]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared54" unique_id=57467856]
@@ -257,14 +257,14 @@ texture = ExtResource("6_n510s")
 [node name="Pared53" type="StaticBody2D" parent="Paredes" unique_id=861432997]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared53" unique_id=1111363558]
-position = Vector2(1212, 792)
-shape = SubResource("RectangleShape2D_g71b8")
+position = Vector2(1283, 792)
+shape = SubResource("RectangleShape2D_2iwhr")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="Paredes/Pared53" unique_id=2096470688]
+position = Vector2(1283, 792)
+shape = SubResource("RectangleShape2D_2iwhr")
 
 [node name="Pared52" type="StaticBody2D" parent="Paredes" unique_id=1192163898]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared52" unique_id=1527096917]
-position = Vector2(1358, 794)
-shape = SubResource("RectangleShape2D_g71b8")
 
 [node name="Pared51" type="StaticBody2D" parent="Paredes" unique_id=611809376]
 
@@ -488,7 +488,7 @@ position = Vector2(1049, 344)
 shape = SubResource("RectangleShape2D_g71b8")
 
 [node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared22" unique_id=1595138994]
-position = Vector2(1093.0001, 338)
+position = Vector2(1085, 338)
 scale = Vector2(0.26503932, 0.37078652)
 texture = ExtResource("6_n510s")
 
@@ -571,6 +571,11 @@ scale = Vector2(0.060221363, 0.07678223)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared11" unique_id=538270997]
 position = Vector2(1095.75, 154)
 shape = SubResource("RectangleShape2D_iuxx6")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared11" unique_id=827121987]
+position = Vector2(1092, 145.00002)
+scale = Vector2(0.24685973, 0.35580525)
+texture = ExtResource("6_n510s")
 
 [node name="Pared8" type="StaticBody2D" parent="Paredes" unique_id=1546634650]
 
