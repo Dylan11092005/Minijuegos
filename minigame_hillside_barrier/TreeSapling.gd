@@ -21,6 +21,8 @@ const IDLE_ANIMATION_SPEED := 3.0
 const IDLE_BOUNCE_AMOUNT := 4.0
 const IDLE_SCALE_AMOUNT := 0.04
 
+const COOLDOWN_COLOR := Color(0.35, 0.35, 0.35, 0.65)
+const READY_COLOR := Color(1, 1, 1, 1)
 
 # =========================================================
 # PUBLIC VARIABLES
@@ -45,6 +47,7 @@ var _time_elapsed := 0.0
 var _base_sprite_position := Vector2.ZERO
 var _base_sprite_scale := Vector2.ONE
 
+var _cooling_down := false
 
 # =========================================================
 # NODE REFERENCES
@@ -80,6 +83,9 @@ func _ready():
 
 
 func _process(delta):
+	if _cooling_down:
+		return
+
 	if _placed:
 		return
 
@@ -98,6 +104,9 @@ func _process(delta):
 
 
 func _input(event):
+	if _cooling_down:
+		return
+
 	if _placed:
 		return
 
@@ -126,6 +135,9 @@ func _animate_idle():
 # =========================================================
 
 func _on_input_event(_viewport, event, _shape_idx):
+	if _cooling_down:
+		return
+
 	if _placed:
 		return
 
@@ -198,3 +210,27 @@ func get_rock_hit_position() -> Vector2:
 
 func get_rock_hit_radius() -> float:
 	return ROCK_HIT_RADIUS
+
+func start_cooldown(seconds: float):
+	_cooling_down = true
+	_dragging = false
+	_returning = false
+
+	input_pickable = false
+	monitoring = false
+	monitorable = false
+
+	modulate = COOLDOWN_COLOR
+
+	await get_tree().create_timer(seconds).timeout
+
+	if not is_instance_valid(self):
+		return
+
+	_cooling_down = false
+
+	input_pickable = true
+	monitoring = true
+	monitorable = true
+
+	modulate = READY_COLOR

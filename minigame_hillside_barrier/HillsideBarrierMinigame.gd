@@ -43,6 +43,7 @@ const TIMER_PANEL_HEIGHT := 60.0
 
 # Árboles en la madera.
 const TREE_TABLE_SCALE := Vector2(0.90, 0.90)
+const TREE_COOLDOWN_SECONDS := 3.0
 
 # Tamaño normal y rápido de rocas.
 # Piedras más rápidas en general.
@@ -278,7 +279,7 @@ func _setup_table_trees():
 		_spawn_table_tree(table_position)
 
 
-func _spawn_table_tree(table_position: Vector2):
+func _spawn_table_tree(table_position: Vector2, start_on_cooldown := false):
 	if _tree_saplings == null:
 		return
 
@@ -290,6 +291,10 @@ func _spawn_table_tree(table_position: Vector2):
 	tree.set("minigame", self)
 
 	_tree_saplings.add_child(tree)
+
+	if start_on_cooldown:
+		if tree.has_method("start_cooldown"):
+			tree.start_cooldown(TREE_COOLDOWN_SECONDS)
 
 
 func _setup_audio():
@@ -578,18 +583,20 @@ func register_successful_tree(tree: Node, spot: Node, table_position: Vector2):
 	if _game_finished:
 		return
 
-	_spawn_table_tree(table_position)
+	# Árbol infinito con cooldown:
+	# aparece otro árbol en la misma posición, pero gris por 3 segundos.
+	_spawn_table_tree(table_position, true)
 
 	if spot != null and is_instance_valid(spot):
-		var spot_id: int = spot.get_instance_id()
+		var rock_id: int = -1
 
-		if _spot_to_rock_id.has(spot_id):
-			var rock_id: int = _spot_to_rock_id[spot_id]
+		if spot.has_meta("rock_id"):
+			rock_id = int(spot.get_meta("rock_id"))
 
-			if _active_challenges.has(rock_id):
-				var data: Dictionary = _active_challenges[rock_id]
-				data["tree"] = tree
-				_active_challenges[rock_id] = data
+		if rock_id != -1 and _active_challenges.has(rock_id):
+			var data: Dictionary = _active_challenges[rock_id]
+			data["tree"] = tree
+			_active_challenges[rock_id] = data
 
 	if _plant_audio:
 		_plant_audio.stop()
