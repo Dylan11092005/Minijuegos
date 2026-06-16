@@ -53,25 +53,27 @@ const FAST_ROCK_SPEED_RANGE := Vector2(190.0, 225.0)
 const FAST_ROCK_CHANCE := 0.45
 
 # Zonas más amplias donde puede aparecer la roca.
-const ROCK_START_X_RANGE := Vector2(1050, 1850)
-const ROCK_START_Y_RANGE := Vector2(70, 360)
+const ROCK_START_X_RANGE := Vector2(950, 1880)
+const ROCK_START_Y_RANGE := Vector2(60, 390)
 
 # Zonas más amplias donde puede terminar la roca.
-const ROCK_END_X_RANGE := Vector2(420, 1180)
-const ROCK_END_Y_RANGE := Vector2(780, 980)
+const ROCK_END_X_RANGE := Vector2(360, 1280)
+const ROCK_END_Y_RANGE := Vector2(780, 1010)
 
 # Más variedad en dónde aparece el punto de siembra dentro del camino.
-const SPOT_PROGRESS_RANGE := Vector2(0.35, 0.78)
+# 0.50 = más cerca del inicio, 0.92 = más abajo.
+const SPOT_PROGRESS_RANGE := Vector2(0.50, 0.92)
 
-# Pequeño movimiento lateral para que el punto no salga siempre tan recto.
-const SPOT_SIDE_OFFSET_RANGE := Vector2(-45.0, 45.0)
+# Movimiento lateral para que el punto no salga siempre tan recto.
+const SPOT_SIDE_OFFSET_RANGE := Vector2(-80.0, 80.0)
 
 # Límites para que los puntos no se salgan de la ladera.
-const SPOT_X_LIMITS := Vector2(520, 1500)
-const SPOT_Y_LIMITS := Vector2(300, 780)
+const SPOT_X_LIMITS := Vector2(430, 1580)
+const SPOT_Y_LIMITS := Vector2(260, 850)
 
 # Separación mínima entre puntos cuando salen 2 rocas.
-const MIN_SPOT_DISTANCE := 220.0
+const MIN_SPOT_DISTANCE := 270.0
+
 
 # Posiciones de los árboles sobre la tabla de abajo.
 const TREE_TABLE_POSITIONS := [
@@ -334,7 +336,6 @@ func _get_random_rock_route() -> Dictionary:
 	)
 
 	var spot_progress := _rng.randf_range(SPOT_PROGRESS_RANGE.x, SPOT_PROGRESS_RANGE.y)
-
 	var path_position := start_position.lerp(end_position, spot_progress)
 
 	var direction := (end_position - start_position).normalized()
@@ -346,6 +347,12 @@ func _get_random_rock_route() -> Dictionary:
 	)
 
 	var spot_position := path_position + perpendicular * side_offset
+
+	# Variación extra pequeña para que no se vea tan repetido.
+	spot_position += Vector2(
+		_rng.randf_range(-35.0, 35.0),
+		_rng.randf_range(-25.0, 25.0)
+	)
 
 	spot_position.x = clamp(spot_position.x, SPOT_X_LIMITS.x, SPOT_X_LIMITS.y)
 	spot_position.y = clamp(spot_position.y, SPOT_Y_LIMITS.x, SPOT_Y_LIMITS.y)
@@ -484,7 +491,7 @@ func _start_next_round():
 			"spot": route["spot"]
 		})
 
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.35).timeout
 
 	if _game_finished:
 		return
@@ -501,7 +508,7 @@ func _start_next_round():
 		var spot_position: Vector2 = rock_data["spot"]
 		var spot_index: int = _rng.randi_range(0, 999)
 
-		var spot: Node = _spawn_planting_spot(spot_position, spot_index)
+		var spot: Node = _spawn_planting_spot(spot_position, spot_index, rock_id)
 
 		if spot == null:
 			continue
@@ -509,11 +516,8 @@ func _start_next_round():
 		var data: Dictionary = _active_challenges[rock_id]
 		data["spot"] = spot
 		_active_challenges[rock_id] = data
-
-		_spot_to_rock_id[spot.get_instance_id()] = rock_id
-
-
-func _spawn_planting_spot(spot_position: Vector2, spot_index: int) -> Node:
+		
+func _spawn_planting_spot(spot_position: Vector2, spot_index: int, rock_id: int) -> Node:
 	if _planting_spots == null:
 		return null
 
@@ -523,7 +527,12 @@ func _spawn_planting_spot(spot_position: Vector2, spot_index: int) -> Node:
 	spot.set("spot_index", spot_index)
 	spot.set("visible_marker", true)
 
+	# Este punto pertenece únicamente a esta roca.
+	spot.set_meta("rock_id", rock_id)
+
 	_planting_spots.add_child(spot)
+
+	_spot_to_rock_id[spot.get_instance_id()] = rock_id
 
 	return spot
 
@@ -661,6 +670,12 @@ func register_rock_reached_bottom(rock: Node):
 
 
 func _resolve_rock_challenge(rock: Node, collided_tree: Node):
+	if rock == null:
+		return
+
+	if not is_instance_valid(rock):
+		return
+
 	var rock_id: int = rock.get_instance_id()
 
 	if not _active_challenges.has(rock_id):
@@ -668,17 +683,18 @@ func _resolve_rock_challenge(rock: Node, collided_tree: Node):
 
 	var data: Dictionary = _active_challenges[rock_id]
 
-	var spot: Node = data.get("spot", null) as Node
-	var saved_tree: Node = data.get("tree", null) as Node
+	var spot_value = data.get("spot", null)
+	var tree_value = data.get("tree", null)
 
-	if spot != null and is_instance_valid(spot):
-		_spot_to_rock_id.erase(spot.get_instance_id())
-		spot.queue_free()
+	if spot_value != null and is_instance_valid(spot_value):
+		var spot_node: Node = spot_value
+		_spot_to_rock_id.erase(spot_node.get_instance_id())
+		spot_node.queue_free()
 
-	var tree_to_remove: Node = collided_tree
+	var tree_to_remove = collided_tree
 
 	if tree_to_remove == null:
-		tree_to_remove = saved_tree
+		tree_to_remove = tree_value
 
 	if tree_to_remove != null and is_instance_valid(tree_to_remove):
 		tree_to_remove.queue_free()
@@ -693,7 +709,6 @@ func _resolve_rock_challenge(rock: Node, collided_tree: Node):
 
 		if _rocks_audio:
 			_rocks_audio.stop()
-
 
 # =========================================================
 # UI METHODS

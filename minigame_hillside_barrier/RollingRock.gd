@@ -6,19 +6,16 @@ class_name HillsideRollingRock
 # CONSTANTS
 # =========================================================
 
-const HIT_DISTANCE := 105.0
+const HIT_DISTANCE := 150.0
 const ROTATION_SPEED := 7.5
 
 const FRAME_COUNT := 3
 
-# La imagen mide 1536 x 864, entonces cada frame mide 512 de ancho.
+# Ajusta estos valores si tu sprite sheet tiene otra medida.
 const FRAME_WIDTH := 512
 const FRAME_HEIGHT := 864
 
-# Tamaño visual de la piedra en el juego.
 const ROCK_SCALE := Vector2(0.18, 0.18)
-
-# Velocidad de la animación de los 3 frames.
 const ANIMATION_SPEED := 10.0
 
 
@@ -35,6 +32,8 @@ var _active := false
 
 var _animation_time := 0.0
 var _current_frame := 0
+
+var _previous_global_position := Vector2.ZERO
 
 var _minigame: Node = null
 
@@ -57,6 +56,8 @@ func setup(p_start: Vector2, p_end: Vector2, p_speed: float, p_minigame: Node):
 	_minigame = p_minigame
 
 	position = _start_position
+	_previous_global_position = global_position
+
 	_distance = max(_start_position.distance_to(_end_position), 1.0)
 	_progress = 0.0
 	_active = true
@@ -76,17 +77,16 @@ func _process(delta):
 	if not _active:
 		return
 
+	_previous_global_position = global_position
+
 	_progress += (_speed * delta) / _distance
 	_progress = clamp(_progress, 0.0, 1.0)
 
 	position = _start_position.lerp(_end_position, _progress)
 
-	# Giro general de la piedra.
 	rotation += ROTATION_SPEED * delta
 
-	# Cambio entre las 3 imágenes.
 	_update_animation(delta)
-
 	_check_tree_collision()
 
 	if _progress >= 1.0:
@@ -146,7 +146,23 @@ func _check_tree_collision():
 		if not is_instance_valid(tree):
 			continue
 
-		if global_position.distance_to(tree.global_position) <= HIT_DISTANCE:
+		var tree_hit_position: Vector2 = tree.global_position
+
+		if tree.has_method("get_rock_hit_position"):
+			tree_hit_position = tree.get_rock_hit_position()
+
+		var hit_radius: float = HIT_DISTANCE
+
+		if tree.has_method("get_rock_hit_radius"):
+			hit_radius = tree.get_rock_hit_radius()
+
+		var distance_to_path: float = _distance_point_to_segment(
+			tree_hit_position,
+			_previous_global_position,
+			global_position
+		)
+
+		if distance_to_path <= hit_radius:
 			_active = false
 
 			if _minigame and _minigame.has_method("register_rock_blocked"):
@@ -154,3 +170,18 @@ func _check_tree_collision():
 
 			queue_free()
 			return
+
+
+func _distance_point_to_segment(point: Vector2, segment_start: Vector2, segment_end: Vector2) -> float:
+	var segment := segment_end - segment_start
+	var segment_length_squared := segment.length_squared()
+
+	if segment_length_squared <= 0.001:
+		return point.distance_to(segment_start)
+
+	var t := (point - segment_start).dot(segment) / segment_length_squared
+	t = clamp(t, 0.0, 1.0)
+
+	var closest_point := segment_start + segment * t
+
+	return point.distance_to(closest_point)
