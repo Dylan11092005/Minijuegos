@@ -15,7 +15,7 @@
 [ext_resource type="AudioStream" uid="uid://ctp2n1rcpkl85" path="res://minigame_laberinto/assets/audio/rescate.mp3" id="13_4vvp6"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_n510s"]
-size = Vector2(59, 51)
+size = Vector2(59, 78)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_g71b8"]
 size = Vector2(104.37649, 46.433754)
@@ -67,6 +67,9 @@ size = Vector2(30, 102)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_rmap4"]
 size = Vector2(28, 134)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_431ry"]
+size = Vector2(406, 31)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_a05bq"]
 size = Vector2(28, 57)
@@ -132,7 +135,7 @@ scale = Vector2(0.20367795, 0.15554336)
 texture = ExtResource("3_n510s")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Jugador" unique_id=1369583057]
-position = Vector2(324.5, 396.5)
+position = Vector2(324.5, 393)
 shape = SubResource("RectangleShape2D_n510s")
 debug_color = Color(0.3334951, 0.5400944, 0.82822275, 0.41960785)
 
@@ -200,10 +203,6 @@ position = Vector2(89, 592)
 shape = SubResource("RectangleShape2D_g71b8")
 
 [node name="Pared64" type="StaticBody2D" parent="Paredes" unique_id=1281680438]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared64" unique_id=1022477341]
-position = Vector2(481, 787)
-shape = SubResource("RectangleShape2D_g71b8")
 
 [node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared64" unique_id=1558287652]
 position = Vector2(580, 829)
@@ -331,23 +330,11 @@ shape = SubResource("RectangleShape2D_g71b8")
 position = Vector2(1930, 691)
 shape = SubResource("RectangleShape2D_rmap4")
 
-[node name="Pared41" type="StaticBody2D" parent="Paredes" unique_id=579227826]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared41" unique_id=1720450503]
-position = Vector2(379, 784)
-shape = SubResource("RectangleShape2D_g71b8")
-
-[node name="Pared40" type="StaticBody2D" parent="Paredes" unique_id=182529240]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared40" unique_id=1611949171]
-position = Vector2(281, 783)
-shape = SubResource("RectangleShape2D_g71b8")
-
 [node name="Pared39" type="StaticBody2D" parent="Paredes" unique_id=729218344]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared39" unique_id=589267726]
-position = Vector2(177, 783)
-shape = SubResource("RectangleShape2D_g71b8")
+position = Vector2(329, 777.5)
+shape = SubResource("RectangleShape2D_431ry")
 
 [node name="Pared38" type="StaticBody2D" parent="Paredes" unique_id=21114523]
 
