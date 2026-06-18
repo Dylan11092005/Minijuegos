@@ -1,0 +1,532 @@
+[gd_scene format=3 uid="uid://bl3usl7rms21o"]
+
+[ext_resource type="Script" uid="uid://dku7p524kcfx6" path="res://Minigames/minigame_route/SchoolRouteMinigame.gd" id="1_7en3t"]
+[ext_resource type="Texture2D" uid="uid://c7yb3t5uvh2qi" path="res://Minigames/minigame_route/assets/map.png" id="1_w3wy7"]
+[ext_resource type="Script" uid="uid://bihombbf1owqd" path="res://Minigames/minigame_route/PathSlot.gd" id="2_iqnyu"]
+[ext_resource type="PackedScene" uid="uid://cb7d1bds05ayd" path="res://Minigames/minigame_route/PathPiece.tscn" id="2_jo43r"]
+[ext_resource type="Texture2D" uid="uid://whlu5c8whg0e" path="res://Minigames/minigame_route/assets/StraightHorizontal.png" id="5_la3aj"]
+[ext_resource type="Texture2D" uid="uid://muadsjjpr7ft" path="res://Minigames/minigame_route/assets/StraightVertical.png" id="6_yrtyv"]
+[ext_resource type="Texture2D" uid="uid://dkan31txs4hej" path="res://Minigames/minigame_route/assets/CURVE_UP_RIGHT.png" id="7_j0ypk"]
+[ext_resource type="Texture2D" uid="uid://cnuuw4lhe35o6" path="res://Minigames/minigame_route/assets/CURVE_RIGHT_DOWN.png" id="8_xarc2"]
+[ext_resource type="Texture2D" uid="uid://dycspbr4mei30" path="res://Minigames/minigame_route/assets/CURVE_DOWN_LEFT.png" id="9_u7kax"]
+[ext_resource type="Texture2D" uid="uid://xo0fx3imb1qw" path="res://Minigames/minigame_route/assets/CURVE_LEFT_UP.png" id="10_ls3yg"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hqbq6"]
+size = Vector2(102.75, 106)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3x01n"]
+size = Vector2(143, 106)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_c6otb"]
+size = Vector2(110.375, 76)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8rcjs"]
+bg_color = Color(0.8980392, 0.78431374, 0.61960787, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.84705883, 0.68235296, 0.4862745, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[node name="SchoolRouteMinigame" type="Node2D" unique_id=852515805]
+script = ExtResource("1_7en3t")
+path_piece_scene = ExtResource("2_jo43r")
+
+[node name="Background" type="Sprite2D" parent="." unique_id=2123984584]
+position = Vector2(813.00006, 619)
+scale = Vector2(1.15, 1.15)
+texture = ExtResource("1_w3wy7")
+metadata/_edit_lock_ = true
+
+[node name="Slots" type="Node2D" parent="." unique_id=1071829169]
+
+[node name="Slot01" type="Area2D" parent="Slots" unique_id=1383757625]
+position = Vector2(243, 541)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot01" unique_id=1458952802]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot02" type="Area2D" parent="Slots" unique_id=1058403729]
+position = Vector2(243, 695)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot02" unique_id=686731583]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot03" type="Area2D" parent="Slots" unique_id=1542808974]
+position = Vector2(245, 847)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot03" unique_id=1217772135]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot04" type="Area2D" parent="Slots" unique_id=917950386]
+position = Vector2(395, 1005)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot04" unique_id=856505238]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot05" type="Area2D" parent="Slots" unique_id=666299640]
+position = Vector2(552, 1005)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot05" unique_id=2095205522]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot06" type="Area2D" parent="Slots" unique_id=1157443522]
+position = Vector2(705, 1004)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot06" unique_id=1883768790]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot07" type="Area2D" parent="Slots" unique_id=1037937687]
+position = Vector2(863, 1005)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot07" unique_id=1398405329]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot08" type="Area2D" parent="Slots" unique_id=601000152]
+position = Vector2(862, 848)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot08" unique_id=1227167837]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot09" type="Area2D" parent="Slots" unique_id=1699258804]
+position = Vector2(706, 849)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot09" unique_id=1391580194]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot10" type="Area2D" parent="Slots" unique_id=918986410]
+position = Vector2(547, 848)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot10" unique_id=23072978]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot11" type="Area2D" parent="Slots" unique_id=694873431]
+position = Vector2(396, 848)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot11" unique_id=390823534]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot12" type="Area2D" parent="Slots" unique_id=461918447]
+position = Vector2(393, 696)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot12" unique_id=850659120]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot13" type="Area2D" parent="Slots" unique_id=601625981]
+position = Vector2(547, 694)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot13" unique_id=965134065]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot14" type="Area2D" parent="Slots" unique_id=1432280891]
+position = Vector2(705, 694)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot14" unique_id=1705868816]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot15" type="Area2D" parent="Slots" unique_id=3663186]
+position = Vector2(864, 694)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot15" unique_id=1912274899]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot16" type="Area2D" parent="Slots" unique_id=1508073485]
+position = Vector2(1020, 694)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot16" unique_id=1720953391]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot17" type="Area2D" parent="Slots" unique_id=1753823727]
+position = Vector2(1179, 694)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot17" unique_id=2124260000]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot18" type="Area2D" parent="Slots" unique_id=1537032351]
+position = Vector2(1337, 694)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot18" unique_id=427315089]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot19" type="Area2D" parent="Slots" unique_id=1229145977]
+position = Vector2(1334, 541)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot19" unique_id=1220482507]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot20" type="Area2D" parent="Slots" unique_id=2085186842]
+position = Vector2(1337, 388)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot20" unique_id=1148310794]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot21" type="Area2D" parent="Slots" unique_id=1794326653]
+position = Vector2(1179, 390)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot21" unique_id=841444503]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot22" type="Area2D" parent="Slots" unique_id=645753208]
+position = Vector2(1177, 541)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot22" unique_id=828757469]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot23" type="Area2D" parent="Slots" unique_id=1992545486]
+position = Vector2(1019, 541)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot23" unique_id=107136989]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot24" type="Area2D" parent="Slots" unique_id=1761754272]
+position = Vector2(1021, 390)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot24" unique_id=1324596748]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot25" type="Area2D" parent="Slots" unique_id=1768800072]
+position = Vector2(863, 390)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot25" unique_id=728054283]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot26" type="Area2D" parent="Slots" unique_id=861337588]
+position = Vector2(861, 541)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot26" unique_id=2007705560]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot27" type="Area2D" parent="Slots" unique_id=1529855681]
+position = Vector2(703, 541)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot27" unique_id=1997411107]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot28" type="Area2D" parent="Slots" unique_id=186956773]
+position = Vector2(705, 388)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot28" unique_id=452890653]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot29" type="Area2D" parent="Slots" unique_id=694566091]
+position = Vector2(547, 386)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot29" unique_id=823783099]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot30" type="Area2D" parent="Slots" unique_id=546690246]
+position = Vector2(547, 539)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot30" unique_id=1024575807]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot31" type="Area2D" parent="Slots" unique_id=668378822]
+position = Vector2(393, 541)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot31" unique_id=91251523]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot32" type="Area2D" parent="Slots" unique_id=1338313613]
+position = Vector2(1017, 848)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot32" unique_id=1811309205]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot33" type="Area2D" parent="Slots" unique_id=1529620665]
+position = Vector2(1017, 1006)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot33" unique_id=1373875093]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot34" type="Area2D" parent="Slots" unique_id=257932358]
+position = Vector2(547, 1159)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot34" unique_id=1160054040]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot35" type="Area2D" parent="Slots" unique_id=1751196688]
+position = Vector2(704, 1159)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot35" unique_id=1851366568]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot36" type="Area2D" parent="Slots" unique_id=1391880007]
+position = Vector2(864, 1157)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot36" unique_id=1056493142]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot37" type="Area2D" parent="Slots" unique_id=1220213628]
+position = Vector2(1178, 236)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot37" unique_id=1897324965]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot38" type="Area2D" parent="Slots" unique_id=1226596630]
+position = Vector2(1022, 239)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot38" unique_id=292783240]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot39" type="Area2D" parent="Slots" unique_id=1561744134]
+position = Vector2(859, 234)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot39" unique_id=1567879374]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot40" type="Area2D" parent="Slots" unique_id=610278158]
+position = Vector2(704, 238)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot40" unique_id=1353580376]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="Slot41" type="Area2D" parent="Slots" unique_id=2058007094]
+position = Vector2(546, 237)
+script = ExtResource("2_iqnyu")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot41" unique_id=1944896844]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_hqbq6")
+metadata/_edit_lock_ = true
+
+[node name="SlotFinal" type="Area2D" parent="Slots" unique_id=1326440582]
+position = Vector2(1189, 999)
+script = ExtResource("2_iqnyu")
+is_goal_slot = true
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/SlotFinal" unique_id=1497672950]
+position = Vector2(8.5, 0)
+shape = SubResource("RectangleShape2D_3x01n")
+metadata/_edit_lock_ = true
+
+[node name="SlotInicial" type="Area2D" parent="Slots" unique_id=826215840]
+position = Vector2(400, 413)
+script = ExtResource("2_iqnyu")
+is_start_slot = true
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/SlotInicial" unique_id=779905807]
+position = Vector2(-2.8125, -3)
+shape = SubResource("RectangleShape2D_c6otb")
+metadata/_edit_lock_ = true
+
+[node name="StartHighlight" type="ColorRect" parent="Slots/SlotInicial" unique_id=245504648]
+offset_left = -58.0
+offset_top = -41.0
+offset_right = 53.0
+offset_bottom = 35.0
+mouse_filter = 2
+color = Color(0.2, 0.8509804, 0.2509804, 0.3019608)
+metadata/_edit_lock_ = true
+
+[node name="PanelContainer" type="PanelContainer" parent="Slots/SlotInicial" unique_id=1197558289]
+offset_left = -78.0
+offset_top = -121.0
+offset_right = 81.0
+offset_bottom = -50.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_8rcjs")
+
+[node name="StartLabel" type="Label" parent="Slots/SlotInicial/PanelContainer" unique_id=1093762968]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.24313726, 0.37254903, 0.56078434, 1)
+theme_override_font_sizes/font_size = 22
+text = "EMPIEZA AQUÍ
+            ↓"
+metadata/_edit_lock_ = true
+
+[node name="PlacedPieces" type="Node2D" parent="." unique_id=2135708631]
+
+[node name="PiecePanel" type="Node2D" parent="." unique_id=900187185]
+
+[node name="PanelBackground" type="Sprite2D" parent="PiecePanel" unique_id=1252452475]
+
+[node name="StraightHorizontal" parent="PiecePanel" unique_id=1603332571 instance=ExtResource("2_jo43r")]
+piece_texture = ExtResource("5_la3aj")
+
+[node name="StraightVertical" parent="PiecePanel" unique_id=1122203041 instance=ExtResource("2_jo43r")]
+path_type = 1
+piece_texture = ExtResource("6_yrtyv")
+
+[node name="CurveUpRight" parent="PiecePanel" unique_id=642097572 instance=ExtResource("2_jo43r")]
+path_type = 2
+piece_texture = ExtResource("7_j0ypk")
+
+[node name="CurveRightDown" parent="PiecePanel" unique_id=1347932092 instance=ExtResource("2_jo43r")]
+path_type = 3
+piece_texture = ExtResource("8_xarc2")
+
+[node name="CurveDownLeft" parent="PiecePanel" unique_id=679093847 instance=ExtResource("2_jo43r")]
+path_type = 4
+piece_texture = ExtResource("9_u7kax")
+
+[node name="CurveLeftUp" parent="PiecePanel" unique_id=1353840015 instance=ExtResource("2_jo43r")]
+path_type = 5
+piece_texture = ExtResource("10_ls3yg")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=960264907]

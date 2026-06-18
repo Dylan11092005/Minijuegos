@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://mjaic5jm6fb0"]
+
+[ext_resource type="Script" uid="uid://bihombbf1owqd" path="res://Minigames/minigame_route/PathSlot.gd" id="1_essto"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8x3lm"]
+size = Vector2(73, 65)
+
+[node name="PathSlot" type="Node2D" unique_id=1935536546]
+script = ExtResource("1_essto")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=580981068]
+position = Vector2(38, 29)
+shape = SubResource("RectangleShape2D_8x3lm")

@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://cb7d1bds05ayd"]
+
+[ext_resource type="Script" uid="uid://k730xpm7pwls" path="res://Minigames/minigame_route/PathPiece.gd" id="1_n2gqi"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_uf0mc"]
+size = Vector2(68, 62)
+
+[node name="PathPiece" type="Area2D" unique_id=173441944]
+script = ExtResource("1_n2gqi")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1568350096]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=804432382]
+position = Vector2(24, 21)
+shape = SubResource("RectangleShape2D_uf0mc")
