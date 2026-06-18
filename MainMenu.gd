@@ -172,3 +172,23 @@ func _on_button_7_pressed() -> void:
 	]
 
 	get_tree().change_scene_to_file("res://Minigames/ui_global/MinigameIntro.tscn")
+
+
+func _on_button_14_pressed() -> void:
+	var minigame_data = get_node_or_null("/root/MinigameData")
+
+	if minigame_data == null:
+		print("ERROR: No existe MinigameData en AutoLoad")
+		get_tree().change_scene_to_file("res://Minigames/minigame_hillside_barrier/HillsideBarrierMinigame.tscn")
+		return
+
+	minigame_data.title = "¡Revisa las fechas de vencimiento!"
+	minigame_data.description = "Olvidaste revisar la fecha de vencimiento de los suministros"
+	minigame_data.instructions = "Observa la fecha actual y las fechas de vencimiento de cada producto, los productos que esten dentro del rango de fecha correcto se arrastran a la refrigeradora en cambio, los productos vencidos se arrastran al basurero"
+	minigame_data.video_path ="res://Minigames/minigame_expiration/assets/ExpirationInstruction.ogv"
+	minigame_data.minigame_scene = "res://Minigames/minigame_expiration/MainExpiration.tscn"
+	minigame_data.controls = [
+		{ "action": "Arrastrar comida", "icon": "res://Minigames/ui_global/assets/ClickIcon.png" },
+	]
+
+	get_tree().change_scene_to_file("res://Minigames/ui_global/MinigameIntro.tscn")
