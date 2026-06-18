@@ -13,6 +13,7 @@ const CURVE_LEFT_UP: int = 5
 @export var slot_id: String = ""
 @export var is_start_slot: bool = false
 @export var is_goal_slot: bool = false
+@export var snap_offset: Vector2 = Vector2(0.0, 8.0)
 
 
 var occupied: bool = false
@@ -41,10 +42,7 @@ func contains_global_point(point: Vector2) -> bool:
 	if not _collision_shape.shape is RectangleShape2D:
 		return false
 
-	var rectangle: RectangleShape2D = (
-		_collision_shape.shape as RectangleShape2D
-	)
-
+	var rectangle: RectangleShape2D = _collision_shape.shape as RectangleShape2D
 	var local_point: Vector2 = _collision_shape.to_local(point)
 	var half_size: Vector2 = rectangle.size * 0.5
 
@@ -70,7 +68,6 @@ func place_piece(piece: Node) -> bool:
 
 	occupied = true
 	placed_piece = piece
-
 	piece.call("place_at", get_snap_position())
 
 	return true
@@ -82,19 +79,14 @@ func remove_piece() -> void:
 
 
 func get_snap_position() -> Vector2:
-	if _collision_shape != null:
-		return _collision_shape.global_position
-
-	return global_position
+	return global_position + snap_offset
 
 
 func has_connection(direction: Vector2i) -> bool:
 	if placed_piece == null:
 		return false
 
-	var current_path_type: int = int(
-		placed_piece.get("path_type")
-	)
+	var current_path_type: int = int(placed_piece.get("path_type"))
 
 	match current_path_type:
 		STRAIGHT_HORIZONTAL:

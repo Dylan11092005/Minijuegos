@@ -4,6 +4,7 @@ class_name PathPiece
 
 signal drag_requested(source_piece: Node)
 signal piece_dropped(piece: Node)
+signal placed_piece_clicked(piece: Node)
 
 
 enum PathType {
@@ -44,10 +45,7 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	if dragging:
-		global_position = (
-			get_global_mouse_position()
-			+ _mouse_offset
-		)
+		global_position = get_global_mouse_position() + _mouse_offset
 
 
 func _input_event(
@@ -58,9 +56,7 @@ func _input_event(
 	if not event is InputEventMouseButton:
 		return
 
-	var mouse_event: InputEventMouseButton = (
-		event as InputEventMouseButton
-	)
+	var mouse_event: InputEventMouseButton = event as InputEventMouseButton
 
 	if mouse_event.button_index != MOUSE_BUTTON_LEFT:
 		return
@@ -73,6 +69,7 @@ func _input_event(
 		return
 
 	if placed:
+		placed_piece_clicked.emit(self)
 		return
 
 	_start_dragging()
@@ -91,9 +88,7 @@ func _input(event: InputEvent) -> void:
 	if not event is InputEventMouseButton:
 		return
 
-	var mouse_event: InputEventMouseButton = (
-		event as InputEventMouseButton
-	)
+	var mouse_event: InputEventMouseButton = event as InputEventMouseButton
 
 	if mouse_event.button_index != MOUSE_BUTTON_LEFT:
 		return
@@ -137,7 +132,7 @@ func place_at(target_position: Vector2) -> void:
 
 	global_position = target_position
 	z_index = 10
-	input_pickable = false
+	input_pickable = true
 
 	refresh_piece()
 
@@ -173,10 +168,7 @@ func refresh_piece() -> void:
 
 func _start_dragging() -> void:
 	dragging = true
-	_mouse_offset = (
-		global_position
-		- get_global_mouse_position()
-	)
+	_mouse_offset = global_position - get_global_mouse_position()
 	z_index = 100
 
 
@@ -209,10 +201,7 @@ func _update_collision(target_size: Vector2) -> void:
 	if not _collision_shape.shape is RectangleShape2D:
 		return
 
-	var rectangle: RectangleShape2D = (
-		_collision_shape.shape as RectangleShape2D
-	)
-
+	var rectangle: RectangleShape2D = _collision_shape.shape as RectangleShape2D
 	rectangle.size = target_size * 0.85
 	_collision_shape.position = Vector2.ZERO
 
@@ -224,9 +213,7 @@ func _make_collision_unique() -> void:
 	if _collision_shape.shape == null:
 		return
 
-	var duplicated_shape: Shape2D = (
-		_collision_shape.shape.duplicate() as Shape2D
-	)
+	var duplicated_shape: Shape2D = _collision_shape.shape.duplicate() as Shape2D
 
 	if duplicated_shape != null:
 		_collision_shape.shape = duplicated_shape

@@ -10,9 +10,10 @@
 [ext_resource type="Texture2D" uid="uid://cnuuw4lhe35o6" path="res://Minigames/minigame_route/assets/CURVE_RIGHT_DOWN.png" id="8_xarc2"]
 [ext_resource type="Texture2D" uid="uid://dycspbr4mei30" path="res://Minigames/minigame_route/assets/CURVE_DOWN_LEFT.png" id="9_u7kax"]
 [ext_resource type="Texture2D" uid="uid://xo0fx3imb1qw" path="res://Minigames/minigame_route/assets/CURVE_LEFT_UP.png" id="10_ls3yg"]
+[ext_resource type="Texture2D" uid="uid://4vm2d77amnhf" path="res://Minigames/minigame_route/assets/fondo_piezas.png" id="11_jo43r"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hqbq6"]
-size = Vector2(102.75, 106)
+size = Vector2(140, 139)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3x01n"]
 size = Vector2(143, 106)
@@ -210,7 +211,7 @@ script = ExtResource("2_iqnyu")
 metadata/_edit_lock_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot17" unique_id=2124260000]
-position = Vector2(1, 0)
+position = Vector2(1, -0.5)
 shape = SubResource("RectangleShape2D_hqbq6")
 metadata/_edit_lock_ = true
 
@@ -486,10 +487,10 @@ color = Color(0.2, 0.8509804, 0.2509804, 0.3019608)
 metadata/_edit_lock_ = true
 
 [node name="PanelContainer" type="PanelContainer" parent="Slots/SlotInicial" unique_id=1197558289]
-offset_left = -78.0
-offset_top = -121.0
-offset_right = 81.0
-offset_bottom = -50.0
+offset_left = -80.0
+offset_top = -148.0
+offset_right = 79.0
+offset_bottom = -77.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_8rcjs")
 
 [node name="StartLabel" type="Label" parent="Slots/SlotInicial/PanelContainer" unique_id=1093762968]
@@ -501,6 +502,7 @@ text = "EMPIEZA AQUÍ
 metadata/_edit_lock_ = true
 
 [node name="PlacedPieces" type="Node2D" parent="." unique_id=2135708631]
+position = Vector2(206, -44)
 
 [node name="PiecePanel" type="Node2D" parent="." unique_id=900187185]
 
@@ -530,3 +532,8 @@ path_type = 5
 piece_texture = ExtResource("10_ls3yg")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=960264907]
+
+[node name="BackgroundPieces" type="Sprite2D" parent="." unique_id=2071145462]
+position = Vector2(1786, 555)
+scale = Vector2(0.38674033, 0.514733)
+texture = ExtResource("11_jo43r")
