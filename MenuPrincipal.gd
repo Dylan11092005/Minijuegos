@@ -31,3 +31,5 @@ func _on_button_23_toggled() -> void:
 func _on_button_12_pressed() -> void:
 	get_tree().change_scene_to_file("res://minigame_river_clean/RiverCleanMinigame.tscn")
 	
+func _on_button_17_toggled() -> void:
+	get_tree().change_scene_to_file("res://minigame_inclusive_alarms/inclusive_alarms_minigame.tscn")

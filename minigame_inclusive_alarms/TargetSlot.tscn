@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://yq4lw7xgay7t"]
+
+[ext_resource type="Texture2D" uid="uid://e5k06y8wrgn8" path="res://minigame_inclusive_alarms/assets/ui/FlashingLightsPane.png" id="1_he4dl"]
+
+[node name="TargetSlot" type="Panel" unique_id=626386558]
+
+[node name="PanelBackground" type="TextureRect" parent="." unique_id=1503001247]
+layout_mode = 0
+offset_left = 142.0
+offset_top = 151.0
+offset_right = 708.0
+offset_bottom = 528.0
+texture = ExtResource("1_he4dl")
+
+[node name="CategoryLabel" type="Label" parent="." unique_id=939537578]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0

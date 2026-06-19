@@ -1,0 +1,237 @@
+[gd_scene format=3 uid="uid://d0uvbyw6sa8tw"]
+
+[ext_resource type="Script" uid="uid://dqge7pions2yb" path="res://minigame_inclusive_alarms/InclusiveAlarmsMinigame.gd" id="1_x3dmc"]
+[ext_resource type="Texture2D" uid="uid://c0yrxm4kodg8u" path="res://minigame_inclusive_alarms/assets/background/InclusiveAlarmBackground.png" id="2_g6yeq"]
+[ext_resource type="Texture2D" uid="uid://d3ho74um7q3s4" path="res://minigame_inclusive_alarms/assets/ui/panel.png" id="3_scje3"]
+[ext_resource type="Script" uid="uid://bo1x183801yb1" path="res://minigame_inclusive_alarms/DraggableObject.gd" id="5_004fk"]
+[ext_resource type="Texture2D" uid="uid://b2q4nhkgxg02a" path="res://minigame_inclusive_alarms/assets/ui/ObjectsTray.png" id="6_ikpy7"]
+[ext_resource type="Texture2D" uid="uid://bwsg0eh6x2oe8" path="res://minigame_inclusive_alarms/assets/objects/StrobeLight.png" id="7_qd3lx"]
+[ext_resource type="Texture2D" uid="uid://cgaachjeqkwd2" path="res://minigame_inclusive_alarms/assets/objects/EmergencyBeacon.png" id="8_lw27b"]
+[ext_resource type="Texture2D" uid="uid://uf08ajg51uad" path="res://minigame_inclusive_alarms/assets/objects/PillowVibrator.png" id="9_fpq88"]
+[ext_resource type="Texture2D" uid="uid://tdn7ingubwma" path="res://minigame_inclusive_alarms/assets/objects/VibratingWatch.png" id="10_lyp1v"]
+[ext_resource type="Texture2D" uid="uid://b2a5x22x3gbyf" path="res://minigame_inclusive_alarms/assets/objects/EmergencyTextSign.png" id="11_ygxt4"]
+[ext_resource type="Texture2D" uid="uid://fbe3ufapfmlr" path="res://minigame_inclusive_alarms/assets/objects/AccessibleExitSign.png" id="12_gjhm0"]
+[ext_resource type="Texture2D" uid="uid://cv1onebfnoig1" path="res://minigame_inclusive_alarms/assets/objects/TraditionalSiren.png" id="13_ulfnk"]
+[ext_resource type="Texture2D" uid="uid://cudfkg8ibgsny" path="res://minigame_inclusive_alarms/assets/ui/EmptySlot.png" id="14_fpq88"]
+[ext_resource type="Texture2D" uid="uid://xw7xn008ubbh" path="res://minigame_inclusive_alarms/assets/objects/Megaphone.png" id="14_gh8sr"]
+[ext_resource type="Texture2D" uid="uid://dxstv6w3tvnmq" path="res://minigame_inclusive_alarms/assets/ui/CheckIcon.png" id="15_lyp1v"]
+[ext_resource type="Texture2D" uid="uid://1rc8b8m24g6r" path="res://minigame_inclusive_alarms/assets/ui/ErrorIcon.png" id="16_ygxt4"]
+[ext_resource type="Texture2D" uid="uid://cla3ektqh2hfx" path="res://minigame_inclusive_alarms/assets/ui/instructions.png" id="17_lyp1v"]
+[ext_resource type="AudioStream" uid="uid://5obc0fqklug3" path="res://minigame_inclusive_alarms/assets/audio/Music.mp3" id="18_ulfnk"]
+[ext_resource type="AudioStream" uid="uid://dao2n0dd263qy" path="res://minigame_inclusive_alarms/assets/audio/Correct.mp3" id="19_gh8sr"]
+[ext_resource type="AudioStream" uid="uid://bm74bmxf5vg1r" path="res://minigame_inclusive_alarms/assets/audio/Error.mp3" id="20_lx1v7"]
+[ext_resource type="PackedScene" uid="uid://dsdbaxj6xesxn" path="res://ui_global/GameResult.tscn" id="21_gh8sr"]
+[ext_resource type="PackedScene" uid="uid://m3dt448yc1u" path="res://ui_global/TimerUi.tscn" id="22_lx1v7"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_scje3"]
+size = Vector2(86, 66.75)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_004fk"]
+size = Vector2(91, 68)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qd3lx"]
+size = Vector2(77.5, 71.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lx1v7"]
+size = Vector2(60, 69)
+
+[node name="InclusiveAlarmsMinigame" type="Node2D" unique_id=494841019]
+script = ExtResource("1_x3dmc")
+
+[node name="Background" type="Sprite2D" parent="." unique_id=607113194]
+position = Vector2(976, 543)
+scale = Vector2(1.2578125, 1.0546875)
+texture = ExtResource("2_g6yeq")
+
+[node name="Categories" type="Node2D" parent="." unique_id=945275309]
+
+[node name="CategoriesPanel" type="Sprite2D" parent="Categories" unique_id=1336868968]
+position = Vector2(949.00006, 352.99994)
+scale = Vector2(0.48697916, 0.67871094)
+texture = ExtResource("3_scje3")
+
+[node name="FlashingLightsArea" type="Area2D" parent="Categories" unique_id=1839304923]
+
+[node name="DropCollision" type="CollisionShape2D" parent="Categories/FlashingLightsArea" unique_id=1096410388]
+position = Vector2(740, 399.625)
+shape = SubResource("RectangleShape2D_scje3")
+
+[node name="VibrationDevicesArea" type="Area2D" parent="Categories" unique_id=349485798]
+
+[node name="DropCollision" type="CollisionShape2D" parent="Categories/VibrationDevicesArea" unique_id=235379476]
+position = Vector2(947, 401)
+shape = SubResource("RectangleShape2D_004fk")
+
+[node name="VisualSignalsArea" type="Area2D" parent="Categories" unique_id=167384513]
+
+[node name="DropCollision" type="CollisionShape2D" parent="Categories/VisualSignalsArea" unique_id=1606198683]
+position = Vector2(1155, 402.25)
+shape = SubResource("RectangleShape2D_qd3lx")
+
+[node name="ObjectsArea" type="Node2D" parent="." unique_id=708942122]
+
+[node name="ObjectsTray" type="Sprite2D" parent="ObjectsArea" unique_id=54344220]
+position = Vector2(942.99994, 851.00006)
+scale = Vector2(0.8995767, 0.55145276)
+texture = ExtResource("6_ikpy7")
+
+[node name="ObjectsContainer" type="Node2D" parent="ObjectsArea" unique_id=862571048]
+
+[node name="StrobeLight" type="Area2D" parent="ObjectsArea/ObjectsContainer" unique_id=230729753]
+script = ExtResource("5_004fk")
+correct_category = "flashing_lights"
+
+[node name="Sprite2D" type="Sprite2D" parent="ObjectsArea/ObjectsContainer/StrobeLight" unique_id=1694920120]
+position = Vector2(726.00006, 789.99994)
+scale = Vector2(0.094400994, 0.100585915)
+texture = ExtResource("7_qd3lx")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ObjectsArea/ObjectsContainer/StrobeLight" unique_id=504986626]
+position = Vector2(726, 793)
+shape = SubResource("RectangleShape2D_lx1v7")
+
+[node name="EmergencyBeacon" type="Area2D" parent="ObjectsArea/ObjectsContainer" unique_id=68523857]
+script = ExtResource("5_004fk")
+correct_category = "flashing_lights"
+
+[node name="Sprite2D" type="Sprite2D" parent="ObjectsArea/ObjectsContainer/EmergencyBeacon" unique_id=1755536550]
+position = Vector2(868.00006, 875.99994)
+scale = Vector2(0.094400994, 0.100585915)
+texture = ExtResource("8_lw27b")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ObjectsArea/ObjectsContainer/EmergencyBeacon" unique_id=1492791205]
+position = Vector2(871, 879)
+shape = SubResource("RectangleShape2D_lx1v7")
+
+[node name="PillowVibrator" type="Area2D" parent="ObjectsArea/ObjectsContainer" unique_id=175120809]
+script = ExtResource("5_004fk")
+correct_category = "vibration_devices"
+
+[node name="Sprite2D" type="Sprite2D" parent="ObjectsArea/ObjectsContainer/PillowVibrator" unique_id=1037107326]
+position = Vector2(727, 884)
+scale = Vector2(0.08951816, 0.100585915)
+texture = ExtResource("9_fpq88")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ObjectsArea/ObjectsContainer/PillowVibrator" unique_id=2111619177]
+position = Vector2(728, 879)
+shape = SubResource("RectangleShape2D_lx1v7")
+
+[node name="VibratingWatch" type="Area2D" parent="ObjectsArea/ObjectsContainer" unique_id=499824512]
+script = ExtResource("5_004fk")
+correct_category = "vibration_devices"
+
+[node name="Sprite2D" type="Sprite2D" parent="ObjectsArea/ObjectsContainer/VibratingWatch" unique_id=163146022]
+position = Vector2(1156, 801.99994)
+scale = Vector2(0.094400994, 0.100585915)
+texture = ExtResource("10_lyp1v")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ObjectsArea/ObjectsContainer/VibratingWatch" unique_id=1749684056]
+position = Vector2(1159, 793)
+shape = SubResource("RectangleShape2D_lx1v7")
+
+[node name="EmergencyTextSign" type="Area2D" parent="ObjectsArea/ObjectsContainer" unique_id=1053456564]
+script = ExtResource("5_004fk")
+correct_category = "visual_signals"
+
+[node name="Sprite2D" type="Sprite2D" parent="ObjectsArea/ObjectsContainer/EmergencyTextSign" unique_id=1489167141]
+position = Vector2(1156.0001, 886.99994)
+scale = Vector2(0.076660186, 0.100585915)
+texture = ExtResource("11_ygxt4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ObjectsArea/ObjectsContainer/EmergencyTextSign" unique_id=1692529353]
+position = Vector2(1159, 878)
+shape = SubResource("RectangleShape2D_lx1v7")
+
+[node name="AccessibleExitSign" type="Area2D" parent="ObjectsArea/ObjectsContainer" unique_id=193584543]
+script = ExtResource("5_004fk")
+correct_category = "visual_signals"
+
+[node name="Sprite2D" type="Sprite2D" parent="ObjectsArea/ObjectsContainer/AccessibleExitSign" unique_id=126017294]
+position = Vector2(870, 799)
+scale = Vector2(0.059855103, 0.100585915)
+texture = ExtResource("12_gjhm0")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ObjectsArea/ObjectsContainer/AccessibleExitSign" unique_id=1155859376]
+position = Vector2(870, 794)
+shape = SubResource("RectangleShape2D_lx1v7")
+
+[node name="TraditionalSiren" type="Area2D" parent="ObjectsArea/ObjectsContainer" unique_id=780125437]
+script = ExtResource("5_004fk")
+correct_category = "distractor"
+
+[node name="Sprite2D" type="Sprite2D" parent="ObjectsArea/ObjectsContainer/TraditionalSiren" unique_id=337058638]
+position = Vector2(1005, 796)
+scale = Vector2(0.06443279, 0.11083981)
+texture = ExtResource("13_ulfnk")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ObjectsArea/ObjectsContainer/TraditionalSiren" unique_id=1499775982]
+position = Vector2(1012, 793)
+shape = SubResource("RectangleShape2D_lx1v7")
+
+[node name="Megaphone" type="Area2D" parent="ObjectsArea/ObjectsContainer" unique_id=1463076522]
+script = ExtResource("5_004fk")
+correct_category = "distractor"
+
+[node name="Sprite2D" type="Sprite2D" parent="ObjectsArea/ObjectsContainer/Megaphone" unique_id=1457011166]
+position = Vector2(1011, 881.99994)
+scale = Vector2(0.06443279, 0.10131837)
+texture = ExtResource("14_gh8sr")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ObjectsArea/ObjectsContainer/Megaphone" unique_id=1537238578]
+position = Vector2(1014, 879)
+shape = SubResource("RectangleShape2D_lx1v7")
+
+[node name="Hud" type="CanvasLayer" parent="." unique_id=156093958]
+
+[node name="StatusPanel" type="Node2D" parent="Hud" unique_id=808065833]
+
+[node name="StatusBackground" type="Sprite2D" parent="Hud/StatusPanel" unique_id=150409431]
+position = Vector2(1563.25, 307.00012)
+scale = Vector2(0.31998685, 0.33203125)
+texture = ExtResource("14_fpq88")
+
+[node name="CheckIcon" type="Sprite2D" parent="Hud/StatusPanel" unique_id=1456354532]
+position = Vector2(1521, 254)
+scale = Vector2(0.045572847, 0.06542966)
+texture = ExtResource("15_lyp1v")
+
+[node name="ErrorIcon" type="Sprite2D" parent="Hud/StatusPanel" unique_id=1216164183]
+position = Vector2(1522.0001, 342)
+scale = Vector2(0.061686125, 0.070800744)
+texture = ExtResource("16_ygxt4")
+
+[node name="CheckLabel" type="Label" parent="Hud/StatusPanel" unique_id=766397229]
+offset_left = 1565.0
+offset_top = 242.0
+offset_right = 1607.0
+offset_bottom = 265.0
+text = " 0/8"
+
+[node name="ErrorLabel" type="Label" parent="Hud/StatusPanel" unique_id=2088300361]
+offset_left = 1566.0
+offset_top = 325.0
+offset_right = 1606.0
+offset_bottom = 348.0
+text = " 0/3"
+
+[node name="InstructionsPanel" type="Sprite2D" parent="." unique_id=631340573]
+position = Vector2(390, 331.49997)
+scale = Vector2(0.5808824, 0.5800654)
+texture = ExtResource("17_lyp1v")
+
+[node name="MusicPlayer" type="AudioStreamPlayer2D" parent="." unique_id=1171625949]
+stream = ExtResource("18_ulfnk")
+
+[node name="CorrectPlayer" type="AudioStreamPlayer2D" parent="." unique_id=1222415252]
+stream = ExtResource("19_gh8sr")
+
+[node name="ErrorPlayer" type="AudioStreamPlayer2D" parent="." unique_id=939082853]
+stream = ExtResource("20_lx1v7")
+
+[node name="GameResult" parent="." unique_id=2106536257 instance=ExtResource("21_gh8sr")]
+
+[node name="TimerUI" parent="." unique_id=1042888595 instance=ExtResource("22_lx1v7")]
+
+[connection signal="area_entered" from="Categories/FlashingLightsArea" to="." method="_on_flashing_lights_area_area_entered"]
+[connection signal="area_entered" from="Categories/VibrationDevicesArea" to="." method="_on_vibration_devices_area_area_entered"]
+[connection signal="area_entered" from="Categories/VisualSignalsArea" to="." method="_on_visual_signals_area_area_entered"]

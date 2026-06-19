@@ -130,3 +130,16 @@ func _on_button_12_pressed() -> void:
 		{ "action": "Mover cursor", "icon": "res://ui_global/assets/ClickIcon.png" },
 	]
 	get_tree().change_scene_to_file("res://ui_global/MinigameIntro.tscn")
+
+
+func _on_button_17_pressed() -> void:
+	var minigame_data = get_node("/root/MinigameData")
+	minigame_data.title = "¡Alarma Inclusiva!"
+	minigame_data.description = "Tu escuela aún no cuenta con un sistema de alarma adecuado para personas con discapacidad auditiva."
+	minigame_data.instructions = "Arrastra cada objeto a la categoría correcta. Identifica las luces intermitentes, dispositivos de vibración y señales visuales. Evita los distractores y completa la clasificación antes de que se agote el tiempo."
+	minigame_data.video_path = "res://minigame_inclusive_alarms/assets/video/InclusiveAlarmsInstructions.ogv"
+	minigame_data.minigame_scene = "res://minigame_inclusive_alarms/inclusive_alarms_minigame.tscn"
+	minigame_data.controls = [
+		{ "action": "Arrastrar objetos", "icon": "res://ui_global/assets/ClickIcon.png" }
+	]
+	get_tree().change_scene_to_file("res://ui_global/MinigameIntro.tscn")
