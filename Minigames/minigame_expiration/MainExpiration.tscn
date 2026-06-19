@@ -11,6 +11,9 @@
 [ext_resource type="Texture2D" uid="uid://divwpxv2v53i0" path="res://Minigames/minigame_expiration/assets/current.png" id="9_n8w4v"]
 [ext_resource type="Texture2D" uid="uid://l7qjawexlwbi" path="res://Minigames/minigame_expiration/assets/error.png" id="10_bmvud"]
 [ext_resource type="Texture2D" uid="uid://k76f720tq3n0" path="res://Minigames/minigame_kit/assets/check.png" id="11_r8d3a"]
+[ext_resource type="AudioStream" uid="uid://ce4gnj6rtcl6m" path="res://Minigames/minigame_expiration/sounds/ExpirarionBackground.mp3" id="12_txdks"]
+[ext_resource type="AudioStream" uid="uid://nurprep7mv3g" path="res://Minigames/minigame_expiration/sounds/ExpirationSuccess.mp3" id="13_ffkaq"]
+[ext_resource type="AudioStream" uid="uid://5icfyabtaels" path="res://Minigames/minigame_expiration/sounds/ExpirationError.mp3" id="14_g3un7"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_kx8yr"]
 load_path = "res://.godot/imported/milk.png-3cc88563564263d51d90cf0daf777973.ctex"
@@ -33,7 +36,7 @@ load_path = "res://.godot/imported/yogurt.png-9a72b93ba1573619d4a79f8c9b13facf.c
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_txdks"]
 load_path = "res://.godot/imported/bread.png-a576de74259b03a5a36b7041774812a6.ctex"
 
-[node name="MainExpiration" type="Node2D" unique_id=108548142 node_paths=PackedStringArray("foods", "date_label", "current_date_label", "fridge_drop_zone", "trash_drop_zone", "check_icon", "error_icon")]
+[node name="MainExpiration" type="Node2D" unique_id=108548142 node_paths=PackedStringArray("foods", "date_label", "current_date_label", "fridge_drop_zone", "trash_drop_zone", "check_icon", "error_icon", "background_sound", "success_sound", "error_sound")]
 script = ExtResource("1_g3un7")
 foods = [NodePath("Node2D/Milk"), NodePath("Node2D/Banana"), NodePath("Node2D/Cereal"), NodePath("Node2D/Cheese"), NodePath("Node2D/Chicken"), NodePath("Node2D/Yogurt"), NodePath("Node2D/Bread")]
 date_label = NodePath("Date")
@@ -42,6 +45,9 @@ fridge_drop_zone = NodePath("Background/Fridge")
 trash_drop_zone = NodePath("Background/Trash")
 check_icon = NodePath("Check")
 error_icon = NodePath("Error")
+background_sound = NodePath("BackgroundSound")
+success_sound = NodePath("SuccessSound")
+error_sound = NodePath("ErrorSound")
 
 [node name="Background" type="Sprite2D" parent="." unique_id=891217995]
 position = Vector2(987, 568)
@@ -158,3 +164,12 @@ visible = false
 position = Vector2(1004.67786, 637.40234)
 scale = Vector2(0.8492886, 0.7143906)
 texture = ExtResource("11_r8d3a")
+
+[node name="BackgroundSound" type="AudioStreamPlayer" parent="." unique_id=945574935]
+stream = ExtResource("12_txdks")
+
+[node name="SuccessSound" type="AudioStreamPlayer" parent="." unique_id=765356359]
+stream = ExtResource("13_ffkaq")
+
+[node name="ErrorSound" type="AudioStreamPlayer" parent="." unique_id=1579143836]
+stream = ExtResource("14_g3un7")

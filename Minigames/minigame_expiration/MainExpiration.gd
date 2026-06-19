@@ -83,6 +83,18 @@ const MONTH_NAMES = [
 ## para ganar el minijuego. Calculado para 8 artículos (5 segundos cada uno).
 @export var total_time: float = 40.0
 
+## --- SONIDOS ---
+## Arrastra aquí el nodo "BackgroundSound": empieza a sonar (en loop) en
+## cuanto arranca el minijuego y se detiene cuando este termina.
+@export var background_sound: AudioStreamPlayer
+
+## Arrastra aquí el nodo "SuccessSound": suena cada vez que aciertas
+## (guardar algo que no estaba vencido, o tirar algo que sí lo estaba).
+@export var success_sound: AudioStreamPlayer
+
+## Arrastra aquí el nodo "ErrorSound": suena cada vez que te equivocas.
+@export var error_sound: AudioStreamPlayer
+
 
 # =========================================================
 # PRIVATE VARIABLES
@@ -160,6 +172,32 @@ func _ready() -> void:
 		print("DEBUG error_icon listo. escala base = ", _icon_base_scale[error_icon])
 	else:
 		print("DEBUG error_icon NO está asignado en el Inspector")
+
+	# --- Sonido de fondo: arranca apenas empieza el minijuego y se repite
+	# en bucle para siempre (sin importar si el recurso de audio tiene o
+	# no activado su propio "loop"), conectando la señal "finished" para
+	# volver a reproducirlo cada vez que termina. ---
+	if background_sound:
+		# Le bajamos 15 dB al volumen que tenga puesto en el Inspector
+		# (no lo dejamos fijo en -15, así respetamos lo que ya hayas ajustado ahí).
+		background_sound.volume_db -= 15.0
+		if not background_sound.finished.is_connected(_on_background_sound_finished):
+			background_sound.finished.connect(_on_background_sound_finished)
+		background_sound.play()
+	else:
+		print("DEBUG background_sound NO está asignado en el Inspector")
+
+	if success_sound:
+		# Le bajamos 10 dB al volumen del efecto de acierto.
+		success_sound.volume_db -= 10.0
+	else:
+		print("DEBUG success_sound NO está asignado en el Inspector")
+
+	if error_sound:
+		# Le bajamos 10 dB al volumen del efecto de error.
+		error_sound.volume_db -= 10.0
+	else:
+		print("DEBUG error_sound NO está asignado en el Inspector")
 
 	# "Hoy" lo fijamos a la medianoche del día real del sistema.
 	var now: Dictionary = Time.get_datetime_dict_from_system()
@@ -441,6 +479,41 @@ func _show_feedback_icon(correct: bool) -> void:
 
 
 # =========================================================
+# SONIDOS (Success / Error / Background)
+# =========================================================
+
+## Reproduce el sonido de acierto o de error. Si el sonido ya estaba
+## sonando (jugador muy rápido), lo reinicia desde el principio para que
+## siempre se escuche completo.
+func _play_feedback_sound(correct: bool) -> void:
+	var player: AudioStreamPlayer = success_sound if correct else error_sound
+	if player == null:
+		return
+	player.stop()
+	player.play()
+
+
+func _on_background_sound_finished() -> void:
+	# Mientras el minijuego no haya terminado, lo volvemos a reproducir
+	# para que suene en bucle infinito.
+	if not _game_finished and background_sound:
+		background_sound.play()
+
+
+func _stop_background_sound() -> void:
+	if background_sound == null:
+		return
+
+	# Desconectamos la señal para que no se vuelva a disparar el play()
+	# justo después de detenerlo.
+	if background_sound.finished.is_connected(_on_background_sound_finished):
+		background_sound.finished.disconnect(_on_background_sound_finished)
+
+	if background_sound.playing:
+		background_sound.stop()
+
+
+# =========================================================
 # RESOLVER ELECCIÓN
 # =========================================================
 
@@ -458,6 +531,7 @@ func _resolve_choice(chose_save: bool) -> void:
 		_lose_life()
 
 	_show_feedback_icon(correct)
+	_play_feedback_sound(correct)
 
 	answer_resolved.emit(correct, _score)
 
@@ -484,6 +558,7 @@ func _win_game():
 	_game_finished = true
 
 	_stop_timer_ui()
+	_stop_background_sound()
 
 	if _game_result:
 		if _game_result.has_method("show_win"):
@@ -501,6 +576,7 @@ func _lose_game():
 	_game_finished = true
 
 	_stop_timer_ui()
+	_stop_background_sound()
 
 	if _game_result:
 		if _game_result.has_method("show_lose"):
