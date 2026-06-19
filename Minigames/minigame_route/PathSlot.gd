@@ -1,3 +1,4 @@
+
 extends Area2D
 class_name PathSlot
 
@@ -42,9 +43,17 @@ func contains_global_point(point: Vector2) -> bool:
 	if not _collision_shape.shape is RectangleShape2D:
 		return false
 
-	var rectangle: RectangleShape2D = _collision_shape.shape as RectangleShape2D
-	var local_point: Vector2 = _collision_shape.to_local(point)
-	var half_size: Vector2 = rectangle.size * 0.5
+	var rectangle: RectangleShape2D = (
+		_collision_shape.shape as RectangleShape2D
+	)
+
+	var local_point: Vector2 = (
+		_collision_shape.to_local(point)
+	)
+
+	var half_size: Vector2 = (
+		rectangle.size * 0.5
+	)
 
 	return (
 		absf(local_point.x) <= half_size.x
@@ -52,7 +61,9 @@ func contains_global_point(point: Vector2) -> bool:
 	)
 
 
-func can_receive_piece(piece_position: Vector2) -> bool:
+func can_receive_piece(
+	piece_position: Vector2
+) -> bool:
 	if occupied:
 		return false
 
@@ -63,19 +74,39 @@ func place_piece(piece: Node) -> bool:
 	if occupied:
 		return false
 
+	if piece == null:
+		return false
+
 	if not piece.has_method("place_at"):
 		return false
 
 	occupied = true
 	placed_piece = piece
-	piece.call("place_at", get_snap_position())
+
+	piece.call(
+		"place_at",
+		get_snap_position()
+	)
 
 	return true
 
 
-func remove_piece() -> void:
+func remove_piece() -> bool:
+	if not occupied:
+		return false
+
+	if placed_piece != null:
+		var fixed_value: Variant = placed_piece.get(
+			"is_fixed_piece"
+		)
+
+		if fixed_value == true:
+			return false
+
 	occupied = false
 	placed_piece = null
+
+	return true
 
 
 func get_snap_position() -> Vector2:
@@ -86,7 +117,9 @@ func has_connection(direction: Vector2i) -> bool:
 	if placed_piece == null:
 		return false
 
-	var current_path_type: int = int(placed_piece.get("path_type"))
+	var current_path_type: int = int(
+		placed_piece.get("path_type")
+	)
 
 	match current_path_type:
 		STRAIGHT_HORIZONTAL:

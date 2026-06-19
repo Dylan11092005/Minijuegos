@@ -1,25 +1,25 @@
 [gd_scene format=3 uid="uid://w1rrtyv30d35"]
 
-[ext_resource type="Script" uid="uid://bhw2vxumlxv8o" path="res://minigame_kit/MedicalKitMinigame.gd" id="1_5uay0"]
-[ext_resource type="Texture2D" uid="uid://bcy00cpmfjbnh" path="res://minigame_kit/assets/botiquin_fondo2.png" id="2_01ddl"]
-[ext_resource type="Script" uid="uid://wdblut6421n2" path="res://minigame_kit/TargetSlot.gd" id="2_8j4xf"]
-[ext_resource type="Texture2D" uid="uid://bn1mml5a857ou" path="res://minigame_kit/assets/fondo.png" id="2_xxftf"]
-[ext_resource type="Texture2D" uid="uid://b6onqveap3j5d" path="res://minigame_kit/assets/OpenLid.png" id="4_v8kco"]
-[ext_resource type="PackedScene" uid="uid://ce2leo0ju6ooo" path="res://minigame_kit/DraggableItem.tscn" id="4_xfrch"]
-[ext_resource type="Texture2D" uid="uid://c5qj3gp0jw8y0" path="res://minigame_kit/assets/jeringa.png" id="5_nk4cs"]
-[ext_resource type="Texture2D" uid="uid://ccet13tly5oo1" path="res://minigame_kit/assets/cinta.png" id="7_wr6t0"]
-[ext_resource type="Texture2D" uid="uid://hhfrnpqe7vrr" path="res://minigame_kit/assets/mascarilla.png" id="8_38x1a"]
-[ext_resource type="Texture2D" uid="uid://bdgaha12t4m3v" path="res://minigame_kit/assets/tijeras.png" id="9_j7cxr"]
-[ext_resource type="Texture2D" uid="uid://gfe363jgjt8k" path="res://minigame_kit/assets/gazas.png" id="10_lwg32"]
-[ext_resource type="Texture2D" uid="uid://bddw1i8rooo2j" path="res://minigame_kit/assets/frasco.png" id="11_56ire"]
-[ext_resource type="Texture2D" uid="uid://dp3k1j53vct2m" path="res://minigame_kit/assets/termometro.png" id="12_6uu3t"]
-[ext_resource type="Texture2D" uid="uid://dw0ome1aqcp3x" path="res://minigame_kit/assets/curitas.png" id="13_oy2x5"]
-[ext_resource type="AudioStream" uid="uid://o846k62o7hse" path="res://minigame_kit/assets/music/fondo.mp3" id="14_irkdq"]
-[ext_resource type="AudioStream" uid="uid://clmu1m5wgw3rb" path="res://minigame_kit/assets/music/pieza.mp3" id="15_td2mh"]
-[ext_resource type="Texture2D" uid="uid://bgwhuh8kd0xmb" path="res://minigame_kit/assets/tapa.png" id="16_1why3"]
-[ext_resource type="AudioStream" uid="uid://cdxuob0qc5w72" path="res://minigame_kit/assets/music/checkKit.mp3" id="17_kivhu"]
-[ext_resource type="Script" uid="uid://cy376p2eia0ia" path="res://minigame_kit/KitLock.gd" id="17_v8kco"]
-[ext_resource type="Texture2D" uid="uid://k76f720tq3n0" path="res://minigame_kit/assets/check.png" id="18_kivhu"]
+[ext_resource type="Script" uid="uid://bhw2vxumlxv8o" path="res://Minigames/minigame_kit/MedicalKitMinigame.gd" id="1_5uay0"]
+[ext_resource type="Texture2D" uid="uid://bcy00cpmfjbnh" path="res://Minigames/minigame_kit/assets/botiquin_fondo2.png" id="2_01ddl"]
+[ext_resource type="Script" uid="uid://wdblut6421n2" path="res://Minigames/minigame_kit/TargetSlot.gd" id="2_8j4xf"]
+[ext_resource type="Texture2D" uid="uid://bn1mml5a857ou" path="res://Minigames/minigame_kit/assets/fondo.png" id="2_xxftf"]
+[ext_resource type="Texture2D" uid="uid://b6onqveap3j5d" path="res://Minigames/minigame_kit/assets/OpenLid.png" id="4_v8kco"]
+[ext_resource type="PackedScene" uid="uid://ce2leo0ju6ooo" path="res://Minigames/minigame_kit/DraggableItem.tscn" id="4_xfrch"]
+[ext_resource type="Texture2D" uid="uid://c5qj3gp0jw8y0" path="res://Minigames/minigame_kit/assets/jeringa.png" id="5_nk4cs"]
+[ext_resource type="Texture2D" uid="uid://ccet13tly5oo1" path="res://Minigames/minigame_kit/assets/cinta.png" id="7_wr6t0"]
+[ext_resource type="Texture2D" uid="uid://hhfrnpqe7vrr" path="res://Minigames/minigame_kit/assets/mascarilla.png" id="8_38x1a"]
+[ext_resource type="Texture2D" uid="uid://bdgaha12t4m3v" path="res://Minigames/minigame_kit/assets/tijeras.png" id="9_j7cxr"]
+[ext_resource type="Texture2D" uid="uid://gfe363jgjt8k" path="res://Minigames/minigame_kit/assets/gazas.png" id="10_lwg32"]
+[ext_resource type="Texture2D" uid="uid://bddw1i8rooo2j" path="res://Minigames/minigame_kit/assets/frasco.png" id="11_56ire"]
+[ext_resource type="Texture2D" uid="uid://dp3k1j53vct2m" path="res://Minigames/minigame_kit/assets/termometro.png" id="12_6uu3t"]
+[ext_resource type="Texture2D" uid="uid://dw0ome1aqcp3x" path="res://Minigames/minigame_kit/assets/curitas.png" id="13_oy2x5"]
+[ext_resource type="AudioStream" uid="uid://o846k62o7hse" path="res://Minigames/minigame_kit/assets/music/fondo.mp3" id="14_irkdq"]
+[ext_resource type="Texture2D" uid="uid://bgwhuh8kd0xmb" path="res://Minigames/minigame_kit/assets/tapa.png" id="16_1why3"]
+[ext_resource type="AudioStream" uid="uid://crquvfbvnyqis" path="res://Minigames/minigame_kit/assets/music/pieza_kit.mp3" id="16_a5t3a"]
+[ext_resource type="AudioStream" uid="uid://cdxuob0qc5w72" path="res://Minigames/minigame_kit/assets/music/checkKit.mp3" id="17_kivhu"]
+[ext_resource type="Script" uid="uid://cy376p2eia0ia" path="res://Minigames/minigame_kit/KitLock.gd" id="17_v8kco"]
+[ext_resource type="Texture2D" uid="uid://k76f720tq3n0" path="res://Minigames/minigame_kit/assets/check.png" id="18_kivhu"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_gdecx"]
 size = Vector2(231.5, 133)
@@ -391,7 +391,7 @@ stream = ExtResource("14_irkdq")
 volume_db = -7.0
 
 [node name="PiecePlacedSound" type="AudioStreamPlayer" parent="." unique_id=26982050]
-stream = ExtResource("15_td2mh")
+stream = ExtResource("16_a5t3a")
 
 [node name="LockSound" type="AudioStreamPlayer" parent="." unique_id=887631748]
 stream = ExtResource("17_kivhu")

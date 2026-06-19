@@ -9,22 +9,23 @@ func _process(delta: float) -> void:
 	pass
 
 
+
 func _on_button_15_pressed() -> void:
 	var minigame_data = get_node("/root/MinigameData")
 
 	minigame_data.title = "¡Construye la ruta segura!"
 
 	minigame_data.description = (
-		"Conecta correctamente el camino desde la escuela "
-		+ "hasta la zona segura."
+		"Construye un camino seguro desde la escuela hasta la zona de reunión, "
+		+ "evitando los obstáculos que bloquean algunas casillas."
 	)
 
 	minigame_data.instructions = (
-		"Arrastra las piezas de camino desde el panel derecho "
-		+ "y colócalas en las casillas del mapa. "
-		+ "Los caminos deben quedar conectados correctamente desde la escuela "
-		+ "hasta la zona segura antes de que termine el tiempo. "
-		+ "Si colocas una pieza incorrecta, tócala para quitarla."
+		"Arrastra las piezas de camino desde el panel derecho y colócalas "
+		+ "en las casillas disponibles del mapa. Conecta la escuela con la "
+		+ "zona segura antes de que termine el tiempo. Las piedras y los árboles "
+		+ "caídos son obstáculos, por lo que no podrás colocar caminos sobre esas "
+		+ "casillas. Si colocas una pieza incorrecta, tócala para quitarla."
 	)
 
 	minigame_data.video_path = (
@@ -41,7 +42,7 @@ func _on_button_15_pressed() -> void:
 			"icon": "res://Minigames/ui_global/assets/ClickIcon.png"
 		},
 		{
-			"action": "Quitar un camino",
+			"action": "Quitar caminos",
 			"icon": "res://Minigames/ui_global/assets/ClickIcon.png"
 		},
 	]
@@ -49,6 +50,7 @@ func _on_button_15_pressed() -> void:
 	get_tree().change_scene_to_file(
 		"res://Minigames/ui_global/MinigameIntro.tscn"
 	)
+
 
 func _on_button_10_pressed() -> void:
 	var minigame_data = get_node("/root/MinigameData")
