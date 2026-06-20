@@ -10,7 +10,7 @@ const BACKGROUND_PATH := "res://Minigames/minigame_fire/assets/background.png"
 const TIMER_UI_SCENE_PATH := "res://Minigames/ui_global/TimerUI.tscn"
 const GAME_RESULT_SCENE_PATH := "res://Minigames/ui_global/GameResult.tscn"
 
-const TOTAL_TIME := 35.0
+const TOTAL_TIME := 20.0
 
 const TOTAL_FLAMES_TO_APPEAR := 10
 const INITIAL_FIRE_TREES := 2

@@ -25,7 +25,7 @@ const SMOKE_PATH := "res://Minigames/minigame_fire/assets/smoke.png"
 # GAMEPLAY CONSTANTS
 # =========================================================
 
-const BURN_DURATION := 5.0
+const BURN_DURATION := 2.0
 const CLICK_SIZE := Vector2(260, 330)
 
 
