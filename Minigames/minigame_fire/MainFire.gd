@@ -22,6 +22,13 @@ const MAX_LIVES := 3
 const TREE_REPOSITION_DELAY := 0.45
 const MIN_TREE_DISTANCE := 180.0
 
+const C_BEIGE := Color("#E5C89E")
+const C_ORANGE := Color("#E0B080")
+const C_BLUE := Color("#3E5F8F")
+const C_PHASE_BLUE := Color("#3E5F8F")
+const C_PHASE_ORANGE := Color("#E07820")
+const C_PHASE_RED := Color("#D63A3A")
+
 
 # =========================================================
 # NODE REFERENCES
@@ -237,27 +244,25 @@ func _setup_fire_label():
 	var counter_panel := Panel.new()
 	counter_panel.name = "FireCounterPanel"
 	
-	# Contador debajo del TimerUI.
+	# Contador debajo del TimerUI, con estilo parecido al timer global.
 	counter_panel.position = Vector2(30, 95)
 	counter_panel.size = Vector2(300, 46)
 	counter_panel.z_index = 100
+	counter_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	
 	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.08, 0.15, 0.20, 0.78)
-	style.border_color = Color("#30C0F0")
-	style.border_width_left = 3
-	style.border_width_right = 3
-	style.border_width_top = 3
-	style.border_width_bottom = 3
+	style.bg_color = C_BEIGE
+	style.border_color = C_ORANGE
 	
-	style.corner_radius_top_left = 14
-	style.corner_radius_top_right = 14
-	style.corner_radius_bottom_left = 14
-	style.corner_radius_bottom_right = 14
+	style.border_width_left = 4
+	style.border_width_right = 4
+	style.border_width_top = 4
+	style.border_width_bottom = 4
 	
-	style.shadow_color = Color(0, 0, 0, 0.30)
-	style.shadow_size = 8
-	style.shadow_offset = Vector2(2, 3)
+	style.corner_radius_top_left = 18
+	style.corner_radius_top_right = 18
+	style.corner_radius_bottom_left = 18
+	style.corner_radius_bottom_right = 18
 	
 	counter_panel.add_theme_stylebox_override("panel", style)
 	hud.add_child(counter_panel)
@@ -269,13 +274,13 @@ func _setup_fire_label():
 	
 	fire_label.position = Vector2.ZERO
 	fire_label.size = counter_panel.size
+	fire_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	
 	fire_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	fire_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	
-	fire_label.add_theme_font_size_override("font_size", 21)
-	fire_label.add_theme_color_override("font_color", Color.WHITE)
-	fire_label.add_theme_color_override("font_outline_color", Color("#203850"))
-	fire_label.add_theme_constant_override("outline_size", 2)
+	fire_label.add_theme_font_size_override("font_size", 22)
+	fire_label.add_theme_color_override("font_color", C_BLUE)
 
 
 # =========================================================
@@ -530,6 +535,25 @@ func _disable_trees():
 func _update_hud():
 	if fire_label:
 		fire_label.text = "Llamas: " + str(_get_burning_count()) + "   " + str(total_flames_resolved) + "/" + str(TOTAL_FLAMES_TO_APPEAR)
+		fire_label.add_theme_color_override("font_color", _get_counter_color())
+
+
+func _get_counter_color() -> Color:
+	if not timer_ui:
+		return C_PHASE_BLUE
+	
+	if not timer_ui.has_method("get_remaining_time"):
+		return C_PHASE_BLUE
+	
+	var remaining_time: float = timer_ui.get_remaining_time()
+	var fraction: float = remaining_time / TOTAL_TIME
+	
+	if fraction > 0.5:
+		return C_PHASE_BLUE
+	elif fraction > 0.25:
+		return C_PHASE_ORANGE
+	else:
+		return C_PHASE_RED
 
 
 func _get_burning_count() -> int:
