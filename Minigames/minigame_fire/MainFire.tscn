@@ -1,3 +1,39 @@
 [gd_scene format=3 uid="uid://dund21m3u3vey"]
 
+[ext_resource type="Script" uid="uid://da2j2kswgvdk4" path="res://Minigames/minigame_fire/MainFire.gd" id="1_87aj1"]
+[ext_resource type="PackedScene" uid="uid://ctphiepgoswex" path="res://Minigames/minigame_fire/FireTree.tscn" id="2_jwrrx"]
+
 [node name="MainFire" type="Node2D" unique_id=1709073972]
+script = ExtResource("1_87aj1")
+
+[node name="Background" type="Sprite2D" parent="." unique_id=421215580]
+
+[node name="Trees" type="Node2D" parent="." unique_id=1354243166]
+
+[node name="FireTree" parent="Trees" unique_id=746632263 instance=ExtResource("2_jwrrx")]
+
+[node name="FireTree2" parent="Trees" unique_id=1935991935 instance=ExtResource("2_jwrrx")]
+
+[node name="FireTree3" parent="Trees" unique_id=1232478684 instance=ExtResource("2_jwrrx")]
+
+[node name="FireTree4" parent="Trees" unique_id=2498198 instance=ExtResource("2_jwrrx")]
+
+[node name="FireTree5" parent="Trees" unique_id=2075199427 instance=ExtResource("2_jwrrx")]
+
+[node name="FireTree6" parent="Trees" unique_id=515291020 instance=ExtResource("2_jwrrx")]
+
+[node name="FireTree7" parent="Trees" unique_id=2027308549 instance=ExtResource("2_jwrrx")]
+
+[node name="FireTree8" parent="Trees" unique_id=1758591045 instance=ExtResource("2_jwrrx")]
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=877890763]
+
+[node name="FireLabel" type="Label" parent="HUD" unique_id=1297428203]
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="LivesUi" type="Node2D" parent="HUD" unique_id=54636152]
+
+[node name="TimerUI" type="CanvasLayer" parent="." unique_id=593930551]
+
+[node name="GameResult" type="CanvasLayer" parent="." unique_id=338221760]

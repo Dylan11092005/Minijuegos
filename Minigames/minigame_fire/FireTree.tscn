@@ -1,3 +1,21 @@
 [gd_scene format=3 uid="uid://ctphiepgoswex"]
 
+[ext_resource type="Script" uid="uid://bwphbidaposye" path="res://Minigames/minigame_fire/FireTree.gd" id="1_fycjt"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_82f2u"]
+
 [node name="FireTree" type="Area2D" unique_id=746632263]
+script = ExtResource("1_fycjt")
+
+[node name="TreeSprite" type="Sprite2D" parent="." unique_id=1787615386]
+
+[node name="BurnedTreeSprite" type="Sprite2D" parent="." unique_id=1151547585]
+
+[node name="FireTopSprite" type="Sprite2D" parent="." unique_id=451791987]
+
+[node name="FireRootSprite" type="Sprite2D" parent="." unique_id=697428161]
+
+[node name="SmokeSprite" type="Sprite2D" parent="." unique_id=1002959166]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2039500939]
+shape = SubResource("RectangleShape2D_82f2u")
