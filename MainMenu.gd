@@ -271,7 +271,7 @@ func _on_button_13_pressed() -> void:
 	minigame_data.minigame_scene = "res://Minigames/minigame_fire/MainFire.tscn"
 	
 	minigame_data.controls = [
-		{ "action": "Presionar árboles en llamas", "icon": "res://Minigames/ui_global/assets/Click.png" },
+		{ "action": "Presionar árboles en llamas", "icon": "res://Minigames/ui_global/assets/ClickIcon.png" },
 	]
 	
 	get_tree().change_scene_to_file("res://Minigames/ui_global/MinigameIntro.tscn")
