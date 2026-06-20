@@ -19,7 +19,8 @@ const SPAWN_FLAME_EVERY := 2.2
 
 const MAX_LIVES := 3
 
-const TREE_JITTER := 10.0
+const TREE_REPOSITION_DELAY := 0.45
+const MIN_TREE_DISTANCE := 180.0
 
 
 # =========================================================
@@ -116,7 +117,7 @@ func _setup_background():
 
 
 # =========================================================
-# SETUP TIMER UI GLOBAL BY CODE
+# TIMER UI GLOBAL
 # =========================================================
 
 func _setup_timer_ui():
@@ -124,63 +125,50 @@ func _setup_timer_ui():
 		var timer_scene = load(TIMER_UI_SCENE_PATH)
 		timer_ui = timer_scene.instantiate()
 		timer_ui.name = "TimerUI"
-		
-		# Se agrega tal cual viene en el global.
-		# No se cambia posición, escala, color, fuente ni nada.
 		add_child(timer_ui)
 	else:
 		push_error("No se encontró TimerUI en: " + TIMER_UI_SCENE_PATH)
-		return
-	
-	_connect_timer_signals()
-	_stop_global_timer()
-
-
-func _connect_timer_signals():
-	if not timer_ui:
 		return
 	
 	if timer_ui.has_signal("time_up"):
 		if not timer_ui.time_up.is_connected(_on_time_up):
 			timer_ui.time_up.connect(_on_time_up)
 	
-	if timer_ui.has_signal("tiempo_agotado"):
-		if not timer_ui.tiempo_agotado.is_connected(_on_time_up):
-			timer_ui.tiempo_agotado.connect(_on_time_up)
+	if timer_ui.has_method("ocultar"):
+		timer_ui.ocultar()
 
 
 func _start_global_timer():
 	if not timer_ui:
 		return
 	
-	if timer_ui.has_method("start_timer"):
-		timer_ui.start_timer(TOTAL_TIME)
-	elif timer_ui.has_method("iniciar_timer"):
-		timer_ui.iniciar_timer(TOTAL_TIME)
-	elif timer_ui.has_method("iniciar"):
-		timer_ui.iniciar(TOTAL_TIME)
-	elif timer_ui.has_method("start"):
-		timer_ui.start(TOTAL_TIME)
+	if timer_ui.has_method("set_tamano_panel"):
+		timer_ui.set_tamano_panel(570, 60)
+	
+	if timer_ui.has_method("iniciar"):
+		timer_ui.iniciar(TOTAL_TIME, "Tiempo restante", "para apagar incendios")
 	else:
-		push_error("TimerUI no tiene método para iniciar. Revisa el nombre exacto del método en TimerUI.gd.")
+		push_error("TimerUI no tiene el método iniciar(p_time, p_text_before, p_text_after).")
 
 
 func _stop_global_timer():
 	if not timer_ui:
 		return
 	
-	if timer_ui.has_method("stop_timer"):
-		timer_ui.stop_timer()
-	elif timer_ui.has_method("detener_timer"):
-		timer_ui.detener_timer()
-	elif timer_ui.has_method("detener"):
+	if timer_ui.has_method("detener"):
 		timer_ui.detener()
-	elif timer_ui.has_method("stop"):
-		timer_ui.stop()
+
+
+func _hide_global_timer():
+	if not timer_ui:
+		return
+	
+	if timer_ui.has_method("ocultar"):
+		timer_ui.ocultar()
 
 
 # =========================================================
-# SETUP GAME RESULT GLOBAL BY CODE
+# GAME RESULT GLOBAL
 # =========================================================
 
 func _setup_game_result():
@@ -249,28 +237,27 @@ func _setup_fire_label():
 	var counter_panel := Panel.new()
 	counter_panel.name = "FireCounterPanel"
 	
-	# Debajo del TimerUI global.
-	# Si queda muy arriba o muy abajo, solo cambia este Y.
-	counter_panel.position = Vector2(30, 120)
-	counter_panel.size = Vector2(390, 62)
+	# Contador debajo del TimerUI.
+	counter_panel.position = Vector2(30, 95)
+	counter_panel.size = Vector2(300, 46)
 	counter_panel.z_index = 100
 	
 	var style := StyleBoxFlat.new()
-	style.bg_color = Color("#E5C89E")
-	style.border_color = Color("#E08040")
-	style.border_width_left = 5
-	style.border_width_right = 5
-	style.border_width_top = 5
-	style.border_width_bottom = 5
+	style.bg_color = Color(0.08, 0.15, 0.20, 0.78)
+	style.border_color = Color("#30C0F0")
+	style.border_width_left = 3
+	style.border_width_right = 3
+	style.border_width_top = 3
+	style.border_width_bottom = 3
 	
-	style.corner_radius_top_left = 18
-	style.corner_radius_top_right = 18
-	style.corner_radius_bottom_left = 18
-	style.corner_radius_bottom_right = 18
+	style.corner_radius_top_left = 14
+	style.corner_radius_top_right = 14
+	style.corner_radius_bottom_left = 14
+	style.corner_radius_bottom_right = 14
 	
-	style.shadow_color = Color(0, 0, 0, 0.25)
-	style.shadow_size = 10
-	style.shadow_offset = Vector2(3, 4)
+	style.shadow_color = Color(0, 0, 0, 0.30)
+	style.shadow_size = 8
+	style.shadow_offset = Vector2(2, 3)
 	
 	counter_panel.add_theme_stylebox_override("panel", style)
 	hud.add_child(counter_panel)
@@ -285,9 +272,9 @@ func _setup_fire_label():
 	fire_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	fire_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	
-	fire_label.add_theme_font_size_override("font_size", 24)
-	fire_label.add_theme_color_override("font_color", Color("#3E5F8F"))
-	fire_label.add_theme_color_override("font_outline_color", Color.WHITE)
+	fire_label.add_theme_font_size_override("font_size", 21)
+	fire_label.add_theme_color_override("font_color", Color.WHITE)
+	fire_label.add_theme_color_override("font_outline_color", Color("#203850"))
 	fire_label.add_theme_constant_override("outline_size", 2)
 
 
@@ -296,31 +283,84 @@ func _setup_fire_label():
 # =========================================================
 
 func _randomize_tree_positions():
+	rng.seed = Time.get_ticks_usec()
+	
+	var used_positions: Array = []
+	
+	for tree in trees:
+		var selected_position := _get_random_safe_tree_position(used_positions)
+		
+		tree.position = selected_position
+		tree.z_index = int(selected_position.y)
+		
+		used_positions.append(selected_position)
+
+
+func _move_tree_after_extinguish(tree):
+	if not tree:
+		return
+	
+	if tree.has_method("set_disabled"):
+		tree.set_disabled(true)
+	
+	await get_tree().create_timer(TREE_REPOSITION_DELAY).timeout
+	
+	if game_over:
+		return
+	
+	var used_positions: Array = []
+	
+	for other_tree in trees:
+		if other_tree != tree:
+			used_positions.append(other_tree.position)
+	
+	var new_position := _get_random_safe_tree_position(used_positions)
+	
+	tree.position = new_position
+	tree.z_index = int(new_position.y)
+	
+	if tree.has_method("reset_tree"):
+		tree.reset_tree()
+
+
+func _get_random_safe_tree_position(used_positions: Array) -> Vector2:
 	var screen_size := get_viewport_rect().size
 	
-	var slots := [
-		Vector2(screen_size.x * 0.17, screen_size.y * 0.56),
-		Vector2(screen_size.x * 0.32, screen_size.y * 0.62),
-		Vector2(screen_size.x * 0.48, screen_size.y * 0.72),
-		Vector2(screen_size.x * 0.62, screen_size.y * 0.60),
-		Vector2(screen_size.x * 0.77, screen_size.y * 0.55),
-		Vector2(screen_size.x * 0.28, screen_size.y * 0.79),
-		Vector2(screen_size.x * 0.66, screen_size.y * 0.79),
-		Vector2(screen_size.x * 0.52, screen_size.y * 0.52)
+	var safe_slots := [
+		Vector2(screen_size.x * 0.16, screen_size.y * 0.58),
+		Vector2(screen_size.x * 0.30, screen_size.y * 0.60),
+		Vector2(screen_size.x * 0.45, screen_size.y * 0.66),
+		Vector2(screen_size.x * 0.60, screen_size.y * 0.58),
+		Vector2(screen_size.x * 0.76, screen_size.y * 0.56),
+		Vector2(screen_size.x * 0.23, screen_size.y * 0.76),
+		Vector2(screen_size.x * 0.38, screen_size.y * 0.79),
+		Vector2(screen_size.x * 0.55, screen_size.y * 0.77),
+		Vector2(screen_size.x * 0.72, screen_size.y * 0.78),
+		Vector2(screen_size.x * 0.84, screen_size.y * 0.68)
 	]
 	
-	slots.shuffle()
-	
-	for i in range(trees.size()):
-		var base_position: Vector2 = slots[i % slots.size()]
+	for attempt in range(40):
+		var base_position: Vector2 = safe_slots[rng.randi_range(0, safe_slots.size() - 1)]
 		
 		var random_offset := Vector2(
-			rng.randf_range(-TREE_JITTER, TREE_JITTER),
-			rng.randf_range(-TREE_JITTER, TREE_JITTER)
+			rng.randf_range(-55.0, 55.0),
+			rng.randf_range(-35.0, 35.0)
 		)
 		
-		trees[i].position = base_position + random_offset
-		trees[i].z_index = int(trees[i].position.y)
+		var selected_position := base_position + random_offset
+		
+		if _is_tree_position_valid(selected_position, used_positions):
+			return selected_position
+	
+	return safe_slots[rng.randi_range(0, safe_slots.size() - 1)]
+
+
+func _is_tree_position_valid(new_position: Vector2, used_positions: Array) -> bool:
+	for used_position in used_positions:
+		if new_position.distance_to(used_position) < MIN_TREE_DISTANCE:
+			return false
+	
+	return true
 
 
 # =========================================================
@@ -381,12 +421,13 @@ func _spawn_one_flame():
 	_update_hud()
 
 
-func _on_tree_extinguished(_tree):
+func _on_tree_extinguished(tree):
 	if game_over:
 		return
 	
 	total_flames_resolved += 1
 	
+	_move_tree_after_extinguish(tree)
 	_check_progress()
 	_update_hud()
 
@@ -488,7 +529,7 @@ func _disable_trees():
 
 func _update_hud():
 	if fire_label:
-		fire_label.text = "🔥 Activas: " + str(_get_burning_count()) + "   Progreso: " + str(total_flames_resolved) + "/" + str(TOTAL_FLAMES_TO_APPEAR)
+		fire_label.text = "Llamas: " + str(_get_burning_count()) + "   " + str(total_flames_resolved) + "/" + str(TOTAL_FLAMES_TO_APPEAR)
 
 
 func _get_burning_count() -> int:

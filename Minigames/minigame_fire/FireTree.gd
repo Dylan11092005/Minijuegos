@@ -26,9 +26,6 @@ const SMOKE_PATH := "res://Minigames/minigame_fire/assets/smoke.png"
 # =========================================================
 
 const BURN_DURATION := 5.0
-
-# Área real para poder presionar el árbol.
-# La hice grande porque visualmente el árbol es grande.
 const CLICK_SIZE := Vector2(260, 330)
 
 
@@ -81,7 +78,6 @@ const FIRE_GLOW_COLOR := Color(1.0, 0.42, 0.05, 0.26)
 
 var burning := false
 var disabled := false
-var extinguished_safe := false
 var burned := false
 var burn_timer := 0.0
 
@@ -139,7 +135,6 @@ func set_burning(value: bool):
 	burning = value
 	
 	if burning:
-		extinguished_safe = false
 		burn_timer = 0.0
 		_show_burning_tree()
 	else:
@@ -151,7 +146,6 @@ func set_burning(value: bool):
 func reset_tree():
 	burning = false
 	disabled = false
-	extinguished_safe = false
 	burned = false
 	burn_timer = 0.0
 	
@@ -180,18 +174,6 @@ func is_burned() -> bool:
 # =========================================================
 
 func _input_event(_viewport, event, _shape_idx):
-	_handle_press_event(event)
-
-
-func _unhandled_input(event):
-	# Esto asegura que se pueda presionar aunque la colisión no agarre perfecto.
-	if not _is_mouse_event_inside_tree(event):
-		return
-	
-	_handle_press_event(event)
-
-
-func _handle_press_event(event):
 	if disabled:
 		return
 	
@@ -200,36 +182,11 @@ func _handle_press_event(event):
 	
 	if event is InputEventMouseButton:
 		if event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-			get_viewport().set_input_as_handled()
 			_press_tree()
 	
 	if event is InputEventScreenTouch:
 		if event.pressed:
-			get_viewport().set_input_as_handled()
 			_press_tree()
-
-
-func _is_mouse_event_inside_tree(event) -> bool:
-	if disabled:
-		return false
-	
-	if burned:
-		return false
-	
-	if not event is InputEventMouseButton:
-		return false
-	
-	if not event.pressed:
-		return false
-	
-	if event.button_index != MOUSE_BUTTON_LEFT:
-		return false
-	
-	var click_position: Vector2 = get_global_mouse_position()
-	var rect_position := global_position - CLICK_SIZE * 0.5
-	var click_rect := Rect2(rect_position, CLICK_SIZE)
-	
-	return click_rect.has_point(click_position)
 
 
 func _press_tree():
@@ -245,7 +202,6 @@ func _press_tree():
 
 func _extinguish_fire():
 	burning = false
-	extinguished_safe = true
 	burn_timer = 0.0
 	
 	_show_extinguished_tree()
@@ -259,7 +215,6 @@ func _burn_tree():
 	
 	burning = false
 	burned = true
-	extinguished_safe = true
 	disabled = true
 	burn_timer = 0.0
 	
@@ -423,7 +378,6 @@ func _show_extinguished_tree():
 	
 	if not burning and not burned:
 		smoke_sprite.visible = false
-		extinguished_safe = false
 		queue_redraw()
 
 
