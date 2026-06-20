@@ -143,10 +143,10 @@ metadata/_edit_lock_ = true
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot09" unique_id=1391580194]
 position = Vector2(1, 0)
 shape = SubResource("RectangleShape2D_hqbq6")
-disabled = true
 metadata/_edit_lock_ = true
 
 [node name="Rock" type="Sprite2D" parent="Slots/Slot09" unique_id=4240118]
+visible = false
 position = Vector2(-1.0000191, 4.9999943)
 scale = Vector2(0.37499988, 0.415)
 texture = ExtResource("5_j0ypk")
