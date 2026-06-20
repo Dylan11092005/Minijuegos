@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://da2j2kswgvdk4" path="res://Minigames/minigame_fire/MainFire.gd" id="1_87aj1"]
 [ext_resource type="PackedScene" uid="uid://ctphiepgoswex" path="res://Minigames/minigame_fire/FireTree.tscn" id="2_jwrrx"]
+[ext_resource type="Script" uid="uid://db3sdgv4pves7" path="res://Minigames/ui_global/LivesUi.gd" id="3_jwrrx"]
 
 [node name="MainFire" type="Node2D" unique_id=1709073972]
 script = ExtResource("1_87aj1")
@@ -33,7 +34,4 @@ offset_right = 40.0
 offset_bottom = 23.0
 
 [node name="LivesUi" type="Node2D" parent="HUD" unique_id=54636152]
-
-[node name="TimerUI" type="CanvasLayer" parent="." unique_id=593930551]
-
-[node name="GameResult" type="CanvasLayer" parent="." unique_id=338221760]
+script = ExtResource("3_jwrrx")
