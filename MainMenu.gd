@@ -242,7 +242,7 @@ func _on_button_13_pressed() -> void:
 	
 	minigame_data.title = "¡Apaga el incendio!"
 	minigame_data.description = "Alguien dejó un cigarrillo en el bosque y provocó un incendio."
-	minigame_data.instructions = "Presiona los árboles que están en llamas para apagar el fuego antes de que se quemen. Si no los apagas a tiempo, perderás vidas."
+	minigame_data.instructions = "Presiona los árboles que están en llamas para apagar el fuego antes de que se quemen. Si no los apagas a tiempo, perderás vidas.Si presionas un árbol que no tiene fuego, perderás una vida."
 	minigame_data.video_path = "res://Minigames/minigame_fire/assets/Fire_Instruction.ogv"
 	minigame_data.minigame_scene = "res://Minigames/minigame_fire/MainFire.tscn"
 	
