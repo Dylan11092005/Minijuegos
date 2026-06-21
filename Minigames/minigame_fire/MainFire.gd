@@ -6,11 +6,12 @@ extends Node2D
 # =========================================================
 
 const BACKGROUND_PATH := "res://Minigames/minigame_fire/assets/background.png"
+const FIRE_BACKGROUND_SOUND_PATH := "res://Minigames/minigame_fire/assets/sound/fire.mp3"
 
 const TIMER_UI_SCENE_PATH := "res://Minigames/ui_global/TimerUI.tscn"
 const GAME_RESULT_SCENE_PATH := "res://Minigames/ui_global/GameResult.tscn"
 
-const TOTAL_TIME := 20.0
+const TOTAL_TIME := 35.0
 
 const TOTAL_FLAMES_TO_APPEAR := 10
 const INITIAL_FIRE_TREES := 2
@@ -48,6 +49,7 @@ const C_PHASE_RED := Color("#D63A3A")
 
 var timer_ui = null
 var game_result = null
+var fire_background_sound: AudioStreamPlayer = null
 
 var trees: Array = []
 var rng := RandomNumberGenerator.new()
@@ -71,6 +73,7 @@ func _ready():
 	randomize()
 	
 	_setup_background()
+	_setup_background_sound()
 	_setup_timer_ui()
 	_setup_game_result()
 	_collect_trees()
@@ -98,6 +101,10 @@ func _process(delta):
 	_update_hud()
 
 
+func _exit_tree():
+	_stop_background_sound()
+
+
 # =========================================================
 # SETUP BACKGROUND
 # =========================================================
@@ -121,6 +128,46 @@ func _setup_background():
 		var final_scale = max(scale_x, scale_y)
 		
 		background.scale = Vector2(final_scale, final_scale)
+
+
+# =========================================================
+# BACKGROUND SOUND
+# =========================================================
+
+func _setup_background_sound():
+	fire_background_sound = AudioStreamPlayer.new()
+	fire_background_sound.name = "FireBackgroundSound"
+	fire_background_sound.volume_db = -8.0
+	fire_background_sound.bus = "Master"
+	
+	if ResourceLoader.exists(FIRE_BACKGROUND_SOUND_PATH):
+		var fire_stream = load(FIRE_BACKGROUND_SOUND_PATH)
+		
+		if fire_stream is AudioStreamMP3:
+			fire_stream.loop = true
+		
+		fire_background_sound.stream = fire_stream
+		add_child(fire_background_sound)
+	else:
+		push_error("No se encontró el sonido de fondo en: " + FIRE_BACKGROUND_SOUND_PATH)
+
+
+func _play_background_sound():
+	if not fire_background_sound:
+		return
+	
+	if fire_background_sound.stream == null:
+		return
+	
+	if not fire_background_sound.playing:
+		fire_background_sound.play()
+
+
+func _stop_background_sound():
+	if not fire_background_sound:
+		return
+	
+	fire_background_sound.stop()
 
 
 # =========================================================
@@ -244,7 +291,6 @@ func _setup_fire_label():
 	var counter_panel := Panel.new()
 	counter_panel.name = "FireCounterPanel"
 	
-	# Contador debajo del TimerUI, con estilo parecido al timer global.
 	counter_panel.position = Vector2(30, 95)
 	counter_panel.size = Vector2(300, 46)
 	counter_panel.z_index = 100
@@ -392,6 +438,7 @@ func _start_game():
 		tree.reset_tree()
 	
 	_start_global_timer()
+	_play_background_sound()
 	_start_initial_fires()
 	_update_hud()
 
@@ -497,6 +544,7 @@ func _win_game():
 	game_started = false
 	
 	_stop_global_timer()
+	_stop_background_sound()
 	_disable_trees()
 	
 	if game_result:
@@ -514,6 +562,7 @@ func _lose_game():
 	game_started = false
 	
 	_stop_global_timer()
+	_stop_background_sound()
 	_disable_trees()
 	
 	if game_result:
