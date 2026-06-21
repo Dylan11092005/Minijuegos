@@ -14,7 +14,7 @@ script = ExtResource("1_xrwn7")
 metadata/_edit_vertical_guides_ = [-3448.0]
 
 [node name="Background" type="Sprite2D" parent="." unique_id=929585264]
-position = Vector2(996.5, 540.23444)
+position = Vector2(990.99994, 538)
 scale = Vector2(1.1883972, 1.1982265)
 texture = ExtResource("2_xrwn7")
 
@@ -22,16 +22,16 @@ texture = ExtResource("2_xrwn7")
 position = Vector2(48, 64)
 
 [node name="Marker2D" type="Marker2D" parent="RockSpawners" unique_id=14773880]
-position = Vector2(1016, 375)
+position = Vector2(681, 292)
 
 [node name="Marker2D2" type="Marker2D" parent="RockSpawners" unique_id=1589535782]
-position = Vector2(1370, 421)
+position = Vector2(1116, 341)
 
 [node name="Marker2D3" type="Marker2D" parent="RockSpawners" unique_id=383624786]
-position = Vector2(503, 300)
+position = Vector2(417, 344)
 
 [node name="Marker2D4" type="Marker2D" parent="RockSpawners" unique_id=805564964]
-position = Vector2(1702, 512)
+position = Vector2(1380, 468)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1624760842]
 
