@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://d0bh66wbv0oqg"]
+
+[ext_resource type="Script" uid="uid://duea2hq4h82j2" path="res://Minigames/minigame_landslide/falling_rock.gd" id="1_l258p"]
+[ext_resource type="Texture2D" uid="uid://cs30gvikuw1sn" path="res://Minigames/minigame_landslide/assets/05_falling_rock.png" id="2_q3msb"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_qvbrt"]
+radius = 56.82429
+
+[node name="FallingRock" type="Node2D" unique_id=1010736123]
+script = ExtResource("1_l258p")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1907600190]
+position = Vector2(-1, -1)
+scale = Vector2(0.7864583, 0.9218749)
+texture = ExtResource("2_q3msb")
+
+[node name="Hitbox" type="Area2D" parent="." unique_id=570468933]
+position = Vector2(-4, 0)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox" unique_id=1445958067]
+position = Vector2(2, 0)
+shape = SubResource("CircleShape2D_qvbrt")
