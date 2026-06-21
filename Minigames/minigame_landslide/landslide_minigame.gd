@@ -9,15 +9,15 @@ const TIMER_HUD_SCENE = preload("res://Minigames/ui_global/TimerUi.tscn")
 const GAME_RESULT_SCENE = preload("res://Minigames/ui_global/GameResult.tscn")
 const LIVES_UI_SCENE = preload("res://Minigames/ui_global/LivesUi.tscn")
 
+const MUSIC_DIR := "res://Minigames/minigame_landslide/Music/"
+
 @export var spawn_interval := 1.05
 @export var spawn_interval_fast := 0.72
 
-# Daño de roca: más pequeño = más preciso
 @export var rock_hit_x_distance := 28.0
 @export var rock_hit_y_min := -75.0
 @export var rock_hit_y_max := 15.0
 
-# Victoria cerca de la cabina segura
 @export var safe_win_distance := 35.0
 
 var game_active := false
@@ -50,11 +50,16 @@ var prompt_label: Label = null
 var phone_overlay: ColorRect = null
 var dial_display: Label = null
 
+var alarm_sound: AudioStreamPlayer = null
+var rocks_sound: AudioStreamPlayer = null
+var keyboard_sound: AudioStreamPlayer = null
+
 
 func _ready() -> void:
 	add_to_group("game_manager")
 	randomize()
 
+	_create_audio()
 	_setup_main_nodes()
 	_setup_collisions()
 	_create_ui()
@@ -98,10 +103,8 @@ func _input(event: InputEvent) -> void:
 
 
 func _setup_main_nodes() -> void:
-	# NO se crea el jugador. Se busca el que vos pusiste manualmente.
 	player = get_node_or_null("Player") as CharacterBody2D
 
-	# Por si tu jugador quedó con otro nombre, busca cualquier CharacterBody2D.
 	if player == null:
 		player = _find_first_character_body()
 
@@ -111,9 +114,8 @@ func _setup_main_nodes() -> void:
 		player.collision_layer = 1
 		player.collision_mask = 2
 	else:
-		push_warning("No se encontró Player. Pon tu personaje manualmente en el mapa como CharacterBody2D y nómbralo Player.")
+		push_warning("No se encontró Player. Pon tu personaje manualmente como CharacterBody2D y nómbralo Player.")
 
-	# Estos también son manuales.
 	phone_cabin = _find_area_node(["PhoneCabin", "Telefono", "Teléfono", "Phone", "Movil", "Móvil", "MobilePhone"])
 	safe_cabin = _find_area_node(["SafeCabin", "CabinaSegura", "Refugio", "SafeZone", "Safe"])
 
@@ -169,8 +171,6 @@ func _setup_collisions() -> void:
 	if phone_cabin:
 		_set_area_collision(phone_cabin, Vector2(100, 135), Vector2(0, 8))
 
-	# SafeCabin NO se toca. La victoria se revisa por distancia corta.
-
 
 func _set_character_collision(node: CharacterBody2D, size: Vector2, offset: Vector2) -> void:
 	var collision := node.get_node_or_null("CollisionShape2D") as CollisionShape2D
@@ -204,6 +204,107 @@ func _set_area_collision(node: Area2D, size: Vector2, offset: Vector2) -> void:
 	collision.position = offset
 	node.monitoring = true
 	node.monitorable = true
+
+
+func _create_audio() -> void:
+	var alarm_stream: AudioStream = _load_audio(["Alarm.mp3", "alarm.mp3"])
+	var rocks_stream: AudioStream = _load_audio(["Rocks.mp3", "rocks.mp3"])
+	var keyboard_stream: AudioStream = _load_audio(["Keyboard.mp3", "keyboard.mp3"])
+
+	if alarm_stream:
+		alarm_sound = AudioStreamPlayer.new()
+		alarm_sound.name = "AlarmSound"
+		alarm_sound.stream = alarm_stream
+		alarm_sound.volume_db = -2
+		add_child(alarm_sound)
+		alarm_sound.finished.connect(_loop_alarm_sound)
+	else:
+		push_warning("No se encontró Alarm.mp3 en Music.")
+
+	if rocks_stream:
+		rocks_sound = AudioStreamPlayer.new()
+		rocks_sound.name = "RocksSound"
+		rocks_sound.stream = rocks_stream
+		rocks_sound.volume_db = -10
+		add_child(rocks_sound)
+		rocks_sound.finished.connect(_loop_rocks_sound)
+	else:
+		push_warning("No se encontró Rocks.mp3 en Music.")
+
+	if keyboard_stream:
+		keyboard_sound = AudioStreamPlayer.new()
+		keyboard_sound.name = "KeyboardSound"
+		keyboard_sound.stream = keyboard_stream
+		keyboard_sound.volume_db = 0
+		add_child(keyboard_sound)
+	else:
+		push_warning("No se encontró Keyboard.mp3 en Music.")
+
+
+func _load_audio(file_names: Array) -> AudioStream:
+	for file_name in file_names:
+		var path := MUSIC_DIR + str(file_name)
+
+		if ResourceLoader.exists(path):
+			var audio := load(path)
+
+			if audio is AudioStream:
+				return audio
+
+	return null
+
+
+func _loop_alarm_sound() -> void:
+	if alarm_sound and game_active and not already_finished:
+		alarm_sound.play()
+
+
+func _loop_rocks_sound() -> void:
+	if rocks_sound and game_active and not already_finished:
+		rocks_sound.play()
+
+
+func _set_alarm_normal_volume() -> void:
+	if alarm_sound:
+		alarm_sound.volume_db = -2
+
+
+func _set_alarm_low_volume() -> void:
+	if alarm_sound:
+		alarm_sound.volume_db = -18
+
+
+func _start_alarm_sound() -> void:
+	if alarm_sound and game_active and not already_finished:
+		if not alarm_sound.playing:
+			alarm_sound.play()
+
+
+func _start_rocks_sound() -> void:
+	if rocks_sound and game_active and not already_finished:
+		if not rocks_sound.playing:
+			rocks_sound.play()
+
+
+func _play_keyboard_sound() -> void:
+	if keyboard_sound:
+		keyboard_sound.stop()
+		keyboard_sound.play()
+
+
+func _stop_keyboard_sound() -> void:
+	if keyboard_sound:
+		keyboard_sound.stop()
+
+
+func _stop_audio() -> void:
+	if alarm_sound:
+		alarm_sound.stop()
+
+	if rocks_sound:
+		rocks_sound.stop()
+
+	_stop_keyboard_sound()
 
 
 func _create_ui() -> void:
@@ -299,21 +400,27 @@ func _create_phone_keypad() -> void:
 	phone_overlay.color = Color(0, 0, 0, 0.55)
 	phone_overlay.visible = false
 	phone_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+
+	var overlay_size := get_viewport_rect().size
+
+	if overlay_size.x <= 0 or overlay_size.y <= 0:
+		overlay_size = Vector2(1280, 720)
+
 	phone_overlay.position = Vector2.ZERO
-	phone_overlay.size = Vector2(1280, 720)
+	phone_overlay.size = overlay_size
 	ui_layer.add_child(phone_overlay)
 
 	var panel := Panel.new()
 	panel.name = "PhonePanel"
-	panel.size = Vector2(360, 500)
-	panel.position = Vector2(460, 110)
+	panel.size = Vector2(380, 510)
+	panel.position = (overlay_size - panel.size) / 2.0
 	phone_overlay.add_child(panel)
 
 	var title := Label.new()
 	title.text = "Llamar al 911"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.position = Vector2(20, 18)
-	title.size = Vector2(320, 35)
+	title.size = Vector2(340, 35)
 	title.add_theme_font_size_override("font_size", 24)
 	panel.add_child(title)
 
@@ -321,21 +428,21 @@ func _create_phone_keypad() -> void:
 	dial_display.text = "___"
 	dial_display.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	dial_display.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	dial_display.position = Vector2(35, 65)
-	dial_display.size = Vector2(290, 55)
+	dial_display.position = Vector2(35, 68)
+	dial_display.size = Vector2(310, 55)
 	dial_display.add_theme_font_size_override("font_size", 34)
 	panel.add_child(dial_display)
 
 	var grid := GridContainer.new()
 	grid.columns = 3
-	grid.position = Vector2(45, 135)
-	grid.size = Vector2(270, 240)
+	grid.position = Vector2(52, 140)
+	grid.size = Vector2(276, 245)
 	panel.add_child(grid)
 
 	for number in ["1", "2", "3", "4", "5", "6", "7", "8", "9", "BORRAR", "0", "LLAMAR"]:
 		var button := Button.new()
 		button.text = number
-		button.custom_minimum_size = Vector2(85, 55)
+		button.custom_minimum_size = Vector2(88, 58)
 		button.add_theme_font_size_override("font_size", 18)
 		grid.add_child(button)
 
@@ -348,7 +455,7 @@ func _create_phone_keypad() -> void:
 
 	var cancel_button := Button.new()
 	cancel_button.text = "CERRAR"
-	cancel_button.position = Vector2(90, 410)
+	cancel_button.position = Vector2(100, 425)
 	cancel_button.size = Vector2(180, 45)
 	cancel_button.add_theme_font_size_override("font_size", 18)
 	cancel_button.pressed.connect(_close_phone_keypad)
@@ -381,6 +488,10 @@ func start_game() -> void:
 	keypad_open = false
 	dialed_number = ""
 
+	_set_alarm_normal_volume()
+	_start_alarm_sound()
+	_start_rocks_sound()
+
 	update_lives_ui()
 	_update_hud()
 	_show_prompt("Busca el teléfono y llama al 911.")
@@ -408,12 +519,19 @@ func _spawn_rock() -> void:
 	if rock_scene == null:
 		return
 
+	if rock_spawners == null:
+		return
+
 	var spawners := rock_spawners.get_children()
 
 	if spawners.is_empty():
 		return
 
-	var marker: Marker2D = spawners.pick_random()
+	var marker := spawners.pick_random() as Marker2D
+
+	if marker == null:
+		return
+
 	var rock := rock_scene.instantiate()
 
 	add_child(rock)
@@ -500,6 +618,13 @@ func _open_phone_keypad() -> void:
 	dialed_number = ""
 	_update_dial_display()
 
+	_set_alarm_low_volume()
+
+	if alarm_sound and not alarm_sound.playing:
+		alarm_sound.play()
+
+	_start_rocks_sound()
+
 	if phone_overlay:
 		phone_overlay.visible = true
 
@@ -510,6 +635,8 @@ func _open_phone_keypad() -> void:
 
 
 func _close_phone_keypad() -> void:
+	_stop_keyboard_sound()
+
 	keypad_open = false
 	dialed_number = ""
 
@@ -518,6 +645,10 @@ func _close_phone_keypad() -> void:
 
 	if player and not already_finished:
 		player.set_physics_process(true)
+
+	_set_alarm_normal_volume()
+	_start_alarm_sound()
+	_start_rocks_sound()
 
 	_show_prompt("Presiona E para usar el teléfono.")
 
@@ -530,12 +661,18 @@ func _add_digit(number: String) -> void:
 	if dialed_number.length() >= 3:
 		return
 
+	_play_keyboard_sound()
+
 	dialed_number += number
 	_update_dial_display()
+
+	if dialed_number == "911":
+		_stop_keyboard_sound()
 
 
 func _backspace_digit() -> void:
 	if dialed_number.length() > 0:
+		_play_keyboard_sound()
 		dialed_number = dialed_number.substr(0, dialed_number.length() - 1)
 
 	_update_dial_display()
@@ -550,6 +687,8 @@ func _update_dial_display() -> void:
 
 
 func _try_call_number() -> void:
+	_stop_keyboard_sound()
+
 	if dialed_number == "911":
 		has_called_911 = true
 		player_in_phone_zone = false
@@ -561,6 +700,10 @@ func _try_call_number() -> void:
 
 		if player and not already_finished:
 			player.set_physics_process(true)
+
+		_set_alarm_normal_volume()
+		_start_alarm_sound()
+		_start_rocks_sound()
 
 		_update_hud()
 		_show_prompt("Llamaste al 911. Ahora llega a la cabina segura.")
@@ -625,6 +768,7 @@ func win_game() -> void:
 
 	already_finished = true
 	game_active = false
+	_stop_audio()
 
 	if player:
 		player.set_physics_process(false)
@@ -648,6 +792,7 @@ func lose_game() -> void:
 
 	already_finished = true
 	game_active = false
+	_stop_audio()
 
 	if player:
 		player.set_physics_process(false)
