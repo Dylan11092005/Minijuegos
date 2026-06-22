@@ -40,8 +40,6 @@ corner_radius_bottom_left = 16
 [node name="SchoolRouteMinigame" type="Node2D" unique_id=852515805]
 script = ExtResource("1_7en3t")
 path_piece_scene = ExtResource("2_jo43r")
-obstacle_textures = Array[Texture2D]([ExtResource("5_xarc2"), ExtResource("5_j0ypk")])
-obstacle_size_multiplier = 1.4000000000000001
 
 [node name="Background" type="Sprite2D" parent="." unique_id=2123984584]
 position = Vector2(813.00006, 619)
@@ -109,10 +107,10 @@ metadata/_edit_lock_ = true
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot06" unique_id=1883768790]
 position = Vector2(1, 0)
 shape = SubResource("RectangleShape2D_hqbq6")
+disabled = true
 metadata/_edit_lock_ = true
 
 [node name="tree" type="Sprite2D" parent="Slots/Slot06" unique_id=1470076938]
-visible = false
 position = Vector2(0.99998856, 6.999983)
 scale = Vector2(0.435, 0.4779999)
 texture = ExtResource("5_xarc2")
@@ -171,10 +169,10 @@ metadata/_edit_lock_ = true
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot11" unique_id=390823534]
 position = Vector2(1, 0)
 shape = SubResource("RectangleShape2D_hqbq6")
+disabled = true
 metadata/_edit_lock_ = true
 
 [node name="RockSprite" type="Sprite2D" parent="Slots/Slot11" unique_id=1153844552]
-visible = false
 position = Vector2(-1.0000077, 5.9999804)
 scale = Vector2(0.3480001, 0.35799998)
 texture = ExtResource("5_j0ypk")
@@ -217,10 +215,10 @@ metadata/_edit_lock_ = true
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot15" unique_id=1912274899]
 position = Vector2(1, 0)
 shape = SubResource("RectangleShape2D_hqbq6")
+disabled = true
 metadata/_edit_lock_ = true
 
 [node name="rock" type="Sprite2D" parent="Slots/Slot15" unique_id=1970543765]
-visible = false
 position = Vector2(0.99998665, 3.7500029)
 scale = Vector2(0.36199993, 0.37899995)
 texture = ExtResource("5_j0ypk")
@@ -283,10 +281,10 @@ metadata/_edit_lock_ = true
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot21" unique_id=841444503]
 position = Vector2(1, 0)
 shape = SubResource("RectangleShape2D_hqbq6")
+disabled = true
 metadata/_edit_lock_ = true
 
 [node name="Tree" type="Sprite2D" parent="Slots/Slot21" unique_id=1367065156]
-visible = false
 position = Vector2(2.6249747, -2.7500086)
 scale = Vector2(0.38549986, 0.44500008)
 texture = ExtResource("5_xarc2")
@@ -319,10 +317,10 @@ metadata/_edit_lock_ = true
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot24" unique_id=1324596748]
 position = Vector2(1, 0)
 shape = SubResource("RectangleShape2D_hqbq6")
+disabled = true
 metadata/_edit_lock_ = true
 
 [node name="rock" type="Sprite2D" parent="Slots/Slot24" unique_id=658041612]
-visible = false
 position = Vector2(7.6293945e-06, 5.0000105)
 scale = Vector2(0.34100008, 0.37000006)
 texture = ExtResource("5_j0ypk")
@@ -355,10 +353,10 @@ metadata/_edit_lock_ = true
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Slots/Slot27" unique_id=1997411107]
 position = Vector2(1, 0)
 shape = SubResource("RectangleShape2D_hqbq6")
+disabled = true
 metadata/_edit_lock_ = true
 
 [node name="Tree" type="Sprite2D" parent="Slots/Slot27" unique_id=2007657242]
-visible = false
 position = Vector2(5, -5)
 scale = Vector2(0.4040001, 0.44300002)
 texture = ExtResource("5_xarc2")
