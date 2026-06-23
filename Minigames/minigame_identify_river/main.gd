@@ -20,6 +20,7 @@ var max_rounds := 3
 var lives := 3
 
 var river_options: Array[RiverOption] = []
+var river_positions: Array[Vector2] = []
 
 var timer_hud: CanvasLayer
 var game_result_panel: CanvasLayer
@@ -44,6 +45,7 @@ func _ready() -> void:
 	randomize()
 
 	get_river_options()
+	save_river_positions()
 	create_timer()
 	create_game_result_panel()
 	create_lives_ui()
@@ -64,6 +66,27 @@ func get_river_options() -> void:
 
 	if river_options.size() == 0:
 		print("ERROR: No se encontraron RiverOption dentro de Main.")
+
+
+func save_river_positions() -> void:
+	river_positions.clear()
+
+	for river_option in river_options:
+		river_positions.append(river_option.position)
+
+
+func shuffle_river_positions() -> void:
+	if river_options.size() == 0:
+		return
+
+	if river_positions.size() != river_options.size():
+		save_river_positions()
+
+	var shuffled_positions := river_positions.duplicate()
+	shuffled_positions.shuffle()
+
+	for i in range(river_options.size()):
+		river_options[i].position = shuffled_positions[i]
 
 
 func create_timer() -> void:
@@ -249,6 +272,7 @@ func start_round() -> void:
 	feedback_label.text = ""
 
 	reset_all_rivers()
+	shuffle_river_positions()
 	update_ui()
 	update_lives_ui()
 
@@ -315,7 +339,6 @@ func _on_river_selected(is_different: bool) -> void:
 			lives = 0
 
 		update_lives_ui()
-
 		show_correct_river()
 
 		feedback_label.text = "Incorrecto. El río correcto está marcado."
