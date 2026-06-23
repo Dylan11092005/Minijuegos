@@ -1,72 +1,134 @@
 extends Node2D
 
-@export var speed := 230.0
-@export var gravity := 60.0
-@export var lifetime := 8.0
-@export var rotation_speed := 6.0
+# =========================================================
+# CONFIGURACIÓN DE ROCA
+# =========================================================
 
 const ASSETS_DIR := "res://Minigames/minigame_landslide/assets/"
 
-var direction := Vector2.DOWN
-var life_counter := 0.0
+const ROTATION_SPEED := 7.5
+const ROCK_SCALE := Vector2(0.16, 0.16)
 
-@onready var sprite: Sprite2D = get_node_or_null("Sprite2D")
-@onready var hitbox: Area2D = get_node_or_null("Hitbox")
+# Si tu roca es sprite sheet de 3 frames, esto lo anima.
+# Si es una sola imagen normal, también funciona sin problema.
+const FRAME_COUNT := 3
+const FRAME_WIDTH := 512
+const FRAME_HEIGHT := 864
+const ANIMATION_SPEED := 10.0
+
+var start_position := Vector2.ZERO
+var end_position := Vector2.ZERO
+var speed := 160.0
+var distance := 1.0
+var progress := 0.0
+var active := false
+
+var rotation_speed := ROTATION_SPEED
+var animation_time := 0.0
+var current_frame := 0
+
+@onready var rock_sprite: Sprite2D = get_node_or_null("RockSprite") as Sprite2D
+
+
+func setup(p_start: Vector2, p_end: Vector2, p_speed: float) -> void:
+	start_position = p_start
+	end_position = p_end
+	speed = p_speed
+
+	global_position = start_position
+	distance = max(start_position.distance_to(end_position), 1.0)
+	progress = 0.0
+	active = true
+
+	_setup_sprite()
 
 
 func _ready() -> void:
-	z_index = 70
+	if rock_sprite == null:
+		rock_sprite = get_node_or_null("Sprite2D") as Sprite2D
 
-	if sprite == null:
-		sprite = Sprite2D.new()
-		sprite.name = "Sprite2D"
-		add_child(sprite)
+	if rock_sprite == null:
+		rock_sprite = Sprite2D.new()
+		rock_sprite.name = "RockSprite"
+		add_child(rock_sprite)
 
-	var rock_texture := _load_texture(["rock", "roca", "piedra"])
-
-	if rock_texture:
-		sprite.texture = rock_texture
-
-	sprite.centered = true
-	sprite.z_index = 5
-
-	if sprite.texture:
-		var desired_width := 70.0
-		var texture_size := sprite.texture.get_size()
-
-		if texture_size.x > 0:
-			var final_scale := desired_width / texture_size.x
-			sprite.scale = Vector2(final_scale, final_scale)
-
-	if hitbox == null:
-		hitbox = Area2D.new()
-		hitbox.name = "Hitbox"
-		add_child(hitbox)
-
-	var collision: CollisionShape2D = hitbox.get_node_or_null("CollisionShape2D")
-
-	if collision == null:
-		collision = CollisionShape2D.new()
-		collision.name = "CollisionShape2D"
-		hitbox.add_child(collision)
-
-	var shape := CircleShape2D.new()
-	shape.radius = 32
-	collision.shape = shape
-
-	hitbox.monitoring = true
-	hitbox.monitorable = true
+	_setup_sprite()
 
 
-func _physics_process(delta: float) -> void:
-	speed += gravity * delta
-	global_position += direction * speed * delta
+func _process(delta: float) -> void:
+	if not active:
+		return
+
+	progress += (speed * delta) / distance
+	progress = clamp(progress, 0.0, 1.0)
+
+	global_position = start_position.lerp(end_position, progress)
+
 	rotation += rotation_speed * delta
 
-	life_counter += delta
+	_update_animation(delta)
 
-	if life_counter >= lifetime:
+	if progress >= 1.0:
+		active = false
 		queue_free()
+
+
+func _setup_sprite() -> void:
+	if rock_sprite == null:
+		return
+
+	if rock_sprite.texture == null:
+		var rock_texture := _load_texture(["rock", "roca", "piedra"])
+
+		if rock_texture:
+			rock_sprite.texture = rock_texture
+
+	rock_sprite.centered = true
+	rock_sprite.z_index = 35
+
+	if rock_sprite.texture:
+		var texture_size := rock_sprite.texture.get_size()
+
+		# Si parece sprite sheet, activa región.
+		if texture_size.x >= FRAME_WIDTH * FRAME_COUNT and texture_size.y >= FRAME_HEIGHT:
+			rock_sprite.region_enabled = true
+			rock_sprite.region_rect = Rect2(0, 0, FRAME_WIDTH, FRAME_HEIGHT)
+			rock_sprite.scale = ROCK_SCALE
+		else:
+			rock_sprite.region_enabled = false
+
+			var desired_width := 70.0
+
+			if texture_size.x > 0:
+				var final_scale := desired_width / texture_size.x
+				rock_sprite.scale = Vector2(final_scale, final_scale)
+
+
+func _update_animation(delta: float) -> void:
+	if rock_sprite == null:
+		return
+
+	if rock_sprite.texture == null:
+		return
+
+	if not rock_sprite.region_enabled:
+		return
+
+	animation_time += delta * ANIMATION_SPEED
+
+	var new_frame: int = int(animation_time) % FRAME_COUNT
+
+	if new_frame == current_frame:
+		return
+
+	current_frame = new_frame
+
+	rock_sprite.region_rect = Rect2(
+		current_frame * FRAME_WIDTH,
+		0,
+		FRAME_WIDTH,
+		FRAME_HEIGHT
+	)
 
 
 func _load_texture(keywords: Array) -> Texture2D:

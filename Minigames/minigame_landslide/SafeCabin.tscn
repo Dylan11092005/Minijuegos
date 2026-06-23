@@ -3,15 +3,15 @@
 [ext_resource type="Texture2D" uid="uid://dex2f7uyx6kh1" path="res://Minigames/minigame_landslide/assets/04_safe_cabin_refuge.png" id="1_ehxra"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ehxra"]
-size = Vector2(291.3125, 265.625)
+size = Vector2(394.41406, 332.70313)
 
 [node name="SafeCabin" type="Area2D" unique_id=225917099]
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1775048245]
-position = Vector2(-2.999998, 3.0000038)
-scale = Vector2(1.670139, 1.8875)
+position = Vector2(-3, 2.9999962)
+scale = Vector2(0.62358946, 0.58417976)
 texture = ExtResource("1_ehxra")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1994569791]
-position = Vector2(4, 10)
+position = Vector2(7, 7)
 shape = SubResource("RectangleShape2D_ehxra")

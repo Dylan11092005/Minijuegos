@@ -281,15 +281,22 @@ func _on_button_16_pressed() -> void:
 	var minigame_data = get_node("/root/MinigameData")
 	
 	minigame_data.title = "¡Alerta de deslizamiento!"
-	minigame_data.description = "Identificaste una amenaza de deslizamiento en la comunidad y debes actuar rápido."
-	minigame_data.instructions = "Muévete con las flechitas para esquivar las rocas. 
-	Llega al teléfono, presiona E y marca 911 en el teclado. Después dirígete a la cabina segura antes de que se acabe el tiempo."
+	
+	minigame_data.description = "Hay una amenaza de deslizamiento en la comunidad. Debes actuar rápido."
+	
+	minigame_data.instructions = "Debes ssquivar las rocas, luego debes llegar al teléfono, presionar la tecla E y marcar 911 en el teclado. 
+	Cuando termines la llamada, completaras la mision, y llegará un camión de bomberos. El camión recogerá al personaje y lo llevará hasta la cabina segura. 
+	Ganas cuando el camión llegue al refugio antes de que se acabe el tiempo."
+	
 	minigame_data.video_path = "res://Minigames/minigame_landslide/assets/MiniGame13.ogv"
+	
 	minigame_data.minigame_scene = "res://Minigames/minigame_landslide/LandslideMinigame.tscn"
 	
 	minigame_data.controls = [
-		{ "action": "Mover personaje", "icon": "res://Minigames/ui_global/assets/ArrowKeys.png" },
-		{ "action": "Usar teléfono / marcar 911", "icon": "res://Minigames/ui_global/assets/KeyE.png" },
+		{ "action": "Moverse derecha,izquierda, arriba y abajo", "icon": 
+			"res://Minigames/ui_global/assets/Movement.png" },
 	]
 	
 	get_tree().change_scene_to_file("res://Minigames/ui_global/MinigameIntro.tscn")
+
+	

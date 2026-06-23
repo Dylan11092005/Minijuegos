@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://dxqrim86yf70m"]
 
-[ext_resource type="Texture2D" uid="uid://c3n870e51uarq" path="res://minigame_hillside_barrier/assets/images/Background.png" id="1_s7jqc"]
-[ext_resource type="Script" uid="uid://cg8a6hmfeylx0" path="res://minigame_hillside_barrier/HillsideBarrierMinigame.gd" id="1_tguba"]
+[ext_resource type="Texture2D" uid="uid://c3n870e51uarq" path="res://Minigames/minigame_hillside_barrier/assets/images/Background.png" id="1_s7jqc"]
+[ext_resource type="Script" uid="uid://cg8a6hmfeylx0" path="res://Minigames/minigame_hillside_barrier/HillsideBarrierMinigame.gd" id="1_tguba"]
 
 [node name="HillsideBarrierMinigame" type="Node2D" unique_id=1440286696]
 script = ExtResource("1_tguba")

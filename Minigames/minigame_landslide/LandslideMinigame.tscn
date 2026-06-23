@@ -6,7 +6,6 @@
 [ext_resource type="Texture2D" uid="uid://wvae3oagxp67" path="res://Minigames/minigame_landslide/assets/09_key_e_icon.png" id="7_1ik8k"]
 [ext_resource type="PackedScene" uid="uid://cf4skwm7ohn6a" path="res://Minigames/minigame_landslide/SafeCabin.tscn" id="7_du55d"]
 [ext_resource type="PackedScene" uid="uid://dwg5a3dxrnsvp" path="res://Minigames/minigame_landslide/PhoneCabin.tscn" id="8_1ik8k"]
-[ext_resource type="Texture2D" uid="uid://dqtdp5agskb0i" path="res://Minigames/minigame_landslide/assets/08_warning_landslide_sign.png" id="8_fn4ig"]
 
 [node name="LandslideMinigame" type="Node2D" unique_id=753319566]
 position = Vector2(-8, 24)
@@ -14,24 +13,24 @@ script = ExtResource("1_xrwn7")
 metadata/_edit_vertical_guides_ = [-3448.0]
 
 [node name="Background" type="Sprite2D" parent="." unique_id=929585264]
-position = Vector2(990.99994, 538)
-scale = Vector2(1.1883972, 1.1982265)
+position = Vector2(981.99994, 527)
+scale = Vector2(1.273677, 1.0727727)
 texture = ExtResource("2_xrwn7")
 
 [node name="RockSpawners" type="Node2D" parent="." unique_id=86279674]
 position = Vector2(48, 64)
 
 [node name="Marker2D" type="Marker2D" parent="RockSpawners" unique_id=14773880]
-position = Vector2(681, 292)
+position = Vector2(1522, 603)
 
 [node name="Marker2D2" type="Marker2D" parent="RockSpawners" unique_id=1589535782]
-position = Vector2(1116, 341)
+position = Vector2(1267, 536)
 
 [node name="Marker2D3" type="Marker2D" parent="RockSpawners" unique_id=383624786]
-position = Vector2(417, 344)
+position = Vector2(1140, 481)
 
 [node name="Marker2D4" type="Marker2D" parent="RockSpawners" unique_id=805564964]
-position = Vector2(1380, 468)
+position = Vector2(867, 414)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1624760842]
 
@@ -66,25 +65,15 @@ offset_right = 240.01
 offset_bottom = 269.49503
 
 [node name="SafeCabin" parent="." unique_id=225917099 instance=ExtResource("7_du55d")]
-position = Vector2(121, 544)
+position = Vector2(184, 685)
 
 [node name="PhoneCabin" parent="." unique_id=437809908 instance=ExtResource("8_1ik8k")]
-position = Vector2(1111, 901)
+position = Vector2(1827, 872)
 
 [node name="PlayerLandslide" parent="." unique_id=2051659331 instance=ExtResource("5_3ukm6")]
-position = Vector2(213, 970)
+position = Vector2(967, 950)
 
 [node name="09KeyEIcon" type="Sprite2D" parent="." unique_id=187291312]
-position = Vector2(1107, 752.99994)
+position = Vector2(1821, 701)
 scale = Vector2(0.8958333, 0.9479167)
 texture = ExtResource("7_1ik8k")
-
-[node name="08WarningLandslideSign" type="Sprite2D" parent="." unique_id=402089993]
-position = Vector2(1786, 985)
-scale = Vector2(0.9765625, 1.0625)
-texture = ExtResource("8_fn4ig")
-
-[node name="08WarningLandslideSign2" type="Sprite2D" parent="." unique_id=1008301980]
-position = Vector2(829, 636)
-scale = Vector2(0.98046803, 1.1367186)
-texture = ExtResource("8_fn4ig")

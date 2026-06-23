@@ -10,6 +10,7 @@ const GAME_RESULT_SCENE = preload("res://Minigames/ui_global/GameResult.tscn")
 const LIVES_UI_SCENE = preload("res://Minigames/ui_global/LivesUi.tscn")
 
 const MUSIC_DIR := "res://Minigames/minigame_landslide/Music/"
+const FIRE_TRUCK_PATH := "res://Minigames/minigame_landslide/assets/fire_truck.png"
 
 @export var spawn_interval := 1.05
 @export var spawn_interval_fast := 0.72
@@ -20,8 +21,13 @@ const MUSIC_DIR := "res://Minigames/minigame_landslide/Music/"
 
 @export var safe_win_distance := 35.0
 
+@export var rescue_truck_scale := Vector2(0.35, 0.35)
+@export var rescue_truck_speed_to_player := 2.0
+@export var rescue_truck_speed_to_safe := 2.6
+
 var game_active := false
 var already_finished := false
+var rescue_started := false
 
 var lives := 3
 var has_called_911 := false
@@ -53,6 +59,10 @@ var dial_display: Label = null
 var alarm_sound: AudioStreamPlayer = null
 var rocks_sound: AudioStreamPlayer = null
 var keyboard_sound: AudioStreamPlayer = null
+var firetruck_siren_sound: AudioStreamPlayer = null
+var call_911_sound: AudioStreamPlayer = null
+
+var rescue_truck: Sprite2D = null
 
 
 func _ready() -> void:
@@ -77,6 +87,9 @@ func _process(delta: float) -> void:
 		return
 
 	if keypad_open:
+		return
+
+	if rescue_started:
 		return
 
 	_handle_rock_spawn(delta)
@@ -210,6 +223,8 @@ func _create_audio() -> void:
 	var alarm_stream: AudioStream = _load_audio(["Alarm.mp3", "alarm.mp3"])
 	var rocks_stream: AudioStream = _load_audio(["Rocks.mp3", "rocks.mp3"])
 	var keyboard_stream: AudioStream = _load_audio(["Keyboard.mp3", "keyboard.mp3"])
+	var firetruck_siren_stream: AudioStream = _load_audio(["Firetrucksiren.mp3", "firetrucksiren.mp3", "FireTruckSiren.mp3"])
+	var call_911_stream: AudioStream = _load_audio(["911.mp3"])
 
 	if alarm_stream:
 		alarm_sound = AudioStreamPlayer.new()
@@ -240,6 +255,25 @@ func _create_audio() -> void:
 	else:
 		push_warning("No se encontró Keyboard.mp3 en Music.")
 
+	if firetruck_siren_stream:
+		firetruck_siren_sound = AudioStreamPlayer.new()
+		firetruck_siren_sound.name = "FireTruckSirenSound"
+		firetruck_siren_sound.stream = firetruck_siren_stream
+		firetruck_siren_sound.volume_db = -1
+		add_child(firetruck_siren_sound)
+		firetruck_siren_sound.finished.connect(_loop_firetruck_siren_sound)
+	else:
+		push_warning("No se encontró Firetrucksiren.mp3 en Music.")
+
+	if call_911_stream:
+		call_911_sound = AudioStreamPlayer.new()
+		call_911_sound.name = "Call911Sound"
+		call_911_sound.stream = call_911_stream
+		call_911_sound.volume_db = 0
+		add_child(call_911_sound)
+	else:
+		push_warning("No se encontró 911.mp3 en Music.")
+
 
 func _load_audio(file_names: Array) -> AudioStream:
 	for file_name in file_names:
@@ -262,6 +296,11 @@ func _loop_alarm_sound() -> void:
 func _loop_rocks_sound() -> void:
 	if rocks_sound and game_active and not already_finished:
 		rocks_sound.play()
+
+
+func _loop_firetruck_siren_sound() -> void:
+	if firetruck_siren_sound and game_active and not already_finished and rescue_started:
+		firetruck_siren_sound.play()
 
 
 func _set_alarm_normal_volume() -> void:
@@ -297,6 +336,23 @@ func _stop_keyboard_sound() -> void:
 		keyboard_sound.stop()
 
 
+func _play_911_sound() -> void:
+	if call_911_sound:
+		call_911_sound.stop()
+		call_911_sound.play()
+
+
+func _play_firetruck_siren_sound() -> void:
+	if firetruck_siren_sound:
+		firetruck_siren_sound.stop()
+		firetruck_siren_sound.play()
+
+
+func _stop_firetruck_siren_sound() -> void:
+	if firetruck_siren_sound:
+		firetruck_siren_sound.stop()
+
+
 func _stop_audio() -> void:
 	if alarm_sound:
 		alarm_sound.stop()
@@ -305,6 +361,10 @@ func _stop_audio() -> void:
 		rocks_sound.stop()
 
 	_stop_keyboard_sound()
+	_stop_firetruck_siren_sound()
+
+	if call_911_sound:
+		call_911_sound.stop()
 
 
 func _create_ui() -> void:
@@ -478,6 +538,7 @@ func _connect_signals() -> void:
 func start_game() -> void:
 	game_active = true
 	already_finished = false
+	rescue_started = false
 
 	lives = max_lives
 	has_called_911 = false
@@ -487,6 +548,14 @@ func start_game() -> void:
 	e_key_was_pressed = false
 	keypad_open = false
 	dialed_number = ""
+
+	if rescue_truck and is_instance_valid(rescue_truck):
+		rescue_truck.queue_free()
+		rescue_truck = null
+
+	if player:
+		player.visible = true
+		player.set_physics_process(true)
 
 	_set_alarm_normal_volume()
 	_start_alarm_sound()
@@ -516,6 +585,9 @@ func _spawn_rock() -> void:
 	if not game_active or already_finished:
 		return
 
+	if rescue_started:
+		return
+
 	if rock_scene == null:
 		return
 
@@ -540,17 +612,38 @@ func _spawn_rock() -> void:
 	rock.set_meta("hit_player", false)
 
 	rock.z_index = 70
-	rock.global_position = marker.global_position
-	rock.direction = Vector2(randf_range(-0.22, 0.22), 1).normalized()
-	rock.speed = randf_range(160.0, 250.0)
-	rock.rotation_speed = randf_range(-8.0, 8.0)
+
+	var screen_size := get_viewport_rect().size
+
+	if screen_size.x <= 0 or screen_size.y <= 0:
+		screen_size = Vector2(1280, 720)
+
+	var start_position := marker.global_position
+
+	var end_position := Vector2(
+		randf_range(80.0, screen_size.x - 80.0),
+		screen_size.y + 120.0
+	)
+
+	var rock_speed := randf_range(180.0, 260.0)
+
+	if rock.has_method("setup"):
+		rock.setup(start_position, end_position, rock_speed)
+	else:
+		rock.global_position = start_position
+
+
+func _clear_rocks() -> void:
+	for rock in get_tree().get_nodes_in_group("falling_rocks"):
+		if is_instance_valid(rock):
+			rock.queue_free()
 
 
 func _check_rock_hits() -> void:
 	if player == null:
 		return
 
-	if player_in_phone_zone or keypad_open:
+	if player_in_phone_zone or keypad_open or rescue_started:
 		return
 
 	for rock in get_tree().get_nodes_in_group("falling_rocks"):
@@ -595,6 +688,9 @@ func _check_interaction() -> void:
 
 
 func _check_safe_win() -> void:
+	if rescue_started:
+		return
+
 	if not game_active or already_finished:
 		return
 
@@ -698,26 +794,104 @@ func _try_call_number() -> void:
 		if phone_overlay:
 			phone_overlay.visible = false
 
-		if player and not already_finished:
-			player.set_physics_process(true)
+		_play_911_sound()
 
 		_set_alarm_normal_volume()
 		_start_alarm_sound()
 		_start_rocks_sound()
 
 		_update_hud()
-		_show_prompt("Llamaste al 911. Ahora llega a la cabina segura.")
+		_show_prompt("Llamaste al 911. Los bomberos vienen en camino.")
+
+		_start_rescue_sequence()
 	else:
 		dialed_number = ""
 		_update_dial_display()
 		_show_prompt("Número incorrecto. Marca 911.")
 
 
+func _start_rescue_sequence() -> void:
+	if rescue_started:
+		return
+
+	if player == null or safe_cabin == null:
+		return
+
+	rescue_started = true
+	_clear_rocks()
+
+	if player:
+		player.set_physics_process(false)
+
+	rescue_truck = Sprite2D.new()
+	rescue_truck.name = "FireTruck"
+	rescue_truck.z_index = 90
+	rescue_truck.scale = rescue_truck_scale
+
+	var truck_texture := load(FIRE_TRUCK_PATH)
+
+	if truck_texture is Texture2D:
+		rescue_truck.texture = truck_texture
+	else:
+		push_warning("No se encontró fire_truck.png en assets.")
+		rescue_truck = null
+		win_game()
+		return
+
+	add_child(rescue_truck)
+
+	var start_position := Vector2(-220, player.global_position.y)
+	var pickup_position := Vector2(player.global_position.x - 90, player.global_position.y)
+	var safe_position := Vector2(safe_cabin.global_position.x, safe_cabin.global_position.y)
+
+	rescue_truck.global_position = start_position
+
+	_show_prompt("Ya casi viene la ayuda...")
+	_play_firetruck_siren_sound()
+
+	rescue_truck.flip_h = false
+
+	var tween := create_tween()
+
+	tween.tween_property(
+		rescue_truck,
+		"global_position",
+		pickup_position,
+		rescue_truck_speed_to_player
+	)
+
+	tween.tween_callback(func():
+		_show_prompt("Los bomberos llegaron por ti.")
+
+		if player:
+			player.visible = false
+
+		if safe_position.x < rescue_truck.global_position.x:
+			rescue_truck.flip_h = true
+		else:
+			rescue_truck.flip_h = false
+	)
+
+	tween.tween_interval(0.4)
+
+	tween.tween_property(
+		rescue_truck,
+		"global_position",
+		safe_position,
+		rescue_truck_speed_to_safe
+	)
+
+	tween.tween_callback(func():
+		_stop_firetruck_siren_sound()
+		win_game()
+	)
+
+
 func _on_player_damaged() -> void:
 	if not game_active or already_finished:
 		return
 
-	if player_in_phone_zone or keypad_open:
+	if player_in_phone_zone or keypad_open or rescue_started:
 		return
 
 	lives -= 1
@@ -861,7 +1035,7 @@ func _call_lives_method(method_name: String) -> bool:
 
 func _update_hud() -> void:
 	if has_called_911:
-		mission_label.text = "Misión: llega a la cabina segura"
+		mission_label.text = "Misión: espera a los bomberos"
 	else:
 		mission_label.text = "Misión: llama al 911"
 
