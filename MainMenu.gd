@@ -284,7 +284,7 @@ func _on_button_16_pressed() -> void:
 	
 	minigame_data.description = "Hay una amenaza de deslizamiento en la comunidad. Debes actuar rápido."
 	
-	minigame_data.instructions = "Debes ssquivar las rocas, luego debes llegar al teléfono, presionar la tecla E y marcar 911 en el teclado. 
+	minigame_data.instructions = "Debes esquivar las rocas, luego debes llegar al teléfono, presionar la tecla E y marcar 911 en el teclado. 
 	Cuando termines la llamada, completaras la mision, y llegará un camión de bomberos. El camión recogerá al personaje y lo llevará hasta la cabina segura. 
 	Ganas cuando el camión llegue al refugio antes de que se acabe el tiempo."
 	
