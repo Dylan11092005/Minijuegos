@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bddw1i8rooo2j"
-path="res://.godot/imported/frasco.png-aa6f30641516eae6e8cb865ef86dd485.ctex"
+uid="uid://b41q15nd32gm0"
+path="res://.godot/imported/vendas.png-ebfbb073981549a91109820ce460489f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Minigames/minigame_kit/assets/frasco.png"
-dest_files=["res://.godot/imported/frasco.png-aa6f30641516eae6e8cb865ef86dd485.ctex"]
+source_file="res://Minigames/minigame_kit/assets/vendas.png"
+dest_files=["res://.godot/imported/vendas.png-ebfbb073981549a91109820ce460489f.ctex"]
 
 [params]
 
