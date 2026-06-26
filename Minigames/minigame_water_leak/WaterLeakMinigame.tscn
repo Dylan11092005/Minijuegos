@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://dtvx7prbnlaoe"]
+
+[ext_resource type="Script" uid="uid://d1wc25cl2rxkq" path="res://Minigames/minigame_water_leak/WaterLeakMinigame.gd" id="1_8r6nm"]
+[ext_resource type="AudioStream" uid="uid://c5plno738xikn" path="res://Minigames/minigame_water_leak/assets/musicBack.mp3" id="2_u7x2t"]
+[ext_resource type="AudioStream" uid="uid://pjkd6d511u7i" path="res://Minigames/minigame_water_leak/assets/watermp3-enhanced-v2.mp3" id="3_l2sq6"]
+[ext_resource type="AudioStream" uid="uid://cbtye2uhmvstp" path="res://Minigames/minigame_water_leak/assets/parche.wav" id="4_o2g1n"]
+
+[node name="WaterLeakMinigame" type="Node2D" unique_id=1924589831]
+script = ExtResource("1_8r6nm")
+
+[node name="BackgroundMusic" type="AudioStreamPlayer" parent="." unique_id=1274728438]
+stream = ExtResource("2_u7x2t")
+
+[node name="LeakSound01" type="AudioStreamPlayer" parent="." unique_id=1847628548]
+stream = ExtResource("3_l2sq6")
+
+[node name="PatchSound" type="AudioStreamPlayer" parent="." unique_id=1428014611]
+stream = ExtResource("4_o2g1n")

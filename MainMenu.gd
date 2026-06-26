@@ -9,6 +9,47 @@ func _process(delta: float) -> void:
 	pass
 
 
+func _on_button_21_pressed() -> void:
+	var minigame_data = get_node("/root/MinigameData")
+
+	minigame_data.title = "¡Repara las fugas!"
+
+	minigame_data.description = (
+		"Evita el desperdicio de agua reparando todas las fugas "
+		+ "antes de que el depósito se vacíe."
+	)
+
+	minigame_data.instructions = (
+		"Arrastra el parche hasta cada fuga de la tubería. "
+		+ "Repara todos los chorros antes de que el nivel de agua "
+		+ "llegue a cero."
+	)
+
+	minigame_data.video_path = (
+		"res://Minigames/minigame_water_leak/assets/"
+		+ "WaterLeak_Instruction.ogv"
+	)
+
+	minigame_data.minigame_scene = (
+		"res://Minigames/minigame_water_leak/"
+		+ "WaterLeakMinigame.tscn"
+	)
+
+	minigame_data.controls = [
+		{
+			"action": "Arrastrar parche",
+			"icon": (
+				"res://Minigames/ui_global/assets/"
+				+ "ClickIcon.png"
+			)
+		}
+	]
+
+	get_tree().change_scene_to_file(
+		"res://Minigames/ui_global/MinigameIntro.tscn"
+	)
+
+
 
 func _on_button_15_pressed() -> void:
 	var minigame_data = get_node("/root/MinigameData")
