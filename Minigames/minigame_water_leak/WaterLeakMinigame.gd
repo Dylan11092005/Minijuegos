@@ -53,11 +53,15 @@ const LEAK_CANDIDATES: Array[Vector2] = [
 @export_range(15.0, 70.0, 1.0) var patch_visual_radius: float = 31.0
 
 @export_group("Animación")
-@export_range(0.5, 3.0, 0.1) var spray_animation_speed: float = 1.6
 @export_range(0.0, 20.0, 1.0) var interface_bounce_amount: float = 5.0
-@export_range(1.0, 2.5, 0.05) var leak_height_multiplier: float = 1.60
-@export_range(0.55, 1.20, 0.05) var leak_spread_multiplier: float = 0.75
-@export_range(0.80, 2.20, 0.05) var leak_thickness_multiplier: float = 1.45
+
+@export_group("Animación de fugas por imágenes")
+@export var leak_frame_01: Texture2D
+@export var leak_frame_02: Texture2D
+@export var leak_frame_03: Texture2D
+@export_range(1.0, 20.0, 0.5) var leak_frame_fps: float = 8.0
+@export_range(50.0, 300.0, 5.0) var leak_sprite_height: float = 155.0
+@export_range(-100.0, 100.0, 1.0) var leak_sprite_vertical_offset: float = 0.0
 
 @export_group("Audio")
 @export var background_music_stream: AudioStream
@@ -85,12 +89,19 @@ var _background_music_player: AudioStreamPlayer = null
 var _patch_sound_player: AudioStreamPlayer = null
 var _leak_sound_players: Array[AudioStreamPlayer] = []
 
+var _leak_frames: Array[Texture2D] = []
+var _leak_sprites: Array[Sprite2D] = []
+var _leak_visuals_root: Node2D = null
+var _current_leak_frame: int = -1
+
 
 func _ready() -> void:
 	_random.randomize()
 	_water_level = starting_water
 	_elapsed_game_time = 0.0
 	_generate_leaks()
+	_setup_leak_frames()
+	_create_leak_visuals()
 	_create_audio_players()
 	_create_game_result()
 
@@ -110,6 +121,7 @@ func _process(delta: float) -> void:
 		_elapsed_game_time += delta
 		_update_water_level(delta)
 
+	_update_leak_animation()
 	queue_redraw()
 
 
@@ -133,6 +145,7 @@ func _input(event: InputEvent) -> void:
 
 
 func _on_viewport_resized() -> void:
+	_update_leak_sprite_transforms()
 	queue_redraw()
 
 
@@ -160,6 +173,108 @@ func _shuffle_integer_array(values: Array[int]) -> void:
 		var temporary_value: int = values[index]
 		values[index] = values[random_index]
 		values[random_index] = temporary_value
+
+
+func _setup_leak_frames() -> void:
+	_leak_frames.clear()
+
+	if leak_frame_01 != null:
+		_leak_frames.append(leak_frame_01)
+	if leak_frame_02 != null:
+		_leak_frames.append(leak_frame_02)
+	if leak_frame_03 != null:
+		_leak_frames.append(leak_frame_03)
+
+	if _leak_frames.is_empty():
+		push_warning(
+			"No hay imágenes asignadas para las fugas. "
+			+ "Asigna Leak Frame 01, 02 y 03 en el Inspector."
+		)
+
+
+func _create_leak_visuals() -> void:
+	_leak_visuals_root = Node2D.new()
+	_leak_visuals_root.name = "LeakVisuals"
+	add_child(_leak_visuals_root)
+
+	_leak_sprites.clear()
+
+	for leak_index: int in range(_leaks.size()):
+		var sprite: Sprite2D = Sprite2D.new()
+		sprite.name = "LeakSprite%02d" % (leak_index + 1)
+		sprite.centered = true
+		sprite.z_index = 10
+		sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+
+		if not _leak_frames.is_empty():
+			sprite.texture = _leak_frames[leak_index % _leak_frames.size()]
+
+		_leak_visuals_root.add_child(sprite)
+		_leak_sprites.append(sprite)
+
+	_update_leak_sprite_transforms()
+	_update_leak_animation(true)
+
+
+func _update_leak_sprite_transforms() -> void:
+	if _leak_sprites.size() != _leaks.size():
+		return
+
+	var visual_scale: float = _get_visual_scale()
+
+	for leak_index: int in range(_leak_sprites.size()):
+		var sprite: Sprite2D = _leak_sprites[leak_index]
+		var leak: Dictionary = _leaks[leak_index]
+		var leak_position: Vector2 = _normalized_to_board(
+			leak.get("position", Vector2.ZERO)
+		)
+
+		var texture_height: float = 1.0
+		if sprite.texture != null:
+			texture_height = maxf(float(sprite.texture.get_height()), 1.0)
+
+		var target_height: float = leak_sprite_height * visual_scale
+		var uniform_scale: float = target_height / texture_height
+		sprite.scale = Vector2.ONE * uniform_scale
+
+		# La base del chorro queda alineada con la grieta del tubo.
+		sprite.position = leak_position + Vector2(
+			0.0,
+			-target_height * 0.5 + leak_sprite_vertical_offset * visual_scale
+		)
+
+
+func _update_leak_animation(force_update: bool = false) -> void:
+	if _leak_frames.is_empty():
+		return
+	if _leak_sprites.size() != _leaks.size():
+		return
+
+	var frame_index: int = int(
+		floor(_animation_time * leak_frame_fps)
+	) % _leak_frames.size()
+
+	if not force_update and frame_index == _current_leak_frame:
+		return
+
+	_current_leak_frame = frame_index
+
+	for leak_index: int in range(_leak_sprites.size()):
+		var sprite: Sprite2D = _leak_sprites[leak_index]
+		var leak: Dictionary = _leaks[leak_index]
+		var repaired: bool = bool(leak.get("repaired", false))
+
+		sprite.visible = not repaired
+		if repaired:
+			continue
+
+		# Desfase por fuga para que no todas cambien exactamente al mismo tiempo.
+		var local_frame: int = (
+			frame_index + leak_index
+		) % _leak_frames.size()
+		sprite.texture = _leak_frames[local_frame]
+
+	_update_leak_sprite_transforms()
 
 
 func _create_audio_players() -> void:
@@ -441,6 +556,7 @@ func _try_repair_leak(mouse_position: Vector2) -> void:
 
 	_stop_leak_sound(selected_index)
 	_play_patch_sound()
+	_update_leak_animation(true)
 
 	if _count_active_leaks() <= 0:
 		_finish_game(true)
@@ -781,441 +897,25 @@ func _draw_pipe_joint(position: Vector2, pipe_width: float) -> void:
 func _draw_leaks() -> void:
 	var visual_scale: float = _get_visual_scale()
 
+	# Las fugas abiertas se muestran con Sprite2D animados.
+	# Aquí solamente se dibujan los parches de las fugas reparadas.
 	for index: int in range(_leaks.size()):
 		var leak: Dictionary = _leaks[index]
-		var leak_position: Vector2 = _normalized_to_board(leak.get("position", Vector2.ZERO))
-
-		if bool(leak.get("repaired", false)):
-			var repaired_pulse: float = 1.0 + sin(_animation_time * 2.4 + float(index)) * 0.025
-			_draw_patch_icon(
-				leak_position,
-				patch_visual_radius * visual_scale * repaired_pulse,
-				1.0,
-				0.03 * sin(float(index))
-			)
-		else:
-			_draw_open_leak(leak_position, index, visual_scale)
-
-
-func _draw_open_leak(position: Vector2, leak_index: int, visual_scale: float) -> void:
-	var phase: float = (
-		_animation_time * 8.5 * spray_animation_speed
-		+ float(leak_index) * 1.23
-	)
-	var origin: Vector2 = position + Vector2(0.0, 2.0) * visual_scale
-	var pulse: float = 1.0 + sin(phase * 0.85) * 0.06
-	var upward_angle: float = -PI * 0.5
-
-	# Grieta oscura sobre el tubo.
-	var crack_size: float = 18.0 * visual_scale
-	var crack_points: PackedVector2Array = PackedVector2Array([
-		position + Vector2(-crack_size, -1.5 * visual_scale),
-		position + Vector2(-crack_size * 0.52, 3.4 * visual_scale),
-		position + Vector2(-crack_size * 0.14, -1.8 * visual_scale),
-		position + Vector2(crack_size * 0.28, 4.0 * visual_scale),
-		position + Vector2(crack_size, -0.8 * visual_scale)
-	])
-	draw_polyline(
-		crack_points,
-		Color(0.08, 0.05, 0.04, 0.96),
-		7.0 * visual_scale,
-		true
-	)
-	draw_polyline(
-		crack_points,
-		Color(0.52, 0.20, 0.09, 0.85),
-		2.2 * visual_scale,
-		true
-	)
-
-	# Humedad y espuma alrededor de la salida.
-	draw_circle(
-		origin,
-		18.0 * visual_scale * pulse,
-		Color(0.24, 0.75, 1.0, 0.08)
-	)
-	for foam_index: int in range(9):
-		var foam_angle: float = (
-			-PI
-			+ float(foam_index) * PI / 8.0
-			+ sin(phase + float(foam_index)) * 0.05
-		)
-		var foam_position: Vector2 = (
-			origin
-			+ Vector2.RIGHT.rotated(foam_angle)
-			* (7.0 + float(foam_index % 3) * 2.0)
-			* visual_scale
-		)
-		draw_circle(
-			foam_position,
-			(2.1 + float(foam_index % 2) * 0.7) * visual_scale,
-			Color(0.83, 0.97, 1.0, 0.72)
-		)
-
-	# Chorros separados, más cercanos entre sí y sin una masa sólida central.
-	# El resultado sigue siendo disperso, pero ya no ocupa un abanico tan ancho.
-	var stream_count: int = 17
-	for stream_index: int in range(stream_count):
-		var spread: float = float(stream_index) / float(stream_count - 1)
-		var spread_offset: float = lerpf(-0.72, 0.72, spread)
-		var angle: float = upward_angle + spread_offset * leak_spread_multiplier
-		angle += sin(phase * 0.42 + float(stream_index) * 1.37) * 0.055
-
-		var direction: Vector2 = Vector2.RIGHT.rotated(angle)
-		var center_factor: float = 1.0 - absf(spread - 0.5) * 2.0
-		var length: float = (
-			34.0
-			+ center_factor * 31.0
-			+ fmod(float(stream_index * 11 + leak_index * 7), 12.0)
-		) * visual_scale * pulse * leak_height_multiplier
-		var width: float = (
-			1.65
-			+ center_factor * 1.75
-			+ float(stream_index % 3) * 0.22
-		) * visual_scale * leak_thickness_multiplier
-		var start_offset: Vector2 = Vector2(
-			(float(stream_index % 5) - 2.0) * 0.9,
-			-float(stream_index % 3) * 0.55
-		) * visual_scale
-
-		_draw_dispersed_water_streak(
-			origin + start_offset,
-			direction,
-			length,
-			width,
-			phase + float(stream_index) * 0.79,
-			visual_scale
-		)
-
-	# Microchorros: un poco más abiertos que los principales para mantener
-	# el aspecto de agua pulverizada en los bordes.
-	for micro_index: int in range(20):
-		var progress_angle: float = float(micro_index) / 19.0
-		var micro_offset: float = lerpf(-0.92, 0.92, progress_angle)
-		var micro_angle: float = (
-			upward_angle
-			+ micro_offset * leak_spread_multiplier
-			+ sin(phase * 0.55 + float(micro_index) * 2.1) * 0.08
-		)
-		var micro_direction: Vector2 = Vector2.RIGHT.rotated(micro_angle)
-		var micro_length: float = (
-			17.0 + fmod(float(micro_index * 7 + leak_index * 3), 21.0)
-		) * visual_scale * leak_height_multiplier
-		var micro_end: Vector2 = origin + micro_direction * micro_length
-		micro_end.y += sin(phase + float(micro_index)) * 2.0 * visual_scale
-
-		draw_line(
-			origin,
-			micro_end,
-			Color(0.58, 0.90, 1.0, 0.38),
-			(
-				0.82 + float(micro_index % 3) * 0.22
-			) * visual_scale * leak_thickness_multiplier,
-			true
-		)
-		draw_circle(
-			micro_end,
-			(
-				1.05 + float(micro_index % 4) * 0.27
-			) * visual_scale * sqrt(leak_thickness_multiplier),
-			Color(0.78, 0.96, 1.0, 0.62)
-		)
-
-	# Gotas animadas: concentradas alrededor del centro, pero con suficiente
-	# variación lateral para que la fuga no parezca una llama.
-	for drop_index: int in range(42):
-		var drop_progress: float = fmod(
-			_animation_time * (0.62 + float(drop_index) * 0.018)
-			+ float(drop_index) * 0.097
-			+ float(leak_index) * 0.051,
-			1.0
-		)
-		var angle_progress: float = float(drop_index % 21) / 20.0
-		var drop_offset: float = lerpf(-0.82, 0.82, angle_progress)
-		var drop_angle: float = (
-			upward_angle
-			+ drop_offset * leak_spread_multiplier
-			+ sin(float(drop_index) * 1.71 + phase * 0.25) * 0.055
-		)
-		var drop_direction: Vector2 = Vector2.RIGHT.rotated(drop_angle)
-		var travel: float = (
-			13.0
-			+ drop_progress
-			* (38.0 + float(drop_index % 7) * 4.8)
-		) * visual_scale * leak_height_multiplier
-		var drop_position: Vector2 = origin + drop_direction * travel
-
-		# Gravedad: después del impulso inicial las gotas empiezan a caer.
-		drop_position.y += drop_progress * drop_progress * 18.0 * visual_scale
-		drop_position.x += sin(
-			phase + float(drop_index) * 0.83
-		) * 2.2 * visual_scale
-
-		var drop_radius: float = (
-			1.15 + float(drop_index % 5) * 0.34
-		) * visual_scale
-		_draw_water_drop(
-			drop_position,
-			drop_radius,
-			Color(0.62, 0.91, 1.0, 0.72)
-		)
-
-	# Niebla fina y concentrada alrededor de los chorros principales.
-	for mist_index: int in range(26):
-		var mist_progress: float = fmod(
-			_animation_time * (0.48 + float(mist_index) * 0.021)
-			+ float(mist_index) * 0.141,
-			1.0
-		)
-		var mist_angle_progress: float = float(mist_index % 15) / 14.0
-		var mist_offset: float = lerpf(-1.0, 1.0, mist_angle_progress)
-		var mist_angle: float = upward_angle + mist_offset * leak_spread_multiplier
-		var mist_direction: Vector2 = Vector2.RIGHT.rotated(mist_angle)
-		var mist_distance: float = (
-			10.0 + mist_progress * (25.0 + float(mist_index % 5) * 3.2)
-		) * visual_scale * leak_height_multiplier
-		var mist_position: Vector2 = origin + mist_direction * mist_distance
-		mist_position.y += mist_progress * mist_progress * 10.0 * visual_scale
-
-		draw_circle(
-			mist_position,
-			(0.78 + float(mist_index % 3) * 0.27) * visual_scale,
-			Color(0.88, 0.98, 1.0, 0.45)
-		)
-
-	# Salpicadura pequeña junto a la tubería.
-	_draw_ellipse_shape(
-		origin + Vector2(0.0, 11.0) * visual_scale,
-		Vector2(18.0, 3.8) * visual_scale,
-		0.0,
-		Color(0.35, 0.75, 1.0, 0.13)
-	)
-
-
-func _draw_dispersed_water_streak(
-	origin: Vector2,
-	direction: Vector2,
-	length: float,
-	starting_width: float,
-	phase: float,
-	visual_scale: float
-) -> void:
-	var normalized_direction: Vector2 = direction.normalized()
-	var perpendicular: Vector2 = Vector2(
-		-normalized_direction.y,
-		normalized_direction.x
-	)
-	var points: PackedVector2Array = PackedVector2Array()
-	var point_count: int = 9
-
-	for point_index: int in range(point_count):
-		var progress: float = float(point_index) / float(point_count - 1)
-		var point: Vector2 = origin + normalized_direction * length * progress
-
-		# Vibración lateral irregular y gravedad suave.
-		point += perpendicular * sin(
-			phase + progress * TAU * 1.55
-		) * (1.4 + 3.6 * progress) * visual_scale
-		point.y += length * 0.16 * progress * progress
-		points.append(point)
-
-	for segment_index: int in range(points.size() - 1):
-		var progress: float = float(segment_index) / float(points.size() - 2)
-
-		# Cortes en los extremos para que el chorro se rompa en gotas.
-		if segment_index >= 5 and (
-			segment_index + int(floor(phase * 0.75))
-		) % 3 == 0:
+		if not bool(leak.get("repaired", false)):
 			continue
 
-		var width: float = maxf(
-			lerpf(starting_width, 0.45 * visual_scale, progress),
-			0.45 * visual_scale
+		var leak_position: Vector2 = _normalized_to_board(
+			leak.get("position", Vector2.ZERO)
 		)
-		var alpha: float = lerpf(0.62, 0.16, progress)
-
-		draw_line(
-			points[segment_index],
-			points[segment_index + 1],
-			Color(0.12, 0.64, 0.94, minf(alpha * 1.18, 0.84)),
-			width,
-			true
+		var repaired_pulse: float = (
+			1.0 + sin(_animation_time * 2.4 + float(index)) * 0.025
 		)
-		draw_line(
-			points[segment_index],
-			points[segment_index + 1],
-			Color(0.88, 0.99, 1.0, alpha * 0.82),
-			maxf(width * 0.34, 0.45 * visual_scale),
-			true
+		_draw_patch_icon(
+			leak_position,
+			patch_visual_radius * visual_scale * repaired_pulse,
+			1.0,
+			0.03 * sin(float(index))
 		)
-
-	var end_position: Vector2 = points[points.size() - 1]
-	draw_circle(
-		end_position,
-		maxf(starting_width * 0.30, 0.75 * visual_scale),
-		Color(0.70, 0.95, 1.0, 0.48)
-	)
-
-
-func _draw_curved_water_stream(
-	origin: Vector2,
-	direction: Vector2,
-	length: float,
-	maximum_width: float,
-	curve_amount: float,
-	phase: float
-) -> void:
-	var normalized_direction: Vector2 = direction.normalized()
-	var perpendicular: Vector2 = Vector2(
-		-normalized_direction.y,
-		normalized_direction.x
-	)
-	var control_point: Vector2 = (
-		origin
-		+ normalized_direction * length * 0.52
-		+ perpendicular * curve_amount
-	)
-	var end_point: Vector2 = (
-		origin
-		+ normalized_direction * length
-		+ Vector2(0.0, length * 0.15)
-		+ perpendicular * sin(phase * 0.65) * maximum_width * 0.36
-	)
-
-	var center_points: PackedVector2Array = PackedVector2Array()
-	var sample_count: int = 14
-
-	for sample_index: int in range(sample_count + 1):
-		var t: float = float(sample_index) / float(sample_count)
-		var inverse_t: float = 1.0 - t
-		var point: Vector2 = (
-			origin * inverse_t * inverse_t
-			+ control_point * 2.0 * inverse_t * t
-			+ end_point * t * t
-		)
-		point += perpendicular * sin(
-			t * TAU * 1.35 + phase
-		) * maximum_width * 0.06 * t
-		center_points.append(point)
-
-	var outer_polygon: PackedVector2Array = _build_water_stream_polygon(
-		center_points,
-		maximum_width * 1.18
-	)
-	var inner_polygon: PackedVector2Array = _build_water_stream_polygon(
-		center_points,
-		maximum_width * 0.72
-	)
-
-	if outer_polygon.size() >= 3:
-		draw_colored_polygon(
-			outer_polygon,
-			Color(0.04, 0.49, 0.82, 0.68)
-		)
-	if inner_polygon.size() >= 3:
-		draw_colored_polygon(
-			inner_polygon,
-			Color(0.24, 0.79, 0.98, 0.86)
-		)
-
-	# Reflejo fino que sigue la curva, no una línea gruesa rígida.
-	var highlight_points: PackedVector2Array = PackedVector2Array()
-	for point_index: int in range(center_points.size()):
-		var tangent: Vector2 = _get_curve_tangent(center_points, point_index)
-		var normal: Vector2 = Vector2(-tangent.y, tangent.x).normalized()
-		var t: float = float(point_index) / float(maxi(center_points.size() - 1, 1))
-		highlight_points.append(
-			center_points[point_index]
-			- normal * maximum_width * (0.15 + t * 0.03)
-		)
-
-	draw_polyline(
-		highlight_points,
-		Color(0.82, 0.97, 1.0, 0.82),
-		maximum_width * 0.15,
-		true
-	)
-
-	var end_tangent: Vector2 = _get_curve_tangent(
-		center_points,
-		center_points.size() - 1
-	)
-	var end_angle: float = end_tangent.angle()
-	_draw_ellipse_shape(
-		end_point,
-		Vector2(maximum_width * 0.42, maximum_width * 0.70),
-		end_angle,
-		Color(0.67, 0.94, 1.0, 0.88)
-	)
-
-	# Pequeñas partículas de espuma sobre el chorro.
-	for foam_index: int in range(3):
-		var point_index: int = mini(
-			3 + foam_index * 4,
-			center_points.size() - 1
-		)
-		var foam_position: Vector2 = center_points[point_index]
-		foam_position += perpendicular * sin(
-			phase + float(foam_index) * 2.1
-		) * maximum_width * 0.22
-		draw_circle(
-			foam_position,
-			maximum_width * (0.13 + float(foam_index) * 0.025),
-			Color(0.87, 0.98, 1.0, 0.58)
-		)
-
-
-func _build_water_stream_polygon(
-	center_points: PackedVector2Array,
-	maximum_width: float
-) -> PackedVector2Array:
-	var polygon: PackedVector2Array = PackedVector2Array()
-	if center_points.size() < 2:
-		return polygon
-
-	for point_index: int in range(center_points.size()):
-		var tangent: Vector2 = _get_curve_tangent(center_points, point_index)
-		var normal: Vector2 = Vector2(-tangent.y, tangent.x).normalized()
-		var t: float = float(point_index) / float(center_points.size() - 1)
-		var width_factor: float = (
-			0.30
-			+ sin(t * PI) * 0.68
-			- t * 0.10
-		)
-		polygon.append(
-			center_points[point_index]
-			+ normal * maximum_width * width_factor
-		)
-
-	for point_index: int in range(center_points.size() - 1, -1, -1):
-		var tangent: Vector2 = _get_curve_tangent(center_points, point_index)
-		var normal: Vector2 = Vector2(-tangent.y, tangent.x).normalized()
-		var t: float = float(point_index) / float(center_points.size() - 1)
-		var width_factor: float = (
-			0.30
-			+ sin(t * PI) * 0.68
-			- t * 0.10
-		)
-		polygon.append(
-			center_points[point_index]
-			- normal * maximum_width * width_factor
-		)
-
-	return polygon
-
-
-func _get_curve_tangent(
-	points: PackedVector2Array,
-	point_index: int
-) -> Vector2:
-	if points.size() < 2:
-		return Vector2.RIGHT
-	if point_index <= 0:
-		return points[1] - points[0]
-	if point_index >= points.size() - 1:
-		return points[points.size() - 1] - points[points.size() - 2]
-	return points[point_index + 1] - points[point_index - 1]
-
 
 
 func _draw_patch_icon(center: Vector2, radius: float, alpha: float, rotation: float) -> void:
