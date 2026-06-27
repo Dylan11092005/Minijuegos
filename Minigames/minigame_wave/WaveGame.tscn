@@ -7,7 +7,6 @@
 [ext_resource type="Script" uid="uid://i8vnwm8o230x" path="res://Minigames/minigame_wave/Background.gd" id="3_ak01e"]
 [ext_resource type="Texture2D" uid="uid://pk5ouk4w48sd" path="res://Minigames/minigame_wave/assets/jump2.png" id="3_b7tct"]
 [ext_resource type="Texture2D" uid="uid://bafhop7qfmm8v" path="res://Minigames/minigame_wave/assets/run2.png" id="3_rh204"]
-[ext_resource type="Texture2D" uid="uid://k2g5xx4o6rdg" path="res://Minigames/minigame_wave/assets/fail2.png" id="4_ak01e"]
 [ext_resource type="Texture2D" uid="uid://dxi06ve3rhdof" path="res://Minigames/minigame_wave/assets/jump3.png" id="4_konyf"]
 [ext_resource type="Texture2D" uid="uid://btaik4rtmbmup" path="res://Minigames/minigame_wave/assets/run3.png" id="4_tus3w"]
 [ext_resource type="Texture2D" uid="uid://sr4a2qmio2x6" path="res://Minigames/minigame_wave/assets/run4.png" id="5_3b6ga"]
@@ -35,14 +34,6 @@ load_path = "res://.godot/imported/ObstacleBackground.png-bb9426b4247f8b7d84aca2
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("4_ak01e")
-}],
-"loop": true,
-"name": &"fail",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
 "texture": ExtResource("2_eua56")
 }, {
 "duration": 1.0,
@@ -59,7 +50,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"jump",
-"speed": 5.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -79,7 +70,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"run",
-"speed": 5.0
+"speed": 12.0
 }]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_6dhov"]
@@ -124,11 +115,11 @@ script = ExtResource("3_0h4q8")
 position = Vector2(784, 504)
 scale = Vector2(1.0902778, 1.0720524)
 sprite_frames = SubResource("SpriteFrames_3ragl")
-animation = &"fail"
+animation = &"run"
 
 [node name="WaveAnimated" type="AnimatedSprite2D" parent="." unique_id=88772762]
-position = Vector2(328.99997, 593.99994)
-scale = Vector2(3.419011, 6.634703)
+position = Vector2(323, 580.00006)
+scale = Vector2(3.172528, 5.8059354)
 sprite_frames = SubResource("SpriteFrames_6dhov")
 animation = &"wave"
 
