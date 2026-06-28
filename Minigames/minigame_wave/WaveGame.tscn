@@ -1,0 +1,167 @@
+[gd_scene format=3 uid="uid://ca0w1l2b5fdtp"]
+
+[ext_resource type="Script" uid="uid://c7poucxdt5atw" path="res://Minigames/minigame_wave/WaveGame.gd" id="1_v1n4o"]
+[ext_resource type="Texture2D" uid="uid://3nvcxsve70ml" path="res://Minigames/minigame_wave/assets/jump1.png" id="2_eua56"]
+[ext_resource type="Texture2D" uid="uid://c77opq84smvg7" path="res://Minigames/minigame_wave/assets/run1.png" id="2_ubvdr"]
+[ext_resource type="Script" uid="uid://ytwswugkpd6q" path="res://Minigames/minigame_wave/CharacterBody2dD.gd" id="3_0h4q8"]
+[ext_resource type="Script" uid="uid://i8vnwm8o230x" path="res://Minigames/minigame_wave/Background.gd" id="3_ak01e"]
+[ext_resource type="Texture2D" uid="uid://pk5ouk4w48sd" path="res://Minigames/minigame_wave/assets/jump2.png" id="3_b7tct"]
+[ext_resource type="Texture2D" uid="uid://bafhop7qfmm8v" path="res://Minigames/minigame_wave/assets/run2.png" id="3_rh204"]
+[ext_resource type="Texture2D" uid="uid://dxi06ve3rhdof" path="res://Minigames/minigame_wave/assets/jump3.png" id="4_konyf"]
+[ext_resource type="Texture2D" uid="uid://btaik4rtmbmup" path="res://Minigames/minigame_wave/assets/run3.png" id="4_tus3w"]
+[ext_resource type="Texture2D" uid="uid://sr4a2qmio2x6" path="res://Minigames/minigame_wave/assets/run4.png" id="5_3b6ga"]
+[ext_resource type="Texture2D" uid="uid://dwngwce3j1s22" path="res://Minigames/minigame_wave/assets/jump4.png" id="5_in6ci"]
+[ext_resource type="Texture2D" uid="uid://cks608bv3vo8i" path="res://Minigames/minigame_wave/assets/run5.png" id="6_lh52t"]
+[ext_resource type="Texture2D" uid="uid://cth531vqntj7l" path="res://Minigames/minigame_wave/assets/jump5.png" id="6_qgjyd"]
+[ext_resource type="Texture2D" uid="uid://dkji44glenb73" path="res://Minigames/minigame_wave/assets/wave1.png" id="12_h44ip"]
+[ext_resource type="Texture2D" uid="uid://dq2lmksd3gkjg" path="res://Minigames/minigame_wave/assets/wave2.png" id="13_v1n4o"]
+[ext_resource type="Texture2D" uid="uid://d0brlqrwvunrh" path="res://Minigames/minigame_wave/assets/wave3.png" id="14_0h4q8"]
+[ext_resource type="Texture2D" uid="uid://yi3yys3cv341" path="res://Minigames/minigame_wave/assets/wave4.png" id="15_6w7sc"]
+[ext_resource type="Texture2D" uid="uid://cy148clwp3qr2" path="res://Minigames/minigame_wave/assets/obstacle1.png" id="18_h44ip"]
+[ext_resource type="Texture2D" uid="uid://mqx6ki7neoei" path="res://Minigames/minigame_wave/assets/obstacle2.png" id="19_v1n4o"]
+[ext_resource type="Texture2D" uid="uid://b88d5ju6x8dmp" path="res://Minigames/minigame_wave/assets/obstacle3.png" id="20_0h4q8"]
+[ext_resource type="Script" uid="uid://dhttpvmarscy3" path="res://Minigames/minigame_wave/ObstaclesSpawner.gd" id="20_6w7sc"]
+[ext_resource type="Texture2D" uid="uid://cyetml8xslpq1" path="res://Minigames/minigame_wave/assets/obstacle5.png" id="22_24hp3"]
+[ext_resource type="Script" uid="uid://c32ol2mrlqdgq" path="res://Minigames/minigame_wave/ObstacleScript.gd" id="22_ak01e"]
+[ext_resource type="Texture2D" uid="uid://cxaymq5mddb2" path="res://Minigames/minigame_wave/assets/wave_zone.png" id="24_6w7sc"]
+[ext_resource type="Script" uid="uid://bq8q3j2tjupf0" path="res://Minigames/minigame_wave/SafeZone.gd" id="25_24hp3"]
+[ext_resource type="AudioStream" uid="uid://c7603rtcvlkb2" path="res://Minigames/minigame_wave/music/SoundBackground.mp3" id="26_6dhov"]
+[ext_resource type="AudioStream" uid="uid://dhl2ssyct8xrp" path="res://Minigames/minigame_wave/music/SoundCollision.mp3" id="27_uo1ub"]
+[ext_resource type="AudioStream" uid="uid://dbovkgfjugqi4" path="res://Minigames/minigame_wave/music/SoundJump.mp3" id="28_7imau"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_24hp3"]
+load_path = "res://.godot/imported/ObstacleBackground.png-bb9426b4247f8b7d84aca29db5290c2c.ctex"
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_3ragl"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_eua56")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_b7tct")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_konyf")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_in6ci")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_qgjyd")
+}],
+"loop": true,
+"name": &"jump",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_ubvdr")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_rh204")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_tus3w")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_3b6ga")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_lh52t")
+}],
+"loop": true,
+"name": &"run",
+"speed": 12.0
+}]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_6dhov"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("12_h44ip")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_v1n4o")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_0h4q8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15_6w7sc")
+}],
+"loop": true,
+"name": &"wave",
+"speed": 5.0
+}]
+
+[node name="WaveGame" type="Node2D" unique_id=390420884]
+script = ExtResource("1_v1n4o")
+
+[node name="Background" type="Sprite2D" parent="." unique_id=810954376]
+position = Vector2(1025.125, 593.7499)
+scale = Vector2(1.3556316, 1.1791991)
+texture = SubResource("CompressedTexture2D_24hp3")
+script = ExtResource("3_ak01e")
+
+[node name="CharacterBody2D" type="CharacterBody2D" parent="." unique_id=441474057]
+script = ExtResource("3_0h4q8")
+
+[node name="BoyAnimated" type="AnimatedSprite2D" parent="CharacterBody2D" unique_id=1581663150]
+position = Vector2(784, 504)
+scale = Vector2(1.0902778, 1.0720524)
+sprite_frames = SubResource("SpriteFrames_3ragl")
+animation = &"run"
+
+[node name="WaveAnimated" type="AnimatedSprite2D" parent="." unique_id=88772762]
+position = Vector2(337, 691)
+scale = Vector2(3.2967904, 2.9765375)
+sprite_frames = SubResource("SpriteFrames_6dhov")
+animation = &"wave"
+
+[node name="Obstacles" type="Node2D" parent="." unique_id=949211385]
+script = ExtResource("20_6w7sc")
+
+[node name="Obstacle1" type="Sprite2D" parent="Obstacles" unique_id=1782368142]
+visible = false
+position = Vector2(1648, 877)
+scale = Vector2(0.5414758, 0.543445)
+texture = ExtResource("18_h44ip")
+script = ExtResource("22_ak01e")
+
+[node name="Obstacle2" type="Sprite2D" parent="Obstacles" unique_id=464061284]
+visible = false
+position = Vector2(1280, 206)
+scale = Vector2(0.63053614, 0.5535117)
+texture = ExtResource("19_v1n4o")
+script = ExtResource("22_ak01e")
+
+[node name="Obstacle3" type="Sprite2D" parent="Obstacles" unique_id=1009593311]
+visible = false
+position = Vector2(1454, 869.99994)
+scale = Vector2(0.50330806, 0.56877)
+texture = ExtResource("20_0h4q8")
+script = ExtResource("22_ak01e")
+
+[node name="Obstacle4" type="Sprite2D" parent="Obstacles" unique_id=598522020]
+visible = false
+position = Vector2(1531, 518)
+scale = Vector2(0.32005903, 0.6264046)
+texture = ExtResource("22_24hp3")
+script = ExtResource("22_ak01e")
+
+[node name="SafeZone" type="Sprite2D" parent="." unique_id=493399318]
+visible = false
+position = Vector2(1748, 178.00012)
+scale = Vector2(0.8594132, 0.84801763)
+texture = ExtResource("24_6w7sc")
+script = ExtResource("25_24hp3")
+
+[node name="BackgroundSound" type="AudioStreamPlayer" parent="." unique_id=226781817]
+stream = ExtResource("26_6dhov")
+
+[node name="CollisionSound" type="AudioStreamPlayer" parent="." unique_id=68318784]
+stream = ExtResource("27_uo1ub")
+
+[node name="JumpSound" type="AudioStreamPlayer" parent="." unique_id=971415386]
+stream = ExtResource("28_7imau")
