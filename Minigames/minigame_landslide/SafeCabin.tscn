@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://cf4skwm7ohn6a"]
 
 [ext_resource type="Texture2D" uid="uid://dex2f7uyx6kh1" path="res://Minigames/minigame_landslide/assets/04_safe_cabin_refuge.png" id="1_ehxra"]
+[ext_resource type="Texture2D" uid="uid://cc3q4c4v5sgko" path="res://Minigames/minigame_landslide/assets/safe.png" id="2_3cwyw"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ehxra"]
 size = Vector2(394.41406, 332.70313)
@@ -12,6 +13,11 @@ position = Vector2(-3, 2.9999962)
 scale = Vector2(0.62358946, 0.58417976)
 texture = ExtResource("1_ehxra")
 
+[node name="Sprite2D2" type="Sprite2D" parent="." unique_id=1205597685]
+position = Vector2(-9.000004, -131)
+scale = Vector2(0.10446507, 0.09526369)
+texture = ExtResource("2_3cwyw")
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1994569791]
-position = Vector2(7, 7)
+position = Vector2(2, 3)
 shape = SubResource("RectangleShape2D_ehxra")
