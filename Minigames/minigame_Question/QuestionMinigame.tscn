@@ -1,0 +1,48 @@
+[gd_scene format=3 uid="uid://dmcatjf74dfs"]
+
+[ext_resource type="Script" uid="uid://csqko7hdnwi47" path="res://Minigames/minigame_Question/question_minigame.gd" id="1_04r6a"]
+
+[node name="QuestionMinigame" type="Node2D" unique_id=412725580]
+script = ExtResource("1_04r6a")
+
+[node name="Background" type="ColorRect" parent="." unique_id=706117494]
+offset_right = 120.0
+offset_bottom = 52.0
+
+[node name="TopBar" type="ColorRect" parent="." unique_id=886504022]
+offset_right = 120.0
+offset_bottom = 52.0
+
+[node name="TitleLabel" type="Label" parent="TopBar" unique_id=1171853614]
+layout_mode = 0
+offset_right = 120.0
+offset_bottom = 24.0
+
+[node name="QuestionPanel" type="Panel" parent="." unique_id=876398451]
+offset_right = 120.0
+offset_bottom = 52.0
+
+[node name="QuestionLabel" type="Label" parent="QuestionPanel" unique_id=5768162]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="OptionsContainer" type="VBoxContainer" parent="." unique_id=1124157034]
+offset_right = 120.0
+offset_bottom = 53.0
+
+[node name="OptionButton1" type="Button" parent="OptionsContainer" unique_id=1308846030]
+layout_mode = 2
+
+[node name="OptionButton2" type="Button" parent="OptionsContainer" unique_id=183778124]
+layout_mode = 2
+
+[node name="OptionButton3" type="Button" parent="OptionsContainer" unique_id=1249639966]
+layout_mode = 2
+
+[node name="OptionButton4" type="Button" parent="OptionsContainer" unique_id=314859446]
+layout_mode = 2
+
+[node name="ScoreLabel" type="Label" parent="." unique_id=1193695363]
+offset_right = 40.0
+offset_bottom = 23.0
