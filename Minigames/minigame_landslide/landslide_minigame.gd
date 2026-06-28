@@ -470,56 +470,109 @@ func _create_phone_keypad() -> void:
 	phone_overlay.size = overlay_size
 	ui_layer.add_child(phone_overlay)
 
-	var panel := Panel.new()
-	panel.name = "PhonePanel"
-	panel.size = Vector2(380, 510)
-	panel.position = (overlay_size - panel.size) / 2.0
-	phone_overlay.add_child(panel)
+	var phone_panel := Panel.new()
+	phone_panel.name = "PhoneKeypadPanel"
+	phone_panel.size = Vector2(410, 560)
+	phone_panel.position = (overlay_size - phone_panel.size) / 2.0
+	phone_overlay.add_child(phone_panel)
+
+	var panel_style := StyleBoxFlat.new()
+	panel_style.bg_color = Color("#F2F2F2")
+	panel_style.border_color = Color("#CFCFCF")
+	panel_style.border_width_left = 4
+	panel_style.border_width_right = 4
+	panel_style.border_width_top = 4
+	panel_style.border_width_bottom = 4
+	panel_style.corner_radius_top_left = 32
+	panel_style.corner_radius_top_right = 32
+	panel_style.corner_radius_bottom_left = 32
+	panel_style.corner_radius_bottom_right = 32
+	panel_style.shadow_color = Color(0, 0, 0, 0.35)
+	panel_style.shadow_size = 12
+	panel_style.shadow_offset = Vector2(0, 6)
+	phone_panel.add_theme_stylebox_override("panel", panel_style)
 
 	var title := Label.new()
 	title.text = "Llamar al 911"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.position = Vector2(20, 18)
+	title.position = Vector2(35, 30)
 	title.size = Vector2(340, 35)
-	title.add_theme_font_size_override("font_size", 24)
-	panel.add_child(title)
+	title.add_theme_font_size_override("font_size", 28)
+	title.add_theme_color_override("font_color", Color("#202020"))
+	phone_panel.add_child(title)
 
 	dial_display = Label.new()
 	dial_display.text = "___"
 	dial_display.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	dial_display.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	dial_display.position = Vector2(35, 68)
-	dial_display.size = Vector2(310, 55)
-	dial_display.add_theme_font_size_override("font_size", 34)
-	panel.add_child(dial_display)
+	dial_display.position = Vector2(55, 85)
+	dial_display.size = Vector2(300, 60)
+	dial_display.add_theme_font_size_override("font_size", 38)
+	dial_display.add_theme_color_override("font_color", Color("#111111"))
+	phone_panel.add_child(dial_display)
 
 	var grid := GridContainer.new()
 	grid.columns = 3
-	grid.position = Vector2(52, 140)
-	grid.size = Vector2(276, 245)
-	panel.add_child(grid)
+	grid.position = Vector2(60, 165)
+	grid.size = Vector2(290, 280)
+	phone_panel.add_child(grid)
 
 	for number in ["1", "2", "3", "4", "5", "6", "7", "8", "9", "BORRAR", "0", "LLAMAR"]:
 		var button := Button.new()
-		button.text = number
-		button.custom_minimum_size = Vector2(88, 58)
-		button.add_theme_font_size_override("font_size", 18)
-		grid.add_child(button)
+		button.custom_minimum_size = Vector2(88, 64)
+		button.add_theme_font_size_override("font_size", 24)
+		button.add_theme_stylebox_override("normal", _create_key_button_style(Color("#FFFFFF"), Color("#D0D0D0")))
+		button.add_theme_stylebox_override("hover", _create_key_button_style(Color("#F4FAFF"), Color("#6CA9E8")))
+		button.add_theme_stylebox_override("pressed", _create_key_button_style(Color("#D9ECFF"), Color("#4A90E2")))
+		button.add_theme_color_override("font_color", Color("#222222"))
 
 		if number == "BORRAR":
+			button.text = "⌫"
+			button.add_theme_font_size_override("font_size", 28)
 			button.pressed.connect(_backspace_digit)
 		elif number == "LLAMAR":
+			button.text = "☎"
+			button.add_theme_font_size_override("font_size", 30)
+			button.add_theme_stylebox_override("normal", _create_key_button_style(Color("#39C95F"), Color("#229B42")))
+			button.add_theme_stylebox_override("hover", _create_key_button_style(Color("#4EE874"), Color("#229B42")))
+			button.add_theme_stylebox_override("pressed", _create_key_button_style(Color("#28A94A"), Color("#17752F")))
+			button.add_theme_color_override("font_color", Color.WHITE)
 			button.pressed.connect(_try_call_number)
 		else:
+			button.text = number
 			button.pressed.connect(_on_keypad_number_pressed.bind(number))
+
+		grid.add_child(button)
 
 	var cancel_button := Button.new()
 	cancel_button.text = "CERRAR"
-	cancel_button.position = Vector2(100, 425)
+	cancel_button.position = Vector2(115, 475)
 	cancel_button.size = Vector2(180, 45)
 	cancel_button.add_theme_font_size_override("font_size", 18)
+	cancel_button.add_theme_stylebox_override("normal", _create_key_button_style(Color("#EEEEEE"), Color("#C4C4C4")))
+	cancel_button.add_theme_stylebox_override("hover", _create_key_button_style(Color("#FFFFFF"), Color("#AFC9E8")))
+	cancel_button.add_theme_stylebox_override("pressed", _create_key_button_style(Color("#D6D6D6"), Color("#999999")))
+	cancel_button.add_theme_color_override("font_color", Color("#222222"))
 	cancel_button.pressed.connect(_close_phone_keypad)
-	panel.add_child(cancel_button)
+	phone_panel.add_child(cancel_button)
+
+
+func _create_key_button_style(background_color: Color, border_color: Color) -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = background_color
+	style.border_color = border_color
+	style.border_width_left = 2
+	style.border_width_right = 2
+	style.border_width_top = 2
+	style.border_width_bottom = 2
+	style.corner_radius_top_left = 32
+	style.corner_radius_top_right = 32
+	style.corner_radius_bottom_left = 32
+	style.corner_radius_bottom_right = 32
+	style.shadow_color = Color(0, 0, 0, 0.16)
+	style.shadow_size = 4
+	style.shadow_offset = Vector2(0, 2)
+	return style
 
 
 func _connect_signals() -> void:
@@ -898,8 +951,6 @@ func _on_player_damaged() -> void:
 
 	if lives < 0:
 		lives = 0
-
-	print("Vidas actuales: ", lives)
 
 	update_lives_ui()
 

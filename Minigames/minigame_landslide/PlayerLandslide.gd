@@ -16,7 +16,6 @@ func _ready() -> void:
 	z_index = 40
 	set_physics_process(true)
 
-	# Capa del jugador para que las rocas lo detecten
 	collision_layer = 1
 	collision_mask = 2
 
@@ -24,11 +23,9 @@ func _ready() -> void:
 func _physics_process(_delta: float) -> void:
 	var direction := Vector2.ZERO
 
-	# Flechitas normales de Godot
 	direction.x = Input.get_axis("ui_left", "ui_right")
 	direction.y = Input.get_axis("ui_up", "ui_down")
 
-	# Respaldo directo por si el InputMap está malo
 	if Input.is_key_pressed(KEY_LEFT):
 		direction.x -= 1
 	if Input.is_key_pressed(KEY_RIGHT):
@@ -43,6 +40,7 @@ func _physics_process(_delta: float) -> void:
 	move_and_slide()
 
 	var screen_size := get_viewport_rect().size
+
 	if screen_size.x <= 0 or screen_size.y <= 0:
 		screen_size = Vector2(1280, 720)
 
@@ -55,9 +53,10 @@ func _physics_process(_delta: float) -> void:
 func _update_visual(direction: Vector2) -> void:
 	if direction.x != 0:
 		if sprite:
-			sprite.flip_h = direction.x < 0
+			sprite.flip_h = direction.x > 0
+
 		if animated_sprite:
-			animated_sprite.flip_h = direction.x < 0
+			animated_sprite.flip_h = direction.x > 0
 
 	if animated_sprite == null:
 		return
