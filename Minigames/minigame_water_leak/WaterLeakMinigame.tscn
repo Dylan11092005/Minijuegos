@@ -2,11 +2,18 @@
 
 [ext_resource type="Script" uid="uid://d1wc25cl2rxkq" path="res://Minigames/minigame_water_leak/WaterLeakMinigame.gd" id="1_8r6nm"]
 [ext_resource type="AudioStream" uid="uid://c5plno738xikn" path="res://Minigames/minigame_water_leak/assets/musicBack.mp3" id="2_u7x2t"]
+[ext_resource type="Texture2D" uid="uid://1afnslvaxyyr" path="res://Minigames/minigame_water_leak/assets/leak_1.png" id="2_xi2uv"]
+[ext_resource type="Texture2D" uid="uid://wbcq3xxvk1w2" path="res://Minigames/minigame_water_leak/assets/leak_2.png" id="3_gnfgy"]
 [ext_resource type="AudioStream" uid="uid://pjkd6d511u7i" path="res://Minigames/minigame_water_leak/assets/watermp3-enhanced-v2.mp3" id="3_l2sq6"]
+[ext_resource type="Texture2D" uid="uid://bkc2klpe3sgmk" path="res://Minigames/minigame_water_leak/assets/leak_3.png" id="4_5hn77"]
 [ext_resource type="AudioStream" uid="uid://cbtye2uhmvstp" path="res://Minigames/minigame_water_leak/assets/parche.wav" id="4_o2g1n"]
 
 [node name="WaterLeakMinigame" type="Node2D" unique_id=1924589831]
 script = ExtResource("1_8r6nm")
+leak_frame_01 = ExtResource("2_xi2uv")
+leak_frame_02 = ExtResource("3_gnfgy")
+leak_frame_03 = ExtResource("4_5hn77")
+leak_sprite_height = 180.0
 
 [node name="BackgroundMusic" type="AudioStreamPlayer" parent="." unique_id=1274728438]
 stream = ExtResource("2_u7x2t")
