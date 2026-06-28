@@ -174,6 +174,10 @@ func _create_pieces() -> void:
 # SHUFFLE
 # =========================================================
 func _shuffle_pieces() -> void:
+	# Forzamos una nueva semilla en cada partida usando microsegundos,
+	# para evitar que el orden se repita si el juego se reinicia muy rápido.
+	seed(Time.get_ticks_usec())
+
 	var positions: Array = range(cols * rows)
 	positions.shuffle()
 	for i in pieces.size():
