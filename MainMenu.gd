@@ -341,3 +341,24 @@ func _on_button_16_pressed() -> void:
 	get_tree().change_scene_to_file("res://Minigames/ui_global/MinigameIntro.tscn")
 
 	
+
+
+func _on_button_20_pressed() -> void:
+	var minigame_data = get_node("/root/MinigameData")
+	
+	minigame_data.title = "¡Alerta de maremoto!"
+	
+	minigame_data.description = "Evacua a un lugar más alto"
+	
+	minigame_data.instructions = "Debes esquivar los obstaculos y evitar que te alcance el maremoto hasta llegar a la zona segura. Con las flechas de arriba y abajo te mueves entre niveles para evitar los obstaculos"
+	
+	minigame_data.video_path = "res://Minigames/minigame_wave/assets/WaveInstruction.ogv"
+	
+	minigame_data.minigame_scene = "res://Minigames/minigame_wave/WaveGame.tscn"
+	
+	minigame_data.controls = [
+		{ "action": "Moverse derecha,izquierda, arriba y abajo", "icon": 
+			"res://Minigames/ui_global/assets/Movement.png" },
+	]
+	
+	get_tree().change_scene_to_file("res://Minigames/ui_global/MinigameIntro.tscn")
