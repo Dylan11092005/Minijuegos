@@ -1,10 +1,10 @@
 [gd_scene format=3 uid="uid://d2ikalu7sjcnd"]
 
-[ext_resource type="Script" uid="uid://cwy0y686xa6ou" path="res://minigame_defo/hole.gd" id="1_cr06n"]
-[ext_resource type="Texture2D" uid="uid://cjpony6qcpc44" path="res://minigame_defo/sprites/huecoBueno.png" id="2_q7xbi"]
-[ext_resource type="Texture2D" uid="uid://be6xh886pcyh2" path="res://minigame_defo/sprites/HuecoMalo.png" id="3_1eslj"]
-[ext_resource type="Texture2D" uid="uid://vo328xoitfkq" path="res://minigame_defo/sprites/semilla_puesta.png" id="4_rluvt"]
-[ext_resource type="Texture2D" uid="uid://byktwlbcoxe8q" path="res://minigame_defo/sprites/arbol.png" id="5_ba458"]
+[ext_resource type="Script" uid="uid://cwy0y686xa6ou" path="res://Minigames/minigame_defo/hole.gd" id="1_cr06n"]
+[ext_resource type="Texture2D" uid="uid://cjpony6qcpc44" path="res://Minigames/minigame_defo/sprites/huecoBueno.png" id="2_q7xbi"]
+[ext_resource type="Texture2D" uid="uid://be6xh886pcyh2" path="res://Minigames/minigame_defo/sprites/HuecoMalo.png" id="3_1eslj"]
+[ext_resource type="Texture2D" uid="uid://vo328xoitfkq" path="res://Minigames/minigame_defo/sprites/semilla_puesta.png" id="4_rluvt"]
+[ext_resource type="Texture2D" uid="uid://byktwlbcoxe8q" path="res://Minigames/minigame_defo/sprites/arbol.png" id="5_ba458"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_k06nb"]
 radius = 75.059975

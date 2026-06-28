@@ -34,6 +34,7 @@ var health_ui: HealthBarUi
 
 
 func _ready():
+	randomize()
 	add_to_group("game_manager")
 
 	create_audio()
@@ -44,6 +45,7 @@ func _ready():
 
 	timer_hud.set_tamano_panel(600, 60)
 
+	await get_tree().process_frame
 	randomize_bad_holes()
 
 	start_game()
