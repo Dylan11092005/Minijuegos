@@ -343,6 +343,32 @@ func _on_button_16_pressed() -> void:
 	
 
 
+func _on_button_19_pressed() -> void:
+	var minigame_data = get_node("/root/MinigameData")
+
+	minigame_data.title = "¡Derechos de la niñez!"
+
+	minigame_data.description = "Aprendiste que aún en medio de un desastre, la niñez tiene derechos y debe ser protegida."
+
+	minigame_data.instructions = """Participarás en un juego de preguntas y respuestas relacionado con los derechos de la niñez durante situaciones de desastre.
+En cada ronda aparecerá una pregunta con diferentes opciones y deberás seleccionar la respuesta correcta.
+Ganas si completas correctamente la cantidad requerida de preguntas antes de que se acabe el tiempo.
+Pierdes si fallas demasiadas respuestas o si no terminas dentro del tiempo establecido."""
+
+	minigame_data.video_path = "res://Minigames/minigame_Question/assets/Video.ogv"
+
+	minigame_data.minigame_scene = "res://Minigames/minigame_Question/QuestionMinigame.tscn"
+
+	minigame_data.controls = [
+		{
+			"action": "Seleccionar respuesta",
+			"icon": "res://Minigames/ui_global/assets/ClickIcon.png"
+		},
+	]
+
+	get_tree().change_scene_to_file("res://Minigames/ui_global/MinigameIntro.tscn")
+
+
 func _on_button_20_pressed() -> void:
 	var minigame_data = get_node("/root/MinigameData")
 	
