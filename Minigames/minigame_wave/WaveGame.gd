@@ -21,6 +21,10 @@ const TOTAL_TIME := 40.0
 @onready var safe_zone = $SafeZone
 @onready var background = $Background
 
+@onready var background_sound = $BackgroundSound
+@onready var collision_sound = $CollisionSound
+@onready var jump_sound = $JumpSound
+
 # =========================================================
 # VARIABLES
 # =========================================================
@@ -56,6 +60,10 @@ func _ready():
 	_setup_timer_ui()
 	_setup_lives_ui()
 	_setup_game_result()
+	_setup_background_sound()
+	
+	if jump_sound:
+		jump_sound.volume_db = -5.0   # ✅ bajamos el volumen del salto
 
 func _process(delta):
 	if game_over:
@@ -106,6 +114,37 @@ func _setup_game_result():
 		_game_result.layer = 50
 
 # =========================================================
+# SONIDO DE FONDO (LOOP MANUAL)
+# =========================================================
+func _setup_background_sound():
+	if background_sound == null:
+		return
+	background_sound.volume_db = -15.0   # ✅ bajamos el volumen del fondo
+	background_sound.play()
+	if not background_sound.finished.is_connected(_on_background_sound_finished):
+		background_sound.finished.connect(_on_background_sound_finished)
+
+func _on_background_sound_finished():
+	# ✅ Lo vuelve a reproducir mientras el juego no haya terminado
+	if not game_over and background_sound:
+		background_sound.play()
+
+func _stop_background_sound():
+	if background_sound and background_sound.playing:
+		background_sound.stop()
+
+# =========================================================
+# SONIDOS PUNTUALES
+# =========================================================
+func play_collision_sound():
+	if collision_sound:
+		collision_sound.play()
+
+func play_jump_sound():
+	if jump_sound:
+		jump_sound.play()
+
+# =========================================================
 # LIVES
 # =========================================================
 func _update_lives_ui():
@@ -125,6 +164,15 @@ func register_hit():
 	wave_x += 160.0
 	wave.position.x = wave_x
 	_update_lives_ui()
+	
+	# ✅ Sonido de choque
+	play_collision_sound()
+	
+	# ✅ Parpadeo de daño en el niño
+	var boy_body = get_node("CharacterBody2D")
+	if boy_body.has_method("take_damage_feedback"):
+		boy_body.take_damage_feedback()
+	
 	if hits >= 3:
 		wave_x += 400.0
 		wave.position.x = wave_x
@@ -183,6 +231,7 @@ func _start_win_sequence():
 		return
 	game_over = true
 	_stop_timer_ui()
+	_stop_background_sound()
 	
 	# ✅ Detener obstáculos restantes
 	for obs in obstacles_node.get_children():
@@ -220,6 +269,7 @@ func _lose_game():
 		return
 	game_over = true
 	_stop_timer_ui()
+	_stop_background_sound()
 	boy.play("fail")
 	boy.scale = Vector2(1.09, 1.072)
 	if _game_result:

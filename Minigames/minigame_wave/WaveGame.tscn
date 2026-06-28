@@ -25,6 +25,9 @@
 [ext_resource type="Script" uid="uid://c32ol2mrlqdgq" path="res://Minigames/minigame_wave/ObstacleScript.gd" id="22_ak01e"]
 [ext_resource type="Texture2D" uid="uid://cxaymq5mddb2" path="res://Minigames/minigame_wave/assets/wave_zone.png" id="24_6w7sc"]
 [ext_resource type="Script" uid="uid://bq8q3j2tjupf0" path="res://Minigames/minigame_wave/SafeZone.gd" id="25_24hp3"]
+[ext_resource type="AudioStream" uid="uid://c7603rtcvlkb2" path="res://Minigames/minigame_wave/music/SoundBackground.mp3" id="26_6dhov"]
+[ext_resource type="AudioStream" uid="uid://dhl2ssyct8xrp" path="res://Minigames/minigame_wave/music/SoundCollision.mp3" id="27_uo1ub"]
+[ext_resource type="AudioStream" uid="uid://dbovkgfjugqi4" path="res://Minigames/minigame_wave/music/SoundJump.mp3" id="28_7imau"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_24hp3"]
 load_path = "res://.godot/imported/ObstacleBackground.png-bb9426b4247f8b7d84aca29db5290c2c.ctex"
@@ -153,3 +156,12 @@ position = Vector2(1748, 178.00012)
 scale = Vector2(0.8594132, 0.84801763)
 texture = ExtResource("24_6w7sc")
 script = ExtResource("25_24hp3")
+
+[node name="BackgroundSound" type="AudioStreamPlayer" parent="." unique_id=226781817]
+stream = ExtResource("26_6dhov")
+
+[node name="CollisionSound" type="AudioStreamPlayer" parent="." unique_id=68318784]
+stream = ExtResource("27_uo1ub")
+
+[node name="JumpSound" type="AudioStreamPlayer" parent="." unique_id=971415386]
+stream = ExtResource("28_7imau")
