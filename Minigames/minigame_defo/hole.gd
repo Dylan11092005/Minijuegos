@@ -3,6 +3,7 @@ extends Area2D
 signal hole_completed
 
 enum State { EMPTY, INVALID, PLANTED, WATERED }
+
 @export var current_state: State = State.EMPTY
 
 var completed_emitted := false
