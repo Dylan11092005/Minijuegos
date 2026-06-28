@@ -3,6 +3,7 @@ extends Sprite2D
 var game_ref: Node
 var bg_width: float
 var bg_copy: Sprite2D
+var stopped = false
 
 func _ready():
 	game_ref = get_parent()
@@ -21,8 +22,11 @@ func _ready():
 	bg_copy.z_index = -10
 	get_parent().call_deferred("add_child", bg_copy)
 
+func stop_scroll():
+	stopped = true
+
 func _process(delta):
-	if game_ref.game_over:
+	if game_ref.game_over or stopped:
 		return
 	
 	var spd = game_ref.speed

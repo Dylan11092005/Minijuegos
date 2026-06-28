@@ -18,6 +18,8 @@ const TOTAL_TIME := 40.0
 @onready var boy = $CharacterBody2D/BoyAnimated
 @onready var wave = $WaveAnimated
 @onready var obstacles_node = $Obstacles
+@onready var safe_zone = $SafeZone
+@onready var background = $Background
 
 # =========================================================
 # VARIABLES
@@ -30,6 +32,13 @@ var speed_increase = 20.0
 var hits = 0
 var wave_x := 0.0
 
+var wave_frame := 0
+var wave_direction := 1
+var wave_timer := 0.0
+var wave_fps := 0.2
+
+var safe_zones_spawned = false
+
 var _timer_ui: Node
 var _game_result: Node
 var _lives_ui: Node
@@ -38,7 +47,9 @@ var _lives_ui: Node
 # LIFECYCLE
 # =========================================================
 func _ready():
-	wave.play("wave")
+	wave.sprite_frames.set_animation_loop("wave", false)
+	wave.animation = "wave"
+	wave.frame = 0
 	wave_x = wave.position.x
 	for obs in obstacles_node.get_children():
 		obs.visible = false
@@ -49,6 +60,16 @@ func _ready():
 func _process(delta):
 	if game_over:
 		return
+	
+	wave_timer += delta
+	if wave_timer >= wave_fps:
+		wave_timer = 0.0
+		wave_frame += wave_direction
+		if wave_frame >= wave.sprite_frames.get_frame_count("wave") - 1:
+			wave_direction = -1
+		elif wave_frame <= 0:
+			wave_direction = 1
+		wave.frame = wave_frame
 	
 	score_timer += delta
 	if score_timer >= 0.5:
@@ -111,31 +132,89 @@ func register_hit():
 		_lose_game()
 
 # =========================================================
-# TIMER
+# SAFE ZONES
 # =========================================================
 func _on_time_up():
 	if game_over:
 		return
-	_win_game()
+	spawn_safe_zones()
+	# ✅ 3 segundos después empieza secuencia de victoria
+	await get_tree().create_timer(3.0).timeout
+	if not game_over:
+		_start_win_sequence()
 
+func spawn_safe_zones():
+	if safe_zones_spawned:
+		return
+	safe_zones_spawned = true
+	
+	# ✅ Desaparecen todos los obstáculos
+	for obs in obstacles_node.get_children():
+		obs.visible = false
+		if obs.has_method("set_process"):
+			obs.set_process(false)
+	
+	var y_positions = [150.0, 502.0, 874.0]
+	
+	safe_zone.position = Vector2(2500.0, y_positions[0])
+	safe_zone.activate(speed)
+	
+	for i in range(1, 3):
+		var copy = safe_zone.duplicate()
+		copy.position = Vector2(2500.0, y_positions[i])
+		add_child(copy)
+		call_deferred("_activate_copy", copy)
+
+func _activate_copy(copy: Node):
+	copy.activate(speed)
+
+# =========================================================
+# TIMER
+# =========================================================
 func _stop_timer_ui():
 	if _timer_ui and _timer_ui.has_method("detener"):
 		_timer_ui.detener()
 
 # =========================================================
-# RESULTADO
+# SECUENCIA DE VICTORIA
 # =========================================================
-func _win_game():
+func _start_win_sequence():
 	if game_over:
 		return
 	game_over = true
 	_stop_timer_ui()
+	
+	# ✅ Detener obstáculos restantes
+	for obs in obstacles_node.get_children():
+		obs.visible = false
+	
+	# ✅ Detener niño completamente
+	var boy_body = get_node("CharacterBody2D")
+	boy_body.velocity = Vector2.ZERO
+	boy_body.set_process(false)
+	boy_body.set_physics_process(false)
+	boy.stop()
+	
+	# ✅ Detener background
+	background.stop_scroll()
+	
+	# ✅ Ola se va hacia la izquierda con animación
+	var tween = create_tween()
+	tween.set_ease(Tween.EASE_IN)
+	tween.set_trans(Tween.TRANS_CUBIC)
+	tween.tween_property(wave, "position:x", -600.0, 2.0)
+	
+	# ✅ 3 segundos después mostrar ganaste
+	await get_tree().create_timer(3.0).timeout
 	if _game_result:
 		if _game_result.has_method("show_win"):
 			_game_result.show_win()
 		elif _game_result.has_method("mostrar_ganaste"):
 			_game_result.mostrar_ganaste()
 
+# =========================================================
+# RESULTADO
+# =========================================================
 func _lose_game():
 	if game_over:
 		return

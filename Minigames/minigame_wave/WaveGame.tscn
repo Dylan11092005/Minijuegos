@@ -13,19 +13,18 @@
 [ext_resource type="Texture2D" uid="uid://dwngwce3j1s22" path="res://Minigames/minigame_wave/assets/jump4.png" id="5_in6ci"]
 [ext_resource type="Texture2D" uid="uid://cks608bv3vo8i" path="res://Minigames/minigame_wave/assets/run5.png" id="6_lh52t"]
 [ext_resource type="Texture2D" uid="uid://cth531vqntj7l" path="res://Minigames/minigame_wave/assets/jump5.png" id="6_qgjyd"]
-[ext_resource type="Texture2D" uid="uid://b0e24ufutachi" path="res://Minigames/minigame_wave/assets/wave1.png" id="12_h44ip"]
-[ext_resource type="Texture2D" uid="uid://dsdxijqa2mn4u" path="res://Minigames/minigame_wave/assets/wave2.png" id="13_v1n4o"]
-[ext_resource type="Texture2D" uid="uid://c002uil2hbxh8" path="res://Minigames/minigame_wave/assets/wave3.png" id="14_0h4q8"]
-[ext_resource type="Texture2D" uid="uid://dr4c63qsnmema" path="res://Minigames/minigame_wave/assets/wave4.png" id="15_6w7sc"]
-[ext_resource type="Texture2D" uid="uid://cokpmv7l8efmx" path="res://Minigames/minigame_wave/assets/wave5.png" id="16_24hp3"]
-[ext_resource type="Texture2D" uid="uid://jpxo1unwrjxw" path="res://Minigames/minigame_wave/assets/wave6.png" id="17_ak01e"]
+[ext_resource type="Texture2D" uid="uid://dkji44glenb73" path="res://Minigames/minigame_wave/assets/wave1.png" id="12_h44ip"]
+[ext_resource type="Texture2D" uid="uid://dq2lmksd3gkjg" path="res://Minigames/minigame_wave/assets/wave2.png" id="13_v1n4o"]
+[ext_resource type="Texture2D" uid="uid://d0brlqrwvunrh" path="res://Minigames/minigame_wave/assets/wave3.png" id="14_0h4q8"]
+[ext_resource type="Texture2D" uid="uid://yi3yys3cv341" path="res://Minigames/minigame_wave/assets/wave4.png" id="15_6w7sc"]
 [ext_resource type="Texture2D" uid="uid://cy148clwp3qr2" path="res://Minigames/minigame_wave/assets/obstacle1.png" id="18_h44ip"]
 [ext_resource type="Texture2D" uid="uid://mqx6ki7neoei" path="res://Minigames/minigame_wave/assets/obstacle2.png" id="19_v1n4o"]
 [ext_resource type="Texture2D" uid="uid://b88d5ju6x8dmp" path="res://Minigames/minigame_wave/assets/obstacle3.png" id="20_0h4q8"]
 [ext_resource type="Script" uid="uid://dhttpvmarscy3" path="res://Minigames/minigame_wave/ObstaclesSpawner.gd" id="20_6w7sc"]
-[ext_resource type="Texture2D" uid="uid://5ihovmmlb7qs" path="res://Minigames/minigame_wave/assets/obstacle4.png" id="21_6w7sc"]
 [ext_resource type="Texture2D" uid="uid://cyetml8xslpq1" path="res://Minigames/minigame_wave/assets/obstacle5.png" id="22_24hp3"]
 [ext_resource type="Script" uid="uid://c32ol2mrlqdgq" path="res://Minigames/minigame_wave/ObstacleScript.gd" id="22_ak01e"]
+[ext_resource type="Texture2D" uid="uid://cxaymq5mddb2" path="res://Minigames/minigame_wave/assets/wave_zone.png" id="24_6w7sc"]
+[ext_resource type="Script" uid="uid://bq8q3j2tjupf0" path="res://Minigames/minigame_wave/SafeZone.gd" id="25_24hp3"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_24hp3"]
 load_path = "res://.godot/imported/ObstacleBackground.png-bb9426b4247f8b7d84aca29db5290c2c.ctex"
@@ -87,12 +86,6 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": ExtResource("15_6w7sc")
-}, {
-"duration": 1.0,
-"texture": ExtResource("16_24hp3")
-}, {
-"duration": 1.0,
-"texture": ExtResource("17_ak01e")
 }],
 "loop": true,
 "name": &"wave",
@@ -118,8 +111,8 @@ sprite_frames = SubResource("SpriteFrames_3ragl")
 animation = &"run"
 
 [node name="WaveAnimated" type="AnimatedSprite2D" parent="." unique_id=88772762]
-position = Vector2(323, 580.00006)
-scale = Vector2(3.172528, 5.8059354)
+position = Vector2(337, 691)
+scale = Vector2(3.2967904, 2.9765375)
 sprite_frames = SubResource("SpriteFrames_6dhov")
 animation = &"wave"
 
@@ -147,16 +140,16 @@ scale = Vector2(0.50330806, 0.56877)
 texture = ExtResource("20_0h4q8")
 script = ExtResource("22_ak01e")
 
-[node name="Obstacle4" type="Sprite2D" parent="Obstacles" unique_id=52605811]
-visible = false
-position = Vector2(1450, 898)
-scale = Vector2(0.40669373, 0.4520548)
-texture = ExtResource("21_6w7sc")
-script = ExtResource("22_ak01e")
-
-[node name="Obstacle5" type="Sprite2D" parent="Obstacles" unique_id=598522020]
+[node name="Obstacle4" type="Sprite2D" parent="Obstacles" unique_id=598522020]
 visible = false
 position = Vector2(1531, 518)
 scale = Vector2(0.32005903, 0.6264046)
 texture = ExtResource("22_24hp3")
 script = ExtResource("22_ak01e")
+
+[node name="SafeZone" type="Sprite2D" parent="." unique_id=493399318]
+visible = false
+position = Vector2(1748, 178.00012)
+scale = Vector2(0.8594132, 0.84801763)
+texture = ExtResource("24_6w7sc")
+script = ExtResource("25_24hp3")
