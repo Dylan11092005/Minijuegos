@@ -9,6 +9,10 @@ const TIMER_HUD_SCENE = preload("res://Minigames/ui_global/TimerUi.tscn")
 const GAME_RESULT_SCENE = preload("res://Minigames/ui_global/GameResult.tscn")
 const LIVES_UI_SCENE = preload("res://Minigames/ui_global/LivesUi.tscn")
 
+const BACKGROUND_MUSIC = preload("res://Minigames/minigame_Question/Music/Music1.mp3")
+const CORRECT_SOUND = preload("res://Minigames/minigame_Question/Music/Correct.mp3")
+const INCORRECT_SOUND = preload("res://Minigames/minigame_Question/Music/Incorrect.mp3")
+
 var game_active := false
 var already_finished := false
 
@@ -25,6 +29,10 @@ var lives_ui: Node
 var lives_layer: CanvasLayer
 
 var score_panel: Panel
+
+var background_music_player: AudioStreamPlayer
+var correct_sound_player: AudioStreamPlayer
+var incorrect_sound_player: AudioStreamPlayer
 
 var questions := [
 	{
@@ -263,6 +271,7 @@ func _ready() -> void:
 	create_timer()
 	create_game_result_panel()
 	create_lives_ui()
+	create_audio()
 	setup_scene_style()
 	connect_buttons()
 
@@ -273,6 +282,45 @@ func _notification(what):
 	if what == NOTIFICATION_WM_SIZE_CHANGED:
 		if is_inside_tree():
 			setup_scene_style()
+
+
+func create_audio() -> void:
+	background_music_player = AudioStreamPlayer.new()
+	background_music_player.stream = BACKGROUND_MUSIC
+	background_music_player.volume_db = -12
+	add_child(background_music_player)
+
+	correct_sound_player = AudioStreamPlayer.new()
+	correct_sound_player.stream = CORRECT_SOUND
+	correct_sound_player.volume_db = 0
+	add_child(correct_sound_player)
+
+	incorrect_sound_player = AudioStreamPlayer.new()
+	incorrect_sound_player.stream = INCORRECT_SOUND
+	incorrect_sound_player.volume_db = 0
+	add_child(incorrect_sound_player)
+
+
+func play_background_music() -> void:
+	if background_music_player != null and not background_music_player.playing:
+		background_music_player.play()
+
+
+func stop_background_music() -> void:
+	if background_music_player != null:
+		background_music_player.stop()
+
+
+func play_correct_sound() -> void:
+	if correct_sound_player != null:
+		correct_sound_player.stop()
+		correct_sound_player.play()
+
+
+func play_incorrect_sound() -> void:
+	if incorrect_sound_player != null:
+		incorrect_sound_player.stop()
+		incorrect_sound_player.play()
 
 
 func create_timer() -> void:
@@ -375,6 +423,7 @@ func start_game() -> void:
 	update_lives_ui()
 	update_score_ui()
 	show_question()
+	play_background_music()
 
 	if timer_hud.has_method("detener"):
 		timer_hud.detener()
@@ -418,9 +467,11 @@ func _on_option_selected(selected_index: int) -> void:
 	disable_buttons()
 
 	if selected_index == current_correct_index:
+		play_correct_sound()
 		correct_answers += 1
 		show_correct_answer(current_correct_index)
 	else:
+		play_incorrect_sound()
 		lives -= 1
 
 		if lives < 0:
@@ -484,6 +535,7 @@ func update_score_ui() -> void:
 
 func _on_time_up() -> void:
 	if game_active and not already_finished:
+		play_incorrect_sound()
 		lose_game()
 
 
@@ -497,6 +549,7 @@ func win_game() -> void:
 	if timer_hud != null and timer_hud.has_method("detener"):
 		timer_hud.detener()
 
+	stop_background_music()
 	disable_buttons()
 
 	if game_result_panel != null:
@@ -516,6 +569,7 @@ func lose_game() -> void:
 	if timer_hud != null and timer_hud.has_method("detener"):
 		timer_hud.detener()
 
+	stop_background_music()
 	disable_buttons()
 
 	if game_result_panel != null:
