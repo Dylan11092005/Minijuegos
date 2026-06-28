@@ -2,7 +2,8 @@ extends Node2D
 
 @export var time_limit := 60.0
 @export var lives_limit := 3
-@export var required_correct_answers := 5
+@export var max_rounds := 8
+@export var required_correct_answers := 8
 
 const TIMER_HUD_SCENE = preload("res://Minigames/ui_global/TimerUi.tscn")
 const GAME_RESULT_SCENE = preload("res://Minigames/ui_global/GameResult.tscn")
@@ -13,7 +14,9 @@ var already_finished := false
 
 var lives := 3
 var correct_answers := 0
+var current_round := 1
 var current_question_index := 0
+var current_correct_index := 0
 
 var timer_hud: CanvasLayer
 var game_result_panel: CanvasLayer
@@ -21,84 +24,206 @@ var game_result_panel: CanvasLayer
 var lives_ui: Node
 var lives_layer: CanvasLayer
 
+var score_panel: Panel
+
 var questions := [
 	{
-		"question": "¿Qué derecho tiene la niñez durante una emergencia?",
+		"question": "¿Qué debes hacer si empieza una emergencia?",
 		"options": [
-			"Recibir protección y ayuda",
-			"Quedarse sola",
-			"No recibir información",
-			"Ser ignorada"
+			"Buscar a un adulto de confianza",
+			"Correr solo",
+			"Esconderte sin avisar",
+			"Salir a jugar"
+		],
+		"correct": 0
+	},
+	{
+		"question": "Si hay una emergencia, ¿qué número se puede llamar?",
+		"options": [
+			"911",
+			"123",
+			"555",
+			"000"
 		],
 		"correct": 0
 	},
 	{
 		"question": "¿Qué necesita un niño o niña durante un desastre?",
 		"options": [
-			"Protección, alimento y atención",
-			"Estar sin adultos",
-			"No recibir apoyo",
-			"Resolver todo solo"
+			"Protección y ayuda",
+			"Estar solo",
+			"No comer",
+			"No hablar"
 		],
 		"correct": 0
 	},
 	{
-		"question": "¿Qué se debe hacer si un niño o niña se pierde en una emergencia?",
+		"question": "¿Qué debes hacer si tienes miedo?",
 		"options": [
+			"Contarle a un adulto",
+			"Guardar silencio",
+			"Salir corriendo",
+			"Esconderte solo"
+		],
+		"correct": 0
+	},
+	{
+		"question": "¿Qué lugar es mejor durante una emergencia?",
+		"options": [
+			"Un lugar seguro",
+			"Un río crecido",
+			"Una calle peligrosa",
+			"Un árbol quemándose"
+		],
+		"correct": 0
+	},
+	{
+		"question": "Si ves a un niño perdido, ¿qué debes hacer?",
+		"options": [
+			"Avisar a un adulto",
 			"Dejarlo solo",
-			"Buscar ayuda de adultos o autoridades",
-			"No avisar a nadie",
-			"Castigarlo"
-		],
-		"correct": 1
-	},
-	{
-		"question": "¿Por qué se deben proteger los derechos de la niñez en desastres?",
-		"options": [
-			"Porque tienen derechos y necesitan seguridad",
-			"Porque no son importantes",
-			"Porque deben ayudar a todos",
-			"Porque no necesitan cuidado"
+			"Reírte",
+			"Ignorarlo"
 		],
 		"correct": 0
 	},
 	{
-		"question": "¿Cuál acción respeta los derechos de los niños y niñas?",
+		"question": "¿Quiénes deben cuidar a los niños en una emergencia?",
 		"options": [
-			"Ignorar sus emociones",
-			"Escuchar sus necesidades",
-			"Separarlos sin explicación",
-			"No darles información"
+			"Adultos responsables",
+			"Nadie",
+			"Solo otros niños",
+			"Personas desconocidas"
 		],
-		"correct": 1
+		"correct": 0
 	},
 	{
-		"question": "Después de un desastre, la niñez debe recibir:",
+		"question": "¿Qué debes hacer si alguien está herido?",
 		"options": [
-			"Apoyo emocional y seguridad",
-			"Menos atención",
+			"Pedir ayuda",
+			"No decir nada",
+			"Seguir jugando",
+			"Irte lejos"
+		],
+		"correct": 0
+	},
+	{
+		"question": "¿Qué derecho tienen los niños y niñas?",
+		"options": [
+			"Ser protegidos",
+			"Ser ignorados",
+			"Estar en peligro",
+			"No recibir ayuda"
+		],
+		"correct": 0
+	},
+	{
+		"question": "¿Qué debes hacer durante una evacuación?",
+		"options": [
+			"Seguir las instrucciones",
+			"Empujar a todos",
+			"Correr sin mirar",
+			"Separarte del grupo"
+		],
+		"correct": 0
+	},
+	{
+		"question": "Si estás en un refugio, ¿qué debes hacer?",
+		"options": [
+			"Permanecer con tu familia o encargado",
+			"Salir solo",
+			"Pelear",
+			"Esconderte"
+		],
+		"correct": 0
+	},
+	{
+		"question": "¿Qué debe recibir un niño después de un desastre?",
+		"options": [
+			"Apoyo y cariño",
 			"Castigos",
+			"Burla",
 			"Abandono"
 		],
 		"correct": 0
 	},
 	{
-		"question": "¿Qué significa proteger a la niñez durante una emergencia?",
+		"question": "¿Qué es importante llevar en una emergencia?",
 		"options": [
-			"Brindar seguridad, cuidado y apoyo",
-			"No escuchar sus necesidades",
-			"Separarlos de sus familias sin razón",
-			"Dejarlos sin información"
+			"Agua y alimentos",
+			"Juguetes peligrosos",
+			"Piedras",
+			"Basura"
 		],
 		"correct": 0
 	},
 	{
-		"question": "¿Cuál es una forma correcta de ayudar a un niño o niña en un desastre?",
+		"question": "¿Qué debes hacer si escuchas una alarma?",
 		"options": [
-			"Escucharlo y llevarlo a un lugar seguro",
-			"Ignorarlo",
-			"Asustarlo más",
-			"Decirle que no pregunte"
+			"Prestar atención y obedecer",
+			"Ignorarla",
+			"Taparte los oídos",
+			"Seguir jugando"
+		],
+		"correct": 0
+	},
+	{
+		"question": "¿Qué debes hacer si no entiendes algo en una emergencia?",
+		"options": [
+			"Preguntar a un adulto",
+			"Quedarte con la duda",
+			"Inventar qué hacer",
+			"Irte solo"
+		],
+		"correct": 0
+	},
+	{
+		"question": "¿Cómo deben tratar a los niños y niñas?",
+		"options": [
+			"Con respeto",
+			"Con gritos",
+			"Con burlas",
+			"Con golpes"
+		],
+		"correct": 0
+	},
+	{
+		"question": "Si hay fuego cerca, ¿qué debes hacer?",
+		"options": [
+			"Alejarte y avisar",
+			"Acercarte",
+			"Tocarlo",
+			"Jugar con él"
+		],
+		"correct": 0
+	},
+	{
+		"question": "Si hay una inundación, ¿qué debes hacer?",
+		"options": [
+			"Pedir ayuda",
+			"Caminar por el agua",
+			"Jugar en la lluvia",
+			"Alejarte de los adultos"
+		],
+		"correct": 0
+	},
+	{
+		"question": "¿Qué debes hacer si estás triste después de un desastre?",
+		"options": [
+			"Hablar con alguien de confianza",
+			"No decir nada nunca",
+			"Alejarte de todos",
+			"Gritar a los demás"
+		],
+		"correct": 0
+	},
+	{
+		"question": "¿Qué deben hacer los adultos con los niños en una emergencia?",
+		"options": [
+			"Cuidarlos y protegerlos",
+			"Ignorarlos",
+			"Dejarlos solos",
+			"Asustarlos"
 		],
 		"correct": 0
 	}
@@ -119,11 +244,22 @@ var questions := [
 	$OptionsContainer/OptionButton4
 ]
 
+var button_colors := [
+	Color("#B9273A"),
+	Color("#6E3FC7"),
+	Color("#F39A0A"),
+	Color("#14B735")
+]
+
+const CORRECT_COLOR := Color("#16C653")
+const WRONG_COLOR := Color("#D63A3A")
+
 
 func _ready() -> void:
 	randomize()
 	add_to_group("game_manager")
 
+	create_score_panel()
 	create_timer()
 	create_game_result_panel()
 	create_lives_ui()
@@ -135,7 +271,8 @@ func _ready() -> void:
 
 func _notification(what):
 	if what == NOTIFICATION_WM_SIZE_CHANGED:
-		setup_scene_style()
+		if is_inside_tree():
+			setup_scene_style()
 
 
 func create_timer() -> void:
@@ -211,6 +348,14 @@ func update_lives_ui() -> void:
 		print("ERROR: LivesUi no tiene método para actualizar vidas.")
 
 
+func create_score_panel() -> void:
+	score_panel = Panel.new()
+	add_child(score_panel)
+
+	if score_label != null:
+		move_child(score_panel, score_label.get_index())
+
+
 func connect_buttons() -> void:
 	for i in range(option_buttons.size()):
 		option_buttons[i].pressed.connect(func(): _on_option_selected(i))
@@ -222,6 +367,7 @@ func start_game() -> void:
 
 	lives = lives_limit
 	correct_answers = 0
+	current_round = 1
 	current_question_index = 0
 
 	questions.shuffle()
@@ -249,27 +395,31 @@ func show_question() -> void:
 
 	question_label.text = current_question["question"]
 
+	var options: Array = current_question["options"].duplicate()
+	var correct_text: String = options[current_question["correct"]]
+
+	options.shuffle()
+
+	current_correct_index = options.find(correct_text)
+
 	for i in range(option_buttons.size()):
-		option_buttons[i].text = current_question["options"][i]
+		option_buttons[i].text = options[i]
 		option_buttons[i].disabled = false
+		option_buttons[i].modulate = Color.WHITE
+		apply_button_style(option_buttons[i], button_colors[i], 1.0)
+
+	update_score_ui()
 
 
 func _on_option_selected(selected_index: int) -> void:
 	if not game_active or already_finished:
 		return
 
-	var current_question = questions[current_question_index]
-
 	disable_buttons()
 
-	if selected_index == current_question["correct"]:
+	if selected_index == current_correct_index:
 		correct_answers += 1
-		update_score_ui()
-
-		if correct_answers >= required_correct_answers:
-			await get_tree().create_timer(0.6).timeout
-			win_game()
-			return
+		show_correct_answer(current_correct_index)
 	else:
 		lives -= 1
 
@@ -277,16 +427,50 @@ func _on_option_selected(selected_index: int) -> void:
 			lives = 0
 
 		update_lives_ui()
+		show_wrong_answer(selected_index, current_correct_index)
 
 		if lives <= 0:
-			await get_tree().create_timer(0.6).timeout
+			await get_tree().create_timer(1.0).timeout
 			lose_game()
 			return
 
-	await get_tree().create_timer(0.7).timeout
+	update_score_ui()
 
+	await get_tree().create_timer(1.1).timeout
+
+	if current_round >= max_rounds:
+		if correct_answers >= required_correct_answers:
+			win_game()
+		else:
+			lose_game()
+		return
+
+	current_round += 1
 	current_question_index += 1
 	show_question()
+
+
+func show_correct_answer(correct_index: int) -> void:
+	for i in range(option_buttons.size()):
+		if i == correct_index:
+			apply_button_style(option_buttons[i], CORRECT_COLOR, 1.0)
+			option_buttons[i].modulate = Color.WHITE
+		else:
+			apply_button_style(option_buttons[i], button_colors[i], 0.22)
+			option_buttons[i].modulate = Color(1, 1, 1, 0.35)
+
+
+func show_wrong_answer(selected_index: int, correct_index: int) -> void:
+	for i in range(option_buttons.size()):
+		if i == selected_index:
+			apply_button_style(option_buttons[i], WRONG_COLOR, 1.0)
+			option_buttons[i].modulate = Color.WHITE
+		elif i == correct_index:
+			apply_button_style(option_buttons[i], CORRECT_COLOR, 1.0)
+			option_buttons[i].modulate = Color.WHITE
+		else:
+			apply_button_style(option_buttons[i], button_colors[i], 0.22)
+			option_buttons[i].modulate = Color(1, 1, 1, 0.35)
 
 
 func disable_buttons() -> void:
@@ -295,7 +479,7 @@ func disable_buttons() -> void:
 
 
 func update_score_ui() -> void:
-	score_label.text = "Correctas: " + str(correct_answers) + " / " + str(required_correct_answers)
+	score_label.text = "Ronda: " + str(current_round) + " / " + str(max_rounds) + "     Correctas: " + str(correct_answers) + " / " + str(required_correct_answers)
 
 
 func _on_time_up() -> void:
@@ -348,54 +532,125 @@ func setup_scene_style() -> void:
 
 	background.position = Vector2.ZERO
 	background.size = screen_size
-	background.color = Color("#4B535C")
+	background.color = Color("#39C8C2")
 
 	top_bar.position = Vector2.ZERO
-	top_bar.size = Vector2(screen_width, screen_height * 0.12)
-	top_bar.color = Color("#2FA85A")
+	top_bar.size = Vector2(screen_width, screen_height * 0.115)
+	top_bar.color = Color("#249995")
 
 	title_label.position = Vector2.ZERO
 	title_label.size = top_bar.size
 	title_label.text = "DERECHOS DE LA NIÑEZ"
 	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	title_label.add_theme_font_size_override("font_size", int(screen_height * 0.045))
+	title_label.add_theme_font_size_override("font_size", int(screen_height * 0.043))
 	title_label.add_theme_color_override("font_color", Color.WHITE)
+	title_label.add_theme_color_override("font_shadow_color", Color("#1A5D62"))
+	title_label.add_theme_constant_override("shadow_offset_x", 3)
+	title_label.add_theme_constant_override("shadow_offset_y", 3)
 
-	var question_width := screen_width * 0.74
+	var question_width := screen_width * 0.75
 	var question_height := screen_height * 0.22
 	var question_x := (screen_width - question_width) / 2.0
-	var question_y := screen_height * 0.18
+	var question_y := screen_height * 0.175
 
 	question_panel.position = Vector2(question_x, question_y)
 	question_panel.size = Vector2(question_width, question_height)
+	question_panel.add_theme_stylebox_override(
+		"panel",
+		create_panel_style(Color("#1888C9"), Color("#166DA0"), 14, 0)
+	)
 
-	question_label.position = Vector2(35, 20)
-	question_label.size = Vector2(question_width - 70, question_height - 40)
+	question_label.position = Vector2(40, 20)
+	question_label.size = Vector2(question_width - 80, question_height - 40)
 	question_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	question_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	question_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	question_label.add_theme_font_size_override("font_size", int(screen_height * 0.04))
-	question_label.add_theme_color_override("font_color", Color("#333333"))
+	question_label.add_theme_font_size_override("font_size", int(screen_height * 0.038))
+	question_label.add_theme_color_override("font_color", Color.WHITE)
+	question_label.add_theme_color_override("font_shadow_color", Color("#0F425D"))
+	question_label.add_theme_constant_override("shadow_offset_x", 3)
+	question_label.add_theme_constant_override("shadow_offset_y", 3)
 
-	var options_width := screen_width * 0.68
-	var options_height := screen_height * 0.36
+	var options_width := screen_width * 0.69
 	var options_x := (screen_width - options_width) / 2.0
-	var options_y := question_y + question_height + screen_height * 0.055
+	var options_y := question_y + question_height + screen_height * 0.06
 
 	options_container.position = Vector2(options_x, options_y)
-	options_container.size = Vector2(options_width, options_height)
+	options_container.size = Vector2(options_width, screen_height * 0.36)
 	options_container.add_theme_constant_override("separation", int(screen_height * 0.025))
 
-	var button_height := screen_height * 0.075
+	var button_height := screen_height * 0.073
 
-	for button in option_buttons:
+	for i in range(option_buttons.size()):
+		var button := option_buttons[i]
 		button.custom_minimum_size = Vector2(options_width, button_height)
-		button.add_theme_font_size_override("font_size", int(screen_height * 0.032))
+		button.add_theme_font_size_override("font_size", int(screen_height * 0.028))
+		button.add_theme_color_override("font_color", Color.WHITE)
+		button.add_theme_color_override("font_shadow_color", Color("#333333"))
+		button.add_theme_constant_override("shadow_offset_x", 2)
+		button.add_theme_constant_override("shadow_offset_y", 2)
+		apply_button_style(button, button_colors[i], 1.0)
 
-	score_label.position = Vector2(0, screen_height - screen_height * 0.105)
-	score_label.size = Vector2(screen_width, screen_height * 0.07)
+	var score_width := screen_width * 0.69
+	var score_height := screen_height * 0.075
+	var score_x := (screen_width - score_width) / 2.0
+	var score_y := screen_height * 0.895
+
+	score_panel.position = Vector2(score_x, score_y)
+	score_panel.size = Vector2(score_width, score_height)
+	score_panel.add_theme_stylebox_override(
+		"panel",
+		create_panel_style(Color.WHITE, Color("#D9D9D9"), 10, 0)
+	)
+
+	score_label.position = score_panel.position
+	score_label.size = score_panel.size
 	score_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	score_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	score_label.add_theme_font_size_override("font_size", int(screen_height * 0.035))
-	score_label.add_theme_color_override("font_color", Color.WHITE)
+	score_label.add_theme_font_size_override("font_size", int(screen_height * 0.032))
+	score_label.add_theme_color_override("font_color", Color("#214A51"))
+
+
+func apply_button_style(button: Button, base_color: Color, alpha := 1.0) -> void:
+	var normal_color := Color(base_color.r, base_color.g, base_color.b, alpha)
+	var border_base := base_color.darkened(0.25)
+	var border_color := Color(border_base.r, border_base.g, border_base.b, alpha)
+
+	button.add_theme_stylebox_override(
+		"normal",
+		create_panel_style(normal_color, border_color, 10, 4)
+	)
+
+	button.add_theme_stylebox_override(
+		"hover",
+		create_panel_style(normal_color.lightened(0.12), border_color, 10, 4)
+	)
+
+	button.add_theme_stylebox_override(
+		"pressed",
+		create_panel_style(normal_color.darkened(0.18), border_color.darkened(0.15), 10, 4)
+	)
+
+	button.add_theme_stylebox_override(
+		"disabled",
+		create_panel_style(normal_color, border_color, 10, 4)
+	)
+
+
+func create_panel_style(bg_color: Color, border_color: Color, radius: int, shadow_size: int) -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = bg_color
+	style.border_color = border_color
+	style.border_width_bottom = 3
+	style.corner_radius_top_left = radius
+	style.corner_radius_top_right = radius
+	style.corner_radius_bottom_left = radius
+	style.corner_radius_bottom_right = radius
+
+	if shadow_size > 0:
+		style.shadow_color = Color(0, 0, 0, 0.35)
+		style.shadow_size = shadow_size
+		style.shadow_offset = Vector2(0, 4)
+
+	return style
