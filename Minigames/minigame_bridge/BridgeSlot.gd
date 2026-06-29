@@ -22,15 +22,12 @@ var occupied: bool = false
 # COLORS
 # =========================================================
 
-const EMPTY_OUTLINE_COLOR := Color(1.0, 1.0, 1.0, 0.45)
-const EMPTY_SLOT_COLOR := Color(0.0, 0.0, 0.0, 0.45)
-const WRONG_SLOT_COLOR := Color(1.0, 0.1, 0.1, 0.70)
-const PLACED_SLOT_COLOR := Color(1.0, 1.0, 1.0, 1.0)
+const EMPTY_OUTLINE_COLOR := Color(1.0, 1.0, 1.0, 0.42)
+const EMPTY_SLOT_COLOR := Color(0.0, 0.0, 0.0, 0.42)
+const WRONG_SLOT_COLOR := Color(1.0, 0.1, 0.1, 0.72)
 
-const WOOD_BASE_COLOR := Color("#8A4F1F")
-const WOOD_BASE_DARK := Color("#4B2A13")
-const WOOD_BASE_LIGHT := Color("#C47A32")
-const WOOD_SHADOW := Color(0.0, 0.0, 0.0, 0.30)
+# Color más oscuro para que combine con el puente del fondo.
+const PLACED_SLOT_COLOR := Color(0.72, 0.52, 0.33, 1.0)
 
 
 # =========================================================
@@ -40,11 +37,6 @@ const WOOD_SHADOW := Color(0.0, 0.0, 0.0, 0.30)
 func _ready():
 	input_pickable = false
 	_create_missing_nodes()
-
-
-func _draw():
-	if occupied:
-		_draw_repair_wood_under_board()
 
 
 # =========================================================
@@ -58,7 +50,7 @@ func setup(p_board_id: int, texture_path: String, p_position: Vector2, p_scale: 
 	occupied = false
 	
 	global_position = p_position
-	z_index = 12
+	z_index = 18
 	
 	if ResourceLoader.exists(texture_path):
 		var texture: Texture2D = load(texture_path)
@@ -80,7 +72,6 @@ func setup(p_board_id: int, texture_path: String, p_position: Vector2, p_scale: 
 		collision_shape.shape = rect
 	
 	visible = true
-	queue_redraw()
 
 
 func _create_missing_nodes():
@@ -115,17 +106,15 @@ func can_accept(p_board_id: int) -> bool:
 func place_board():
 	occupied = true
 	
-	# Se oculta el borde blanco.
+	# Quita el borde blanco.
 	if outline_sprite:
 		outline_sprite.visible = false
 	
-	# El slot gris se convierte en la tabla normal.
+	# La figura gris se convierte en madera colocada.
 	if sprite:
 		sprite.visible = true
 		sprite.modulate = PLACED_SLOT_COLOR
 		sprite.z_index = 5
-	
-	queue_redraw()
 
 
 func reset_slot():
@@ -139,8 +128,6 @@ func reset_slot():
 		sprite.visible = true
 		sprite.modulate = EMPTY_SLOT_COLOR
 		sprite.z_index = 2
-	
-	queue_redraw()
 
 
 func highlight_wrong():
@@ -161,60 +148,3 @@ func clear_highlight():
 
 func get_center_position() -> Vector2:
 	return global_position
-
-
-# =========================================================
-# DRAW REPAIR BASE
-# =========================================================
-
-func _draw_repair_wood_under_board():
-	if not sprite or not sprite.texture:
-		return
-	
-	var texture_size: Vector2 = sprite.texture.get_size() * sprite.scale
-	
-	var width: float = texture_size.x + 42.0
-	var height: float = texture_size.y + 28.0
-	
-	var shadow_rect := Rect2(
-		Vector2(-width * 0.5 + 7.0, -height * 0.5 + 9.0),
-		Vector2(width, height)
-	)
-	
-	var wood_rect := Rect2(
-		Vector2(-width * 0.5, -height * 0.5),
-		Vector2(width, height)
-	)
-	
-	# Sombra debajo de la reparación.
-	draw_rect(shadow_rect, WOOD_SHADOW, true)
-	
-	# Base de madera debajo de la tabla.
-	draw_rect(wood_rect, WOOD_BASE_COLOR, true)
-	
-	# Borde oscuro.
-	draw_rect(wood_rect, WOOD_BASE_DARK, false, 4.0)
-	
-	# Líneas para que parezca madera del puente.
-	var line_count := 5
-	
-	for i in range(1, line_count):
-		var x: float = lerpf(
-			wood_rect.position.x,
-			wood_rect.position.x + wood_rect.size.x,
-			float(i) / float(line_count)
-		)
-		
-		draw_line(
-			Vector2(x, wood_rect.position.y + 6.0),
-			Vector2(x, wood_rect.position.y + wood_rect.size.y - 6.0),
-			WOOD_BASE_DARK,
-			2.0
-		)
-		
-		draw_line(
-			Vector2(x + 4.0, wood_rect.position.y + 8.0),
-			Vector2(x + 4.0, wood_rect.position.y + wood_rect.size.y - 8.0),
-			WOOD_BASE_LIGHT,
-			1.2
-		)

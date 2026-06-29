@@ -28,10 +28,9 @@ const BOARD_TEXTURES := {
 const TOTAL_TIME := 40.0
 const TOTAL_BOARDS := 4
 
+const BOARD_SCALE := Vector2(0.46, 0.46)
+const SLOT_SCALE := Vector2(0.46, 0.46)
 const DROP_DISTANCE := 105.0
-
-const BOARD_SCALE := Vector2(0.52, 0.52)
-const SLOT_SCALE := Vector2(0.52, 0.52)
 
 
 # =========================================================
@@ -270,6 +269,7 @@ func _start_game():
 	placed_boards = 0
 	
 	_clear_round()
+	_draw_bridge_repair_base()
 	_create_random_slots()
 	_create_boards()
 	
@@ -291,7 +291,58 @@ func _clear_round():
 # =========================================================
 # CREATE SLOTS AND BOARDS
 # =========================================================
-
+func _draw_bridge_repair_base():
+	var old_base = slots_parent.get_node_or_null("BridgeRepairBase")
+	
+	if old_base:
+		old_base.queue_free()
+	
+	var base := Node2D.new()
+	base.name = "BridgeRepairBase"
+	base.z_index = 10
+	slots_parent.add_child(base)
+	
+	var screen_size := get_viewport_rect().size
+	
+	# Base oscura que conecta el puente izquierdo con el derecho.
+	var back_beam := Polygon2D.new()
+	back_beam.color = Color("#4B2A13")
+	back_beam.polygon = PackedVector2Array([
+		Vector2(screen_size.x * 0.29, screen_size.y * 0.47),
+		Vector2(screen_size.x * 0.71, screen_size.y * 0.47),
+		Vector2(screen_size.x * 0.72, screen_size.y * 0.535),
+		Vector2(screen_size.x * 0.28, screen_size.y * 0.535),
+	])
+	base.add_child(back_beam)
+	
+	var front_beam := Polygon2D.new()
+	front_beam.color = Color("#3A1F0D")
+	front_beam.polygon = PackedVector2Array([
+		Vector2(screen_size.x * 0.28, screen_size.y * 0.605),
+		Vector2(screen_size.x * 0.72, screen_size.y * 0.605),
+		Vector2(screen_size.x * 0.735, screen_size.y * 0.665),
+		Vector2(screen_size.x * 0.265, screen_size.y * 0.665),
+	])
+	base.add_child(front_beam)
+	
+	# Líneas de madera entre los dos lados del puente.
+	for i in range(5):
+		var t: float = float(i) / 4.0
+		
+		var x_top: float = lerpf(screen_size.x * 0.30, screen_size.x * 0.70, t)
+		var x_bottom: float = lerpf(screen_size.x * 0.285, screen_size.x * 0.715, t)
+		
+		var line := Line2D.new()
+		line.width = 5
+		line.default_color = Color("#5C3416")
+		line.points = PackedVector2Array([
+			Vector2(x_top, screen_size.y * 0.485),
+			Vector2(x_bottom, screen_size.y * 0.645),
+		])
+		base.add_child(line)
+		
+		
+		
 func _create_random_slots():
 	if not ResourceLoader.exists(BRIDGE_SLOT_SCENE_PATH):
 		push_error("No se encontró BridgeSlot.tscn")
@@ -303,11 +354,11 @@ func _create_random_slots():
 	# Posiciones donde van las piezas del puente.
 	# Se ven como huecos con la forma exacta de cada tabla.
 	var possible_positions := [
-		Vector2(screen_size.x * 0.38, screen_size.y * 0.50),
-		Vector2(screen_size.x * 0.46, screen_size.y * 0.50),
-		Vector2(screen_size.x * 0.54, screen_size.y * 0.50),
-		Vector2(screen_size.x * 0.62, screen_size.y * 0.50)
-	]
+	Vector2(screen_size.x * 0.38, screen_size.y * 0.555),
+	Vector2(screen_size.x * 0.46, screen_size.y * 0.555),
+	Vector2(screen_size.x * 0.54, screen_size.y * 0.555),
+	Vector2(screen_size.x * 0.62, screen_size.y * 0.555)
+]
 	
 	var board_ids := [1, 2, 3, 4]
 	board_ids.shuffle()
