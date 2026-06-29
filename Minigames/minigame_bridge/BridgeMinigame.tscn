@@ -1,3 +1,20 @@
 [gd_scene format=3 uid="uid://ce0qmpf7kqqtv"]
 
+[ext_resource type="Script" uid="uid://cwy5yu0rry2dq" path="res://Minigames/minigame_bridge/BridgeMinigame.gd" id="1_r31ey"]
+
 [node name="BridgeMinigame" type="Node2D" unique_id=58310518]
+script = ExtResource("1_r31ey")
+
+[node name="Background" type="Sprite2D" parent="." unique_id=1288221426]
+
+[node name="RiverWater" type="Node2D" parent="." unique_id=338142381]
+
+[node name="Slots" type="Node2D" parent="." unique_id=1923364514]
+
+[node name="Boards" type="Node2D" parent="." unique_id=1223625227]
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=140308353]
+
+[node name="BoardLabel" type="Label" parent="HUD" unique_id=226387311]
+offset_right = 40.0
+offset_bottom = 23.0

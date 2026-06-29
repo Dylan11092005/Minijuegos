@@ -1,3 +1,10 @@
 [gd_scene format=3 uid="uid://w0h5tfxp4bdr"]
 
+[ext_resource type="Script" uid="uid://b16vgqbi15whp" path="res://Minigames/minigame_bridge/BridgeBoard.gd" id="1_0h1gw"]
+
 [node name="BridgeBoard" type="Area2D" unique_id=2121785281]
+script = ExtResource("1_0h1gw")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1804262602]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=478501396]

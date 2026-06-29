@@ -28,10 +28,10 @@ const BOARD_TEXTURES := {
 const TOTAL_TIME := 40.0
 const TOTAL_BOARDS := 4
 
-const DROP_DISTANCE := 80.0
+const DROP_DISTANCE := 105.0
 
-const BOARD_SCALE := Vector2(0.42, 0.42)
-const SLOT_SCALE := Vector2(0.42, 0.42)
+const BOARD_SCALE := Vector2(0.52, 0.52)
+const SLOT_SCALE := Vector2(0.52, 0.52)
 
 
 # =========================================================
@@ -51,7 +51,6 @@ const C_PHASE_RED := Color("#D63A3A")
 # =========================================================
 
 @onready var background: Sprite2D = $Background
-@onready var river_water: Node2D = $RiverWater
 @onready var slots_parent: Node2D = $Slots
 @onready var boards_parent: Node2D = $Boards
 
@@ -301,20 +300,14 @@ func _create_random_slots():
 	var slot_scene = load(BRIDGE_SLOT_SCENE_PATH)
 	var screen_size := get_viewport_rect().size
 	
-	# Estas son posiciones posibles en el puente.
-	# Cada partida se escogen 4 aleatorias.
+	# Posiciones donde van las piezas del puente.
+	# Se ven como huecos con la forma exacta de cada tabla.
 	var possible_positions := [
-		Vector2(screen_size.x * 0.31, screen_size.y * 0.48),
-		Vector2(screen_size.x * 0.40, screen_size.y * 0.51),
-		Vector2(screen_size.x * 0.49, screen_size.y * 0.47),
-		Vector2(screen_size.x * 0.58, screen_size.y * 0.51),
-		Vector2(screen_size.x * 0.45, screen_size.y * 0.61),
-		Vector2(screen_size.x * 0.55, screen_size.y * 0.61),
-		Vector2(screen_size.x * 0.36, screen_size.y * 0.59),
-		Vector2(screen_size.x * 0.64, screen_size.y * 0.59)
+		Vector2(screen_size.x * 0.38, screen_size.y * 0.50),
+		Vector2(screen_size.x * 0.46, screen_size.y * 0.50),
+		Vector2(screen_size.x * 0.54, screen_size.y * 0.50),
+		Vector2(screen_size.x * 0.62, screen_size.y * 0.50)
 	]
-	
-	possible_positions.shuffle()
 	
 	var board_ids := [1, 2, 3, 4]
 	board_ids.shuffle()
@@ -326,6 +319,8 @@ func _create_random_slots():
 		var slot = slot_scene.instantiate()
 		slots_parent.add_child(slot)
 		
+		# Usa la MISMA imagen de la tabla para el slot.
+		# Por eso la forma calza perfecto.
 		slot.setup(board_id, BOARD_TEXTURES[board_id], slot_position, SLOT_SCALE)
 		slots.append(slot)
 
@@ -345,10 +340,10 @@ func _create_boards():
 	
 	board_ids.shuffle()
 	
-	var spacing := 145.0
+	var spacing := screen_size.x * 0.14
 	var total_width := spacing * float(board_ids.size() - 1)
 	var start_x := screen_size.x * 0.5 - total_width * 0.5
-	var start_y := screen_size.y - 95.0
+	var start_y := screen_size.y * 0.86
 	
 	for i in range(board_ids.size()):
 		var board_id: int = board_ids[i]
@@ -378,8 +373,7 @@ func _on_board_dropped(board):
 	
 	if target_slot:
 		target_slot.place_board()
-		board.lock_to_position(target_slot.global_position)
-		board.set_correct_feedback()
+		board.lock_and_hide()
 		
 		placed_boards += 1
 		_update_hud()
@@ -403,7 +397,7 @@ func _get_matching_slot_for_board(board):
 		if not slot.can_accept(board.board_id):
 			continue
 		
-		var distance: float = board.global_position.distance_to(slot.global_position)
+		var distance: float = board.global_position.distance_to(slot.get_center_position())
 		
 		if distance <= DROP_DISTANCE:
 			return slot
@@ -419,7 +413,7 @@ func _get_nearest_slot(position_to_check: Vector2):
 		if slot.occupied:
 			continue
 		
-		var distance: float = position_to_check.distance_to(slot.global_position)
+		var distance: float = position_to_check.distance_to(slot.get_center_position())
 		
 		if distance < nearest_distance:
 			nearest_distance = distance
