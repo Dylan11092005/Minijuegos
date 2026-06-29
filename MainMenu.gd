@@ -406,8 +406,7 @@ func _on_button_22_pressed() -> void:
 	minigame_data.controls = [
 		
 
-{ "action": "Arrastrar tablas", "icon": "res://Minigames/ui_global/assets/ClickIcon.png" },
-		{ "action": "Usar martillo", "icon": "res://Minigames/ui_global/assets/ClickIcon.png" },
+{ "action": "Arrastrar tablas, arrastrar martillo", "icon": "res://Minigames/ui_global/assets/ClickIcon.png" },
 	]
 
 
