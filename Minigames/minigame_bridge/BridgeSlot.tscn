@@ -8,3 +8,5 @@ script = ExtResource("1_ka4yd")
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=411521290]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1246803682]
+
+[node name="OutlineSprite" type="Sprite2D" parent="." unique_id=1874550539]

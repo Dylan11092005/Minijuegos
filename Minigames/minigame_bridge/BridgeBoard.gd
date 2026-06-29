@@ -7,12 +7,12 @@ signal dropped(board)
 var sprite: Sprite2D
 var collision_shape: CollisionShape2D
 
-var board_id := 0
-var start_global_position := Vector2.ZERO
+var board_id: int = 0
+var start_global_position: Vector2 = Vector2.ZERO
 
-var dragging := false
-var locked := false
-var mouse_offset := Vector2.ZERO
+var dragging: bool = false
+var locked: bool = false
+var mouse_offset: Vector2 = Vector2.ZERO
 
 
 func _ready():
@@ -52,7 +52,7 @@ func setup(p_board_id: int, texture_path: String, p_position: Vector2, p_scale: 
 	locked = false
 	visible = true
 	
-	z_index = 30
+	z_index = 40
 	
 	if ResourceLoader.exists(texture_path):
 		var texture: Texture2D = load(texture_path)
@@ -64,6 +64,8 @@ func setup(p_board_id: int, texture_path: String, p_position: Vector2, p_scale: 
 		var rect := RectangleShape2D.new()
 		rect.size = texture.get_size() * p_scale
 		collision_shape.shape = rect
+	else:
+		push_error("No se encontró la tabla: " + texture_path)
 
 
 func _input_event(_viewport, event, _shape_idx):
@@ -98,8 +100,17 @@ func _drop_board():
 		return
 	
 	dragging = false
-	z_index = 30
+	z_index = 40
 	dropped.emit(self)
+
+
+func lock_to_position(target_position: Vector2):
+	locked = true
+	dragging = false
+	z_index = 35
+	
+	var tween := create_tween()
+	tween.tween_property(self, "global_position", target_position, 0.18)
 
 
 func lock_and_hide():
@@ -111,7 +122,7 @@ func lock_and_hide():
 func return_to_start():
 	dragging = false
 	locked = false
-	z_index = 30
+	z_index = 40
 	
 	var tween := create_tween()
 	tween.tween_property(self, "global_position", start_global_position, 0.20)

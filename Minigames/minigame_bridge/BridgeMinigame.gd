@@ -5,7 +5,9 @@ extends Node2D
 # PATHS
 # =========================================================
 
-const BACKGROUND_PATH := "res://Minigames/minigame_bridge/assets/background.png"
+const BACKGROUND_BROKEN_PATH := "res://Minigames/minigame_bridge/assets/background.png"
+const BACKGROUND_FIXED_PATH := "res://Minigames/minigame_bridge/assets/background_fixed.png"
+const HAMMER_PATH := "res://Minigames/minigame_bridge/assets/hammer.png"
 
 const BRIDGE_BOARD_SCENE_PATH := "res://Minigames/minigame_bridge/BridgeBoard.tscn"
 const BRIDGE_SLOT_SCENE_PATH := "res://Minigames/minigame_bridge/BridgeSlot.tscn"
@@ -28,9 +30,10 @@ const BOARD_TEXTURES := {
 const TOTAL_TIME := 40.0
 const TOTAL_BOARDS := 4
 
+const DROP_DISTANCE := 120.0
 const BOARD_SCALE := Vector2(0.46, 0.46)
 const SLOT_SCALE := Vector2(0.46, 0.46)
-const DROP_DISTANCE := 105.0
+const HAMMER_SCALE := Vector2(0.26, 0.26)
 
 
 # =========================================================
@@ -50,8 +53,10 @@ const C_PHASE_RED := Color("#D63A3A")
 # =========================================================
 
 @onready var background: Sprite2D = $Background
+@onready var river_water: Node2D = $RiverWater
 @onready var slots_parent: Node2D = $Slots
 @onready var boards_parent: Node2D = $Boards
+@onready var hammer: Sprite2D = $Hammer
 
 @onready var hud: CanvasLayer = $HUD
 @onready var board_label: Label = $HUD/BoardLabel
@@ -69,9 +74,10 @@ var rng := RandomNumberGenerator.new()
 var slots: Array = []
 var boards: Array = []
 
-var placed_boards := 0
-var game_started := false
-var game_over := false
+var placed_boards: int = 0
+var game_started: bool = false
+var game_over: bool = false
+var hammer_animating: bool = false
 
 
 # =========================================================
@@ -82,7 +88,9 @@ func _ready():
 	rng.randomize()
 	randomize()
 	
+	_remove_old_bridge_layers()
 	_setup_background()
+	_setup_hammer()
 	_setup_timer_ui()
 	_setup_game_result()
 	_setup_ui()
@@ -101,6 +109,27 @@ func _process(_delta):
 
 
 # =========================================================
+# IMPORTANT CLEANUP
+# =========================================================
+
+func _remove_old_bridge_layers():
+	# Esto borra capas viejas que estaban causando que el puente se viera pegado encima.
+	var old_nodes := [
+		"RepairLayer",
+		"BridgeLayer",
+		"BridgeFixed",
+		"BridgeBroken",
+		"BridgeSprite"
+	]
+	
+	for node_name in old_nodes:
+		var old_node = get_node_or_null(node_name)
+		
+		if old_node:
+			old_node.queue_free()
+
+
+# =========================================================
 # BACKGROUND
 # =========================================================
 
@@ -108,21 +137,104 @@ func _setup_background():
 	if not background:
 		return
 	
-	if ResourceLoader.exists(BACKGROUND_PATH):
-		background.texture = load(BACKGROUND_PATH)
-	
 	background.position = get_viewport_rect().size / 2
 	background.z_index = -20
 	
-	var screen_size := get_viewport_rect().size
+	_set_background(BACKGROUND_BROKEN_PATH)
+
+
+func _set_background(path: String):
+	if not background:
+		return
+	
+	if not ResourceLoader.exists(path):
+		push_error("No se encontró el fondo: " + path)
+		return
+	
+	background.texture = load(path)
+	
+	var screen_size: Vector2 = get_viewport_rect().size
 	
 	if background.texture:
-		var texture_size := background.texture.get_size()
-		var scale_x := screen_size.x / texture_size.x
-		var scale_y := screen_size.y / texture_size.y
-		var final_scale = max(scale_x, scale_y)
+		var texture_size: Vector2 = background.texture.get_size()
+		var scale_x: float = screen_size.x / texture_size.x
+		var scale_y: float = screen_size.y / texture_size.y
+		var final_scale: float = max(scale_x, scale_y)
 		
 		background.scale = Vector2(final_scale, final_scale)
+		background.position = screen_size / 2
+
+
+# =========================================================
+# HAMMER
+# =========================================================
+
+func _setup_hammer():
+	hammer = get_node_or_null("Hammer")
+	
+	if not hammer:
+		hammer = Sprite2D.new()
+		hammer.name = "Hammer"
+		add_child(hammer)
+	
+	if ResourceLoader.exists(HAMMER_PATH):
+		hammer.texture = load(HAMMER_PATH)
+	else:
+		push_error("No se encontró hammer.png en: " + HAMMER_PATH)
+	
+	hammer.visible = false
+	hammer.z_index = 120
+	hammer.scale = HAMMER_SCALE
+	hammer.rotation_degrees = -35
+
+
+func _play_hammer_animation():
+	if hammer:
+		hammer.visible = true
+	
+	var screen_size: Vector2 = get_viewport_rect().size
+	
+	var hit_positions := [
+		Vector2(screen_size.x * 0.38, screen_size.y * 0.45),
+		Vector2(screen_size.x * 0.46, screen_size.y * 0.45),
+		Vector2(screen_size.x * 0.54, screen_size.y * 0.45),
+		Vector2(screen_size.x * 0.62, screen_size.y * 0.45),
+	]
+	
+	for hit_position in hit_positions:
+		await _hammer_hit_at(hit_position)
+	
+	if hammer:
+		hammer.visible = false
+	
+	# Oculta las tablas colocadas antes de cambiar al fondo arreglado.
+	for board in boards:
+		board.visible = false
+	
+	_set_background(BACKGROUND_FIXED_PATH)
+	
+	await get_tree().create_timer(0.45).timeout
+	
+	_win_game()
+
+
+func _hammer_hit_at(hit_position: Vector2):
+	if not hammer:
+		return
+	
+	hammer.position = hit_position + Vector2(-45, -90)
+	hammer.rotation_degrees = -45
+	hammer.scale = HAMMER_SCALE
+	
+	var tween := create_tween()
+	
+	tween.tween_property(hammer, "position", hit_position + Vector2(0, -35), 0.14)
+	tween.parallel().tween_property(hammer, "rotation_degrees", 18.0, 0.14)
+	
+	tween.tween_property(hammer, "position", hit_position + Vector2(-38, -82), 0.11)
+	tween.parallel().tween_property(hammer, "rotation_degrees", -45.0, 0.11)
+	
+	await tween.finished
 
 
 # =========================================================
@@ -266,11 +378,16 @@ func _get_counter_color() -> Color:
 func _start_game():
 	game_started = true
 	game_over = false
+	hammer_animating = false
 	placed_boards = 0
 	
+	_set_background(BACKGROUND_BROKEN_PATH)
+	
+	if hammer:
+		hammer.visible = false
+	
 	_clear_round()
-	_draw_bridge_repair_base()
-	_create_random_slots()
+	_create_slots()
 	_create_boards()
 	
 	_start_global_timer()
@@ -291,87 +408,32 @@ func _clear_round():
 # =========================================================
 # CREATE SLOTS AND BOARDS
 # =========================================================
-func _draw_bridge_repair_base():
-	var old_base = slots_parent.get_node_or_null("BridgeRepairBase")
-	
-	if old_base:
-		old_base.queue_free()
-	
-	var base := Node2D.new()
-	base.name = "BridgeRepairBase"
-	base.z_index = 10
-	slots_parent.add_child(base)
-	
-	var screen_size := get_viewport_rect().size
-	
-	# Base oscura que conecta el puente izquierdo con el derecho.
-	var back_beam := Polygon2D.new()
-	back_beam.color = Color("#4B2A13")
-	back_beam.polygon = PackedVector2Array([
-		Vector2(screen_size.x * 0.29, screen_size.y * 0.47),
-		Vector2(screen_size.x * 0.71, screen_size.y * 0.47),
-		Vector2(screen_size.x * 0.72, screen_size.y * 0.535),
-		Vector2(screen_size.x * 0.28, screen_size.y * 0.535),
-	])
-	base.add_child(back_beam)
-	
-	var front_beam := Polygon2D.new()
-	front_beam.color = Color("#3A1F0D")
-	front_beam.polygon = PackedVector2Array([
-		Vector2(screen_size.x * 0.28, screen_size.y * 0.605),
-		Vector2(screen_size.x * 0.72, screen_size.y * 0.605),
-		Vector2(screen_size.x * 0.735, screen_size.y * 0.665),
-		Vector2(screen_size.x * 0.265, screen_size.y * 0.665),
-	])
-	base.add_child(front_beam)
-	
-	# Líneas de madera entre los dos lados del puente.
-	for i in range(5):
-		var t: float = float(i) / 4.0
-		
-		var x_top: float = lerpf(screen_size.x * 0.30, screen_size.x * 0.70, t)
-		var x_bottom: float = lerpf(screen_size.x * 0.285, screen_size.x * 0.715, t)
-		
-		var line := Line2D.new()
-		line.width = 5
-		line.default_color = Color("#5C3416")
-		line.points = PackedVector2Array([
-			Vector2(x_top, screen_size.y * 0.485),
-			Vector2(x_bottom, screen_size.y * 0.645),
-		])
-		base.add_child(line)
-		
-		
-		
-func _create_random_slots():
+
+func _create_slots():
 	if not ResourceLoader.exists(BRIDGE_SLOT_SCENE_PATH):
 		push_error("No se encontró BridgeSlot.tscn")
 		return
 	
 	var slot_scene = load(BRIDGE_SLOT_SCENE_PATH)
-	var screen_size := get_viewport_rect().size
+	var screen_size: Vector2 = get_viewport_rect().size
 	
-	# Posiciones donde van las piezas del puente.
-	# Se ven como huecos con la forma exacta de cada tabla.
-	var possible_positions := [
-	Vector2(screen_size.x * 0.38, screen_size.y * 0.555),
-	Vector2(screen_size.x * 0.46, screen_size.y * 0.555),
-	Vector2(screen_size.x * 0.54, screen_size.y * 0.555),
-	Vector2(screen_size.x * 0.62, screen_size.y * 0.555)
-]
+	var slot_positions := [
+		Vector2(screen_size.x * 0.38, screen_size.y * 0.50),
+		Vector2(screen_size.x * 0.46, screen_size.y * 0.50),
+		Vector2(screen_size.x * 0.54, screen_size.y * 0.50),
+		Vector2(screen_size.x * 0.62, screen_size.y * 0.50),
+	]
 	
-	var board_ids := [1, 2, 3, 4]
+	var board_ids: Array = [1, 2, 3, 4]
 	board_ids.shuffle()
 	
 	for i in range(TOTAL_BOARDS):
 		var board_id: int = board_ids[i]
-		var slot_position: Vector2 = possible_positions[i]
+		var slot_position: Vector2 = slot_positions[i]
 		
 		var slot = slot_scene.instantiate()
 		slots_parent.add_child(slot)
 		
-		# Usa la MISMA imagen de la tabla para el slot.
-		# Por eso la forma calza perfecto.
 		slot.setup(board_id, BOARD_TEXTURES[board_id], slot_position, SLOT_SCALE)
 		slots.append(slot)
 
@@ -382,23 +444,23 @@ func _create_boards():
 		return
 	
 	var board_scene = load(BRIDGE_BOARD_SCENE_PATH)
-	var screen_size := get_viewport_rect().size
+	var screen_size: Vector2 = get_viewport_rect().size
 	
-	var board_ids := []
+	var board_ids: Array = []
 	
 	for slot in slots:
 		board_ids.append(slot.board_id)
 	
 	board_ids.shuffle()
 	
-	var spacing := screen_size.x * 0.14
-	var total_width := spacing * float(board_ids.size() - 1)
-	var start_x := screen_size.x * 0.5 - total_width * 0.5
-	var start_y := screen_size.y * 0.86
+	var spacing: float = screen_size.x * 0.14
+	var total_width: float = spacing * float(board_ids.size() - 1)
+	var start_x: float = screen_size.x * 0.5 - total_width * 0.5
+	var start_y: float = screen_size.y * 0.86
 	
 	for i in range(board_ids.size()):
 		var board_id: int = board_ids[i]
-		var board_position := Vector2(start_x + spacing * i, start_y)
+		var board_position := Vector2(start_x + spacing * float(i), start_y)
 		
 		var board = board_scene.instantiate()
 		boards_parent.add_child(board)
@@ -420,17 +482,23 @@ func _on_board_dropped(board):
 	if game_over:
 		return
 	
+	if hammer_animating:
+		return
+	
 	var target_slot = _get_matching_slot_for_board(board)
 	
 	if target_slot:
 		target_slot.place_board()
-		board.lock_and_hide()
+		
+		# Ahora la tabla NO desaparece.
+		# Se queda visible en el puente.
+		board.lock_to_position(target_slot.get_center_position())
 		
 		placed_boards += 1
 		_update_hud()
 		
 		if placed_boards >= TOTAL_BOARDS:
-			_win_game()
+			_start_final_repair()
 	else:
 		var wrong_slot = _get_nearest_slot(board.global_position)
 		
@@ -476,6 +544,21 @@ func _get_nearest_slot(position_to_check: Vector2):
 	return null
 
 
+func _start_final_repair():
+	hammer_animating = true
+	_stop_global_timer()
+	
+	for board in boards:
+		board.locked = true
+	
+	for slot in slots:
+		slot.visible = false
+	
+	await get_tree().create_timer(0.25).timeout
+	
+	await _play_hammer_animation()
+
+
 # =========================================================
 # WIN / LOSE
 # =========================================================
@@ -494,7 +577,6 @@ func _win_game():
 	game_over = true
 	game_started = false
 	
-	_stop_global_timer()
 	_disable_boards()
 	
 	if game_result:
@@ -513,6 +595,9 @@ func _lose_game():
 	
 	_stop_global_timer()
 	_disable_boards()
+	
+	if hammer:
+		hammer.visible = false
 	
 	if game_result:
 		if game_result.has_method("show_lose"):
