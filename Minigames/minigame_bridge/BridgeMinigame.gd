@@ -68,6 +68,11 @@ const C_PHASE_RED := Color("#D63A3A")
 @onready var hud: CanvasLayer = $HUD
 @onready var board_label: Label = $HUD/BoardLabel
 
+# --- Sonidos ---
+@onready var background_sound: AudioStreamPlayer = $BackgroundSound
+@onready var wood_sound: AudioStreamPlayer = $WoodSound
+@onready var hammer_sound: AudioStreamPlayer = $HammerSound
+
 
 # =========================================================
 # VARIABLES
@@ -103,6 +108,9 @@ var current_lives: int = MAX_LIVES
 var damage_layer: CanvasLayer = null
 var damage_rect: ColorRect = null
 
+# --- Control del loop de sonido de fondo ---
+var _background_sound_active: bool = false
+
 
 # =========================================================
 # LIFECYCLE
@@ -112,6 +120,7 @@ func _ready():
 	rng.randomize()
 	randomize()
 	
+	_setup_sound_volumes()
 	_remove_old_bridge_layers()
 	_setup_background()
 	_setup_hammer()
@@ -188,6 +197,63 @@ func _remove_old_bridge_layers():
 		
 		if old_node:
 			old_node.queue_free()
+
+
+# =========================================================
+# SONIDOS
+# =========================================================
+
+# Ajusta el volumen de los sonidos respecto a su valor original.
+func _setup_sound_volumes() -> void:
+	if background_sound:
+		background_sound.volume_db -= 15.0
+	
+	if hammer_sound:
+		hammer_sound.volume_db -= 5.0
+
+
+# Arranca el sonido de fondo en loop. Se queda sonando mientras
+# _background_sound_active sea true (es decir, hasta que el
+# minijuego termine, ya sea ganando o perdiendo).
+func _start_background_sound() -> void:
+	_background_sound_active = true
+	
+	if not background_sound:
+		return
+	
+	if background_sound.stream:
+		if background_sound.stream is AudioStreamWAV:
+			background_sound.stream.loop_mode = AudioStreamWAV.LOOP_FORWARD
+		elif background_sound.stream is AudioStreamOggVorbis:
+			background_sound.stream.loop = true
+	
+	if not background_sound.finished.is_connected(_on_background_sound_finished):
+		background_sound.finished.connect(_on_background_sound_finished)
+	
+	background_sound.play()
+
+
+# Fallback manual de loop, por si el stream no soporta loop nativo.
+func _on_background_sound_finished() -> void:
+	if _background_sound_active and background_sound:
+		background_sound.play()
+
+
+func _stop_background_sound() -> void:
+	_background_sound_active = false
+	
+	if background_sound:
+		background_sound.stop()
+
+
+func _play_wood_sound() -> void:
+	if wood_sound:
+		wood_sound.play()
+
+
+func _play_hammer_sound() -> void:
+	if hammer_sound:
+		hammer_sound.play()
 
 
 # =========================================================
@@ -323,6 +389,7 @@ func _check_hammer_hits():
 		
 		if distance <= HAMMER_HIT_RADIUS:
 			hammer_hits[i] = true
+			_play_hammer_sound()
 			await _hammer_hit_effect(hit_position)
 			_check_all_hammer_hits()
 			return
@@ -654,6 +721,7 @@ func _start_game():
 	_create_boards()
 	
 	_start_global_timer()
+	_start_background_sound()
 	_update_hud()
 
 
@@ -755,6 +823,8 @@ func _on_board_dropped(board):
 	if target_slot:
 		target_slot.place_board()
 		board.lock_to_position(target_slot.get_center_position())
+		
+		_play_wood_sound()
 		
 		placed_boards += 1
 		_update_hud()
@@ -886,6 +956,7 @@ func _win_game():
 	game_over = true
 	game_started = false
 	
+	_stop_background_sound()
 	_disable_boards()
 	
 	if game_result:
@@ -902,6 +973,7 @@ func _lose_game():
 	game_over = true
 	game_started = false
 	
+	_stop_background_sound()
 	_stop_global_timer()
 	_disable_boards()
 	

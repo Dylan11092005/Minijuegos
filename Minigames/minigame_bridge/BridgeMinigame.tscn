@@ -1,6 +1,9 @@
 [gd_scene format=3 uid="uid://ce0qmpf7kqqtv"]
 
 [ext_resource type="Script" uid="uid://cwy5yu0rry2dq" path="res://Minigames/minigame_bridge/BridgeMinigame.gd" id="1_r31ey"]
+[ext_resource type="AudioStream" uid="uid://bmhxn8a34megl" path="res://Minigames/minigame_bridge/music/BridgeSound.mp3" id="2_vua0n"]
+[ext_resource type="AudioStream" uid="uid://cqykybvymr16q" path="res://Minigames/minigame_bridge/music/WoodSound.mp3" id="3_3afe2"]
+[ext_resource type="AudioStream" uid="uid://bo36fx4pc8mre" path="res://Minigames/minigame_bridge/music/HammerSound.mp3" id="4_3v2xv"]
 
 [node name="BridgeMinigame" type="Node2D" unique_id=58310518]
 script = ExtResource("1_r31ey")
@@ -20,3 +23,12 @@ script = ExtResource("1_r31ey")
 [node name="BoardLabel" type="Label" parent="HUD" unique_id=226387311]
 offset_right = 40.0
 offset_bottom = 23.0
+
+[node name="BackgroundSound" type="AudioStreamPlayer" parent="." unique_id=1701655977]
+stream = ExtResource("2_vua0n")
+
+[node name="WoodSound" type="AudioStreamPlayer" parent="." unique_id=1159446622]
+stream = ExtResource("3_3afe2")
+
+[node name="HammerSound" type="AudioStreamPlayer" parent="." unique_id=36857677]
+stream = ExtResource("4_3v2xv")
