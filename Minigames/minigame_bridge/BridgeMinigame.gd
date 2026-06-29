@@ -255,7 +255,7 @@ func _start_hammer_phase():
 	hammer_hit_busy = false
 	hammer_hits = [false, false, false, false, false, false]
 	
-	_stop_global_timer()
+	
 	
 	for board in boards:
 		board.locked = true
@@ -373,6 +373,8 @@ func _finish_repair_with_hammer():
 	hammer_phase = false
 	hammer_dragging = false
 	hammer_hit_busy = false
+	
+	_stop_global_timer()
 	
 	await get_tree().create_timer(0.35).timeout
 	
