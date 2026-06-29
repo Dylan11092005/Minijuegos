@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://ce0qmpf7kqqtv"]
 
 [ext_resource type="Script" uid="uid://cwy5yu0rry2dq" path="res://Minigames/minigame_bridge/BridgeMinigame.gd" id="1_r31ey"]
-[ext_resource type="Script" uid="uid://binuc6mgea21v" path="res://Minigames/minigame_bridge/BridgeRepairLayer.gd" id="2_y5a38"]
 
 [node name="BridgeMinigame" type="Node2D" unique_id=58310518]
 script = ExtResource("1_r31ey")
@@ -9,10 +8,6 @@ script = ExtResource("1_r31ey")
 [node name="Background" type="Sprite2D" parent="." unique_id=1288221426]
 
 [node name="RiverWater" type="Node2D" parent="." unique_id=338142381]
-
-[node name="RepairLayer" type="Node2D" parent="." unique_id=1115074069]
-visible = false
-script = ExtResource("2_y5a38")
 
 [node name="Slots" type="Node2D" parent="." unique_id=1923364514]
 

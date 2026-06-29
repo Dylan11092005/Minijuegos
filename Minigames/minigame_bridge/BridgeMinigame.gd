@@ -14,6 +14,7 @@ const BRIDGE_SLOT_SCENE_PATH := "res://Minigames/minigame_bridge/BridgeSlot.tscn
 
 const TIMER_UI_SCENE_PATH := "res://Minigames/ui_global/TimerUI.tscn"
 const GAME_RESULT_SCENE_PATH := "res://Minigames/ui_global/GameResult.tscn"
+const LIVES_UI_SCRIPT_PATH := "res://Minigames/ui_global/LivesUi.gd"
 
 const BOARD_TEXTURES := {
 	1: "res://Minigames/minigame_bridge/assets/boards/board_1.png",
@@ -38,6 +39,8 @@ const SLOT_SCALE := Vector2(0.38, 0.38)
 const HAMMER_SCALE := Vector2(0.23, 0.23)
 const HAMMER_PICK_RADIUS := 95.0
 const HAMMER_HIT_RADIUS := 85.0
+
+const MAX_LIVES := 3
 
 
 # =========================================================
@@ -89,8 +92,16 @@ var hammer_hit_busy: bool = false
 var hammer_offset: Vector2 = Vector2.ZERO
 var hammer_hits: Array = []
 var hammer_hit_positions: Array = []
+
 var fade_layer: CanvasLayer = null
 var fade_rect: ColorRect = null
+
+var lives_layer: CanvasLayer = null
+var lives_ui = null
+var current_lives: int = MAX_LIVES
+
+var damage_layer: CanvasLayer = null
+var damage_rect: ColorRect = null
 
 
 # =========================================================
@@ -104,10 +115,12 @@ func _ready():
 	_remove_old_bridge_layers()
 	_setup_background()
 	_setup_hammer()
-	_setup_fade_overlay()
 	_setup_timer_ui()
 	_setup_game_result()
 	_setup_ui()
+	_setup_lives_ui()
+	_setup_fade_overlay()
+	_setup_damage_effect()
 	
 	call_deferred("_start_game")
 
@@ -263,16 +276,16 @@ func _start_hammer_phase():
 	
 	if hammer:
 		hammer.visible = true
-	hammer.global_position = Vector2(screen_size.x * 0.50, screen_size.y * 0.92)
-	hammer.rotation_degrees = -35
-	hammer.scale = Vector2.ZERO
-	hammer.z_index = 150
-
-	var hammer_intro := create_tween()
-	hammer_intro.set_ease(Tween.EASE_OUT)
-	hammer_intro.set_trans(Tween.TRANS_BACK)
-	hammer_intro.tween_property(hammer, "global_position", Vector2(screen_size.x * 0.50, screen_size.y * 0.86), 0.35)
-	hammer_intro.parallel().tween_property(hammer, "scale", HAMMER_SCALE, 0.35)
+		hammer.global_position = Vector2(screen_size.x * 0.50, screen_size.y * 0.92)
+		hammer.rotation_degrees = -35
+		hammer.scale = Vector2.ZERO
+		hammer.z_index = 150
+		
+		var hammer_intro := create_tween()
+		hammer_intro.set_ease(Tween.EASE_OUT)
+		hammer_intro.set_trans(Tween.TRANS_BACK)
+		hammer_intro.tween_property(hammer, "global_position", Vector2(screen_size.x * 0.50, screen_size.y * 0.86), 0.35)
+		hammer_intro.parallel().tween_property(hammer, "scale", HAMMER_SCALE, 0.35)
 	
 	_update_hud()
 
@@ -327,19 +340,15 @@ func _hammer_hit_effect(hit_position: Vector2):
 	
 	var tween := create_tween()
 	
-	# Se acerca al punto lentamente.
 	tween.tween_property(hammer, "global_position", start_position, 0.12)
 	tween.parallel().tween_property(hammer, "rotation_degrees", -42.0, 0.12)
 	
-	# Golpe más lento y visible.
 	tween.tween_property(hammer, "global_position", hit_down_position, 0.22)
 	tween.parallel().tween_property(hammer, "rotation_degrees", 18.0, 0.22)
 	tween.parallel().tween_property(hammer, "scale", HAMMER_SCALE * 1.12, 0.22)
 	
-	# Pequeña pausa para que se sienta el golpe.
 	tween.tween_interval(0.08)
 	
-	# Regresa.
 	tween.tween_property(hammer, "global_position", back_position, 0.20)
 	tween.parallel().tween_property(hammer, "rotation_degrees", -35.0, 0.20)
 	tween.parallel().tween_property(hammer, "scale", HAMMER_SCALE, 0.20)
@@ -367,7 +376,6 @@ func _finish_repair_with_hammer():
 	
 	await get_tree().create_timer(0.35).timeout
 	
-	# Fundido suave antes de cambiar al puente reparado.
 	if fade_rect:
 		var fade_out := create_tween()
 		fade_out.tween_property(fade_rect, "modulate:a", 0.45, 0.45)
@@ -383,7 +391,6 @@ func _finish_repair_with_hammer():
 	
 	await get_tree().create_timer(0.15).timeout
 	
-	# Fundido suave de regreso.
 	if fade_rect:
 		var fade_in := create_tween()
 		fade_in.tween_property(fade_rect, "modulate:a", 0.0, 0.55)
@@ -392,6 +399,11 @@ func _finish_repair_with_hammer():
 	await get_tree().create_timer(0.25).timeout
 	
 	_win_game()
+
+
+# =========================================================
+# FADE OVERLAY
+# =========================================================
 
 func _setup_fade_overlay():
 	fade_layer = CanvasLayer.new()
@@ -407,7 +419,8 @@ func _setup_fade_overlay():
 	fade_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
 	
 	fade_layer.add_child(fade_rect)
-	
+
+
 # =========================================================
 # TIMER UI GLOBAL
 # =========================================================
@@ -556,6 +569,61 @@ func _get_counter_color() -> Color:
 
 
 # =========================================================
+# VIDAS GLOBAL
+# =========================================================
+
+func _setup_lives_ui():
+	if lives_layer:
+		return
+	
+	lives_layer = CanvasLayer.new()
+	lives_layer.name = "LivesLayer"
+	lives_layer.layer = 120
+	add_child(lives_layer)
+	
+	if ResourceLoader.exists(LIVES_UI_SCRIPT_PATH):
+		var lives_script = load(LIVES_UI_SCRIPT_PATH)
+		lives_ui = Node2D.new()
+		lives_ui.name = "LivesUI"
+		lives_ui.set_script(lives_script)
+		lives_layer.add_child(lives_ui)
+	else:
+		push_error("No se encontró LivesUi.gd en: " + LIVES_UI_SCRIPT_PATH)
+		return
+	
+	# IMPORTANTE:
+	# No lo movemos con position porque el LivesUi global ya maneja esquinas.
+	lives_ui.position = Vector2.ZERO
+	
+	# TOP_RIGHT en el enum global normalmente es 1.
+	lives_ui.set("panel_corner", 1)
+	lives_ui.set("panel_margin", Vector2(25, 25))
+	
+	if lives_ui.has_method("set_max_lives"):
+		lives_ui.set_max_lives(MAX_LIVES)
+	else:
+		lives_ui.set("max_lives", MAX_LIVES)
+	
+	_update_lives_ui()
+	
+	if lives_ui.has_method("queue_redraw"):
+		lives_ui.queue_redraw()
+
+
+func _update_lives_ui():
+	if not lives_ui:
+		return
+	
+	if lives_ui.has_method("actualizar_vidas"):
+		lives_ui.actualizar_vidas(current_lives)
+	else:
+		lives_ui.set("current_lives", current_lives)
+	
+	if lives_ui.has_method("queue_redraw"):
+		lives_ui.queue_redraw()
+
+
+# =========================================================
 # GAME START
 # =========================================================
 
@@ -568,7 +636,12 @@ func _start_game():
 	hammer_hit_busy = false
 	
 	placed_boards = 0
+	current_lives = MAX_LIVES
 	
+	placed_boards = 0
+	current_lives = MAX_LIVES
+
+	_update_lives_ui()
 	_set_background(BACKGROUND_BROKEN_PATH)
 	
 	if hammer:
@@ -614,7 +687,6 @@ func _create_slots():
 		Vector2(screen_size.x * 0.655, screen_size.y * 0.50),
 	]
 	
-	# Se repiten dos tablas usando las imágenes que ya tienes.
 	var board_ids: Array = [1, 2, 3, 4, 1, 2]
 	board_ids.shuffle()
 	
@@ -698,6 +770,7 @@ func _on_board_dropped(board):
 		
 		board.set_wrong_feedback()
 		board.return_to_start()
+		_lose_life()
 
 
 func _get_matching_slot_for_board(board):
@@ -731,6 +804,66 @@ func _get_nearest_slot(position_to_check: Vector2):
 		return nearest_slot
 	
 	return null
+
+
+# =========================================================
+# VIDAS
+# =========================================================
+
+func _lose_life():
+	current_lives -= 1
+	current_lives = max(current_lives, 0)
+	
+	_update_lives_ui()
+	_play_damage_effect()
+	
+	if current_lives <= 0:
+		await get_tree().create_timer(0.2).timeout
+		_lose_game()
+
+
+# =========================================================
+# EFECTO DAÑO
+# =========================================================
+
+func _setup_damage_effect():
+	damage_layer = CanvasLayer.new()
+	damage_layer.name = "DamageLayer"
+	damage_layer.layer = 200
+	add_child(damage_layer)
+	
+	damage_rect = ColorRect.new()
+	damage_rect.name = "DamageRect"
+	damage_rect.color = Color(1, 0, 0)
+	damage_rect.modulate.a = 0.0
+	damage_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	damage_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	
+	damage_layer.add_child(damage_rect)
+
+
+func _play_damage_effect():
+	if not damage_rect:
+		return
+	
+	var original_pos: Vector2 = position
+	
+	var flash_tween := create_tween()
+	damage_rect.modulate.a = 0.0
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.35, 0.08)
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.0, 0.22)
+	
+	var shake_tween := create_tween()
+	
+	for i in range(6):
+		var offset := Vector2(
+			randf_range(-8.0, 8.0),
+			randf_range(-8.0, 8.0)
+		)
+		
+		shake_tween.tween_property(self, "position", original_pos + offset, 0.03)
+	
+	shake_tween.tween_property(self, "position", original_pos, 0.05)
 
 
 # =========================================================

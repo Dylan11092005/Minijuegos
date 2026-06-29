@@ -388,3 +388,28 @@ func _on_button_20_pressed() -> void:
 	]
 	
 	get_tree().change_scene_to_file("res://Minigames/ui_global/MinigameIntro.tscn")
+
+
+func _on_button_22_pressed() -> void:
+	var minigame_data = get_node("/root/MinigameData")
+	
+	minigame_data.title = "¡Repara el puente!"
+	
+	minigame_data.description = "Un puente se rompió y debes arreglarlo antes de que alguien caiga."
+	
+	minigame_data.instructions = "Arrastra las tablas al lugar correcto para completar el puente. Si te equivocas, perderás vidas. Luego usa el martillo para terminar la reparación."
+	
+	minigame_data.video_path = "res://Minigames/minigame_bridge/assets/Bridge_Instruction.ogv"
+	
+	minigame_data.minigame_scene = "res://Minigames/minigame_bridge/BridgeMinigame.tscn"
+	
+	minigame_data.controls = [
+		
+
+{ "action": "Arrastrar tablas", "icon": "res://Minigames/ui_global/assets/ClickIcon.png" },
+		{ "action": "Usar martillo", "icon": "res://Minigames/ui_global/assets/ClickIcon.png" },
+	]
+
+
+	
+	get_tree().change_scene_to_file("res://Minigames/ui_global/MinigameIntro.tscn")
