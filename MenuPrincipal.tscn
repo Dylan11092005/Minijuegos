@@ -149,6 +149,10 @@ text = "Selector de edad"
 [connection signal="pressed" from="GridContainer/Button15" to="." method="_on_button_15_pressed"]
 [connection signal="pressed" from="GridContainer/Button16" to="." method="_on_button_16_pressed"]
 [connection signal="pressed" from="GridContainer/Button17" to="." method="_on_button_17_pressed"]
+
 [connection signal="pressed" from="GridContainer/Button19" to="." method="_on_button_19_pressed"]
+
+[connection signal="pressed" from="GridContainer/Button18" to="." method="_on_button_18_pressed"]
+
 [connection signal="pressed" from="GridContainer/Button21" to="." method="_on_button_21_pressed"]
 [connection signal="pressed" from="GridContainer/Button26" to="." method="_on_button_26_pressed"]

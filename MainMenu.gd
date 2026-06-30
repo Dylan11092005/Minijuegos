@@ -343,6 +343,7 @@ func _on_button_16_pressed() -> void:
 	
 
 
+
 func _on_button_19_pressed() -> void:
 	var minigame_data = get_node("/root/MinigameData")
 
@@ -369,3 +370,25 @@ Pierdes si fallas demasiadas respuestas o si no terminas dentro del tiempo estab
 	get_tree().change_scene_to_file("res://Minigames/ui_global/MinigameIntro.tscn")
 	
 	
+func _on_button_18_pressed() -> void:
+	var minigame_data = get_node("/root/MinigameData")
+	
+	minigame_data.title = "¡Encuentra a la familia!"
+	
+	minigame_data.description = "¡Alerta! Debes ir al punto de encuentro acordado con la familia durante una emergencia."
+	
+	minigame_data.instructions = "Mueve al rescatista dentro de la casa para encontrar a papá, mamá, hijo e hija. Rescata a los cuatro familiares y llévalos a la zona segura antes de que se acabe el tiempo."
+	
+	minigame_data.video_path = "res://Minigames/minigame_FamilyMeeting/assets/video/FamilyMeetingInstructions.ogv"
+	
+	minigame_data.minigame_scene = "res://Minigames/minigame_FamilyMeeting/FamilyMeetingMinigame.tscn"
+	
+	minigame_data.controls = [
+		{
+			"action": "Moverse derecha, izquierda, arriba y abajo",
+			"icon": "res://Minigames/ui_global/assets/Movement.png"
+		},
+	]
+	
+	get_tree().change_scene_to_file("res://Minigames/ui_global/MinigameIntro.tscn")
+
