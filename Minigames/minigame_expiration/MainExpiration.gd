@@ -31,6 +31,15 @@ const MONTH_NAMES = [
 	"julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
 ]
 
+## Rango (en días, hacia atrás y hacia adelante de "hoy") dentro del cual
+## se sortea la fecha de vencimiento de cada producto. Con 15, la fecha
+## puede caer entre 15 días antes de hoy (vencido) y 15 días después
+## (todavía bueno), pudiendo cruzar de un mes a otro sin problema.
+## Subilo si querés que el juego sea más difícil (fechas "más ajustadas"
+## no, al revés: un rango más grande da más variedad de fechas, pero no
+## cambia la dificultad de decidir si está vencido o no).
+const EXPIRATION_RANGE_DAYS: int = 15
+
 
 # =========================================================
 # EXPORTED VARIABLES
@@ -373,32 +382,20 @@ func _spawn_random_food() -> void:
 
 
 func _generate_random_expiration() -> void:
-	var today_dict: Dictionary = Time.get_datetime_dict_from_unix_time(_today_unix)
-
-	# El mes y el año son siempre los mismos que los de "hoy": así la fecha
-	# de vencimiento y la fecha actual nunca caen en un mes o un año
-	# distinto. Solo el día se elige al azar dentro de ese mismo mes.
-	var month: int = today_dict.month
-	var year: int = today_dict.year
-	var day: int = randi_range(1, _days_in_month(month, year))
-
-	_current_expiration_unix = Time.get_unix_time_from_datetime_dict({
-		"year": year, "month": month, "day": day,
-		"hour": 0, "minute": 0, "second": 0
-	})
+	# Elegimos un desfase aleatorio de días respecto a "hoy": puede ser
+	# negativo (fecha en el pasado -> ya vencido) o positivo (fecha en
+	# el futuro -> todavía bueno). Al sumarlo directamente en segundos
+	# sobre _today_unix, es Godot quien se encarga de "cruzar" el mes o
+	# el año correctamente (por ejemplo, 1 de julio - 5 días = 26 de
+	# junio), así que esto funciona sin importar qué día del mes sea hoy.
+	#
+	# ANTES: el día se sorteaba siempre dentro del mismo mes/año que hoy,
+	# así que si hoy era, por ejemplo, el día 1 del mes, casi ningún
+	# producto podía salir "vencido" (nunca había un día menor a 1 dentro
+	# de ese mismo mes).
+	var offset_days: int = randi_range(-EXPIRATION_RANGE_DAYS, EXPIRATION_RANGE_DAYS)
+	_current_expiration_unix = _today_unix + offset_days * 86400
 	date_label.text = _format_date(_current_expiration_unix)
-
-
-func _days_in_month(month: int, year: int) -> int:
-	var days_per_month: Array = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-	var days: int = days_per_month[month - 1]
-	if month == 2 and _is_leap_year(year):
-		days = 29
-	return days
-
-
-func _is_leap_year(year: int) -> bool:
-	return (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0)
 
 
 func _format_date(unix_time: int) -> String:

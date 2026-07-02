@@ -28,9 +28,17 @@ var _progress: float = 0.0
 func _ready() -> void:
 	z_as_relative = false
 
-	var win = DisplayServer.window_get_size()
-	_sw = float(win.x)
-	_sh = float(win.y)
+	# IMPORTANTE: usamos get_viewport_rect().size (tamaño "de diseño" del
+	# viewport, respetando el Stretch Mode del proyecto) en vez de
+	# DisplayServer.window_get_size() (tamaño real en píxeles de la ventana
+	# del sistema operativo). Si usáramos el tamaño real de la ventana,
+	# todo el fondo se calcularía en una escala distinta a la que usa
+	# Godot para escalar el canvas, y terminaba viéndose chiquito o mal
+	# proporcionado apenas la ventana no coincidía exactamente con la
+	# resolución base del proyecto.
+	var vp_size = get_viewport_rect().size
+	_sw = vp_size.x
+	_sh = vp_size.y
 	_horizon_y = _sh * 0.52
 
 	_build_sky()
