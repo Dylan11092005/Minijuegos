@@ -1,0 +1,132 @@
+extends Node2D
+
+@onready var game_result := $GameResult
+@onready var timer_ui := $TimerUI
+@onready var correct_label := $Hud/StatusPanel/CorrectLabel
+@onready var error_label := $Hud/StatusPanel/ErrorLabel
+@onready var correct_player := $CorrectPlayer
+@onready var error_player := $ErrorPlayer
+@onready var number_a := $Formula/NumberA
+@onready var operator := $Formula/Operator
+@onready var number_b := $Formula/NumberB
+@onready var equal := $Formula/Equal
+@onready var answer := $Formula/Answer
+@onready var music_player := $MusicPlayer
+
+var current_answer := 0
+var correct_answers := 0
+var wrong_answers := 0
+var game_finished := false
+
+const REQUIRED_ANSWERS := 10
+const MAX_ERRORS := 3
+const SYMBOL_PATH := "res://Minigames/minigame_mathChallenge/assets/objects/math_symbols/"
+
+func _ready() -> void:
+	update_hud()
+	timer_ui.iniciar(50, "Calcula en", "segundos")
+	timer_ui.time_up.connect(_on_timer_ui_time_up)
+	music_player.play()
+	randomize()
+	generate_question()
+
+func generate_question() -> void:
+	var is_addition := randi_range(0, 1) == 0
+	var a := 0
+	var b := 0
+
+	if is_addition:
+		a = randi_range(0, 9)
+		b = randi_range(0, 9 - a)
+		current_answer = a + b
+		operator.texture = load(SYMBOL_PATH + "+.png")
+	else:
+		a = randi_range(0, 9)
+		b = randi_range(0, a)
+		current_answer = a - b
+		operator.texture = load(SYMBOL_PATH + "-.png")
+
+	number_a.texture = load(SYMBOL_PATH + str(a) + ".png")
+	number_b.texture = load(SYMBOL_PATH + str(b) + ".png")
+	equal.texture = load(SYMBOL_PATH + "=.png")
+	answer.texture = load(SYMBOL_PATH + "_.png")
+
+	print("Respuesta correcta:", current_answer)
+
+func check_answer(selected_number: int) -> void:
+	if game_finished:
+		return
+
+	answer.texture = load(SYMBOL_PATH + str(selected_number) + ".png")
+
+	if selected_number == current_answer:
+		correct_answers += 1
+		correct_player.play()
+	else:
+		wrong_answers += 1
+		error_player.play()
+
+	update_hud()
+
+	if correct_answers >= REQUIRED_ANSWERS:
+		game_finished = true
+		timer_ui.detener()
+		music_player.stop()
+		game_result.show_win()
+		return
+
+	if wrong_answers >= MAX_ERRORS:
+		game_finished = true
+		timer_ui.detener()
+		music_player.stop()
+		game_result.show_lose()
+		return
+
+	await get_tree().create_timer(0.4).timeout
+
+	if game_finished:
+		return
+
+	generate_question()
+
+func update_hud() -> void:
+	correct_label.text = str(correct_answers) + "/" + str(REQUIRED_ANSWERS)
+	error_label.text = str(wrong_answers) + "/" + str(MAX_ERRORS)
+
+func _on_button_0_pressed() -> void:
+	check_answer(0)
+
+func _on_button_1_pressed() -> void:
+	check_answer(1)
+
+func _on_button_2_pressed() -> void:
+	check_answer(2)
+
+func _on_button_3_pressed() -> void:
+	check_answer(3)
+
+func _on_button_4_pressed() -> void:
+	check_answer(4)
+
+func _on_button_5_pressed() -> void:
+	check_answer(5)
+
+func _on_button_6_pressed() -> void:
+	check_answer(6)
+
+func _on_button_7_pressed() -> void:
+	check_answer(7)
+
+func _on_button_8_pressed() -> void:
+	check_answer(8)
+
+func _on_button_9_pressed() -> void:
+	check_answer(9)
+
+func _on_timer_ui_time_up() -> void:
+	if game_finished:
+		return
+
+	game_finished = true
+	music_player.stop()
+	game_result.show_lose()
