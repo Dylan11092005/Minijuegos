@@ -9,28 +9,33 @@ signal age_selected(age: int)
 @onready var stone: TextureButton = $StoneSlider
 @onready var bar: TextureRect = $Bar
 
-# ── Las 5 etapas del panda (cárgalas desde tus assets)
+# ── Solo 5 imágenes de panda disponibles
 var panda_textures: Array[Texture2D] = []
 
-# ── Rangos: índice 0 = Etapa1, ..., 4 = Etapa5
+# ── Rangos de edad (6 tramos, pero comparten solo 5 texturas)
 # Formato: [edad_minima, edad_maxima]
 const AGE_RANGES = [
-	[0,  5],   # Etapa1 — bebé
-	[6,  12],  # Etapa2 — niño
-	[13, 17],  # Etapa3 — adolescente
-	[18, 59],  # Etapa4 — adulto
-	[60, 99],  # Etapa5 — adulto mayor
+	[0,  7],    # Tramo1 — <= 7   -> Etapa1
+	[8,  8],    # Tramo2 — 8      -> Etapa2
+	[9,  9],    # Tramo3 — 9      -> Etapa3
+	[10, 10],   # Tramo4 — 10     -> Etapa4
+	[11, 11],   # Tramo5 — 11     -> Etapa5
+	[12, 99],   # Tramo6 — >= 12  -> Etapa5 (comparte con el tramo anterior)
 ]
-const MIN_AGE = 0
-const MAX_AGE = 99
+
+# ── Mapeo de cada tramo a su índice de textura (0..4, solo 5 imágenes)
+const STAGE_TO_TEXTURE = [0, 1, 2, 3, 4, 4]
+
+const MIN_AGE = 7    # La barra empieza en 7
+const MAX_AGE = 12   # 12 = "12 o más"
 
 # ── Estado interno
-var current_age: int = 0
+var current_age: int = MIN_AGE
 var dragging: bool = false
 var drag_offset: float = 0.0
 
 func _ready() -> void:
-	# Cargar texturas
+	# Cargar las 5 texturas
 	panda_textures = [
 		load("res://age_selector/assets/Etapa1.png"),
 		load("res://age_selector/assets/Etapa2.png"),
@@ -44,12 +49,15 @@ func _ready() -> void:
 	$BtnContinuar.pressed.connect(_on_continuar_pressed)
 
 func _on_continuar_pressed() -> void:
+	# Guardar la edad seleccionada en el Autoload MinigameData
+	MinigameData.player_age = current_age
 	emit_signal("age_selected", current_age)
+	# Abrir el menú principal
+	get_tree().change_scene_to_file("res://MenuPrincipal.tscn")
 
 # ────────────────────────────────────────────
 #  LÓGICA DE ARRASTRE DE LA PIEDRA
 # ────────────────────────────────────────────
-
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT:
@@ -58,7 +66,6 @@ func _input(event: InputEvent) -> void:
 				drag_offset = event.position.x - stone.global_position.x
 			else:
 				dragging = false
-
 	if event is InputEventMouseMotion and dragging:
 		_move_stone(event.position.x - drag_offset)
 
@@ -75,7 +82,7 @@ func _move_stone(target_x: float) -> void:
 	var new_x = clamp(target_x, bar_left, bar_right)
 	stone.global_position.x = new_x
 	
-	# Convertir posición a edad
+	# Convertir posición a edad (rango 7 a 12)
 	var t = (new_x - bar_left) / (bar_right - bar_left)  # 0.0 … 1.0
 	var age = int(round(lerp(float(MIN_AGE), float(MAX_AGE), t)))
 	_update_display(age)
@@ -83,14 +90,20 @@ func _move_stone(target_x: float) -> void:
 # ────────────────────────────────────────────
 #  ACTUALIZAR LABEL Y PANDA
 # ────────────────────────────────────────────
-
 func _update_display(age: int) -> void:
 	current_age = age
-	age_label.text = str(age)
-	panda_display.texture = panda_textures[_get_stage(age)]
+	if age >= MAX_AGE:
+		age_label.text = str(MAX_AGE) + "+"
+	elif age <= MIN_AGE:
+		age_label.text = str(MIN_AGE) + "-"
+	else:
+		age_label.text = str(age)
+	
+	var stage := _get_stage(age)
+	panda_display.texture = panda_textures[STAGE_TO_TEXTURE[stage]]
 
 func _get_stage(age: int) -> int:
 	for i in range(AGE_RANGES.size()):
 		if age >= AGE_RANGES[i][0] and age <= AGE_RANGES[i][1]:
 			return i
-	return AGE_RANGES.size() - 1  # fallback: última etapa
+	return AGE_RANGES.size() - 1  # fallback: último tramo

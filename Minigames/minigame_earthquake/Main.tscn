@@ -1,12 +1,12 @@
 [gd_scene format=3 uid="uid://buboxvwru5nb"]
 
-[ext_resource type="Script" uid="uid://bujjgj43yvive" path="res://minigame_earthquake/Main.gd" id="1_yuua3"]
-[ext_resource type="PackedScene" uid="uid://drg1sfdfxdsh8" path="res://minigame_earthquake/Background.tscn" id="2_wiglt"]
-[ext_resource type="PackedScene" uid="uid://c1502o12m01un" path="res://minigame_earthquake/Player.tscn" id="3_kwj2e"]
-[ext_resource type="PackedScene" uid="uid://cqykt4enwb6ma" path="res://minigame_earthquake/HUD.tscn" id="4_e7s46"]
-[ext_resource type="AudioStream" uid="uid://dfqgmvj34qjx5" path="res://minigame_earthquake/assets/audio/BackgroundSound.mp3" id="5_e7s46"]
-[ext_resource type="AudioStream" uid="uid://bpnf8aap7j3ix" path="res://minigame_earthquake/assets/audio/AfterSound.mp3" id="6_k6jtc"]
-[ext_resource type="AudioStream" uid="uid://6i3o028728gu" path="res://minigame_earthquake/assets/audio/EarthquakeSound.mp3" id="7_4x4hf"]
+[ext_resource type="Script" uid="uid://bujjgj43yvive" path="res://Minigames/minigame_earthquake/Main.gd" id="1_yuua3"]
+[ext_resource type="PackedScene" uid="uid://drg1sfdfxdsh8" path="res://Minigames/minigame_earthquake/Background.tscn" id="2_wiglt"]
+[ext_resource type="PackedScene" uid="uid://c1502o12m01un" path="res://Minigames/minigame_earthquake/Player.tscn" id="3_kwj2e"]
+[ext_resource type="PackedScene" uid="uid://cqykt4enwb6ma" path="res://Minigames/minigame_earthquake/HUD.tscn" id="4_e7s46"]
+[ext_resource type="AudioStream" uid="uid://dfqgmvj34qjx5" path="res://Minigames/minigame_earthquake/assets/audio/BackgroundSound.mp3" id="5_e7s46"]
+[ext_resource type="AudioStream" uid="uid://bpnf8aap7j3ix" path="res://Minigames/minigame_earthquake/assets/audio/AfterSound.mp3" id="6_k6jtc"]
+[ext_resource type="AudioStream" uid="uid://6i3o028728gu" path="res://Minigames/minigame_earthquake/assets/audio/EarthquakeSound.mp3" id="7_4x4hf"]
 
 [node name="Main" type="Node" unique_id=184937608]
 script = ExtResource("1_yuua3")
