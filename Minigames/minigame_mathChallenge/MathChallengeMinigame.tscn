@@ -1,0 +1,298 @@
+[gd_scene format=3 uid="uid://b4ik4aimvgtn3"]
+
+[ext_resource type="Script" uid="uid://mm35otjch7it" path="res://Minigames/minigame_mathChallenge/MathChallengeMinigame.gd" id="1_6gfea"]
+[ext_resource type="Texture2D" uid="uid://l4owlbxo8h8i" path="res://Minigames/minigame_mathChallenge/assets/background/MathClassroomBackground.png" id="2_ut2sw"]
+[ext_resource type="Texture2D" uid="uid://b3k3am233upct" path="res://Minigames/minigame_mathChallenge/assets/ui/NumberPad.png" id="3_rcv5u"]
+[ext_resource type="Texture2D" uid="uid://cde17wds6fwhl" path="res://Minigames/minigame_mathChallenge/assets/objects/math_symbols/3.png" id="4_dt3j7"]
+[ext_resource type="Texture2D" uid="uid://r5yi20op07mm" path="res://Minigames/minigame_mathChallenge/assets/objects/math_symbols/+.png" id="5_ssvdq"]
+[ext_resource type="Texture2D" uid="uid://dm6f4ddrqs2vl" path="res://Minigames/minigame_mathChallenge/assets/objects/math_symbols/5.png" id="6_6st3i"]
+[ext_resource type="Texture2D" uid="uid://cy4xe77r7w5ek" path="res://Minigames/minigame_mathChallenge/assets/objects/math_symbols/=.png" id="7_xj55e"]
+[ext_resource type="Texture2D" uid="uid://b4p2pawrtmg6l" path="res://Minigames/minigame_mathChallenge/assets/objects/math_symbols/_.png" id="8_dt3j7"]
+[ext_resource type="Texture2D" uid="uid://cfk4r7l10bkqc" path="res://Minigames/minigame_mathChallenge/assets/objects/math_symbols/0.png" id="9_4irs6"]
+[ext_resource type="AudioStream" uid="uid://dao2n0dd263qy" path="res://Minigames/minigame_inclusive_alarms/assets/audio/Correct.mp3" id="9_6st3i"]
+[ext_resource type="Texture2D" uid="uid://j2t3gaj17r2t" path="res://Minigames/minigame_mathChallenge/assets/objects/keypad_numbers/Color1.png" id="10_f3gj1"]
+[ext_resource type="AudioStream" uid="uid://bm74bmxf5vg1r" path="res://Minigames/minigame_inclusive_alarms/assets/audio/Error.mp3" id="10_xj55e"]
+[ext_resource type="Texture2D" uid="uid://bkhcq01qpfqkh" path="res://Minigames/minigame_mathChallenge/assets/objects/keypad_numbers/Color2.png" id="11_brhp0"]
+[ext_resource type="Texture2D" uid="uid://dsirjlgoegxth" path="res://Minigames/minigame_mathChallenge/assets/background/panel.png" id="11_f0odt"]
+[ext_resource type="Texture2D" uid="uid://cjtp53kkhqh2c" path="res://Minigames/minigame_mathChallenge/assets/objects/keypad_numbers/CheckIcon.png" id="12_ftb8v"]
+[ext_resource type="Texture2D" uid="uid://0ovp0letvvb7" path="res://Minigames/minigame_mathChallenge/assets/objects/keypad_numbers/Color4.png" id="12_hcvh5"]
+[ext_resource type="Texture2D" uid="uid://bi3ixpkyyxnud" path="res://Minigames/minigame_mathChallenge/assets/objects/keypad_numbers/Color6.png" id="13_7e38n"]
+[ext_resource type="Texture2D" uid="uid://bf0ixixxpsmcj" path="res://Minigames/minigame_mathChallenge/assets/objects/keypad_numbers/ErrorIcon.png" id="13_mx2ie"]
+[ext_resource type="Texture2D" uid="uid://uxopmi6klior" path="res://Minigames/minigame_mathChallenge/assets/objects/keypad_numbers/Coolor7.png" id="14_ijc01"]
+[ext_resource type="Texture2D" uid="uid://crmxj52v0vecb" path="res://Minigames/minigame_mathChallenge/assets/objects/math_symbols/8.png" id="15_ru4dg"]
+[ext_resource type="Texture2D" uid="uid://56genougix3p" path="res://Minigames/minigame_mathChallenge/assets/objects/keypad_numbers/Color9.png" id="16_rmpei"]
+[ext_resource type="PackedScene" uid="uid://m3dt448yc1u" path="res://Minigames/ui_global/TimerUi.tscn" id="22_brhp0"]
+[ext_resource type="PackedScene" uid="uid://dsdbaxj6xesxn" path="res://Minigames/ui_global/GameResult.tscn" id="23_hcvh5"]
+[ext_resource type="AudioStream" uid="uid://vv3d0hrajdxf" path="res://Minigames/minigame_mathChallenge/assets/audio/MusicMath.mp3" id="24_hcvh5"]
+
+[node name="MathChallengeMinigame" type="Node2D" unique_id=55626075]
+script = ExtResource("1_6gfea")
+
+[node name="Background" type="Sprite2D" parent="." unique_id=1510876219]
+position = Vector2(963.5, 561.5)
+scale = Vector2(1.1501194, 1.1912858)
+texture = ExtResource("2_ut2sw")
+
+[node name="NumberPad" type="Sprite2D" parent="." unique_id=481684602]
+position = Vector2(989, 783.00006)
+scale = Vector2(0.70800775, 0.47558594)
+texture = ExtResource("3_rcv5u")
+
+[node name="Button0" type="Button" parent="NumberPad" unique_id=429334143]
+anchors_preset = -1
+anchor_left = -0.298
+anchor_top = -0.9990001
+anchor_right = -0.298
+anchor_bottom = -0.9990001
+offset_left = -115.712036
+offset_top = 810.6063
+offset_right = 11.405273
+offset_bottom = 923.73975
+flat = true
+
+[node name="Button1" type="Button" parent="NumberPad" unique_id=1482881638]
+anchors_preset = -1
+anchor_left = -0.298
+anchor_top = -0.9990001
+anchor_right = -0.298
+anchor_bottom = -0.9990001
+offset_left = 122.98596
+offset_top = 819.01697
+offset_right = 250.10327
+offset_bottom = 932.1504
+flat = true
+
+[node name="Button2" type="Button" parent="NumberPad" unique_id=1128171939]
+anchors_preset = -1
+anchor_left = -0.298
+anchor_top = -0.9990001
+anchor_right = -0.298
+anchor_bottom = -0.9990001
+offset_left = 361.6839
+offset_top = 814.81165
+offset_right = 488.8012
+offset_bottom = 927.94507
+flat = true
+
+[node name="Button3" type="Button" parent="NumberPad" unique_id=241085730]
+anchors_preset = -1
+anchor_left = -0.298
+anchor_top = -0.9990001
+anchor_right = -0.298
+anchor_bottom = -0.9990001
+offset_left = 604.6191
+offset_top = 812.709
+offset_right = 731.7364
+offset_bottom = 925.8424
+flat = true
+
+[node name="Button4" type="Button" parent="NumberPad" unique_id=791423414]
+anchors_preset = -1
+anchor_left = -0.298
+anchor_top = -0.9990001
+anchor_right = -0.298
+anchor_bottom = -0.9990001
+offset_left = 860.26605
+offset_top = 816.9143
+offset_right = 987.38336
+offset_bottom = 930.0477
+flat = true
+
+[node name="Button5" type="Button" parent="NumberPad" unique_id=524071141]
+anchors_preset = -1
+anchor_left = -0.298
+anchor_top = -0.9990001
+anchor_right = -0.298
+anchor_bottom = -0.9990001
+offset_left = -105.825134
+offset_top = 1022.97595
+offset_right = 21.292175
+offset_bottom = 1136.1094
+flat = true
+
+[node name="Button6" type="Button" parent="NumberPad" unique_id=1951956079]
+anchors_preset = -1
+anchor_left = -0.298
+anchor_top = -0.9990001
+anchor_right = -0.298
+anchor_bottom = -0.9990001
+offset_left = 125.81073
+offset_top = 1020.8733
+offset_right = 252.92804
+offset_bottom = 1134.0067
+flat = true
+
+[node name="Button7" type="Button" parent="NumberPad" unique_id=2047927994]
+anchors_preset = -1
+anchor_left = -0.298
+anchor_top = -0.9990001
+anchor_right = -0.298
+anchor_bottom = -0.9990001
+offset_left = 367.33356
+offset_top = 1022.97595
+offset_right = 494.45087
+offset_bottom = 1136.1094
+flat = true
+
+[node name="Button8" type="Button" parent="NumberPad" unique_id=1914231235]
+anchors_preset = -1
+anchor_left = -0.298
+anchor_top = -0.9990001
+anchor_right = -0.298
+anchor_bottom = -0.9990001
+offset_left = 606.0315
+offset_top = 1027.1813
+offset_right = 733.1488
+offset_bottom = 1140.3147
+flat = true
+
+[node name="Button9" type="Button" parent="NumberPad" unique_id=1683722058]
+anchors_preset = -1
+anchor_left = -0.298
+anchor_top = -0.9990001
+anchor_right = -0.298
+anchor_bottom = -0.9990001
+offset_left = 864.5033
+offset_top = 1029.2839
+offset_right = 991.6206
+offset_bottom = 1142.4174
+flat = true
+
+[node name="Formula" type="Node2D" parent="." unique_id=568910953]
+
+[node name="NumberA" type="Sprite2D" parent="Formula" unique_id=786607538]
+position = Vector2(635, 283)
+scale = Vector2(0.21679688, 0.21679688)
+texture = ExtResource("4_dt3j7")
+
+[node name="Operator" type="Sprite2D" parent="Formula" unique_id=52865065]
+position = Vector2(785, 299)
+scale = Vector2(0.15039063, 0.16406249)
+texture = ExtResource("5_ssvdq")
+
+[node name="NumberB" type="Sprite2D" parent="Formula" unique_id=1980019700]
+position = Vector2(926, 290)
+scale = Vector2(0.1791992, 0.21533205)
+texture = ExtResource("6_6st3i")
+
+[node name="Equal" type="Sprite2D" parent="Formula" unique_id=879442546]
+position = Vector2(1066, 285)
+scale = Vector2(0.1533203, 0.15429688)
+texture = ExtResource("7_xj55e")
+
+[node name="Answer" type="Sprite2D" parent="Formula" unique_id=357209320]
+position = Vector2(1207, 286.00003)
+scale = Vector2(0.16805016, 0.18273926)
+texture = ExtResource("8_dt3j7")
+
+[node name="NumberSprites" type="Sprite2D" parent="." unique_id=1243167053]
+
+[node name="Number0" type="Sprite2D" parent="NumberSprites" unique_id=503048884]
+position = Vector2(630, 711)
+scale = Vector2(0.09326175, 0.08300789)
+texture = ExtResource("9_4irs6")
+
+[node name="Number1" type="Sprite2D" parent="NumberSprites" unique_id=1277541244]
+position = Vector2(795, 715)
+scale = Vector2(0.09326175, 0.08300789)
+texture = ExtResource("10_f3gj1")
+
+[node name="Number2" type="Sprite2D" parent="NumberSprites" unique_id=1992055486]
+position = Vector2(964.99994, 713.00006)
+scale = Vector2(0.08764644, 0.07861334)
+texture = ExtResource("11_brhp0")
+
+[node name="Number3" type="Sprite2D" parent="NumberSprites" unique_id=84346472]
+position = Vector2(1137, 710)
+scale = Vector2(0.09326175, 0.08300789)
+texture = ExtResource("4_dt3j7")
+
+[node name="Number4" type="Sprite2D" parent="NumberSprites" unique_id=194553272]
+position = Vector2(1314, 712)
+scale = Vector2(0.09326175, 0.08300789)
+texture = ExtResource("12_hcvh5")
+
+[node name="Number5" type="Sprite2D" parent="NumberSprites" unique_id=209881124]
+position = Vector2(626, 814)
+scale = Vector2(0.09326175, 0.08300789)
+texture = ExtResource("6_6st3i")
+
+[node name="Number6" type="Sprite2D" parent="NumberSprites" unique_id=443310540]
+position = Vector2(793, 809.00006)
+scale = Vector2(0.09326175, 0.08300789)
+texture = ExtResource("13_7e38n")
+
+[node name="Number7" type="Sprite2D" parent="NumberSprites" unique_id=1333965168]
+position = Vector2(963, 813.00006)
+scale = Vector2(0.09326175, 0.08300789)
+texture = ExtResource("14_ijc01")
+
+[node name="Number8" type="Sprite2D" parent="NumberSprites" unique_id=1811751654]
+position = Vector2(1139, 815.00006)
+scale = Vector2(0.09326175, 0.08300789)
+texture = ExtResource("15_ru4dg")
+
+[node name="Number9" type="Sprite2D" parent="NumberSprites" unique_id=1149521838]
+position = Vector2(1317.9999, 811.00006)
+scale = Vector2(0.09326175, 0.08300789)
+texture = ExtResource("16_rmpei")
+
+[node name="CorrectPlayer" type="AudioStreamPlayer2D" parent="." unique_id=578035522]
+stream = ExtResource("9_6st3i")
+
+[node name="ErrorPlayer" type="AudioStreamPlayer2D" parent="." unique_id=763818959]
+stream = ExtResource("10_xj55e")
+volume_db = 20.0
+
+[node name="Panel" type="Sprite2D" parent="." unique_id=386383071]
+position = Vector2(1663.0001, 310.00003)
+scale = Vector2(0.4928827, 0.57266676)
+texture = ExtResource("11_f0odt")
+
+[node name="CheckIcon" type="Sprite2D" parent="." unique_id=1293372726]
+position = Vector2(1608, 283.99997)
+scale = Vector2(0.048380423, 0.07019044)
+texture = ExtResource("12_ftb8v")
+
+[node name="ErrorIcon" type="Sprite2D" parent="." unique_id=657022177]
+position = Vector2(1609.9999, 340.00003)
+scale = Vector2(0.03833008, 0.06555174)
+texture = ExtResource("13_mx2ie")
+
+[node name="Hud" type="CanvasLayer" parent="." unique_id=39618620]
+
+[node name="StatusPanel" type="Node2D" parent="Hud" unique_id=756766706]
+
+[node name="CorrectLabel" type="Label" parent="Hud/StatusPanel" unique_id=257988091]
+modulate = Color(0.0253638, 0.0253638, 0.025363795, 1)
+offset_left = 1650.0
+offset_top = 273.0
+offset_right = 1690.0
+offset_bottom = 296.0
+text = "0/10"
+
+[node name="ErrorLabel" type="Label" parent="Hud/StatusPanel" unique_id=284743269]
+modulate = Color(0.008202022, 0.008202025, 0.008202025, 1)
+offset_left = 1650.0
+offset_top = 324.0
+offset_right = 1690.0
+offset_bottom = 347.0
+text = "0/3"
+
+[node name="TimerUI" parent="." unique_id=1042888595 instance=ExtResource("22_brhp0")]
+
+[node name="GameResult" parent="." unique_id=2106536257 instance=ExtResource("23_hcvh5")]
+
+[node name="MusicPlayer" type="AudioStreamPlayer2D" parent="." unique_id=1477339437]
+stream = ExtResource("24_hcvh5")
+
+[connection signal="pressed" from="NumberPad/Button0" to="." method="_on_button_0_pressed"]
+[connection signal="pressed" from="NumberPad/Button1" to="." method="_on_button_1_pressed"]
+[connection signal="pressed" from="NumberPad/Button2" to="." method="_on_button_2_pressed"]
+[connection signal="pressed" from="NumberPad/Button3" to="." method="_on_button_3_pressed"]
+[connection signal="pressed" from="NumberPad/Button4" to="." method="_on_button_4_pressed"]
+[connection signal="pressed" from="NumberPad/Button5" to="." method="_on_button_5_pressed"]
+[connection signal="pressed" from="NumberPad/Button6" to="." method="_on_button_6_pressed"]
+[connection signal="pressed" from="NumberPad/Button7" to="." method="_on_button_7_pressed"]
+[connection signal="pressed" from="NumberPad/Button8" to="." method="_on_button_8_pressed"]
+[connection signal="pressed" from="NumberPad/Button9" to="." method="_on_button_9_pressed"]

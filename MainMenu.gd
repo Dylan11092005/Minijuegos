@@ -413,6 +413,7 @@ func _on_button_18_pressed() -> void:
 	
 	get_tree().change_scene_to_file("res://Minigames/ui_global/MinigameIntro.tscn")
 
+
 func _on_button_22_pressed() -> void:
 	var minigame_data = get_node("/root/MinigameData")
 	
@@ -430,4 +431,27 @@ func _on_button_22_pressed() -> void:
 		{ "action": "Arrastrar tablas, arrastrar martillo", "icon": "res://Minigames/ui_global/assets/ClickIcon.png" },
 	]
 	
+
+
+func _on_button_24_pressed() -> void:
+	var minigame_data = get_node("/root/MinigameData")
+
+	minigame_data.title = "¡Desafío Matemático!"
+
+	minigame_data.description = "Pon a prueba tu rapidez resolviendo operaciones matemáticas antes de que se acabe el tiempo."
+
+	minigame_data.instructions = "Observa la operación que aparece en la pizarra y selecciona el número correcto en el teclado. Completa 10 operaciones antes de que termine el tiempo. Si acumulas 3 errores o se acaba el tiempo, perderás la partida."
+
+	minigame_data.video_path = "res://Minigames/minigame_mathChallenge/assets/video/InstructionsMath.ogv"
+
+	minigame_data.minigame_scene = "res://Minigames/minigame_mathChallenge/MathChallengeMinigame.tscn"
+
+	minigame_data.controls = [
+		{
+			"action": "Seleccionar la respuesta correcta",
+			"icon": "res://Minigames/ui_global/assets/ClickIcon.png"
+		},
+	]
+
+
 	get_tree().change_scene_to_file("res://Minigames/ui_global/MinigameIntro.tscn")
