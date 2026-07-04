@@ -16,7 +16,7 @@ signal puzzle_failed
 @export var rows: int = 3
 @export var piece_gap: int = 6
 
-const TOTAL_TIME = 30.0
+var TOTAL_TIME: float = 30.0
 
 # =========================================================
 # GLOBAL SCENES
@@ -117,6 +117,12 @@ func _start_game() -> void:
 	audio_background.volume_db = -15.0
 	audio_slide.volume_db      = -10.0
 	audio_background.play()
+	
+	var player_age: int = MinigameData.player_age
+	if player_age < 12:
+		TOTAL_TIME = 30.0 + _get_time_bonus(player_age)
+	else:
+		TOTAL_TIME = 30.0
 
 	timer_hud.iniciar(TOTAL_TIME, "Tiempo restante", "para completar el mapa")
 
@@ -321,7 +327,17 @@ func _lose() -> void:
 func _on_time_up() -> void:
 	if game_active:
 		_lose()
-
+# =========================================================
+# Funcion de cuanto tiempo se añade
+# =========================================================
+func _get_time_bonus(age: int) -> float:
+	match age:
+		11: return 2.0
+		10: return 3.0
+		9:  return 5.0
+		8:  return 7.0
+		7:  return 10.0
+		_:  return 10.0 if age < 7 else 0.0
 # =========================================================
 # BUILD UI
 # =========================================================
