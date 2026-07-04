@@ -430,6 +430,7 @@ func _on_button_22_pressed() -> void:
 	minigame_data.controls = [
 		{ "action": "Arrastrar tablas, arrastrar martillo", "icon": "res://Minigames/ui_global/assets/ClickIcon.png" },
 	]
+	get_tree().change_scene_to_file("res://Minigames/ui_global/MinigameIntro.tscn")
 	
 
 
