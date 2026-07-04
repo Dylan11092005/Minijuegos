@@ -13,7 +13,7 @@ const PIECE_SCENE = preload("res://Minigames/minigame_house/Piece.tscn")
 const TIMER_HUD_SCENE = preload("res://Minigames/ui_global/TimerUi.tscn")
 const PANEL_RESULTADO_SCENE = preload("res://Minigames/ui_global/GameResult.tscn")
 
-const TOTAL_TIME = 40.0
+var TOTAL_TIME: float = 45.0
 var total_pieces: int = 0
 var detached_pieces: int = 0
 var game_active: bool = false
@@ -165,7 +165,20 @@ func _init_game():
 
 	_build_house()
 	_start_game()
-
+	
+# =========================================================
+# TIME BONUS POR EDAD
+# =========================================================
+func _get_time_bonus(age: int) -> float:
+	match age:
+		11: return 5.0
+		10: return 5.0
+		9:  return 7.0
+		8:  return 10.0
+		7:  return 15.0
+		_:  return 15.0 if age < 7 else 0.0
+		
+		
 func _build_house():
 	total_pieces = house_data.size()
 	detached_pieces = 0
@@ -204,6 +217,14 @@ func _start_game():
 	game_active = true
 	audio_fondo.volume_db = -15.0
 	audio_fondo.play()
+	
+	# --- NUEVO: ajustar tiempo según edad del jugador ---
+	var player_age: int = MinigameData.player_age  # <-- ajusta el nombre del autoload
+	if player_age < 12:
+		TOTAL_TIME = 45.0 + _get_time_bonus(player_age)
+	else:
+		TOTAL_TIME = 45.0
+	
 	timer_hud.iniciar(TOTAL_TIME, "Tiempo restante", "para la erupción")
 
 func _process(_delta):
