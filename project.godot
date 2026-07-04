@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Minijuegos"
-run/main_scene="uid://dlx3as015ftwm"
+run/main_scene="uid://cjr8rwja674f5"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
