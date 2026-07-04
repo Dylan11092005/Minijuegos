@@ -24,7 +24,7 @@ const DEFAULT_LIGHTNING_SCENE := preload("res://Minigames/minigame_storm/Lightni
 # CONSTANTS
 # =========================================================
 
-const TOTAL_TIME := 20.0
+var TOTAL_TIME: float = 28.0
 const LIGHTNING_SPAWN_MARGIN := 80
 
 
@@ -90,6 +90,19 @@ func _process(_delta):
 	if _player and _player.lives <= 0:
 		_lose_game()
 
+# =========================================================
+# TIME BONUS POR EDAD
+# =========================================================
+func _get_time_bonus(age: int) -> float:
+	if age >= 12:
+		return 12.0
+	match age:
+		7:  return 2.0
+		8:  return 3.0
+		9:  return 5.0
+		10: return 7.0
+		11: return 10.0
+		_:  return 0.0
 
 # =========================================================
 # SETUP METHODS
@@ -108,11 +121,19 @@ func _setup_timer_ui():
 	if _timer_ui.has_method("set_tamano_panel"):
 		_timer_ui.set_tamano_panel(500, 60)
 
+# --- NUEVO: ajustar tiempo según edad del jugador ---
+	var player_age: int = MinigameData.player_age
+	TOTAL_TIME = 28.0 + _get_time_bonus(player_age)
+
 	if _timer_ui.has_method("iniciar"):
 		_timer_ui.iniciar(TOTAL_TIME, "Tiempo restante", "para sobrevivir")
 	else:
 		print("ERROR: El TimerUi no tiene el método iniciar()")
 
+	if _timer_ui.has_method("iniciar"):
+		_timer_ui.iniciar(TOTAL_TIME, "Tiempo restante", "para sobrevivir")
+	else:
+		print("ERROR: El TimerUi no tiene el método iniciar()")
 
 func _setup_lives_ui():
 	_lives_ui = LIVES_UI_SCENE.instantiate()
