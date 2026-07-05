@@ -214,14 +214,22 @@ func _on_button_6_pressed() -> void:
 
 func _on_button_12_pressed() -> void:
 	var minigame_data = get_node("/root/MinigameData")
+
 	minigame_data.title = "¡Limpia el río!"
-	minigame_data.description = "Las fábricas han contaminado el río de tu comunidad."
-	minigame_data.instructions = "Mueve el cursor rápidamente sobre los desechos que aparecen en el agua para eliminarlos antes de que se acabe el tiempo."
+	minigame_data.description = "Las fábricas han contaminado el río. Elimina los desechos sin dañar a los peces."
+
+	minigame_data.instructions = "Mueve el cursor sobre los desechos para recogerlos antes de que termine el tiempo. Evita tocar a los peces, ya que perderás puntos o cometerás errores."
+
 	minigame_data.video_path = "res://Minigames/minigame_river_clean/assets/video/RiverCleanInstructions.ogv"
 	minigame_data.minigame_scene = "res://Minigames/minigame_river_clean/RiverCleanMinigame.tscn"
+
 	minigame_data.controls = [
-	{ "action": "Mover guante", "icon": "res://Minigames/ui_global/assets/ClickIcon.png" },
+		{
+			"action": "Mover guante",
+			"icon": "res://Minigames/ui_global/assets/ClickIcon.png"
+		},
 	]
+
 	get_tree().change_scene_to_file("res://Minigames/ui_global/MinigameIntro.tscn")
 func _on_button_11_pressed() -> void:
 	var minigame_data = get_node("/root/MinigameData")

@@ -1,24 +1,24 @@
 [gd_scene format=3 uid="uid://c57j6bn7yn537"]
 
-[ext_resource type="Script" uid="uid://cwc5fh661amni" path="res://minigame_laberinto/MazeMinigame.gd" id="1_4vvp6"]
-[ext_resource type="Texture2D" uid="uid://c58cp3pyxyhrk" path="res://minigame_laberinto/assets/escenario/fondo.png" id="2_g71b8"]
-[ext_resource type="Texture2D" uid="uid://cwq8jly3vq06g" path="res://minigame_laberinto/assets/personajes/jugador.png" id="3_n510s"]
-[ext_resource type="Script" uid="uid://dcj3onotqhw30" path="res://minigame_laberinto/jugador.gd" id="4_g71b8"]
-[ext_resource type="Texture2D" uid="uid://be48j7m67f3gs" path="res://minigame_laberinto/assets/escenario/zona_segura.png" id="4_mht8p"]
-[ext_resource type="Texture2D" uid="uid://en3ihvees3vq" path="res://minigame_laberinto/assets/escenario/pared.png" id="6_n510s"]
-[ext_resource type="Texture2D" uid="uid://em8tiojt62y" path="res://minigame_laberinto/assets/personajes/amigo1.png" id="7_vp2i8"]
-[ext_resource type="Texture2D" uid="uid://t8e56na54t22" path="res://minigame_laberinto/assets/personajes/amigo2.png" id="8_6op3i"]
-[ext_resource type="PackedScene" uid="uid://m3dt448yc1u" path="res://ui_global/TimerUi.tscn" id="9_kjcdp"]
-[ext_resource type="AudioStream" uid="uid://cfmnqqrcvqffb" path="res://ui_global/music/Tiempo.mp3" id="10_a4bxp"]
-[ext_resource type="PackedScene" uid="uid://dsdbaxj6xesxn" path="res://ui_global/GameResult.tscn" id="11_a4bxp"]
-[ext_resource type="AudioStream" uid="uid://r361hmn2tkmn" path="res://minigame_laberinto/assets/audio/laberinto.mp3" id="12_hwi0u"]
-[ext_resource type="AudioStream" uid="uid://ctp2n1rcpkl85" path="res://minigame_laberinto/assets/audio/rescate.mp3" id="13_4vvp6"]
+[ext_resource type="Script" uid="uid://cwc5fh661amni" path="res://Minigames/minigame_laberinto/MazeMinigame.gd" id="1_4vvp6"]
+[ext_resource type="Texture2D" uid="uid://c58cp3pyxyhrk" path="res://Minigames/minigame_laberinto/assets/escenario/fondo.png" id="2_g71b8"]
+[ext_resource type="Texture2D" uid="uid://cwq8jly3vq06g" path="res://Minigames/minigame_laberinto/assets/personajes/jugador.png" id="3_n510s"]
+[ext_resource type="Script" uid="uid://dcj3onotqhw30" path="res://Minigames/minigame_laberinto/jugador.gd" id="4_g71b8"]
+[ext_resource type="Texture2D" uid="uid://be48j7m67f3gs" path="res://Minigames/minigame_laberinto/assets/escenario/zona_segura.png" id="4_mht8p"]
+[ext_resource type="Texture2D" uid="uid://en3ihvees3vq" path="res://Minigames/minigame_laberinto/assets/escenario/pared.png" id="6_n510s"]
+[ext_resource type="Texture2D" uid="uid://em8tiojt62y" path="res://Minigames/minigame_laberinto/assets/personajes/amigo1.png" id="7_vp2i8"]
+[ext_resource type="Texture2D" uid="uid://t8e56na54t22" path="res://Minigames/minigame_laberinto/assets/personajes/amigo2.png" id="8_6op3i"]
+[ext_resource type="PackedScene" uid="uid://m3dt448yc1u" path="res://Minigames/ui_global/TimerUi.tscn" id="9_kjcdp"]
+[ext_resource type="AudioStream" uid="uid://cfmnqqrcvqffb" path="res://Minigames/ui_global/music/Tiempo.mp3" id="10_a4bxp"]
+[ext_resource type="PackedScene" uid="uid://dsdbaxj6xesxn" path="res://Minigames/ui_global/GameResult.tscn" id="11_a4bxp"]
+[ext_resource type="AudioStream" uid="uid://r361hmn2tkmn" path="res://Minigames/minigame_laberinto/assets/audio/laberinto.mp3" id="12_hwi0u"]
+[ext_resource type="AudioStream" uid="uid://ctp2n1rcpkl85" path="res://Minigames/minigame_laberinto/assets/audio/rescate.mp3" id="13_4vvp6"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_n510s"]
 size = Vector2(59, 78)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_g71b8"]
-size = Vector2(104.37649, 46.433754)
+size = Vector2(77.18825, 64.21687)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5mky7"]
 size = Vector2(252, 33)
@@ -232,7 +232,7 @@ texture = ExtResource("6_n510s")
 [node name="Pared57" type="StaticBody2D" parent="Paredes" unique_id=784215123]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared57" unique_id=1118202039]
-position = Vector2(643, 947)
+position = Vector2(639, 949)
 shape = SubResource("RectangleShape2D_awhdy")
 
 [node name="Pared56" type="StaticBody2D" parent="Paredes" unique_id=486506417]
@@ -434,7 +434,7 @@ scale = Vector2(0.05810548, 0.085205086)
 [node name="Pared27" type="StaticBody2D" parent="Paredes" unique_id=1589380270]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Paredes/Pared27" unique_id=899022102]
-position = Vector2(1575, 259)
+position = Vector2(1197.5941, 540.10846)
 shape = SubResource("RectangleShape2D_g71b8")
 
 [node name="Sprite2D" type="Sprite2D" parent="Paredes/Pared27" unique_id=2008099520]
@@ -633,24 +633,20 @@ texture = ExtResource("6_n510s")
 [node name="Amigo1" type="Area2D" parent="Amigos" unique_id=458404327]
 
 [node name="Sprite2D" type="Sprite2D" parent="Amigos/Amigo1" unique_id=378560463]
-position = Vector2(1461.5001, 260)
 scale = Vector2(0.19241214, 0.13905329)
 texture = ExtResource("7_vp2i8")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Amigos/Amigo1" unique_id=992646568]
-position = Vector2(1458, 264)
 shape = SubResource("RectangleShape2D_kjcdp")
 
 [node name="Amigo2" type="Area2D" parent="Amigos" unique_id=1492820054]
 
 [node name="Sprite2D" type="Sprite2D" parent="Amigos/Amigo2" unique_id=435406139]
-position = Vector2(770.00006, 712)
 scale = Vector2(0.2066949, 0.14250565)
 texture = ExtResource("8_6op3i")
 flip_h = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Amigos/Amigo2" unique_id=1421942007]
-position = Vector2(765, 713)
 shape = SubResource("RectangleShape2D_a4bxp")
 
 [node name="ZonaSegura" type="Area2D" parent="." unique_id=1708743996]
@@ -684,3 +680,35 @@ stream = ExtResource("12_hwi0u")
 
 [node name="AudioRescate" type="AudioStreamPlayer2D" parent="." unique_id=978384693]
 stream = ExtResource("13_4vvp6")
+
+[node name="SpawnPoints" type="Node2D" parent="." unique_id=1604303220]
+
+[node name="Spawn1" type="Marker2D" parent="SpawnPoints" unique_id=364441952]
+position = Vector2(613, 876)
+
+[node name="Spawn2" type="Marker2D" parent="SpawnPoints" unique_id=1630500029]
+position = Vector2(1261, 719)
+
+[node name="Spawn3" type="Marker2D" parent="SpawnPoints" unique_id=1448221302]
+position = Vector2(1240, 391)
+
+[node name="Spawn4" type="Marker2D" parent="SpawnPoints" unique_id=1595446852]
+position = Vector2(926, 720)
+
+[node name="Spawn5" type="Marker2D" parent="SpawnPoints" unique_id=563397960]
+position = Vector2(1822, 407)
+
+[node name="Spawn6" type="Marker2D" parent="SpawnPoints" unique_id=1314000305]
+position = Vector2(748, 720)
+
+[node name="Spawn7" type="Marker2D" parent="SpawnPoints" unique_id=874076228]
+position = Vector2(1445, 253)
+
+[node name="Spawn8" type="Marker2D" parent="SpawnPoints" unique_id=906768278]
+position = Vector2(1070, 424)
+
+[node name="Spawn9" type="Marker2D" parent="SpawnPoints" unique_id=678447037]
+position = Vector2(199, 564)
+
+[node name="Spawn10" type="Marker2D" parent="SpawnPoints" unique_id=1186967817]
+position = Vector2(1456, 868)

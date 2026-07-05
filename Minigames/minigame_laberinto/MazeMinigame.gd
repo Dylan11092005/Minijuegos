@@ -4,6 +4,10 @@ var amigos_rescatados = 0
 var _panel: Node2D
 var pulse := 0.0
 
+
+
+@onready var spawn_points = $SpawnPoints.get_children()
+
 const C_BEIGE  = Color("#E5C89E")
 const C_ORANGE = Color("#E0B080")
 const C_BLUE   = Color("#3E5F8F")
@@ -15,21 +19,31 @@ const PANEL_RADIUS := 22.0
 func _ready() -> void:
 	var canvas = CanvasLayer.new()
 	add_child(canvas)
+
 	_panel = Node2D.new()
 	canvas.add_child(_panel)
 	_panel.draw.connect(_on_panel_draw)
 
 	$AudioMusica.play()
+	_randomize_friend_positions()
+
 	$Amigos/Amigo1.body_entered.connect(_on_amigo1_rescatado)
 	$Amigos/Amigo2.body_entered.connect(_on_amigo2_rescatado)
 	$ZonaSegura.body_entered.connect(_on_zona_segura_entrada)
+
 	$TimerUI.iniciar(50, "Evacúa en", "segundos")
 	$TimerUI.time_up.connect(_on_tiempo_agotado)
 
-func _process(delta):
+func _randomize_friend_positions() -> void:
+	spawn_points.shuffle()
+
+	$Amigos/Amigo1.global_position = spawn_points[0].global_position
+	$Amigos/Amigo2.global_position = spawn_points[1].global_position
+func _process(_delta):
 	if _panel == null:
 		return
-	pulse += delta
+
+	pulse += _delta
 	_panel.queue_redraw()
 
 func _on_amigo1_rescatado(body):
@@ -48,7 +62,7 @@ func _on_amigo2_rescatado(body):
 
 func verificar_zona_segura():
 	if amigos_rescatados >= 2:
-		$ZonaSegura/BloqueoZona/CollisionShape2D.disabled = true
+		$ZonaSegura/BloqueoZona/CollisionShape2D.set_deferred("disabled", true)
 
 func _on_zona_segura_entrada(body):
 	if body.name == "Jugador":
@@ -93,34 +107,50 @@ func _panel_draw_titulo(pos: Vector2):
 
 func _panel_draw_iconos_amigos(pos: Vector2):
 	var start = pos + Vector2(70, 76)
+
 	for i in range(2):
 		var centro = start + Vector2(i * 62, 0)
+
 		if i < amigos_rescatados:
 			var s = 1.1 + sin(pulse * 4.0 + i) * 0.04
 			_panel_figura_amigo(centro, s, C_GREEN, Color(0.6, 1.0, 0.7), true)
 		else:
-			_panel_figura_amigo(centro, 1.0,
+			_panel_figura_amigo(
+				centro,
+				1.0,
 				Color(0.55, 0.48, 0.42, 0.55),
-				Color(0.78, 0.70, 0.60, 0.35), false)
+				Color(0.78, 0.70, 0.60, 0.35),
+				false
+			)
 
-func _panel_figura_amigo(centro: Vector2, escala: float,
-		color: Color, shine: Color, activo: bool):
+func _panel_figura_amigo(centro: Vector2, escala: float, color: Color, shine: Color, activo: bool):
 	var r_cabeza = 10.0 * escala
+
 	_panel.draw_circle(centro + Vector2(2, 3 - 22 * escala), r_cabeza, Color(0, 0, 0, 0.22))
 	_panel.draw_circle(centro + Vector2(0, -22 * escala), r_cabeza, color)
+
 	if activo:
 		_panel.draw_circle(centro + Vector2(-4, -26 * escala), 3.5 * escala, shine)
+
 	var cuerpo_top  = centro + Vector2(-10 * escala, -10 * escala)
 	var cuerpo_size = Vector2(20 * escala, 22 * escala)
+
 	_panel_rounded_rect(cuerpo_top + Vector2(2, 4), cuerpo_size, 6, Color(0, 0, 0, 0.22))
 	_panel_rounded_rect(cuerpo_top, cuerpo_size, 6, color)
+
 	if not activo:
-		_panel.draw_line(centro + Vector2(-14, -34) * escala,
+		_panel.draw_line(
+			centro + Vector2(-14, -34) * escala,
 			centro + Vector2(14, 2) * escala,
-			Color(0.35, 0.25, 0.20, 0.65), 3)
-		_panel.draw_line(centro + Vector2(14, -34) * escala,
+			Color(0.35, 0.25, 0.20, 0.65),
+			3
+		)
+		_panel.draw_line(
+			centro + Vector2(14, -34) * escala,
 			centro + Vector2(-14, 2) * escala,
-			Color(0.35, 0.25, 0.20, 0.65), 3)
+			Color(0.35, 0.25, 0.20, 0.65),
+			3
+		)
 
 func _panel_rounded_rect(rpos: Vector2, rsize: Vector2, radius: float, color: Color):
 	_panel.draw_rect(Rect2(rpos.x + radius, rpos.y, rsize.x - radius * 2, rsize.y), color)
@@ -130,21 +160,12 @@ func _panel_rounded_rect(rpos: Vector2, rsize: Vector2, radius: float, color: Co
 	_panel.draw_circle(rpos + Vector2(radius, rsize.y - radius), radius, color)
 	_panel.draw_circle(rpos + Vector2(rsize.x - radius, rsize.y - radius), radius, color)
 
-func _panel_rounded_border(rpos: Vector2, rsize: Vector2,
-		radius: float, color: Color, width: float):
-	_panel.draw_line(rpos + Vector2(radius, 0),
-		rpos + Vector2(rsize.x - radius, 0), color, width)
-	_panel.draw_line(rpos + Vector2(radius, rsize.y),
-		rpos + Vector2(rsize.x - radius, rsize.y), color, width)
-	_panel.draw_line(rpos + Vector2(0, radius),
-		rpos + Vector2(0, rsize.y - radius), color, width)
-	_panel.draw_line(rpos + Vector2(rsize.x, radius),
-		rpos + Vector2(rsize.x, rsize.y - radius), color, width)
-	_panel.draw_arc(rpos + Vector2(radius, radius),
-		radius, PI, PI * 1.5, 18, color, width)
-	_panel.draw_arc(rpos + Vector2(rsize.x - radius, radius),
-		radius, PI * 1.5, TAU, 18, color, width)
-	_panel.draw_arc(rpos + Vector2(radius, rsize.y - radius),
-		radius, PI * 0.5, PI, 18, color, width)
-	_panel.draw_arc(rpos + Vector2(rsize.x - radius, rsize.y - radius),
-		radius, 0, PI * 0.5, 18, color, width)
+func _panel_rounded_border(rpos: Vector2, rsize: Vector2, radius: float, color: Color, width: float):
+	_panel.draw_line(rpos + Vector2(radius, 0), rpos + Vector2(rsize.x - radius, 0), color, width)
+	_panel.draw_line(rpos + Vector2(radius, rsize.y), rpos + Vector2(rsize.x - radius, rsize.y), color, width)
+	_panel.draw_line(rpos + Vector2(0, radius), rpos + Vector2(0, rsize.y - radius), color, width)
+	_panel.draw_line(rpos + Vector2(rsize.x, radius), rpos + Vector2(rsize.x, rsize.y - radius), color, width)
+	_panel.draw_arc(rpos + Vector2(radius, radius), radius, PI, PI * 1.5, 18, color, width)
+	_panel.draw_arc(rpos + Vector2(rsize.x - radius, radius), radius, PI * 1.5, TAU, 18, color, width)
+	_panel.draw_arc(rpos + Vector2(radius, rsize.y - radius), radius, PI * 0.5, PI, 18, color, width)
+	_panel.draw_arc(rpos + Vector2(rsize.x - radius, rsize.y - radius), radius, 0, PI * 0.5, 18, color, width)
