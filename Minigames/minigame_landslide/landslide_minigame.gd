@@ -1,6 +1,6 @@
 extends Node2D
 
-@export var time_limit := 45.0
+@export var TOTAL_TIME: float = 45.0
 @export var max_lives := 3
 
 @export var rock_scene: PackedScene = preload("res://Minigames/minigame_landslide/FallingRock.tscn")
@@ -618,12 +618,22 @@ func start_game() -> void:
 	_update_hud()
 	_show_prompt("Busca el teléfono y llama al 911.")
 
+	
+	var player_age: int = MinigameData.player_age
+
+	if player_age < 12:
+		TOTAL_TIME = 45.0 + _get_time_bonus(player_age)
+	else:
+		TOTAL_TIME = 45.0
+
 	if timer_hud.has_method("iniciar"):
-		timer_hud.iniciar(time_limit, "Tiempo", "para evacuar")
+		timer_hud.iniciar(TOTAL_TIME, "Tiempo", "para evacuar")
 	elif timer_hud.has_method("start_timer"):
-		timer_hud.start_timer(time_limit)
+		timer_hud.start_timer(TOTAL_TIME)
 	elif timer_hud.has_method("start"):
-		timer_hud.start(time_limit)
+		timer_hud.start(TOTAL_TIME)
+
+
 
 
 func _handle_rock_spawn(delta: float) -> void:
@@ -1094,3 +1104,21 @@ func _update_hud() -> void:
 func _show_prompt(message: String) -> void:
 	if prompt_label:
 		prompt_label.text = message
+
+# =========================================================
+# TIME BONUS POR EDAD
+# =========================================================
+func _get_time_bonus(age: int) -> float:
+	match age:
+		11:
+			return 2.0
+		10:
+			return 3.0
+		9:
+			return 5.0
+		8:
+			return 7.0
+		7:
+			return 10.0
+		_:
+			return 10.0 if age < 7 else 0.0

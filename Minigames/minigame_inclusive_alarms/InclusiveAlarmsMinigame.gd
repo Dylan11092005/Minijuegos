@@ -6,7 +6,7 @@ const MAX_ERRORS := 3
 var classified_objects := 0
 var errors := 0
 var game_finished := false
-
+var TOTAL_TIME: float = 25.0
 @onready var timer_ui := $TimerUI
 @onready var game_result := $GameResult
 @onready var check_label := $Hud/StatusPanel/CheckLabel
@@ -20,8 +20,17 @@ func _ready() -> void:
 	_update_hud()
 	music_player.play()
 	timer_ui.iniciar(25)
-	timer_ui.iniciar(25, "Clasifica en", "segundos")
-	timer_ui.time_up.connect(_on_timer_ui_time_up)
+
+	var player_age: int = MinigameData.player_age
+
+	if player_age < 12:
+		TOTAL_TIME = 25.0 + _get_time_bonus(player_age)
+	else:
+		TOTAL_TIME = 25.0
+
+	timer_ui.iniciar(TOTAL_TIME, "Clasifica en", "segundos")
+
+
 
 func _process(_delta: float) -> void:
 	pass
@@ -73,6 +82,24 @@ func _on_timer_ui_time_up() -> void:
 	music_player.stop()
 	timer_ui.detener()
 	game_result.show_lose()			
+
+# =========================================================
+# TIME BONUS POR EDAD
+# =========================================================
+func _get_time_bonus(age: int) -> float:
+	match age:
+		11:
+			return 2.0
+		10:
+			return 3.0
+		9:
+			return 5.0
+		8:
+			return 7.0
+		7:
+			return 10.0
+		_:
+			return 10.0 if age < 7 else 0.0
 
 
 

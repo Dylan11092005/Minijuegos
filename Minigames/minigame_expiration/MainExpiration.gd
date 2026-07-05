@@ -81,7 +81,7 @@ const MONTH_NAMES = [
 
 ## Cuántos segundos debe sobrevivir el jugador (sin quedarse sin vidas)
 ## para ganar el minijuego. Calculado para 8 artículos (5 segundos cada uno).
-@export var total_time: float = 40.0
+@export var TOTAL_TIME: float = 40.0
 
 ## --- SONIDOS ---
 ## Arrastra aquí el nodo "BackgroundSound": empieza a sonar (en loop) en
@@ -241,6 +241,7 @@ func _setup_timer_ui():
 	add_child(_timer_ui)
 
 	# Tu TimerUi global emite la señal "time_up"
+
 	if _timer_ui.has_signal("time_up"):
 		_timer_ui.connect("time_up", Callable(self, "_on_time_up"))
 	else:
@@ -250,7 +251,14 @@ func _setup_timer_ui():
 		_timer_ui.set_tamano_panel(500, 60)
 
 	if _timer_ui.has_method("iniciar"):
-		_timer_ui.iniciar(total_time, "Tiempo restante", "para ganar")
+		var player_age: int = MinigameData.player_age
+
+		if player_age < 12:
+			TOTAL_TIME = 40.0 + _get_time_bonus(player_age)
+		else:
+			TOTAL_TIME = 40.0
+
+		_timer_ui.iniciar(TOTAL_TIME, "Tiempo restante", "para ganar")
 	else:
 		print("ERROR: El TimerUi no tiene el método iniciar()")
 
@@ -285,6 +293,7 @@ func _on_time_up():
 	# Si ya los hubiera repartido todos, el juego ya habría terminado en
 	# victoria antes de que sonara el tiempo (ver _spawn_random_food()).
 	_lose_game()
+
 
 
 func _stop_timer_ui():
@@ -585,3 +594,21 @@ func _lose_game():
 			_game_result.mostrar_perdiste()
 
 	emit_signal("puzzle_failed")
+	
+	# =========================================================
+# TIME BONUS POR EDAD
+# =========================================================
+func _get_time_bonus(age: int) -> float:
+	match age:
+		11:
+			return 2.0
+		10:
+			return 3.0
+		9:
+			return 5.0
+		8:
+			return 7.0
+		7:
+			return 10.0
+		_:
+			return 10.0 if age < 7 else 0.0
