@@ -11,7 +11,7 @@ const FIRE_BACKGROUND_SOUND_PATH := "res://Minigames/minigame_fire/assets/sound/
 const TIMER_UI_SCENE_PATH := "res://Minigames/ui_global/TimerUI.tscn"
 const GAME_RESULT_SCENE_PATH := "res://Minigames/ui_global/GameResult.tscn"
 
-const TOTAL_TIME := 35.0
+var TOTAL_TIME: float = 35.0
 
 const TOTAL_FLAMES_TO_APPEAR := 10
 const INITIAL_FIRE_TREES := 2
@@ -199,10 +199,18 @@ func _start_global_timer():
 	if timer_ui.has_method("set_tamano_panel"):
 		timer_ui.set_tamano_panel(570, 60)
 	
+	var player_age: int = MinigameData.player_age
+
+	if player_age < 12:
+		TOTAL_TIME = 35.0 + _get_time_bonus(player_age)
+	else:
+		TOTAL_TIME = 35.0
+	
 	if timer_ui.has_method("iniciar"):
 		timer_ui.iniciar(TOTAL_TIME, "Tiempo restante", "para apagar incendios")
 	else:
 		push_error("TimerUI no tiene el método iniciar(p_time, p_text_before, p_text_after).")
+
 
 
 func _stop_global_timer():
@@ -614,3 +622,22 @@ func _get_burning_count() -> int:
 				count += 1
 	
 	return count
+
+
+# =========================================================
+# TIME BONUS POR EDAD
+# =========================================================
+func _get_time_bonus(age: int) -> float:
+	match age:
+		11:
+			return 2.0
+		10:
+			return 3.0
+		9:
+			return 5.0
+		8:
+			return 7.0
+		7:
+			return 10.0
+		_:
+			return 10.0 if age < 7 else 0.0

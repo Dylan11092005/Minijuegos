@@ -10,7 +10,7 @@ extends Node2D
 var cleaned_trash = 0
 var total_trash = 5
 var game_active = true
-
+var TOTAL_TIME: float = 25.0
 @onready var trash_items = [
 	$TrashBottle,
 	$TrashBag,
@@ -22,8 +22,18 @@ var game_active = true
 func _ready() -> void:
 	music_player.play()
 
-	timer_ui.iniciar(25, "Limpia el rio en", "segundos")
+
+	var player_age: int = MinigameData.player_age
+
+	if player_age < 12:
+		TOTAL_TIME = 25.0 + _get_time_bonus(player_age)
+	else:
+		TOTAL_TIME = 25.0
+
+	timer_ui.iniciar(TOTAL_TIME, "Limpia el rio en", "segundos")
 	timer_ui.time_up.connect(_on_time_up)
+
+
 
 	for trash in trash_items:
 		trash.visible = false
@@ -100,3 +110,22 @@ func show_clean_effect(position_effect):
 	await get_tree().create_timer(0.3).timeout
 
 	clean_effect.visible = false
+
+
+# =========================================================
+# TIME BONUS POR EDAD
+# =========================================================
+func _get_time_bonus(age: int) -> float:
+	match age:
+		11:
+			return 2.0
+		10:
+			return 3.0
+		9:
+			return 5.0
+		8:
+			return 7.0
+		7:
+			return 10.0
+		_:
+			return 10.0 if age < 7 else 0.0

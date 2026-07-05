@@ -101,6 +101,8 @@ var _distance_traveled: float = 0.0
 var _current_speed:     float = 0.0
 var _current_lives:     int   = 3
 
+var _progress_age_multiplier: float = 1.0
+
 # _button_held se actualiza desde el Hud vía on_hide_button_pressed/released
 var _button_held: bool = false
 
@@ -126,8 +128,14 @@ var _lives_ui:    Node2D = null
 var _game_result: Node   = null
 
 
+
 func _ready() -> void:
 	_current_lives = max_lives
+
+	var player_age: int = MinigameData.player_age
+	_progress_age_multiplier = _get_progress_multiplier(player_age)
+
+
 
 	# --- LivesUi ---
 	var lives_scene = load("res://Minigames/ui_global/LivesUi.tscn")
@@ -176,7 +184,10 @@ func _process(delta: float) -> void:
 
 # ---------------------------------------------------------------------------
 func _process_walking(delta: float) -> void:
-	_distance_traveled += _current_speed * delta
+
+	_distance_traveled += _current_speed * _progress_age_multiplier * delta
+
+
 	var progress = clamp(_distance_traveled / total_walk_distance, 0.0, 1.0)
 
 	_hud.update_progress(progress)
@@ -340,3 +351,22 @@ func _schedule_next_earthquake() -> void:
 func on_player_reached_safe_zone() -> void:
 	if _state != State.WIN and _state != State.LOSE:
 		_set_state(State.WIN)
+
+
+# =========================================================
+# PROGRESS BONUS POR EDAD
+# =========================================================
+func _get_progress_multiplier(age: int) -> float:
+	match age:
+		11:
+			return 1.10
+		10:
+			return 1.20
+		9:
+			return 1.35
+		8:
+			return 1.50
+		7:
+			return 1.70
+		_:
+			return 1.80 if age < 7 else 1.0

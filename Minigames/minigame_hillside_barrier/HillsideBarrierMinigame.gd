@@ -34,7 +34,9 @@ const ROCKS_SOUND := preload("res://Minigames/minigame_hillside_barrier/assets/s
 # CONSTANTS
 # =========================================================
 
-const TOTAL_TIME := 65.0
+
+var TOTAL_TIME: float = 65.0
+
 const MAX_LIVES := 3
 const ROCKS_TO_BLOCK := 8
 
@@ -189,10 +191,20 @@ func _setup_timer_ui():
 	if _timer_ui.has_method("set_tamano_panel"):
 		_timer_ui.set_tamano_panel(TIMER_PANEL_WIDTH, TIMER_PANEL_HEIGHT)
 
+
+	var player_age: int = MinigameData.player_age
+
+	if player_age < 12:
+		TOTAL_TIME = 65.0 + _get_time_bonus(player_age)
+	else:
+		TOTAL_TIME = 65.0
+
 	if _timer_ui.has_method("iniciar"):
 		_timer_ui.iniciar(TOTAL_TIME, "Tiempo para el", "deslizamiento")
 	else:
 		print("ERROR: TimerUi no tiene el método iniciar()")
+
+
 
 
 func _setup_lives_ui():
@@ -827,3 +839,22 @@ func _clear_children(parent: Node):
 
 	for child in parent.get_children():
 		child.queue_free()
+
+
+# =========================================================
+# TIME BONUS POR EDAD
+# =========================================================
+func _get_time_bonus(age: int) -> float:
+	match age:
+		11:
+			return 2.0
+		10:
+			return 3.0
+		9:
+			return 5.0
+		8:
+			return 7.0
+		7:
+			return 10.0
+		_:
+			return 10.0 if age < 7 else 0.0

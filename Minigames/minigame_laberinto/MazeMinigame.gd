@@ -11,6 +11,8 @@ const C_GREEN  = Color("#4A9B5F")
 
 const PANEL_SIZE   := Vector2(240, 108)
 const PANEL_RADIUS := 22.0
+var TOTAL_TIME: float = 50.0
+
 
 func _ready() -> void:
 	var canvas = CanvasLayer.new()
@@ -23,8 +25,17 @@ func _ready() -> void:
 	$Amigos/Amigo1.body_entered.connect(_on_amigo1_rescatado)
 	$Amigos/Amigo2.body_entered.connect(_on_amigo2_rescatado)
 	$ZonaSegura.body_entered.connect(_on_zona_segura_entrada)
-	$TimerUI.iniciar(50, "Evacúa en", "segundos")
+	var player_age: int = MinigameData.player_age
+
+	if player_age < 12:
+		TOTAL_TIME = 50.0 + _get_time_bonus(player_age)
+	else:
+		TOTAL_TIME = 50.0
+
+	$TimerUI.iniciar(TOTAL_TIME, "Evacúa en", "segundos")
 	$TimerUI.time_up.connect(_on_tiempo_agotado)
+
+
 
 func _process(delta):
 	if _panel == null:
@@ -148,3 +159,21 @@ func _panel_rounded_border(rpos: Vector2, rsize: Vector2,
 		radius, PI * 0.5, PI, 18, color, width)
 	_panel.draw_arc(rpos + Vector2(rsize.x - radius, rsize.y - radius),
 		radius, 0, PI * 0.5, 18, color, width)
+
+# =========================================================
+# TIME BONUS POR EDAD
+# =========================================================
+func _get_time_bonus(age: int) -> float:
+	match age:
+		11:
+			return 2.0
+		10:
+			return 3.0
+		9:
+			return 5.0
+		8:
+			return 7.0
+		7:
+			return 10.0
+		_:
+			return 10.0 if age < 7 else 0.0
