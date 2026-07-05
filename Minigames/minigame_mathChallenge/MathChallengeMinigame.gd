@@ -21,14 +21,26 @@ var game_finished := false
 const REQUIRED_ANSWERS := 10
 const MAX_ERRORS := 3
 const SYMBOL_PATH := "res://Minigames/minigame_mathChallenge/assets/objects/math_symbols/"
+var TOTAL_TIME: float = 50.0
+
 
 func _ready() -> void:
 	update_hud()
-	timer_ui.iniciar(50, "Calcula en", "segundos")
+
+	var player_age: int = MinigameData.player_age
+
+	if player_age < 12:
+		TOTAL_TIME = 50.0 + _get_time_bonus(player_age)
+	else:
+		TOTAL_TIME = 50.0
+
+	timer_ui.iniciar(TOTAL_TIME, "Calcula en", "segundos")
 	timer_ui.time_up.connect(_on_timer_ui_time_up)
 	music_player.play()
 	randomize()
 	generate_question()
+
+
 
 func generate_question() -> void:
 	var is_addition := randi_range(0, 1) == 0
@@ -130,3 +142,21 @@ func _on_timer_ui_time_up() -> void:
 	game_finished = true
 	music_player.stop()
 	game_result.show_lose()
+
+# =========================================================
+# TIME BONUS POR EDAD
+# =========================================================
+func _get_time_bonus(age: int) -> float:
+	match age:
+		11:
+			return 2.0
+		10:
+			return 3.0
+		9:
+			return 5.0
+		8:
+			return 7.0
+		7:
+			return 10.0
+		_:
+			return 10.0 if age < 7 else 0.0
