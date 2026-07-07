@@ -25,8 +25,8 @@ const SMOKE_PATH := "res://Minigames/minigame_fire/assets/smoke.png"
 # GAMEPLAY CONSTANTS
 # =========================================================
 
-const BURN_DURATION := 2.0
-const CLICK_SIZE := Vector2(260, 330)
+var BURN_DURATION := 2.0
+const CLICK_SIZE := Vector2(165, 210)
 
 
 # =========================================================
@@ -39,8 +39,8 @@ const TREE_OUTLINE_SCALE := Vector2(0.54, 0.54)
 const BURNED_TREE_SCALE := Vector2(0.48, 0.48)
 const BURNED_TREE_OUTLINE_SCALE := Vector2(0.54, 0.54)
 
-const FIRE_TOP_SCALE := Vector2(0.22, 0.22)
-const FIRE_ROOT_SCALE := Vector2(0.25, 0.25)
+const FIRE_TOP_SCALE := Vector2(0.44, 0.44)
+const FIRE_ROOT_SCALE := Vector2(0.50, 0.50)
 const SMOKE_SCALE := Vector2(0.27, 0.27)
 
 const TREE_MODULATE := Color(1.18, 1.18, 1.18, 1.0)
@@ -155,6 +155,10 @@ func reset_tree():
 
 func set_disabled(value: bool):
 	disabled = value
+
+
+func set_burn_duration(value: float) -> void:
+	BURN_DURATION = value
 
 
 func can_catch_fire() -> bool:

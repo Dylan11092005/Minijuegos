@@ -30,6 +30,8 @@ const C_PHASE_BLUE := Color("#3E5F8F")
 const C_PHASE_ORANGE := Color("#E07820")
 const C_PHASE_RED := Color("#D63A3A")
 
+const BASE_BURN_DURATION := 2.0
+
 
 # =========================================================
 # NODE REFERENCES
@@ -89,6 +91,8 @@ func _process(delta):
 	if game_over:
 		return
 	
+	wave_process(delta)
+	
 	spawn_timer += delta
 	
 	if spawn_timer >= SPAWN_FLAME_EVERY:
@@ -99,6 +103,10 @@ func _process(delta):
 				_spawn_one_flame()
 	
 	_update_hud()
+
+
+func wave_process(_delta):
+	pass
 
 
 func _exit_tree():
@@ -250,12 +258,17 @@ func _setup_game_result():
 func _collect_trees():
 	trees.clear()
 	
+	var burn_duration := _get_burn_duration_for_age(MinigameData.player_age)
+	
 	for child in trees_parent.get_children():
 		if child.has_method("reset_tree") and child.has_method("set_burning"):
 			trees.append(child)
 			
 			child.reset_tree()
 			child.set_disabled(true)
+			
+			if child.has_method("set_burn_duration"):
+				child.set_burn_duration(burn_duration)
 			
 			if child.has_signal("extinguished"):
 				if not child.extinguished.is_connected(_on_tree_extinguished):
@@ -625,7 +638,7 @@ func _get_burning_count() -> int:
 
 
 # =========================================================
-# TIME BONUS POR EDAD
+# TIME BONUS POR EDAD (tiempo total del minijuego)
 # =========================================================
 func _get_time_bonus(age: int) -> float:
 	match age:
@@ -641,3 +654,25 @@ func _get_time_bonus(age: int) -> float:
 			return 10.0
 		_:
 			return 10.0 if age < 7 else 0.0
+
+
+# =========================================================
+# TIEMPO DE QUEMADO SEGÚN EDAD (cuánto dura un árbol ardiendo)
+# =========================================================
+func _get_burn_duration_for_age(age: int) -> float:
+	if age >= 12:
+		return BASE_BURN_DURATION
+	
+	match age:
+		11:
+			return BASE_BURN_DURATION + 0.5
+		10:
+			return BASE_BURN_DURATION + 1.0
+		9:
+			return BASE_BURN_DURATION + 1.5
+		8:
+			return BASE_BURN_DURATION + 2.0
+		7:
+			return BASE_BURN_DURATION + 2.5
+		_:
+			return BASE_BURN_DURATION + 3.0 if age < 7 else BASE_BURN_DURATION
