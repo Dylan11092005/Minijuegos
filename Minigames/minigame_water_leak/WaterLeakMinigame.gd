@@ -73,6 +73,7 @@ const LEAK_CANDIDATES: Array[Vector2] = [
 
 var _water_level: float = 100.0
 var _leaks: Array[Dictionary] = []
+var _water_loss_age_multiplier: float = 1.0
 var _dragging_patch: bool = false
 var _drag_position: Vector2 = Vector2.ZERO
 var _game_finished: bool = false
@@ -95,10 +96,17 @@ var _leak_visuals_root: Node2D = null
 var _current_leak_frame: int = -1
 
 
+
 func _ready() -> void:
 	_random.randomize()
 	_water_level = starting_water
 	_elapsed_game_time = 0.0
+
+	var player_age: int = MinigameData.player_age
+	_water_loss_age_multiplier = _get_water_loss_multiplier(player_age)
+
+	
+	
 	_generate_leaks()
 	_setup_leak_frames()
 	_create_leak_visuals()
@@ -487,6 +495,8 @@ func _update_water_level(delta: float) -> void:
 		)
 
 	loss_per_second *= initial_multiplier
+	loss_per_second *= _water_loss_age_multiplier
+
 
 	_water_level = clampf(
 		_water_level - loss_per_second * delta,
@@ -1533,3 +1543,21 @@ func _draw_water_drop(center: Vector2, radius: float, color: Color) -> void:
 		center + Vector2(-radius * 0.70, -radius * 0.10)
 	])
 	draw_colored_polygon(points, color)
+
+# =========================================================
+# WATER LOSS POR EDAD
+# =========================================================
+func _get_water_loss_multiplier(age: int) -> float:
+	match age:
+		11:
+			return 0.75
+		10:
+			return 0.70
+		9:
+			return 0.65
+		8:
+			return 0.60
+		7:
+			return 0.55
+		_:
+			return 0.50 if age < 7 else 1.0

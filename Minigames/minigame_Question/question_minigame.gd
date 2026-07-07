@@ -1,6 +1,6 @@
 extends Node2D
 
-@export var time_limit := 60.0
+@export var TOTAL_TIME: float = 60.0
 @export var lives_limit := 3
 @export var max_rounds := 8
 @export var required_correct_answers := 8
@@ -428,8 +428,17 @@ func start_game() -> void:
 	if timer_hud.has_method("detener"):
 		timer_hud.detener()
 
+	var player_age: int = MinigameData.player_age
+
+	if player_age < 12:
+		TOTAL_TIME = 60.0 + _get_time_bonus(player_age)
+	else:
+		TOTAL_TIME = 60.0
+
 	if timer_hud.has_method("iniciar"):
-		timer_hud.iniciar(time_limit, "Tiempo", "responde las preguntas")
+		timer_hud.iniciar(TOTAL_TIME, "Tiempo", "responde las preguntas")
+
+
 
 
 func show_question() -> void:
@@ -708,3 +717,21 @@ func create_panel_style(bg_color: Color, border_color: Color, radius: int, shado
 		style.shadow_offset = Vector2(0, 4)
 
 	return style
+
+# =========================================================
+# TIME BONUS POR EDAD
+# =========================================================
+func _get_time_bonus(age: int) -> float:
+	match age:
+		11:
+			return 2.0
+		10:
+			return 3.0
+		9:
+			return 5.0
+		8:
+			return 7.0
+		7:
+			return 10.0
+		_:
+			return 10.0 if age < 7 else 0.0

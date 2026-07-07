@@ -214,14 +214,22 @@ func _on_button_6_pressed() -> void:
 
 func _on_button_12_pressed() -> void:
 	var minigame_data = get_node("/root/MinigameData")
+
 	minigame_data.title = "¡Limpia el río!"
-	minigame_data.description = "Las fábricas han contaminado el río de tu comunidad."
-	minigame_data.instructions = "Mueve el cursor rápidamente sobre los desechos que aparecen en el agua para eliminarlos antes de que se acabe el tiempo."
+	minigame_data.description = "Las fábricas han contaminado el río. Elimina los desechos sin dañar a los peces."
+
+	minigame_data.instructions = "Mueve el cursor sobre los desechos para recogerlos antes de que termine el tiempo. Evita tocar a los peces, ya que perderás puntos o cometerás errores."
+
 	minigame_data.video_path = "res://Minigames/minigame_river_clean/assets/video/RiverCleanInstructions.ogv"
 	minigame_data.minigame_scene = "res://Minigames/minigame_river_clean/RiverCleanMinigame.tscn"
+
 	minigame_data.controls = [
-	{ "action": "Mover guante", "icon": "res://Minigames/ui_global/assets/ClickIcon.png" },
+		{
+			"action": "Mover guante",
+			"icon": "res://Minigames/ui_global/assets/ClickIcon.png"
+		},
 	]
+
 	get_tree().change_scene_to_file("res://Minigames/ui_global/MinigameIntro.tscn")
 func _on_button_11_pressed() -> void:
 	var minigame_data = get_node("/root/MinigameData")
@@ -343,6 +351,7 @@ func _on_button_16_pressed() -> void:
 	
 
 
+
 func _on_button_19_pressed() -> void:
 	var minigame_data = get_node("/root/MinigameData")
 
@@ -367,5 +376,91 @@ Pierdes si fallas demasiadas respuestas o si no terminas dentro del tiempo estab
 	]
 
 	get_tree().change_scene_to_file("res://Minigames/ui_global/MinigameIntro.tscn")
+
+
+func _on_button_20_pressed() -> void:
+	var minigame_data = get_node("/root/MinigameData")
 	
+	minigame_data.title = "¡Alerta de maremoto!"
 	
+	minigame_data.description = "Evacua a un lugar más alto"
+	
+	minigame_data.instructions = "Debes esquivar los obstaculos y evitar que te alcance el maremoto hasta llegar a la zona segura. Con las flechas de arriba y abajo te mueves entre niveles para evitar los obstaculos"
+	
+	minigame_data.video_path = "res://Minigames/minigame_wave/assets/WaveInstruction.ogv"
+	
+	minigame_data.minigame_scene = "res://Minigames/minigame_wave/WaveGame.tscn"
+	
+	minigame_data.controls = [
+		{ "action": "Moverse derecha,izquierda, arriba y abajo", "icon": 
+			"res://Minigames/ui_global/assets/Movement.png" },
+	]
+	
+	get_tree().change_scene_to_file("res://Minigames/ui_global/MinigameIntro.tscn")
+
+
+func _on_button_18_pressed() -> void:
+	var minigame_data = get_node("/root/MinigameData")
+	
+	minigame_data.title = "¡Encuentra a la familia!"
+	
+	minigame_data.description = "¡Alerta! Debes ir al punto de encuentro acordado con la familia durante una emergencia."
+	
+	minigame_data.instructions = "Mueve al rescatista dentro de la casa para encontrar a papá, mamá, hijo e hija. Rescata a los cuatro familiares y llévalos a la zona segura antes de que se acabe el tiempo."
+	
+	minigame_data.video_path = "res://Minigames/minigame_FamilyMeeting/assets/video/FamilyMeetingInstructions.ogv"
+	
+	minigame_data.minigame_scene = "res://Minigames/minigame_FamilyMeeting/FamilyMeetingMinigame.tscn"
+	
+	minigame_data.controls = [
+		{
+			"action": "Moverse derecha, izquierda, arriba y abajo",
+			"icon": "res://Minigames/ui_global/assets/Movement.png"
+		},
+	]
+	
+	get_tree().change_scene_to_file("res://Minigames/ui_global/MinigameIntro.tscn")
+
+
+func _on_button_22_pressed() -> void:
+	var minigame_data = get_node("/root/MinigameData")
+	
+	minigame_data.title = "¡Repara el puente!"
+	
+	minigame_data.description = "Un puente se rompió y debes arreglarlo antes de que alguien caiga."
+	
+	minigame_data.instructions = "Arrastra las tablas al lugar correcto para completar el puente. Si te equivocas, perderás vidas. Luego usa el martillo para terminar la reparación."
+	
+	minigame_data.video_path = "res://Minigames/minigame_bridge/assets/Bridge_Instruction.ogv"
+	
+	minigame_data.minigame_scene = "res://Minigames/minigame_bridge/BridgeMinigame.tscn"
+	
+	minigame_data.controls = [
+		{ "action": "Arrastrar tablas, arrastrar martillo", "icon": "res://Minigames/ui_global/assets/ClickIcon.png" },
+	]
+	get_tree().change_scene_to_file("res://Minigames/ui_global/MinigameIntro.tscn")
+	
+
+
+func _on_button_24_pressed() -> void:
+	var minigame_data = get_node("/root/MinigameData")
+
+	minigame_data.title = "¡Desafío Matemático!"
+
+	minigame_data.description = "Pon a prueba tu rapidez resolviendo operaciones matemáticas antes de que se acabe el tiempo."
+
+	minigame_data.instructions = "Observa la operación que aparece en la pizarra y selecciona el número correcto en el teclado. Completa 10 operaciones antes de que termine el tiempo. Si acumulas 3 errores o se acaba el tiempo, perderás la partida."
+
+	minigame_data.video_path = "res://Minigames/minigame_mathChallenge/assets/video/InstructionsMath.ogv"
+
+	minigame_data.minigame_scene = "res://Minigames/minigame_mathChallenge/MathChallengeMinigame.tscn"
+
+	minigame_data.controls = [
+		{
+			"action": "Seleccionar la respuesta correcta",
+			"icon": "res://Minigames/ui_global/assets/ClickIcon.png"
+		},
+	]
+
+
+	get_tree().change_scene_to_file("res://Minigames/ui_global/MinigameIntro.tscn")

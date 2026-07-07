@@ -35,11 +35,28 @@ func _ready():
 
 func _start_game():
 	game_active = true
-
+	
+	var player_age: int = MinigameData.player_age
+	if player_age < 12:
+		time_limit = 30.0 + _get_time_bonus(player_age)
+	else:
+		time_limit = 30.0
+		
 	if timer_hud != null:
 		timer_hud.iniciar(time_limit, "Tiempo restante", "para limpiar el río")
 
-
+# =========================================================
+# TIME BONUS POR EDAD
+# =========================================================
+func _get_time_bonus(age: int) -> float:
+	match age:
+		11: return 2.0
+		10: return 3.0
+		9:  return 5.0
+		8:  return 7.0
+		7:  return 10.0
+		_:  return 10.0 if age < 7 else 0.0
+		
 func _setup_timer_hud():
 	timer_hud = TIMER_HUD_SCENE.instantiate()
 	add_child(timer_hud)

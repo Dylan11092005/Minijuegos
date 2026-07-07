@@ -1,24 +1,31 @@
 [gd_scene format=3 uid="uid://de23ex3t4mp8o"]
 
-[ext_resource type="Texture2D" uid="uid://jwwy135j4bdv" path="res://minigame_river_clean/assets/background/RiverBackground.png" id="1_43aah"]
-[ext_resource type="Script" uid="uid://dgvuqmnq8ojf4" path="res://minigame_river_clean/RiverCleanMinigame.gd" id="1_atuvn"]
-[ext_resource type="Texture2D" uid="uid://jj7wphwib506" path="res://minigame_river_clean/assets/trash/TrashBottle.png" id="3_0fj38"]
-[ext_resource type="Texture2D" uid="uid://b1pw6g0ojhv3f" path="res://minigame_river_clean/assets/tools/CleaningGlove.png" id="3_sxihc"]
-[ext_resource type="Texture2D" uid="uid://djucxbl2024ap" path="res://minigame_river_clean/assets/trash/TrashPaper.png" id="4_bdfur"]
-[ext_resource type="Texture2D" uid="uid://b4rhld0de2mla" path="res://minigame_river_clean/assets/trash/TrashBox.png" id="5_p63nh"]
-[ext_resource type="Texture2D" uid="uid://c1uh4eum6gwob" path="res://minigame_river_clean/assets/trash/TrashCan.png" id="6_7j2wh"]
-[ext_resource type="Texture2D" uid="uid://dkhaow61nnouq" path="res://minigame_river_clean/assets/trash/TrashBag.png" id="7_hx8n7"]
-[ext_resource type="Texture2D" uid="uid://dwfaf2wc4fwbu" path="res://minigame_river_clean/assets/tools/CleanEffect.png" id="9_p63nh"]
-[ext_resource type="AudioStream" uid="uid://lipmvupxeg1d" path="res://minigame_river_clean/assets/audio/RiverMusic.mp3" id="10_hx8n7"]
-[ext_resource type="AudioStream" uid="uid://bylw0nbvb4fxp" path="res://minigame_river_clean/assets/audio/cleam.mp3" id="11_k8wwk"]
-[ext_resource type="PackedScene" uid="uid://m3dt448yc1u" path="res://ui_global/TimerUi.tscn" id="12_ne8od"]
-[ext_resource type="PackedScene" uid="uid://dsdbaxj6xesxn" path="res://ui_global/GameResult.tscn" id="13_3n02i"]
+[ext_resource type="Texture2D" uid="uid://jwwy135j4bdv" path="res://Minigames/minigame_river_clean/assets/background/RiverBackground.png" id="1_43aah"]
+[ext_resource type="Script" uid="uid://dgvuqmnq8ojf4" path="res://Minigames/minigame_river_clean/RiverCleanMinigame.gd" id="1_atuvn"]
+[ext_resource type="Texture2D" uid="uid://jj7wphwib506" path="res://Minigames/minigame_river_clean/assets/trash/TrashBottle.png" id="3_0fj38"]
+[ext_resource type="Texture2D" uid="uid://b1pw6g0ojhv3f" path="res://Minigames/minigame_river_clean/assets/tools/CleaningGlove.png" id="3_sxihc"]
+[ext_resource type="Texture2D" uid="uid://djucxbl2024ap" path="res://Minigames/minigame_river_clean/assets/trash/TrashPaper.png" id="4_bdfur"]
+[ext_resource type="Texture2D" uid="uid://b4rhld0de2mla" path="res://Minigames/minigame_river_clean/assets/trash/TrashBox.png" id="5_p63nh"]
+[ext_resource type="Texture2D" uid="uid://c1uh4eum6gwob" path="res://Minigames/minigame_river_clean/assets/trash/TrashCan.png" id="6_7j2wh"]
+[ext_resource type="Texture2D" uid="uid://dkhaow61nnouq" path="res://Minigames/minigame_river_clean/assets/trash/TrashBag.png" id="7_hx8n7"]
+[ext_resource type="Texture2D" uid="uid://etfwfpojvkba" path="res://Minigames/minigame_river_clean/assets/trash/Fish1.png" id="8_6l4ud"]
+[ext_resource type="Texture2D" uid="uid://bx28bybnx7xlm" path="res://Minigames/minigame_river_clean/assets/trash/Fish2.png" id="9_hdhb5"]
+[ext_resource type="Texture2D" uid="uid://dwfaf2wc4fwbu" path="res://Minigames/minigame_river_clean/assets/tools/CleanEffect.png" id="9_p63nh"]
+[ext_resource type="Texture2D" uid="uid://b06h4llm20kt3" path="res://Minigames/minigame_river_clean/assets/trash/Fish3.png" id="10_4xdq4"]
+[ext_resource type="AudioStream" uid="uid://lipmvupxeg1d" path="res://Minigames/minigame_river_clean/assets/audio/RiverMusic.mp3" id="10_hx8n7"]
+[ext_resource type="AudioStream" uid="uid://bylw0nbvb4fxp" path="res://Minigames/minigame_river_clean/assets/audio/cleam.mp3" id="11_k8wwk"]
+[ext_resource type="PackedScene" uid="uid://m3dt448yc1u" path="res://Minigames/ui_global/TimerUi.tscn" id="12_ne8od"]
+[ext_resource type="PackedScene" uid="uid://dsdbaxj6xesxn" path="res://Minigames/ui_global/GameResult.tscn" id="13_3n02i"]
+[ext_resource type="AudioStream" uid="uid://4vdmimp1qbyv" path="res://Minigames/minigame_mathChallenge/assets/audio/Error.mp3" id="20_4ujdx"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_8y2w3"]
 size = Vector2(50.375, 54.25)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vggo2"]
+size = Vector2(74, 34.25)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_sxihc"]
-size = Vector2(86, 82)
+size = Vector2(129, 127)
 
 [node name="RiverCleanMinigame" type="Node2D" unique_id=2009519007]
 script = ExtResource("1_atuvn")
@@ -88,23 +95,61 @@ texture = ExtResource("7_hx8n7")
 position = Vector2(1633, 504)
 shape = SubResource("RectangleShape2D_8y2w3")
 
+[node name="Fish1" type="Area2D" parent="." unique_id=565213000]
+visible = false
+
+[node name="Sprite2D" type="Sprite2D" parent="Fish1" unique_id=858568995]
+position = Vector2(496.75, 642.25)
+scale = Vector2(0.07714842, 0.07275394)
+texture = ExtResource("8_6l4ud")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Fish1" unique_id=1667540790]
+position = Vector2(500, 642.125)
+shape = SubResource("RectangleShape2D_vggo2")
+
+[node name="Fish2" type="Area2D" parent="." unique_id=232903883]
+visible = false
+
+[node name="Sprite2D" type="Sprite2D" parent="Fish2" unique_id=997533579]
+position = Vector2(1215, 614)
+scale = Vector2(0.07714842, 0.07275394)
+texture = ExtResource("9_hdhb5")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Fish2" unique_id=1003268218]
+position = Vector2(1214, 611)
+shape = SubResource("RectangleShape2D_vggo2")
+
+[node name="Fish3" type="Area2D" parent="." unique_id=113827751]
+visible = false
+
+[node name="Sprite2D" type="Sprite2D" parent="Fish3" unique_id=751652724]
+position = Vector2(1309.375, 845.37494)
+scale = Vector2(0.0854492, 0.07934566)
+texture = ExtResource("10_4xdq4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Fish3" unique_id=338963275]
+position = Vector2(1313, 844)
+shape = SubResource("RectangleShape2D_vggo2")
+
 [node name="CleaningGlove" type="Area2D" parent="." unique_id=243690598]
 
 [node name="Sprite2D" type="Sprite2D" parent="CleaningGlove" unique_id=819940685]
-scale = Vector2(0.2, 0.2)
+position = Vector2(20.550001, 19.399994)
+scale = Vector2(0.24472253, 0.26339868)
 texture = ExtResource("3_sxihc")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CleaningGlove" unique_id=1275853686]
-position = Vector2(1, -2)
+position = Vector2(22.5, 20.5)
 shape = SubResource("RectangleShape2D_sxihc")
 
 [node name="CleanEffect" type="Sprite2D" parent="." unique_id=443562461]
-position = Vector2(-5.4999995, -7.953121)
-scale = Vector2(0.122349106, 0.15023452)
+position = Vector2(13.500002, 9.999998)
+scale = Vector2(0.18433933, 0.20880914)
 texture = ExtResource("9_p63nh")
 
 [node name="MusicPlayer" type="AudioStreamPlayer2D" parent="." unique_id=237628319]
 stream = ExtResource("10_hx8n7")
+volume_db = -10.0
 autoplay = true
 
 [node name="CleanSound" type="AudioStreamPlayer2D" parent="." unique_id=2139897978]
@@ -114,8 +159,15 @@ stream = ExtResource("11_k8wwk")
 
 [node name="GameResult" parent="." unique_id=2106536257 instance=ExtResource("13_3n02i")]
 
+[node name="ErrorPlayer" type="AudioStreamPlayer2D" parent="." unique_id=1275809191]
+stream = ExtResource("20_4ujdx")
+volume_db = 15.0
+
 [connection signal="area_entered" from="TrashBottle" to="." method="_on_trash_bottle_area_entered"]
 [connection signal="area_entered" from="TrashPaper" to="." method="_on_trash_paper_area_entered"]
 [connection signal="area_entered" from="TrashBox" to="." method="_on_trash_box_area_entered"]
 [connection signal="area_entered" from="TrashCan" to="." method="_on_trash_can_area_entered"]
 [connection signal="area_entered" from="TrashBag" to="." method="_on_trash_bag_area_entered"]
+[connection signal="area_entered" from="Fish1" to="." method="_on_fish_1_area_entered"]
+[connection signal="area_entered" from="Fish2" to="." method="_on_fish_2_area_entered"]
+[connection signal="area_entered" from="Fish3" to="." method="_on_fish_3_area_entered"]
