@@ -1,4 +1,3 @@
-
 extends Node2D
 class_name SchoolRouteMinigame
 
@@ -150,6 +149,8 @@ var _random: RandomNumberGenerator = (
 	RandomNumberGenerator.new()
 )
 
+var _error_texture: Texture2D = null
+
 
 @onready var _slots_root: Node2D = $Slots
 
@@ -173,6 +174,10 @@ var _random: RandomNumberGenerator = (
 @onready var _piece_sound: AudioStreamPlayer = (
 	get_node_or_null("PieceSound")
 	as AudioStreamPlayer
+)
+
+@onready var _error_template: Node = (
+	get_node_or_null("Error")
 )
 
 
@@ -205,6 +210,7 @@ func _ready() -> void:
 	_layout_interface()
 	_create_global_ui()
 	_configure_audio()
+	_configure_error_template()
 	_start_game()
 
 
@@ -307,6 +313,130 @@ func _play_piece_sound() -> void:
 
 	_piece_sound.stop()
 	_piece_sound.play()
+
+
+# ============================================================
+# MARCA DE ERROR (X)
+# ============================================================
+
+func _configure_error_template() -> void:
+	if _error_template == null:
+		return
+
+	if _error_template is Sprite2D:
+		_error_texture = (
+			_error_template as Sprite2D
+		).texture
+
+	_error_template.visible = false
+
+
+func _add_error_mark(piece: Node) -> void:
+	if _error_texture == null:
+		return
+
+	if not is_instance_valid(piece):
+		return
+
+	for child: Node in piece.get_children():
+		if bool(
+			child.get_meta(
+				"error_mark",
+				false
+			)
+		):
+			return
+
+	var mark: Sprite2D = Sprite2D.new()
+
+	mark.name = "ErrorMark"
+	mark.texture = _error_texture
+	mark.centered = true
+	mark.z_index = 60
+
+	mark.set_meta(
+		"error_mark",
+		true
+	)
+
+	piece.add_child(mark)
+
+	_fit_error_mark_to_piece(mark, piece)
+
+
+func _fit_error_mark_to_piece(
+	mark: Sprite2D,
+	piece: Node
+) -> void:
+	if mark.texture == null:
+		return
+
+	var target_size: Vector2 = (
+		_board_piece_size
+	)
+
+	var piece_size_value: Variant = piece.get(
+		"board_visual_size"
+	)
+
+	if piece_size_value is Vector2:
+		if (piece_size_value as Vector2) != Vector2.ZERO:
+			target_size = piece_size_value
+
+	var texture_size: Vector2 = (
+		mark.texture.get_size()
+	)
+
+	if texture_size.x <= 0.0:
+		return
+
+	if texture_size.y <= 0.0:
+		return
+
+	var scale_x: float = (
+		target_size.x / texture_size.x
+	)
+
+	var scale_y: float = (
+		target_size.y / texture_size.y
+	)
+
+	var final_scale: float = minf(
+		scale_x,
+		scale_y
+	)
+
+	mark.scale = Vector2(
+		final_scale,
+		final_scale
+	)
+
+
+func _clear_all_error_marks() -> void:
+	for slot: Node in _slots_root.get_children():
+		var piece_value: Variant = slot.get(
+			"placed_piece"
+		)
+
+		if piece_value == null:
+			continue
+
+		if not (piece_value is Node):
+			continue
+
+		var piece: Node = piece_value as Node
+
+		if not is_instance_valid(piece):
+			continue
+
+		for child: Node in piece.get_children():
+			if bool(
+				child.get_meta(
+					"error_mark",
+					false
+				)
+			):
+				child.queue_free()
 
 
 # ============================================================
@@ -1354,7 +1484,7 @@ func _on_piece_dropped(
 
 	_active_piece = null
 
-	_check_win_condition()
+	_check_board_state()
 
 
 func _on_placed_piece_clicked(
@@ -1389,6 +1519,8 @@ func _on_placed_piece_clicked(
 
 	if is_instance_valid(piece):
 		piece.queue_free()
+
+	_check_board_state()
 
 
 func _find_available_slot(
@@ -1426,21 +1558,119 @@ func _find_slot_by_piece(
 
 
 # ============================================================
-# VALIDACIÓN DE VICTORIA
+# VALIDACIÓN DE VICTORIA Y DE ERRORES
 # ============================================================
 
-func _check_win_condition() -> void:
+func _check_board_state() -> void:
 	if _game_finished:
 		return
 
+	_clear_all_error_marks()
+
+	if _evaluate_win_path():
+		_finish_game(true)
+		return
+
+	_mark_incorrect_pieces()
+
+
+func _mark_incorrect_pieces() -> void:
+	var wrong_slot_ids: Dictionary = {}
+
+	for slot: Node in _slots_root.get_children():
+		if not slot.has_method("has_connection"):
+			continue
+
+		var piece_value: Variant = slot.get(
+			"placed_piece"
+		)
+
+		if piece_value == null:
+			continue
+
+		for direction: Vector2i in CARDINAL_DIRECTIONS:
+			var neighbor: Node = _find_neighbor(
+				slot,
+				direction
+			)
+
+			if neighbor == null:
+				continue
+
+			var neighbor_piece_value: Variant = neighbor.get(
+				"placed_piece"
+			)
+
+			if neighbor_piece_value == null:
+				continue
+
+			var slot_connects: bool = (
+				_slot_has_connection(
+					slot,
+					direction
+				)
+			)
+
+			var opposite: Vector2i = (
+				_get_opposite_direction(
+					direction
+				)
+			)
+
+			var neighbor_connects: bool = (
+				_slot_has_connection(
+					neighbor,
+					opposite
+				)
+			)
+
+			if slot_connects != neighbor_connects:
+				wrong_slot_ids[
+					slot.get_instance_id()
+				] = slot
+
+				wrong_slot_ids[
+					neighbor.get_instance_id()
+				] = neighbor
+
+	for id: int in wrong_slot_ids:
+		var wrong_slot: Node = (
+			wrong_slot_ids[id]
+		)
+
+		var wrong_piece_value: Variant = wrong_slot.get(
+			"placed_piece"
+		)
+
+		if wrong_piece_value == null:
+			continue
+
+		if not (wrong_piece_value is Node):
+			continue
+
+		var wrong_piece: Node = (
+			wrong_piece_value as Node
+		)
+
+		var fixed_value: Variant = wrong_piece.get(
+			"is_fixed_piece"
+		)
+
+		if fixed_value == true:
+			continue
+
+		_add_error_mark(wrong_piece)
+
+
+func _evaluate_win_path() -> bool:
 	var start_slot: Node = _get_start_slot()
 	var goal_slot: Node = _get_goal_slot()
 
 	if start_slot == null:
-		return
+		return false
 
 	if goal_slot == null:
-		return
+		return false
 
 	var start_direction: Vector2i = (
 		_get_external_direction(
@@ -1458,13 +1688,13 @@ func _check_win_condition() -> void:
 		start_slot,
 		start_direction
 	):
-		return
+		return false
 
 	if not _slot_has_connection(
 		goal_slot,
 		goal_direction
 	):
-		return
+		return false
 
 	var pending_slots: Array[Node] = []
 	var visited_slots: Dictionary = {}
@@ -1490,8 +1720,7 @@ func _check_win_condition() -> void:
 		visited_slots[current_id] = true
 
 		if current_slot == goal_slot:
-			_finish_game(true)
-			return
+			return true
 
 		for direction: Vector2i in CARDINAL_DIRECTIONS:
 			if not _slot_has_connection(
@@ -1530,6 +1759,8 @@ func _check_win_condition() -> void:
 				pending_slots.append(
 					neighbor_slot
 				)
+
+	return false
 
 
 func _find_neighbor(
