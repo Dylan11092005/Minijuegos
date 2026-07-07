@@ -16,9 +16,6 @@
 [ext_resource type="AudioStream" uid="uid://bylw0nbvb4fxp" path="res://Minigames/minigame_river_clean/assets/audio/cleam.mp3" id="11_k8wwk"]
 [ext_resource type="PackedScene" uid="uid://m3dt448yc1u" path="res://Minigames/ui_global/TimerUi.tscn" id="12_ne8od"]
 [ext_resource type="PackedScene" uid="uid://dsdbaxj6xesxn" path="res://Minigames/ui_global/GameResult.tscn" id="13_3n02i"]
-[ext_resource type="Texture2D" uid="uid://bx0efswyd3cdx" path="res://Minigames/minigame_river_clean/assets/trash/Panel.png" id="17_4xdq4"]
-[ext_resource type="Texture2D" uid="uid://blc0kcspp62ym" path="res://Minigames/minigame_river_clean/assets/trash/HeartFull.png" id="18_vggo2"]
-[ext_resource type="Texture2D" uid="uid://cnmbwoq83utdj" path="res://Minigames/minigame_river_clean/assets/trash/HeartEmpty.png" id="19_vggo2"]
 [ext_resource type="AudioStream" uid="uid://4vdmimp1qbyv" path="res://Minigames/minigame_mathChallenge/assets/audio/Error.mp3" id="20_4ujdx"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_8y2w3"]
@@ -28,7 +25,7 @@ size = Vector2(50.375, 54.25)
 size = Vector2(74, 34.25)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_sxihc"]
-size = Vector2(86, 82)
+size = Vector2(129, 127)
 
 [node name="RiverCleanMinigame" type="Node2D" unique_id=2009519007]
 script = ExtResource("1_atuvn")
@@ -137,16 +134,17 @@ shape = SubResource("RectangleShape2D_vggo2")
 [node name="CleaningGlove" type="Area2D" parent="." unique_id=243690598]
 
 [node name="Sprite2D" type="Sprite2D" parent="CleaningGlove" unique_id=819940685]
-scale = Vector2(0.2, 0.2)
+position = Vector2(20.550001, 19.399994)
+scale = Vector2(0.24472253, 0.26339868)
 texture = ExtResource("3_sxihc")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CleaningGlove" unique_id=1275853686]
-position = Vector2(1, -2)
+position = Vector2(22.5, 20.5)
 shape = SubResource("RectangleShape2D_sxihc")
 
 [node name="CleanEffect" type="Sprite2D" parent="." unique_id=443562461]
-position = Vector2(-5.4999995, -7.953121)
-scale = Vector2(0.122349106, 0.15023452)
+position = Vector2(13.500002, 9.999998)
+scale = Vector2(0.18433933, 0.20880914)
 texture = ExtResource("9_p63nh")
 
 [node name="MusicPlayer" type="AudioStreamPlayer2D" parent="." unique_id=237628319]
@@ -160,34 +158,6 @@ stream = ExtResource("11_k8wwk")
 [node name="TimerUI" parent="." unique_id=1042888595 instance=ExtResource("12_ne8od")]
 
 [node name="GameResult" parent="." unique_id=2106536257 instance=ExtResource("13_3n02i")]
-
-[node name="Lives" type="Node2D" parent="." unique_id=1212216958]
-
-[node name="Panel" type="Sprite2D" parent="Lives" unique_id=165644963]
-position = Vector2(1636.5001, 150.75)
-scale = Vector2(0.30273438, 0.2709961)
-texture = ExtResource("17_4xdq4")
-
-[node name="Heart1" type="Sprite2D" parent="Lives" unique_id=2021931439]
-position = Vector2(1619, 145)
-scale = Vector2(0.08170581, 0.11279303)
-texture = ExtResource("18_vggo2")
-
-[node name="Heart2" type="Sprite2D" parent="Lives" unique_id=1192567539]
-position = Vector2(1692.9999, 144)
-scale = Vector2(0.07641587, 0.116760254)
-texture = ExtResource("18_vggo2")
-
-[node name="Heart3" type="Sprite2D" parent="Lives" unique_id=1658572394]
-position = Vector2(1774, 145)
-scale = Vector2(0.081461556, 0.12109374)
-texture = ExtResource("18_vggo2")
-
-[node name="HeartEmpty" type="Sprite2D" parent="Lives" unique_id=1044916893]
-visible = false
-position = Vector2(1774, 145)
-scale = Vector2(0.081461556, 0.12109374)
-texture = ExtResource("19_vggo2")
 
 [node name="ErrorPlayer" type="AudioStreamPlayer2D" parent="." unique_id=1275809191]
 stream = ExtResource("20_4ujdx")
