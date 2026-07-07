@@ -2,5 +2,5 @@
 
 [ext_resource type="Script" uid="uid://eeac43yo4jib" path="res://Minigames/minigame_evacuation/evacuation_rhythm_minigame.tscn.gd" id="1_6nq4a"]
 
-[node name="EvacuationRhythmMinigame_tscn" type="Node2D" unique_id=1266558906]
+[node name="EvacuationRhythmMinigame" type="Node2D" unique_id=1266558906]
 script = ExtResource("1_6nq4a")

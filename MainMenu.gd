@@ -410,7 +410,7 @@ func _on_button_18_pressed() -> void:
 	
 	minigame_data.video_path = "res://Minigames/minigame_FamilyMeeting/assets/video/FamilyMeetingInstructions.ogv"
 	
-	minigame_data.minigame_scene = "res://Minigames/minigame_FamilyMeeting/FamilyMeetingMinigame.tscn"
+	minigame_data.minigame_scene = "res://Minigames/minigame_FamilyMeeting/FamilyMeetingMinigame.tscn.tscn"
 	
 	minigame_data.controls = [
 		{
@@ -462,5 +462,37 @@ func _on_button_24_pressed() -> void:
 		},
 	]
 
+
+	get_tree().change_scene_to_file("res://Minigames/ui_global/MinigameIntro.tscn")
+
+
+func _on_button_23_pressed() -> void:
+	var minigame_data = get_node("/root/MinigameData")
+
+	minigame_data.title = "¡Evacuación segura!"
+
+	minigame_data.description = "Ayuda a los niños a evacuar de forma ordenada y llegar seguros a la escuela siguiendo el ritmo correcto."
+
+	minigame_data.instructions = "Observa los colores que bajan en pantalla y presiona las flechas correctas o el raton cuando lleguen a la zona de ritmo. Si fallas demasiadas veces o se acaba el tiempo, perderás la partida."
+
+	minigame_data.video_path = "res://Minigames/minigame_evacuation/assets/InstructionsEva.ogv"
+
+	minigame_data.minigame_scene = "res://Minigames/minigame_evacuation/EvacuationRhythmMinigame.tscn.tscn"
+
+	minigame_data.controls = [
+		{
+			"action": "Usa el raton",
+			"icon": "res://Minigames/ui_global/assets/ClickIcon.png"
+		},
+		{ "action": "Derecha,izquierda, arriba y abajo", "icon": 
+			"res://Minigames/ui_global/assets/Movement.png" },
+	]
+
+	print("Minijuego seleccionado: ", minigame_data.title)
+	print("Escena a cargar: ", minigame_data.minigame_scene)
+
+	if not ResourceLoader.exists(minigame_data.minigame_scene):
+		print("ERROR: No existe la escena en esta ruta: ", minigame_data.minigame_scene)
+		return
 
 	get_tree().change_scene_to_file("res://Minigames/ui_global/MinigameIntro.tscn")

@@ -17,6 +17,13 @@ const TIMER_HUD_SCENE = preload("res://Minigames/ui_global/TimerUi.tscn")
 const GAME_RESULT_SCENE = preload("res://Minigames/ui_global/GameResult.tscn")
 const LIVES_UI_SCENE = preload("res://Minigames/ui_global/LivesUi.tscn")
 
+const KIDS_TEXTURE = preload("res://Minigames/minigame_evacuation/assets/Kids.png")
+const SCHOOL_TEXTURE = preload("res://Minigames/minigame_evacuation/assets/School.png")
+
+const BACKGROUND_MUSIC = preload("res://Minigames/minigame_evacuation/music/Fon.mp3")
+const CORRECT_SOUND = preload("res://Minigames/minigame_evacuation/music/Correct.mp3")
+const ERROR_SOUND = preload("res://Minigames/minigame_evacuation/music/Error.mp3")
+
 
 const C_BEIGE := Color("#E5C89E")
 const C_ORANGE := Color("#E0B080")
@@ -30,34 +37,34 @@ const C_DARK := Color("#1F2D3D")
 
 
 const NOTE_SIZE := Vector2(90, 62)
-const BUTTON_SIZE := Vector2(145, 76)
-const COLUMN_GAP := 42.0
+const BUTTON_SIZE := Vector2(130, 78)
+const COLUMN_GAP := 82.0
 
 const COLOR_IDS: Array[String] = ["red", "blue", "yellow", "green"]
 
 const COLOR_DATA := {
 	"red": {
 		"name": "ROJO",
-		"key_name": "A",
-		"key": KEY_A,
+		"key_name": "←",
+		"key": KEY_LEFT,
 		"color": Color("#D63A3A")
 	},
 	"blue": {
 		"name": "AZUL",
-		"key_name": "S",
-		"key": KEY_S,
+		"key_name": "↓",
+		"key": KEY_DOWN,
 		"color": Color("#3E5F8F")
 	},
 	"yellow": {
 		"name": "AMARILLO",
-		"key_name": "D",
-		"key": KEY_D,
+		"key_name": "↑",
+		"key": KEY_UP,
 		"color": Color("#F2C94C")
 	},
 	"green": {
 		"name": "VERDE",
-		"key_name": "F",
-		"key": KEY_F,
+		"key_name": "→",
+		"key": KEY_RIGHT,
 		"color": Color("#38A169")
 	}
 }
@@ -72,7 +79,7 @@ var title_label: Label
 var progress_label: Label
 var feedback_label: Label
 var instruction_label: Label
-var hit_zone_rect: ColorRect
+var hit_zone_rect: Panel
 var hit_zone_label: Label
 
 var spawn_timer: Timer
@@ -97,10 +104,16 @@ var game_result_panel: CanvasLayer
 var lives_ui: Node
 var lives_layer: CanvasLayer
 
+var background_music_player: AudioStreamPlayer
+var correct_sound_player: AudioStreamPlayer
+var error_sound_player: AudioStreamPlayer
+
 
 func _ready() -> void:
 	add_to_group("game_manager")
 	randomize()
+
+	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 
 	screen_size = get_viewport_rect().size
 
@@ -109,6 +122,7 @@ func _ready() -> void:
 	create_timer()
 	create_game_result_panel()
 	create_lives_ui()
+	create_audio()
 	_create_ui()
 	_create_timers()
 	_create_sequence()
@@ -124,8 +138,8 @@ func _calculate_layout() -> void:
 		var color_id: String = COLOR_IDS[i]
 		column_x[color_id] = start_x + float(i) * (NOTE_SIZE.x + COLUMN_GAP)
 
-	path_start = Vector2(100, screen_size.y * 0.43)
-	path_end = Vector2(screen_size.x - 150, screen_size.y * 0.43)
+	path_start = Vector2(115, screen_size.y * 0.43)
+	path_end = Vector2(screen_size.x - 235, screen_size.y * 0.43)
 
 
 func _create_layers() -> void:
@@ -134,7 +148,7 @@ func _create_layers() -> void:
 	add_child(ui_layer)
 
 	notes_layer = CanvasLayer.new()
-	notes_layer.layer = 35
+	notes_layer.layer = 45
 	add_child(notes_layer)
 
 
@@ -152,6 +166,56 @@ func _create_sequence() -> void:
 	for i in range(sequence_length):
 		var random_color: String = COLOR_IDS[randi() % COLOR_IDS.size()]
 		sequence.append(random_color)
+
+
+# =========================
+# AUDIO
+# =========================
+
+func create_audio() -> void:
+	background_music_player = AudioStreamPlayer.new()
+	background_music_player.stream = BACKGROUND_MUSIC
+	background_music_player.volume_db = -12
+	background_music_player.finished.connect(_on_background_music_finished)
+	add_child(background_music_player)
+
+	correct_sound_player = AudioStreamPlayer.new()
+	correct_sound_player.stream = CORRECT_SOUND
+	correct_sound_player.volume_db = 0
+	add_child(correct_sound_player)
+
+	error_sound_player = AudioStreamPlayer.new()
+	error_sound_player.stream = ERROR_SOUND
+	error_sound_player.volume_db = 0
+	add_child(error_sound_player)
+
+
+func play_background_music() -> void:
+	if background_music_player != null:
+		if not background_music_player.playing:
+			background_music_player.play()
+
+
+func stop_background_music() -> void:
+	if background_music_player != null:
+		background_music_player.stop()
+
+
+func _on_background_music_finished() -> void:
+	if game_active and not already_finished:
+		background_music_player.play()
+
+
+func play_correct_sound() -> void:
+	if correct_sound_player != null:
+		correct_sound_player.stop()
+		correct_sound_player.play()
+
+
+func play_error_sound() -> void:
+	if error_sound_player != null:
+		error_sound_player.stop()
+		error_sound_player.play()
 
 
 # =========================
@@ -243,7 +307,7 @@ func _create_ui() -> void:
 	)
 
 	instruction_label = _make_label(
-		"Presiona el color correcto cuando llegue a la zona de ritmo.",
+		"Usa las flechas del teclado y presiona el color correcto en la zona de ritmo.",
 		Vector2(0, 64),
 		Vector2(screen_size.x, 32),
 		20,
@@ -261,20 +325,26 @@ func _create_ui() -> void:
 
 	var hit_zone_y: float = _get_hit_zone_y()
 
-	hit_zone_rect = ColorRect.new()
-	hit_zone_rect.color = Color(1, 1, 1, 0.28)
-	hit_zone_rect.position = Vector2(55, hit_zone_y - 45)
-	hit_zone_rect.size = Vector2(screen_size.x - 110, 90)
+	hit_zone_rect = Panel.new()
+	hit_zone_rect.position = Vector2(70, hit_zone_y - 55)
+	hit_zone_rect.size = Vector2(screen_size.x - 140, 110)
 	hit_zone_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hit_zone_rect.add_theme_stylebox_override("panel", _make_hit_zone_stylebox())
 	ui_layer.add_child(hit_zone_rect)
 
+	_create_hit_zone_markers()
+
 	hit_zone_label = _make_label(
-		"ZONA DE RITMO",
-		Vector2(0, hit_zone_y - 18),
-		Vector2(screen_size.x, 36),
-		22,
-		C_BLUE
+		"PRESIONA AQUÍ",
+		Vector2(0, hit_zone_y - 22),
+		Vector2(screen_size.x, 44),
+		25,
+		C_WHITE
 	)
+
+	hit_zone_label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.75))
+	hit_zone_label.add_theme_constant_override("shadow_offset_x", 3)
+	hit_zone_label.add_theme_constant_override("shadow_offset_y", 3)
 
 	feedback_label = _make_label(
 		"",
@@ -287,8 +357,45 @@ func _create_ui() -> void:
 	_create_color_buttons()
 
 
+func _create_hit_zone_markers() -> void:
+	var hit_zone_y: float = _get_hit_zone_y()
+
+	for color_id in COLOR_IDS:
+		var info: Dictionary = COLOR_DATA[color_id]
+		var base_color: Color = info["color"]
+
+		var marker: Panel = Panel.new()
+		marker.position = Vector2(float(column_x[color_id]) - NOTE_SIZE.x / 2.0, hit_zone_y - NOTE_SIZE.y / 2.0)
+		marker.size = NOTE_SIZE
+		marker.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+		var style: StyleBoxFlat = StyleBoxFlat.new()
+		style.bg_color = Color(base_color.r, base_color.g, base_color.b, 0.18)
+		style.border_color = Color(base_color.r, base_color.g, base_color.b, 0.95)
+		style.set_border_width_all(4)
+		style.set_corner_radius_all(16)
+		style.shadow_color = Color(0, 0, 0, 0.25)
+		style.shadow_size = 4
+		style.shadow_offset = Vector2(2, 3)
+
+		marker.add_theme_stylebox_override("panel", style)
+		ui_layer.add_child(marker)
+
+
+func _make_hit_zone_stylebox() -> StyleBoxFlat:
+	var style: StyleBoxFlat = StyleBoxFlat.new()
+	style.bg_color = Color(0.08, 0.18, 0.30, 0.38)
+	style.border_color = C_CYAN
+	style.set_border_width_all(5)
+	style.set_corner_radius_all(24)
+	style.shadow_color = Color(0, 0, 0, 0.35)
+	style.shadow_size = 8
+	style.shadow_offset = Vector2(4, 6)
+	return style
+
+
 func _create_color_buttons() -> void:
-	var button_y: float = screen_size.y - 120
+	var button_y: float = screen_size.y - 118
 
 	for color_id in COLOR_IDS:
 		var info: Dictionary = COLOR_DATA[color_id]
@@ -297,16 +404,20 @@ func _create_color_buttons() -> void:
 		var key_name: String = str(info["key_name"])
 
 		var button: Button = Button.new()
-		button.text = "%s\nTecla %s" % [color_name, key_name]
+		button.text = "%s\n%s" % [key_name, color_name]
 		button.position = Vector2(float(column_x[color_id]) - BUTTON_SIZE.x / 2.0, button_y)
 		button.size = BUTTON_SIZE
 		button.focus_mode = Control.FOCUS_NONE
 
-		button.add_theme_font_size_override("font_size", 19)
+		button.add_theme_font_size_override("font_size", 23)
 		button.add_theme_color_override("font_color", C_WHITE)
-		button.add_theme_stylebox_override("normal", _make_stylebox(base_color, C_ORANGE, 3))
-		button.add_theme_stylebox_override("hover", _make_stylebox(base_color.lightened(0.12), C_WHITE, 3))
-		button.add_theme_stylebox_override("pressed", _make_stylebox(base_color.darkened(0.15), C_WHITE, 3))
+		button.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.60))
+		button.add_theme_constant_override("shadow_offset_x", 2)
+		button.add_theme_constant_override("shadow_offset_y", 2)
+
+		button.add_theme_stylebox_override("normal", _make_stylebox(base_color, C_WHITE, 3))
+		button.add_theme_stylebox_override("hover", _make_stylebox(base_color.lightened(0.14), C_WHITE, 4))
+		button.add_theme_stylebox_override("pressed", _make_stylebox(base_color.darkened(0.18), C_CYAN, 4))
 
 		button.pressed.connect(_on_color_button_pressed.bind(color_id))
 		ui_layer.add_child(button)
@@ -377,6 +488,8 @@ func start_game() -> void:
 		timer_hud.detener()
 		timer_hud.iniciar(time_limit, "Tiempo", "evacúa hacia la escuela")
 
+	play_background_music()
+
 	spawn_timer.start()
 	queue_redraw()
 
@@ -434,7 +547,7 @@ func _spawn_next_note() -> void:
 	note.size = NOTE_SIZE
 	note.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	note.set_meta("color_id", color_id)
-	note.add_theme_stylebox_override("panel", _make_stylebox(base_color, C_WHITE, 2))
+	note.add_theme_stylebox_override("panel", _make_note_stylebox(base_color))
 
 	var note_label: Label = Label.new()
 	note_label.text = color_name
@@ -443,10 +556,25 @@ func _spawn_next_note() -> void:
 	note_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	note_label.add_theme_font_size_override("font_size", 18)
 	note_label.add_theme_color_override("font_color", C_WHITE)
+	note_label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.7))
+	note_label.add_theme_constant_override("shadow_offset_x", 2)
+	note_label.add_theme_constant_override("shadow_offset_y", 2)
 	note.add_child(note_label)
 
 	notes_layer.add_child(note)
 	active_notes.append(note)
+
+
+func _make_note_stylebox(base_color: Color) -> StyleBoxFlat:
+	var style: StyleBoxFlat = StyleBoxFlat.new()
+	style.bg_color = base_color
+	style.border_color = C_WHITE
+	style.set_border_width_all(3)
+	style.set_corner_radius_all(18)
+	style.shadow_color = Color(0, 0, 0, 0.30)
+	style.shadow_size = 6
+	style.shadow_offset = Vector2(3, 5)
+	return style
 
 
 func _move_notes(delta: float) -> void:
@@ -489,6 +617,8 @@ func _try_hit(color_id: String) -> void:
 func _hit_note(note: Control) -> void:
 	_remove_note(note)
 
+	play_correct_sound()
+
 	success_count += 1
 	_update_progress_ui()
 
@@ -519,7 +649,7 @@ func _get_closest_note_to_hit_zone() -> Control:
 		return null
 
 	var closest_note: Control = null
-	var closest_distance := 999999.0
+	var closest_distance: float = 999999.0
 	var hit_y: float = _get_hit_zone_y()
 
 	for note in active_notes:
@@ -551,6 +681,8 @@ func _lose_life(message: String) -> void:
 	if not game_active:
 		return
 
+	play_error_sound()
+
 	lives -= 1
 
 	if lives < 0:
@@ -571,11 +703,13 @@ func _update_progress_ui() -> void:
 
 func _check_end_without_enough_hits() -> void:
 	if spawned_index >= sequence.size() and active_notes.is_empty() and success_count < required_hits_to_win:
+		play_error_sound()
 		lose_game()
 
 
 func _on_time_up() -> void:
 	if game_active and not already_finished:
+		play_error_sound()
 		feedback_label.text = "Se acabó el tiempo. No lograste llegar a la escuela."
 		feedback_label.add_theme_color_override("font_color", C_RED)
 		lose_game()
@@ -598,6 +732,7 @@ func win_game() -> void:
 	if timer_hud != null:
 		timer_hud.detener()
 
+	stop_background_music()
 	_clear_notes()
 
 	feedback_label.text = "¡Llegaste a la escuela de forma segura!"
@@ -625,6 +760,7 @@ func lose_game() -> void:
 	if timer_hud != null:
 		timer_hud.detener()
 
+	stop_background_music()
 	_clear_notes()
 
 	if game_result_panel != null:
@@ -643,6 +779,7 @@ func _clear_notes() -> void:
 
 
 func _on_back_pressed() -> void:
+	stop_background_music()
 	get_tree().change_scene_to_file("res://MenuPrincipal.tscn")
 
 
@@ -675,62 +812,47 @@ func _draw_background() -> void:
 
 
 func _draw_path() -> void:
-	var path_color := Color("#A67C52")
-	var border_color := Color("#7A5837")
+	var road_shadow := Color(0, 0, 0, 0.22)
+	var road_border := Color("#6B4A2E")
+	var road_color := Color("#A67C52")
+	var road_light := Color("#C99A6B")
 
-	draw_line(path_start, path_end, border_color, 34.0)
-	draw_line(path_start, path_end, path_color, 25.0)
+	draw_line(path_start + Vector2(0, 8), path_end + Vector2(0, 8), road_shadow, 48.0)
+
+	draw_line(path_start, path_end, road_border, 42.0)
+	draw_circle(path_start, 21.0, road_border)
+	draw_circle(path_end, 21.0, road_border)
+
+	draw_line(path_start, path_end, road_color, 32.0)
+	draw_circle(path_start, 16.0, road_color)
+	draw_circle(path_end, 16.0, road_color)
+
+	draw_line(path_start + Vector2(0, -5), path_end + Vector2(0, -5), road_light, 6.0)
 
 	var progress: float = clampf(float(success_count) / float(required_hits_to_win), 0.0, 1.0)
 	var current_pos: Vector2 = path_start.lerp(path_end, progress)
 
-	draw_line(path_start, current_pos, C_CYAN, 12.0)
+	draw_line(path_start, current_pos, C_CYAN, 16.0)
+	draw_circle(path_start, 8.0, C_CYAN)
+	draw_circle(current_pos, 15.0, C_CYAN)
+	draw_circle(current_pos, 7.0, C_WHITE)
+
+	for i in range(1, 7):
+		var mark_progress: float = float(i) / 7.0
+		var mark_pos: Vector2 = path_start.lerp(path_end, mark_progress)
+		draw_circle(mark_pos, 4.0, Color(1, 1, 1, 0.55))
 
 
 func _draw_school() -> void:
-	var school_pos: Vector2 = path_end + Vector2(-48, -115)
-
-	draw_rect(Rect2(school_pos, Vector2(105, 85)), C_BEIGE)
-	draw_rect(Rect2(school_pos, Vector2(105, 85)), C_BLUE, false, 4.0)
-
-	var roof_points := PackedVector2Array([
-		school_pos + Vector2(-10, 0),
-		school_pos + Vector2(52, -48),
-		school_pos + Vector2(115, 0)
-	])
-
-	draw_colored_polygon(roof_points, C_RED)
-
-	draw_rect(Rect2(school_pos + Vector2(42, 38), Vector2(25, 47)), C_BLUE)
-
-	draw_rect(Rect2(school_pos + Vector2(15, 25), Vector2(22, 20)), C_CYAN)
-	draw_rect(Rect2(school_pos + Vector2(70, 25), Vector2(22, 20)), C_CYAN)
-
-	draw_string(
-		ThemeDB.fallback_font,
-		school_pos + Vector2(18, 72),
-		"ESCUELA",
-		HORIZONTAL_ALIGNMENT_LEFT,
-		80,
-		16,
-		C_BLUE
-	)
+	var school_rect: Rect2 = Rect2(path_end + Vector2(-165, -250), Vector2(330, 250))
+	draw_texture_rect(SCHOOL_TEXTURE, school_rect, false)
 
 
 func _draw_character() -> void:
 	var progress: float = clampf(float(success_count) / float(required_hits_to_win), 0.0, 1.0)
 	var pos: Vector2 = path_start.lerp(path_end, progress)
 
-	draw_ellipse(pos + Vector2(0, 35), 25.0, 7.0, Color(0, 0, 0, 0.20))
+	draw_ellipse(pos + Vector2(0, 45), 58.0, 14.0, Color(0, 0, 0, 0.20))
 
-	draw_circle(pos + Vector2(0, -38), 17, Color("#F2C9A0"))
-
-	draw_rect(Rect2(pos + Vector2(-15, -22), Vector2(30, 45)), C_BLUE)
-
-	draw_rect(Rect2(pos + Vector2(-24, -15), Vector2(12, 30)), C_ORANGE)
-
-	draw_line(pos + Vector2(-8, 22), pos + Vector2(-13, 45), C_DARK, 5.0)
-	draw_line(pos + Vector2(8, 22), pos + Vector2(13, 45), C_DARK, 5.0)
-
-	draw_line(pos + Vector2(-15, -8), pos + Vector2(-30, 8), C_DARK, 4.0)
-	draw_line(pos + Vector2(15, -8), pos + Vector2(30, 8), C_DARK, 4.0)
+	var kids_rect: Rect2 = Rect2(pos + Vector2(-73, -148), Vector2(146, 190))
+	draw_texture_rect(KIDS_TEXTURE, kids_rect, false)
