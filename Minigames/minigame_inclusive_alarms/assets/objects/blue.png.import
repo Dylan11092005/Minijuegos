@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://fbe3ufapfmlr"
-path="res://.godot/imported/AccessibleExitSign.png-ad22f732ddeb5c6bede5ebcdfdc07e29.ctex"
+uid="uid://bgvbf874j8dpv"
+path="res://.godot/imported/blue.png-34fee9526906e6ac0dbdf8ab50851ffa.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Minigames/minigame_inclusive_alarms/assets/objects/AccessibleExitSign.png"
-dest_files=["res://.godot/imported/AccessibleExitSign.png-ad22f732ddeb5c6bede5ebcdfdc07e29.ctex"]
+source_file="res://Minigames/minigame_inclusive_alarms/assets/objects/blue.png"
+dest_files=["res://.godot/imported/blue.png-34fee9526906e6ac0dbdf8ab50851ffa.ctex"]
 
 [params]
 

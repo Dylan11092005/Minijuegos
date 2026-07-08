@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bwsg0eh6x2oe8"
-path="res://.godot/imported/StrobeLight.png-978bbfb2830fa1183a8be68d82cc5e34.ctex"
+uid="uid://bu0tdkimlto2q"
+path="res://.godot/imported/trap1.png-4d40d3743350822d1cafd88e545aa9ff.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Minigames/minigame_inclusive_alarms/assets/objects/StrobeLight.png"
-dest_files=["res://.godot/imported/StrobeLight.png-978bbfb2830fa1183a8be68d82cc5e34.ctex"]
+source_file="res://Minigames/minigame_inclusive_alarms/assets/objects/trap1.png"
+dest_files=["res://.godot/imported/trap1.png-4d40d3743350822d1cafd88e545aa9ff.ctex"]
 
 [params]
 

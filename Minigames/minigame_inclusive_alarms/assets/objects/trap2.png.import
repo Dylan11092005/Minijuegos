@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://xw7xn008ubbh"
-path="res://.godot/imported/Megaphone.png-bbe28d77e540b4dd215b354b79a0d35a.ctex"
+uid="uid://w0a86m11skgv"
+path="res://.godot/imported/trap2.png-479cdaac8056201d29d3dd019c980649.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Minigames/minigame_inclusive_alarms/assets/objects/Megaphone.png"
-dest_files=["res://.godot/imported/Megaphone.png-bbe28d77e540b4dd215b354b79a0d35a.ctex"]
+source_file="res://Minigames/minigame_inclusive_alarms/assets/objects/trap2.png"
+dest_files=["res://.godot/imported/trap2.png-479cdaac8056201d29d3dd019c980649.ctex"]
 
 [params]
 

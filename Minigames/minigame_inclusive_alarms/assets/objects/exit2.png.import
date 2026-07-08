@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cv1onebfnoig1"
-path="res://.godot/imported/TraditionalSiren.png-15e9d6484382abfaf1da9c380ec41ba8.ctex"
+uid="uid://b1bgfep7t6vcb"
+path="res://.godot/imported/exit2.png-a2cd5c238c0ecd68afcab7a4718090d6.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Minigames/minigame_inclusive_alarms/assets/objects/TraditionalSiren.png"
-dest_files=["res://.godot/imported/TraditionalSiren.png-15e9d6484382abfaf1da9c380ec41ba8.ctex"]
+source_file="res://Minigames/minigame_inclusive_alarms/assets/objects/exit2.png"
+dest_files=["res://.godot/imported/exit2.png-a2cd5c238c0ecd68afcab7a4718090d6.ctex"]
 
 [params]
 

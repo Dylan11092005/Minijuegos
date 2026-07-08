@@ -7,30 +7,25 @@ var classified_objects := 0
 var errors := 0
 var game_finished := false
 var TOTAL_TIME: float = 25.0
+
 @onready var timer_ui := $TimerUI
 @onready var game_result := $GameResult
 @onready var check_label := $Hud/StatusPanel/CheckLabel
 @onready var error_label := $Hud/StatusPanel/ErrorLabel
 @onready var music_player = $MusicPlayer
-@onready var correct_player = $CorrectPlayer
-@onready var error_player = $ErrorPlayer
-
+@onready var success_player := $Success
+@onready var error_player := $Error
 
 func _ready() -> void:
 	_update_hud()
 	music_player.play()
 	timer_ui.iniciar(25)
-
 	var player_age: int = MinigameData.player_age
-
 	if player_age < 12:
 		TOTAL_TIME = 25.0 + _get_time_bonus(player_age)
 	else:
 		TOTAL_TIME = 25.0
-
 	timer_ui.iniciar(TOTAL_TIME, "Clasifica en", "segundos")
-
-
 
 func _process(_delta: float) -> void:
 	pass
@@ -51,13 +46,11 @@ func _update_hud() -> void:
 func _check_answer(area: Area2D, target_category: String) -> void:
 	if game_finished:
 		return
-
 	if area.correct_category == target_category:
-		correct_player.play()
+		success_player.play()
 		classified_objects += 1
 		_update_hud()
 		area.queue_free()
-
 		if classified_objects >= TOTAL_OBJECTS:
 			game_finished = true
 			timer_ui.detener()
@@ -67,21 +60,20 @@ func _check_answer(area: Area2D, target_category: String) -> void:
 		error_player.play()
 		errors += 1
 		_update_hud()
-
 		if errors >= MAX_ERRORS:
 			timer_ui.detener()
 			game_finished = true
 			music_player.stop()
 			game_result.show_lose()
-			
+
 func _on_timer_ui_time_up() -> void:
 	if game_finished:
 		return
-
 	game_finished = true
 	music_player.stop()
 	timer_ui.detener()
-	game_result.show_lose()			
+	error_player.play()
+	game_result.show_lose()
 
 # =========================================================
 # TIME BONUS POR EDAD
@@ -100,9 +92,3 @@ func _get_time_bonus(age: int) -> float:
 			return 10.0
 		_:
 			return 10.0 if age < 7 else 0.0
-
-
-
-	
-	
-	

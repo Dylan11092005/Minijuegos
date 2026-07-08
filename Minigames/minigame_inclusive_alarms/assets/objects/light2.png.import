@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://tdn7ingubwma"
-path="res://.godot/imported/VibratingWatch.png-3c880286a7ca1b6a8bf0a227eb1ee194.ctex"
+uid="uid://dm4sl5stvjnp0"
+path="res://.godot/imported/light2.png-a4a91956e36de92cd2031f0f3f05a944.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Minigames/minigame_inclusive_alarms/assets/objects/VibratingWatch.png"
-dest_files=["res://.godot/imported/VibratingWatch.png-3c880286a7ca1b6a8bf0a227eb1ee194.ctex"]
+source_file="res://Minigames/minigame_inclusive_alarms/assets/objects/light2.png"
+dest_files=["res://.godot/imported/light2.png-a4a91956e36de92cd2031f0f3f05a944.ctex"]
 
 [params]
 

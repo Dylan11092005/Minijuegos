@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://uf08ajg51uad"
-path="res://.godot/imported/PillowVibrator.png-854b90a074b04e4d1b642b98e0332c59.ctex"
+uid="uid://dgn8rpq5gketm"
+path="res://.godot/imported/light1.png-48a13cc3cbb8fdace5f099b5ac4b8141.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Minigames/minigame_inclusive_alarms/assets/objects/PillowVibrator.png"
-dest_files=["res://.godot/imported/PillowVibrator.png-854b90a074b04e4d1b642b98e0332c59.ctex"]
+source_file="res://Minigames/minigame_inclusive_alarms/assets/objects/light1.png"
+dest_files=["res://.godot/imported/light1.png-48a13cc3cbb8fdace5f099b5ac4b8141.ctex"]
 
 [params]
 

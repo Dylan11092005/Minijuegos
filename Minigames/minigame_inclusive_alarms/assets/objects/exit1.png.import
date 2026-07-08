@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b2a5x22x3gbyf"
-path="res://.godot/imported/EmergencyTextSign.png-44563f224c16467eda088ba647632f16.ctex"
+uid="uid://bs2sp1e6iakrm"
+path="res://.godot/imported/exit1.png-32ecfd873f49e147cbf3e1c1039f14b0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Minigames/minigame_inclusive_alarms/assets/objects/EmergencyTextSign.png"
-dest_files=["res://.godot/imported/EmergencyTextSign.png-44563f224c16467eda088ba647632f16.ctex"]
+source_file="res://Minigames/minigame_inclusive_alarms/assets/objects/exit1.png"
+dest_files=["res://.godot/imported/exit1.png-32ecfd873f49e147cbf3e1c1039f14b0.ctex"]
 
 [params]
 

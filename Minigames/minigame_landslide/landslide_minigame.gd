@@ -1412,4 +1412,4 @@ func _get_time_bonus(age: int) -> float:
 		7:
 			return 10.0
 		_:
-			return 10.0 if age < 7 else 0.0
+			return 10.0 if age < 7 else 0.0															
