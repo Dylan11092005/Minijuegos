@@ -3,10 +3,10 @@
 [ext_resource type="Script" uid="uid://duea2hq4h82j2" path="res://Minigames/minigame_landslide/falling_rock.gd" id="1_l258p"]
 [ext_resource type="Texture2D" uid="uid://cs30gvikuw1sn" path="res://Minigames/minigame_landslide/assets/05_falling_rock.png" id="2_q3msb"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_qvbrt"]
-radius = 56.82429
+[sub_resource type="CircleShape2D" id="CircleShape2D_q3msb"]
+radius = 152.1611
 
-[node name="FallingRock" type="Node2D" unique_id=1010736123]
+[node name="FallingRock" type="Area2D" unique_id=189762069]
 script = ExtResource("1_l258p")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1907600190]
@@ -18,5 +18,5 @@ texture = ExtResource("2_q3msb")
 position = Vector2(-4, 0)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox" unique_id=1445958067]
-position = Vector2(2, 0)
-shape = SubResource("CircleShape2D_qvbrt")
+position = Vector2(0, 3)
+shape = SubResource("CircleShape2D_q3msb")

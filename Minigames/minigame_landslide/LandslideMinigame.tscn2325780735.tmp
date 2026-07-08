@@ -3,11 +3,12 @@
 [ext_resource type="Script" uid="uid://evgg31un0xo" path="res://Minigames/minigame_landslide/landslide_minigame.gd" id="1_xrwn7"]
 [ext_resource type="Texture2D" uid="uid://d3yc8jmqyet7" path="res://Minigames/minigame_landslide/assets/01_background_landslide.png" id="2_xrwn7"]
 [ext_resource type="PackedScene" uid="uid://baspr7yo4qutn" path="res://Minigames/minigame_landslide/PlayerLandslide.tscn" id="5_3ukm6"]
+[ext_resource type="Texture2D" uid="uid://wvae3oagxp67" path="res://Minigames/minigame_landslide/assets/09_key_e_icon.png" id="7_1ik8k"]
 [ext_resource type="PackedScene" uid="uid://cf4skwm7ohn6a" path="res://Minigames/minigame_landslide/SafeCabin.tscn" id="7_du55d"]
 [ext_resource type="PackedScene" uid="uid://dwg5a3dxrnsvp" path="res://Minigames/minigame_landslide/PhoneCabin.tscn" id="8_1ik8k"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_telab"]
-size = Vector2(77, 264.5)
+size = Vector2(257, 264.5)
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_telab"]
 radius = 9.942078
@@ -48,7 +49,7 @@ position = Vector2(1003, 886)
 scale = Vector2(1.5, 1.5)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D" unique_id=723591867]
-position = Vector2(1011.5, 878.75)
+position = Vector2(1006, 878.75)
 shape = SubResource("RectangleShape2D_telab")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1624760842]
@@ -89,6 +90,11 @@ scale = Vector2(1.5, 1.5)
 
 [node name="PhoneCabin" parent="." unique_id=437809908 instance=ExtResource("8_1ik8k")]
 position = Vector2(1827, 872)
+
+[node name="09KeyEIcon" type="Sprite2D" parent="." unique_id=187291312]
+position = Vector2(1821, 701)
+scale = Vector2(0.8958333, 0.9479167)
+texture = ExtResource("7_1ik8k")
 
 [node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=649903626]
 collision_layer = 2
