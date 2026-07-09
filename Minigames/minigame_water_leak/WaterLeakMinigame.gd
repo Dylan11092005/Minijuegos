@@ -43,10 +43,25 @@ const LEAK_CANDIDATES: Array[Vector2] = [
 @export_range(10.0, 100.0, 1.0) var starting_water: float = 100.0
 @export_range(0.0, 5.0, 0.05) var base_water_loss_per_second: float = 0.25
 @export_range(0.0, 5.0, 0.05) var water_loss_per_active_leak: float = 0.35
+# Cantidad "de referencia" usada para normalizar el peligro según la
+# PROPORCIÓN de fugas activas (activas / total), no la cantidad absoluta.
+# Así, un niño con pocas fugas totales pero todas abiertas es tan
+# peligroso como uno con muchas fugas totales y todas abiertas; cada
+# fuga que tape cuenta proporcionalmente más si tiene menos fugas en total.
+@export_range(1.0, 20.0, 1.0) var leak_danger_reference_count: float = 10.0
 
 @export_group("Dificultad inicial")
 @export_range(1.0, 3.0, 0.05) var initial_water_loss_multiplier: float = 1.70
 @export_range(1.0, 20.0, 0.5) var initial_fast_loss_duration: float = 7.0
+
+@export_group("Fugas según edad")
+@export_range(1, 20, 1) var leak_count_age_under_7: int = 4
+@export_range(1, 20, 1) var leak_count_age_7: int = 5
+@export_range(1, 20, 1) var leak_count_age_8: int = 6
+@export_range(1, 20, 1) var leak_count_age_9: int = 7
+@export_range(1, 20, 1) var leak_count_age_10: int = 8
+@export_range(1, 20, 1) var leak_count_age_11: int = 9
+@export_range(1, 20, 1) var leak_count_age_12_plus: int = 10
 
 @export_group("Interacción")
 @export_range(20.0, 100.0, 1.0) var leak_hit_radius: float = 52.0
@@ -104,6 +119,7 @@ func _ready() -> void:
 
 	var player_age: int = MinigameData.player_age
 	_water_loss_age_multiplier = _get_water_loss_multiplier(player_age)
+	leak_count = _get_leak_count_for_age(player_age)
 
 	
 	
@@ -472,9 +488,19 @@ func _update_water_level(delta: float) -> void:
 		_finish_game(true)
 		return
 
+	# El peligro se calcula por PROPORCIÓN de fugas activas sobre el total
+	# de fugas que le tocaron a este jugador, normalizado contra una
+	# cantidad de referencia (leak_danger_reference_count). Esto evita que
+	# tener menos fugas totales (niños pequeños) sea automáticamente más
+	# fácil: si tiene todas sus fugas abiertas, la urgencia es la misma
+	# que la de alguien con muchas más fugas totales y todas abiertas.
+	# Cada fuga que tapa, sin embargo, alivia proporcionalmente más.
+	var total_leaks: int = maxi(_leaks.size(), 1)
+	var active_ratio: float = float(active_leaks) / float(total_leaks)
+
 	var loss_per_second: float = (
 		base_water_loss_per_second
-		+ water_loss_per_active_leak * float(active_leaks)
+		+ water_loss_per_active_leak * active_ratio * leak_danger_reference_count
 	)
 
 	# Durante los primeros segundos el agua se pierde más rápido.
@@ -1561,3 +1587,22 @@ func _get_water_loss_multiplier(age: int) -> float:
 			return 0.55
 		_:
 			return 0.50 if age < 7 else 1.0
+
+
+# =========================================================
+# CANTIDAD DE FUGAS POR EDAD
+# =========================================================
+func _get_leak_count_for_age(age: int) -> int:
+	match age:
+		11:
+			return leak_count_age_11
+		10:
+			return leak_count_age_10
+		9:
+			return leak_count_age_9
+		8:
+			return leak_count_age_8
+		7:
+			return leak_count_age_7
+		_:
+			return leak_count_age_under_7 if age < 7 else leak_count_age_12_plus
