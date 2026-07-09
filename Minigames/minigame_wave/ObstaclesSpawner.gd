@@ -5,7 +5,7 @@ var spawn_timer = 0.0
 var spawn_interval = 2.0
 var game_ref: Node
 
-var platform_y_positions = [206.0, 557.0, 921.0]
+var platform_y_positions = [220.0, 557.0, 921.0]
 
 func _ready():
 	game_ref = get_parent()

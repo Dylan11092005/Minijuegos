@@ -10,7 +10,7 @@ var jumping_up := false
 var game_ref: Node
 var current_level := 2
 var is_flickering := false
-const LEVELS = [-350.0, 0.0, 390.0]
+const LEVELS = [-350.0, 0.0, 350.0]
 func _ready():
 	game_ref = get_parent()
 	position.x = 400
