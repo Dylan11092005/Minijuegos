@@ -410,7 +410,7 @@ func _on_button_18_pressed() -> void:
 	
 	minigame_data.video_path = "res://Minigames/minigame_FamilyMeeting/assets/video/FamilyMeetingInstructions.ogv"
 	
-	minigame_data.minigame_scene = "res://Minigames/minigame_FamilyMeeting/FamilyMeetingMinigame.tscn.tscn"
+	minigame_data.minigame_scene = "res://Minigames/minigame_FamilyMeeting/FamilyMeetingMinigame.tscn"
 	
 	minigame_data.controls = [
 		{

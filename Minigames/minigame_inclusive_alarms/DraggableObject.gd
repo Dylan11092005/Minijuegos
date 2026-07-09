@@ -1,7 +1,6 @@
 extends Area2D
 
 @export var correct_category := ""
-
 var is_dragging := false
 var drag_offset := Vector2.ZERO
 var start_position := Vector2.ZERO
@@ -22,3 +21,10 @@ func _input_event(_viewport, event, _shape_idx) -> void:
 			else:
 				is_dragging = false
 				global_position = start_position
+
+# Actualiza la posición base a la que el objeto regresa si se suelta
+# fuera de una zona válida. Debe llamarse después de reposicionar
+# el objeto en un slot aleatorio del inventario.
+func set_start_position(new_pos: Vector2) -> void:
+	start_position = new_pos
+	global_position = new_pos

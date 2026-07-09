@@ -42,7 +42,7 @@ size = Vector2(63, 66.5)
 script = ExtResource("1_x3dmc")
 
 [node name="Background" type="Sprite2D" parent="." unique_id=607113194]
-position = Vector2(976, 543)
+position = Vector2(966, 543.00006)
 scale = Vector2(1.2578125, 1.0546875)
 texture = ExtResource("2_g6yeq")
 
@@ -77,6 +77,38 @@ shape = SubResource("RectangleShape2D_qd3lx")
 position = Vector2(942.99994, 851.00006)
 scale = Vector2(0.8995767, 0.55145276)
 texture = ExtResource("6_ikpy7")
+
+[node name="Slot1" type="Marker2D" parent="ObjectsArea/ObjectsTray" unique_id=873501598]
+position = Vector2(-239.00116, -94.29639)
+scale = Vector2(1.111634, 1.813392)
+
+[node name="Slot2" type="Marker2D" parent="ObjectsArea/ObjectsTray" unique_id=779962479]
+position = Vector2(-233.443, 48.961525)
+scale = Vector2(1.111634, 1.813392)
+
+[node name="Slot3" type="Marker2D" parent="ObjectsArea/ObjectsTray" unique_id=774446794]
+position = Vector2(-75.591, -112.43036)
+scale = Vector2(1.111634, 1.813392)
+
+[node name="Slot4" type="Marker2D" parent="ObjectsArea/ObjectsTray" unique_id=491702949]
+position = Vector2(-75.591, 48.961525)
+scale = Vector2(1.111634, 1.813392)
+
+[node name="Slot5" type="Marker2D" parent="ObjectsArea/ObjectsTray" unique_id=531342811]
+position = Vector2(81.149414, -106.99019)
+scale = Vector2(1.111634, 1.813392)
+
+[node name="Slot6" type="Marker2D" parent="ObjectsArea/ObjectsTray" unique_id=933980990]
+position = Vector2(84.484314, 48.961525)
+scale = Vector2(1.111634, 1.813392)
+
+[node name="Slot7" type="Marker2D" parent="ObjectsArea/ObjectsTray" unique_id=263011245]
+position = Vector2(246.78284, -103.3634)
+scale = Vector2(1.111634, 1.813392)
+
+[node name="Slot8" type="Marker2D" parent="ObjectsArea/ObjectsTray" unique_id=1017564932]
+position = Vector2(242.3363, 54.40171)
+scale = Vector2(1.111634, 1.813392)
 
 [node name="ObjectsContainer" type="Node2D" parent="ObjectsArea" unique_id=862571048]
 
