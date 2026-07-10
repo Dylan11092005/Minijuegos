@@ -99,6 +99,9 @@ func _start_game() -> void:
 	if map_texture == null:
 		return
 
+	var player_age: int = MinigameData.player_age
+	_apply_piece_amount_by_age(player_age)
+
 	guide_preview.texture = map_texture
 
 	var available_width  = 1050.0
@@ -117,8 +120,7 @@ func _start_game() -> void:
 	audio_background.volume_db = -15.0
 	audio_slide.volume_db      = -10.0
 	audio_background.play()
-	
-	var player_age: int = MinigameData.player_age
+
 	if player_age < 12:
 		TOTAL_TIME = 30.0 + _get_time_bonus(player_age)
 	else:
@@ -271,10 +273,11 @@ func _get_piece_at(pos: Vector2) -> int:
 # SWAP PIECES
 # =========================================================
 func _swap_pieces(a: int, b: int) -> void:
-	var temp_pos             = pieces[a]["current_pos"]
+	var temp_pos              = pieces[a]["current_pos"]
 	pieces[a]["current_pos"] = pieces[b]["current_pos"]
 	pieces[b]["current_pos"] = temp_pos
 	_apply_positions()
+
 	# Sonido al intercambiar piezas
 	audio_slide.play()
 
@@ -327,17 +330,53 @@ func _lose() -> void:
 func _on_time_up() -> void:
 	if game_active:
 		_lose()
+
 # =========================================================
-# Funcion de cuanto tiempo se añade
+# TIME BONUS POR EDAD
 # =========================================================
 func _get_time_bonus(age: int) -> float:
 	match age:
-		11: return 2.0
-		10: return 3.0
-		9:  return 5.0
-		8:  return 7.0
-		7:  return 10.0
-		_:  return 10.0 if age < 7 else 0.0
+		11:
+			return 2.0
+		10:
+			return 3.0
+		9:
+			return 5.0
+		8:
+			return 7.0
+		7:
+			return 10.0
+		_:
+			return 10.0 if age < 7 else 0.0
+
+# =========================================================
+# PIECE AMOUNT POR EDAD
+# =========================================================
+func _apply_piece_amount_by_age(age: int) -> void:
+	match age:
+		11:
+			cols = 3
+			rows = 3 # 9 piezas
+		10:
+			cols = 3
+			rows = 3 # 9 piezas
+		9:
+			cols = 3
+			rows = 2 # 6 piezas
+		8:
+			cols = 3
+			rows = 2 # 6 piezas
+		7:
+			cols = 2
+			rows = 2 # 4 piezas
+		_:
+			if age < 7:
+				cols = 2
+				rows = 2 # 4 piezas
+			else:
+				cols = 4
+				rows = 3 # 12 piezas
+
 # =========================================================
 # BUILD UI
 # =========================================================

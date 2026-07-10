@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://gfe363jgjt8k"
-path="res://.godot/imported/gazas.png-685b9e9c4580c0fe9ce5b1a77e944ddd.ctex"
+uid="uid://dqhf05i5eglck"
+path="res://.godot/imported/gazasColor.png-a9148d07e272dbe6c600e2cbfabf91e1.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Minigames/minigame_kit/assets/gazas.png"
-dest_files=["res://.godot/imported/gazas.png-685b9e9c4580c0fe9ce5b1a77e944ddd.ctex"]
+source_file="res://Minigames/minigame_kit/assets/gazasColor.png"
+dest_files=["res://.godot/imported/gazasColor.png-a9148d07e272dbe6c600e2cbfabf91e1.ctex"]
 
 [params]
 

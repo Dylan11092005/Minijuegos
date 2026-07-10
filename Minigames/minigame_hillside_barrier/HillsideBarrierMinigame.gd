@@ -1,5 +1,7 @@
 extends Node2D
 class_name HillsideBarrierMinigame
+
+
 # =========================================================
 # SIGNALS
 # =========================================================
@@ -30,56 +32,40 @@ const MOVE1_SOUND := preload("res://Minigames/minigame_hillside_barrier/assets/s
 const MOVE2_SOUND := preload("res://Minigames/minigame_hillside_barrier/assets/sounds/move2.mp3")
 const ROCKS_SOUND := preload("res://Minigames/minigame_hillside_barrier/assets/sounds/rocks.mp3")
 
+
 # =========================================================
 # CONSTANTS
 # =========================================================
 
-
 var TOTAL_TIME: float = 65.0
 
 const MAX_LIVES := 3
-const ROCKS_TO_BLOCK := 8
+const ROCKS_TO_BLOCK := 12
 
 const TIMER_PANEL_WIDTH := 500.0
 const TIMER_PANEL_HEIGHT := 60.0
 
-# Árboles en la madera.
 const TREE_TABLE_SCALE := Vector2(0.90, 0.90)
 const TREE_COOLDOWN_SECONDS := 3.0
 
-# Tamaño normal y rápido de rocas.
-# Piedras más rápidas en general.
 const NORMAL_ROCK_SPEED_RANGE := Vector2(145.0, 170.0)
 const FAST_ROCK_SPEED_RANGE := Vector2(190.0, 225.0)
-
-# Casi la mitad de las piedras pueden salir rápidas.
 const FAST_ROCK_CHANCE := 0.45
 
-# Zonas más amplias donde puede aparecer la roca.
 const ROCK_START_X_RANGE := Vector2(950, 1880)
 const ROCK_START_Y_RANGE := Vector2(60, 390)
 
-# Zonas más amplias donde puede terminar la roca.
 const ROCK_END_X_RANGE := Vector2(360, 1280)
 const ROCK_END_Y_RANGE := Vector2(780, 1010)
 
-# El punto puede aparecer en distintas partes del camino,
-# pero siempre sobre la ruta real de la roca.
 const SPOT_PROGRESS_RANGE := Vector2(0.55, 0.88)
-
-# IMPORTANTE:
-# No mover el punto hacia los lados, porque si no la roca puede pasar al lado.
 const SPOT_SIDE_OFFSET_RANGE := Vector2(0.0, 0.0)
 
-# Límites para que los puntos no se salgan de la ladera.
 const SPOT_X_LIMITS := Vector2(430, 1580)
 const SPOT_Y_LIMITS := Vector2(260, 850)
 
-# Separación mínima entre puntos cuando salen 2 rocas.
-const MIN_SPOT_DISTANCE := 270.0
+const MIN_SPOT_DISTANCE := 220.0
 
-
-# Posiciones de los árboles sobre la tabla de abajo.
 const TREE_TABLE_POSITIONS := [
 	Vector2(1050, 1000),
 	Vector2(1200, 1000),
@@ -88,6 +74,8 @@ const TREE_TABLE_POSITIONS := [
 	Vector2(1650, 1000),
 	Vector2(1800, 1000)
 ]
+
+
 # =========================================================
 # PRIVATE VARIABLES
 # =========================================================
@@ -101,12 +89,8 @@ var _blocked_rocks := 0
 var _wave_number := 0
 var _wave_active_rocks := 0
 var _double_wave_numbers: Array = []
-# Guarda los datos de cada roca activa.
-# rock_id -> { "spot": Node, "tree": Node }
-var _active_challenges: Dictionary = {}
 
-# Guarda qué punto pertenece a qué roca.
-# spot_id -> rock_id
+var _active_challenges: Dictionary = {}
 var _spot_to_rock_id: Dictionary = {}
 
 var _timer_ui: Node
@@ -117,6 +101,7 @@ var _progress_layer: CanvasLayer
 var _progress_label: Label
 
 var _rng := RandomNumberGenerator.new()
+
 
 # =========================================================
 # NODE REFERENCES
@@ -191,7 +176,6 @@ func _setup_timer_ui():
 	if _timer_ui.has_method("set_tamano_panel"):
 		_timer_ui.set_tamano_panel(TIMER_PANEL_WIDTH, TIMER_PANEL_HEIGHT)
 
-
 	var player_age: int = MinigameData.player_age
 
 	if player_age < 12:
@@ -203,8 +187,6 @@ func _setup_timer_ui():
 		_timer_ui.iniciar(TOTAL_TIME, "Tiempo para el", "deslizamiento")
 	else:
 		print("ERROR: TimerUi no tiene el método iniciar()")
-
-
 
 
 func _setup_lives_ui():
@@ -355,7 +337,6 @@ func _get_random_rock_route() -> Dictionary:
 
 	var spot_progress := _rng.randf_range(SPOT_PROGRESS_RANGE.x, SPOT_PROGRESS_RANGE.y)
 
-	# El punto queda EXACTAMENTE en el camino de la roca.
 	var spot_position := start_position.lerp(end_position, spot_progress)
 
 	spot_position.x = clamp(spot_position.x, SPOT_X_LIMITS.x, SPOT_X_LIMITS.y)
@@ -385,22 +366,26 @@ func _get_random_rock_speed() -> float:
 
 	return _rng.randf_range(NORMAL_ROCK_SPEED_RANGE.x, NORMAL_ROCK_SPEED_RANGE.y)
 
+
 func _setup_double_waves():
 	_double_wave_numbers.clear()
 
-	var possible_waves: Array = [2, 3, 4, 5, 6]
+	var possible_waves: Array = [2, 3, 4, 5, 6, 7, 8, 9]
 	possible_waves.shuffle()
 
 	_double_wave_numbers.append(possible_waves[0])
 	_double_wave_numbers.append(possible_waves[1])
+	_double_wave_numbers.append(possible_waves[2])
 	_double_wave_numbers.sort()
 
-	print("Oleadas dobles: ", _double_wave_numbers)
-	
-	
+	print("Oleadas con más rocas: ", _double_wave_numbers)
+
+
 func _get_wave_rock_amount() -> int:
-	# En cada partida se eligen 2 oleadas dobles al azar.
 	if _double_wave_numbers.has(_wave_number):
+		return _rng.randi_range(2, 3)
+
+	if _rng.randf() < 0.35:
 		return 2
 
 	return 1
@@ -428,7 +413,6 @@ func _generate_wave_routes(amount: int) -> Array:
 		if valid_position:
 			routes.append(new_route)
 
-	# Si por alguna razón no logró separar bien las rutas, rellena normal.
 	while routes.size() < amount:
 		routes.append(_get_random_rock_route())
 
@@ -520,7 +504,8 @@ func _start_next_round():
 		var data: Dictionary = _active_challenges[rock_id]
 		data["spot"] = spot
 		_active_challenges[rock_id] = data
-		
+
+
 func _spawn_planting_spot(spot_position: Vector2, spot_index: int, rock_id: int) -> Node:
 	if _planting_spots == null:
 		return null
@@ -530,8 +515,6 @@ func _spawn_planting_spot(spot_position: Vector2, spot_index: int, rock_id: int)
 	spot.position = spot_position
 	spot.set("spot_index", spot_index)
 	spot.set("visible_marker", true)
-
-	# Este punto pertenece únicamente a esta roca.
 	spot.set_meta("rock_id", rock_id)
 
 	_planting_spots.add_child(spot)
@@ -582,8 +565,6 @@ func register_successful_tree(tree: Node, spot: Node, table_position: Vector2):
 	if _game_finished:
 		return
 
-	# Árbol infinito con cooldown:
-	# aparece otro árbol en la misma posición, pero gris por 3 segundos.
 	_spawn_table_tree(table_position, true)
 
 	if spot != null and is_instance_valid(spot):
@@ -716,6 +697,7 @@ func _resolve_rock_challenge(rock: Node, collided_tree: Node):
 		if _rocks_audio:
 			_rocks_audio.stop()
 
+
 # =========================================================
 # UI METHODS
 # =========================================================
@@ -844,6 +826,7 @@ func _clear_children(parent: Node):
 # =========================================================
 # TIME BONUS POR EDAD
 # =========================================================
+
 func _get_time_bonus(age: int) -> float:
 	match age:
 		11:

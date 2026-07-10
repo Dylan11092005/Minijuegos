@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cvodgq5ecxa40"
-path="res://.godot/imported/Seguro.png-156ce9f017f494d8f279d0a8306cfff3.ctex"
+uid="uid://cv0hy6tbkec6j"
+path="res://.godot/imported/tijerasColor.png-954e10d4b0ddc8b8b36db1a81be1a14f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Minigames/minigame_kit/assets/Seguro.png"
-dest_files=["res://.godot/imported/Seguro.png-156ce9f017f494d8f279d0a8306cfff3.ctex"]
+source_file="res://Minigames/minigame_kit/assets/tijerasColor.png"
+dest_files=["res://.godot/imported/tijerasColor.png-954e10d4b0ddc8b8b36db1a81be1a14f.ctex"]
 
 [params]
 

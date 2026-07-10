@@ -144,16 +144,18 @@ func _on_button_3_pressed() -> void:
 
 func _on_button_2_pressed() -> void:
 	var minigame_data = get_node("/root/MinigameData")
-	minigame_data.title        = "¡Limpia el río!"
-	minigame_data.description  = "Ayuda a limpiar el río"
-	minigame_data.instructions = "Selecciona una basura y arrastrala al basurero"
-	minigame_data.video_path   = "res://Minigames/minigame_river/assets/River_Instruction.ogv"
+	minigame_data.title = "¡Limpia el río!"
+	minigame_data.description = "Ayuda a limpiar el río recogiendo solo la basura."
+	minigame_data.instructions = "Arrastra la basura al basurero para limpiar el río. No agarres los peces ni los tires al basurero, porque ellos viven en el río."
+	minigame_data.video_path = "res://Minigames/minigame_river/assets/River_Instruction.ogv"
 	minigame_data.minigame_scene = "res://Minigames/minigame_river/RiverCleanupMinigame.tscn"
 	minigame_data.controls = [
-		{ "action": "Arrastrar basura", "icon": "res://Minigames/ui_global/assets/ClickIcon.png" },
+		{
+			"action": "Arrastrar solo la basura",
+			"icon": "res://Minigames/ui_global/assets/ClickIcon.png"
+		},
 	]
 	get_tree().change_scene_to_file("res://Minigames/ui_global/MinigameIntro.tscn")
-
 
 
 func _on_button_pressed() -> void:
@@ -190,13 +192,16 @@ func _on_button_26_pressed() -> void:
 func _on_button_9_pressed() -> void:
 	var minigame_data = get_node("/root/MinigameData")
 	minigame_data.title = "¡Llega a la zona segura!"
-	minigame_data.description = "TERREMOTO, Te metiste debajo de la mesa para protegerte."
-	minigame_data.instructions = "Manten presionado el botón rojo cuando ocurra un terromoto para ocultarte debajo de la mesa."
+	minigame_data.description = "Camina hacia la zona segura. Cuando empiece el terremoto, escóndete debajo de la mesa para protegerte."
+	minigame_data.instructions = "Cuando el botón esté verde, sigue avanzando. Cuando se ponga amarillo, prepárate. Cuando se ponga rojo y empiece el terremoto, mantén presionado el botón para esconderte debajo de la mesa. Suelta el botón cuando el terremoto termine."
 	minigame_data.video_path = "res://Minigames/minigame_earthquake/assets/EarthquakeInstructions.ogv"
 	minigame_data.minigame_scene = "res://Minigames/minigame_earthquake/Main.tscn"
 	minigame_data.controls = [
-	{ "action": "Manten presionado el botón", "icon": "res://Minigames/ui_global/assets/ClickIcon.png" },
-]
+		{
+			"action": "Mantén presionado el botón para esconderte",
+			"icon": "res://Minigames/ui_global/assets/ClickIcon.png"
+		},
+	]
 	get_tree().change_scene_to_file("res://Minigames/ui_global/MinigameIntro.tscn")
 
 func _on_button_6_pressed() -> void:
@@ -234,15 +239,18 @@ func _on_button_12_pressed() -> void:
 func _on_button_11_pressed() -> void:
 	var minigame_data = get_node("/root/MinigameData")
 
-	minigame_data.title = "¡Identifica el río diferente!"
-	minigame_data.description = "Identificaste que el río está creciendo. Observa los ríos y encuentra cuál tiene una característica distinta."
-	minigame_data.instructions = "Mira cuidadosamente cada grupo de ríos. Haz clic sobre el río diferente para avanzar de ronda. Ganas si completas las tres rondas antes de quedarte sin vidas o sin tiempo."
+	minigame_data.title = "¡Encuentra el río diferente!"
+	minigame_data.description = "Observa bien los ríos. Uno de ellos se ve diferente porque el agua está creciendo o cambió su forma."
+	minigame_data.instructions = "Mira cada grupo de ríos con atención. Haz clic en el río que se vea diferente a los demás. Si eliges bien, pasas a la siguiente ronda. Ganas al completar las 3 rondas antes de quedarte sin vidas o sin tiempo."
 
 	minigame_data.video_path = "res://Minigames/minigame_identify_river/assets/videoriver.ogv"
 	minigame_data.minigame_scene = "res://Minigames/minigame_identify_river/main.tscn"
 
 	minigame_data.controls = [
-		{ "action": "Seleccionar río", "icon": "res://Minigames/ui_global/assets/ClickIcon.png" },
+		{
+			"action": "Haz clic en el río diferente",
+			"icon": "res://Minigames/ui_global/assets/ClickIcon.png"
+		},
 	]
 
 	get_tree().change_scene_to_file("res://Minigames/ui_global/MinigameIntro.tscn")

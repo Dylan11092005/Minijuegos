@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bdgaha12t4m3v"
-path="res://.godot/imported/tijeras.png-784fa9644a02a49964ca9184efcbc3b4.ctex"
+uid="uid://lijeg7uoiwkp"
+path="res://.godot/imported/pez1.png-18066ccc256be2fce8d3669ac95961a5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Minigames/minigame_kit/assets/tijeras.png"
-dest_files=["res://.godot/imported/tijeras.png-784fa9644a02a49964ca9184efcbc3b4.ctex"]
+source_file="res://Minigames/minigame_river/assets/pez1.png"
+dest_files=["res://.godot/imported/pez1.png-18066ccc256be2fce8d3669ac95961a5.ctex"]
 
 [params]
 
