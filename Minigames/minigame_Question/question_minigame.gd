@@ -1,6 +1,6 @@
 extends Node2D
 
-@export var time_limit := 60.0
+@export var TOTAL_TIME: float = 60.0
 @export var lives_limit := 3
 @export var max_rounds := 8
 @export var required_correct_answers := 8
@@ -234,6 +234,106 @@ var questions := [
 			"Asustarlos"
 		],
 		"correct": 0
+	},
+	{
+		"question": "¿Qué debe hacer un adulto si un niño está asustado durante un desastre?",
+		"options": [
+			"Consolarlo y explicarle con calma",
+			"Regañarlo por tener miedo",
+			"Dejarlo solo para que se calme",
+			"Ignorar sus sentimientos"
+		],
+		"correct": 0
+	},
+	{
+		"question": "¿Qué es importante para la salud de los niños después de una emergencia?",
+		"options": [
+			"Recibir atención médica si la necesitan",
+			"No decir nada de sus heridas",
+			"Evitar a los médicos",
+			"Curarse solos"
+		],
+		"correct": 0
+	},
+	{
+		"question": "¿Qué deben hacer los niños si se separan de su familia?",
+		"options": [
+			"Buscar a un adulto de uniforme o autoridad",
+			"Esconderse y no hablar con nadie",
+			"Salir a buscarlos solos por la calle",
+			"Quedarse llorando sin pedir ayuda"
+		],
+		"correct": 0
+	},
+	{
+		"question": "¿Por qué es importante que los niños participen en simulacros?",
+		"options": [
+			"Para saber cómo actuar en una emergencia real",
+			"Porque es obligatorio y sin motivo",
+			"Para perder clases",
+			"Porque es un juego sin importancia"
+		],
+		"correct": 0
+	},
+	{
+		"question": "¿Qué derecho tienen los niños a la educación durante un desastre?",
+		"options": [
+			"Seguir aprendiendo aunque cambien las condiciones",
+			"Dejar de estudiar para siempre",
+			"Perder el año sin ayuda",
+			"No tener acceso a maestros"
+		],
+		"correct": 0
+	},
+	{
+		"question": "¿Qué deben hacer los adultos si un niño no entiende las instrucciones de evacuación?",
+		"options": [
+			"Explicarle de forma clara y sencilla",
+			"Gritarle para que corra más rápido",
+			"Dejarlo atrás",
+			"No explicarle nada"
+		],
+		"correct": 0
+	},
+	{
+		"question": "¿Qué es un derecho básico de todo niño o niña en cualquier situación?",
+		"options": [
+			"Tener un nombre y una identidad protegida",
+			"Perder su identidad",
+			"No tener documentos",
+			"Ser tratado como adulto"
+		],
+		"correct": 0
+	},
+	{
+		"question": "¿Qué deben hacer los niños si ven que un adulto está en peligro?",
+		"options": [
+			"Pedir ayuda a otro adulto de confianza",
+			"Intentar rescatarlo solos",
+			"Ignorarlo",
+			"Salir corriendo sin avisar a nadie"
+		],
+		"correct": 0
+	},
+	{
+		"question": "¿Qué es importante mantener durante una emergencia para sentirse seguro?",
+		"options": [
+			"La calma y la comunicación con la familia",
+			"El silencio total sin hablar",
+			"La distancia de todos los adultos",
+			"El desorden"
+		],
+		"correct": 0
+	},
+	{
+		"question": "¿Qué deben recibir los niños que perdieron su hogar en un desastre?",
+		"options": [
+			"Refugio y cuidado seguro",
+			"Ninguna ayuda",
+			"Solo comida sin refugio",
+			"Indiferencia"
+		],
+		"correct": 0
 	}
 ]
 
@@ -428,8 +528,17 @@ func start_game() -> void:
 	if timer_hud.has_method("detener"):
 		timer_hud.detener()
 
+	var player_age: int = MinigameData.player_age
+
+	if player_age < 12:
+		TOTAL_TIME = 60.0 + _get_time_bonus(player_age)
+	else:
+		TOTAL_TIME = 60.0
+
 	if timer_hud.has_method("iniciar"):
-		timer_hud.iniciar(time_limit, "Tiempo", "responde las preguntas")
+		timer_hud.iniciar(TOTAL_TIME, "Tiempo", "responde las preguntas")
+
+
 
 
 func show_question() -> void:
@@ -708,3 +817,21 @@ func create_panel_style(bg_color: Color, border_color: Color, radius: int, shado
 		style.shadow_offset = Vector2(0, 4)
 
 	return style
+
+# =========================================================
+# TIME BONUS POR EDAD
+# =========================================================
+func _get_time_bonus(age: int) -> float:
+	match age:
+		11:
+			return 2.0
+		10:
+			return 3.0
+		9:
+			return 5.0
+		8:
+			return 7.0
+		7:
+			return 10.0
+		_:
+			return 10.0 if age < 7 else 0.0

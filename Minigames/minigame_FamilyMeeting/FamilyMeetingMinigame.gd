@@ -27,7 +27,7 @@ extends Node2D
 @onready var daughter_follower := $Player/DaughterFollower
 
 const TOTAL_FAMILY := 4
-
+var TOTAL_TIME: float = 35.0
 var rescued_count := 0
 var game_finished := false
 
@@ -42,9 +42,18 @@ var son_happy_texture := preload("res://Minigames/minigame_FamilyMeeting/assets/
 var daughter_happy_texture := preload("res://Minigames/minigame_FamilyMeeting/assets/objects/Daughter_Happy.png")
 
 func _ready() -> void:
-	timer_ui.iniciar(35, "Reúne a todos en", "segundos")
+	var player_age: int = MinigameData.player_age
+
+	if player_age < 12:
+		TOTAL_TIME = 35.0 + _get_time_bonus(player_age)
+	else:
+		TOTAL_TIME = 35.0
+
+	timer_ui.iniciar(TOTAL_TIME, "Reúne a todos en", "segundos")
 	timer_ui.time_up.connect(_on_timer_ui_time_up)
 	music_player.play()
+
+
 
 	father_icon.modulate = Color(0.25, 0.25, 0.25, 1)
 	mother_icon.modulate = Color(0.25, 0.25, 0.25, 1)
@@ -123,3 +132,21 @@ func _on_timer_ui_time_up() -> void:
 	music_player.stop()
 	player.bloquear_movimiento()
 	game_result.show_lose()
+
+# =========================================================
+# TIME BONUS POR EDAD
+# =========================================================
+func _get_time_bonus(age: int) -> float:
+	match age:
+		11:
+			return 2.0
+		10:
+			return 3.0
+		9:
+			return 5.0
+		8:
+			return 7.0
+		7:
+			return 10.0
+		_:
+			return 10.0 if age < 7 else 0.0

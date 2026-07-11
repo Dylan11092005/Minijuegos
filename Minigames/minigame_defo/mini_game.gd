@@ -55,6 +55,17 @@ func _process(_delta):
 	if game_active and not already_finished:
 		check_win_condition()
 
+# =========================================================
+# TIME BONUS POR EDAD
+# =========================================================
+func _get_time_bonus(age: int) -> float:
+	match age:
+		11: return 2.0
+		10: return 3.0
+		9:  return 5.0
+		8:  return 7.0
+		7:  return 10.0
+		_:  return 10.0 if age < 7 else 0.0
 
 func randomize_bad_holes():
 	var holes = get_tree().get_nodes_in_group("holes")
@@ -170,6 +181,13 @@ func start_game():
 	health = 100
 	current_damage = 10
 	update_health_bar()
+	
+	# --- NUEVO: ajustar tiempo según edad del jugador ---
+	var player_age: int = MinigameData.player_age  # <-- ajusta el nombre del autoload
+	if player_age < 12:
+		time_limit = 30.0 + _get_time_bonus(player_age)
+	else:
+		time_limit = 30.0
 
 	timer_hud.iniciar(time_limit, "Tiempo", "para reforestar el bosque")
 

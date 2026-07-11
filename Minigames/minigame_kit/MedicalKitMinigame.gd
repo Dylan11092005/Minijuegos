@@ -8,7 +8,7 @@ const LIVES_UI_SCENE = preload("res://Minigames/ui_global/LivesUi.tscn")
 
 
 @export_category("Configuración del juego")
-@export var time_limit := 30.0
+@export var TOTAL_TIME: float = 30.0
 @export var max_errors := 3
 
 @export_category("Animación de apertura")
@@ -464,15 +464,25 @@ func _finish_opening_kit():
 	_start_game()
 
 
+
 func _start_game():
 	_game_active = true
 
+	var player_age: int = MinigameData.player_age
+
+	if player_age < 12:
+		TOTAL_TIME = 30.0 + _get_time_bonus(player_age)
+	else:
+		TOTAL_TIME = 30.0
+
 	if _timer_hud != null:
 		_timer_hud.iniciar(
-			time_limit,
+			TOTAL_TIME,
 			"Tiempo restante",
 			"para ordenar el botiquín"
 		)
+
+
 
 
 func _on_item_dropped(item: DraggableItem):
@@ -617,3 +627,22 @@ func _on_back_button_pressed():
 		_timer_hud.detener()
 
 	get_tree().change_scene_to_file("res://MenuPrincipal.tscn")
+
+
+# =========================================================
+# TIME BONUS POR EDAD
+# =========================================================
+func _get_time_bonus(age: int) -> float:
+	match age:
+		11:
+			return 2.0
+		10:
+			return 3.0
+		9:
+			return 5.0
+		8:
+			return 7.0
+		7:
+			return 10.0
+		_:
+			return 10.0 if age < 7 else 0.0

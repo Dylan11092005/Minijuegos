@@ -11,7 +11,7 @@ const FIRE_BACKGROUND_SOUND_PATH := "res://Minigames/minigame_fire/assets/sound/
 const TIMER_UI_SCENE_PATH := "res://Minigames/ui_global/TimerUI.tscn"
 const GAME_RESULT_SCENE_PATH := "res://Minigames/ui_global/GameResult.tscn"
 
-const TOTAL_TIME := 35.0
+var TOTAL_TIME: float = 35.0
 
 const TOTAL_FLAMES_TO_APPEAR := 10
 const INITIAL_FIRE_TREES := 2
@@ -29,6 +29,8 @@ const C_BLUE := Color("#3E5F8F")
 const C_PHASE_BLUE := Color("#3E5F8F")
 const C_PHASE_ORANGE := Color("#E07820")
 const C_PHASE_RED := Color("#D63A3A")
+
+const BASE_BURN_DURATION := 2.0
 
 
 # =========================================================
@@ -89,6 +91,8 @@ func _process(delta):
 	if game_over:
 		return
 	
+	wave_process(delta)
+	
 	spawn_timer += delta
 	
 	if spawn_timer >= SPAWN_FLAME_EVERY:
@@ -99,6 +103,10 @@ func _process(delta):
 				_spawn_one_flame()
 	
 	_update_hud()
+
+
+func wave_process(_delta):
+	pass
 
 
 func _exit_tree():
@@ -199,10 +207,18 @@ func _start_global_timer():
 	if timer_ui.has_method("set_tamano_panel"):
 		timer_ui.set_tamano_panel(570, 60)
 	
+	var player_age: int = MinigameData.player_age
+
+	if player_age < 12:
+		TOTAL_TIME = 35.0 + _get_time_bonus(player_age)
+	else:
+		TOTAL_TIME = 35.0
+	
 	if timer_ui.has_method("iniciar"):
 		timer_ui.iniciar(TOTAL_TIME, "Tiempo restante", "para apagar incendios")
 	else:
 		push_error("TimerUI no tiene el método iniciar(p_time, p_text_before, p_text_after).")
+
 
 
 func _stop_global_timer():
@@ -242,12 +258,17 @@ func _setup_game_result():
 func _collect_trees():
 	trees.clear()
 	
+	var burn_duration := _get_burn_duration_for_age(MinigameData.player_age)
+	
 	for child in trees_parent.get_children():
 		if child.has_method("reset_tree") and child.has_method("set_burning"):
 			trees.append(child)
 			
 			child.reset_tree()
 			child.set_disabled(true)
+			
+			if child.has_method("set_burn_duration"):
+				child.set_burn_duration(burn_duration)
 			
 			if child.has_signal("extinguished"):
 				if not child.extinguished.is_connected(_on_tree_extinguished):
@@ -614,3 +635,44 @@ func _get_burning_count() -> int:
 				count += 1
 	
 	return count
+
+
+# =========================================================
+# TIME BONUS POR EDAD (tiempo total del minijuego)
+# =========================================================
+func _get_time_bonus(age: int) -> float:
+	match age:
+		11:
+			return 2.0
+		10:
+			return 3.0
+		9:
+			return 5.0
+		8:
+			return 7.0
+		7:
+			return 10.0
+		_:
+			return 10.0 if age < 7 else 0.0
+
+
+# =========================================================
+# TIEMPO DE QUEMADO SEGÚN EDAD (cuánto dura un árbol ardiendo)
+# =========================================================
+func _get_burn_duration_for_age(age: int) -> float:
+	if age >= 12:
+		return BASE_BURN_DURATION
+	
+	match age:
+		11:
+			return BASE_BURN_DURATION + 0.5
+		10:
+			return BASE_BURN_DURATION + 1.0
+		9:
+			return BASE_BURN_DURATION + 1.5
+		8:
+			return BASE_BURN_DURATION + 2.0
+		7:
+			return BASE_BURN_DURATION + 2.5
+		_:
+			return BASE_BURN_DURATION + 3.0 if age < 7 else BASE_BURN_DURATION

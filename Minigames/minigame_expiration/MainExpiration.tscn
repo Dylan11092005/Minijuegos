@@ -14,6 +14,8 @@
 [ext_resource type="AudioStream" uid="uid://ce4gnj6rtcl6m" path="res://Minigames/minigame_expiration/sounds/ExpirarionBackground.mp3" id="12_txdks"]
 [ext_resource type="AudioStream" uid="uid://nurprep7mv3g" path="res://Minigames/minigame_expiration/sounds/ExpirationSuccess.mp3" id="13_ffkaq"]
 [ext_resource type="AudioStream" uid="uid://5icfyabtaels" path="res://Minigames/minigame_expiration/sounds/ExpirationError.mp3" id="14_g3un7"]
+[ext_resource type="Texture2D" uid="uid://blwlshqdkp6na" path="res://Minigames/minigame_expiration/assets/good.png" id="15_g3un7"]
+[ext_resource type="Texture2D" uid="uid://b5il26a47yusw" path="res://Minigames/minigame_expiration/assets/bad.png" id="16_mxhwo"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_kx8yr"]
 load_path = "res://.godot/imported/milk.png-3cc88563564263d51d90cf0daf777973.ctex"
@@ -36,7 +38,7 @@ load_path = "res://.godot/imported/yogurt.png-9a72b93ba1573619d4a79f8c9b13facf.c
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_txdks"]
 load_path = "res://.godot/imported/bread.png-a576de74259b03a5a36b7041774812a6.ctex"
 
-[node name="MainExpiration" type="Node2D" unique_id=108548142 node_paths=PackedStringArray("foods", "date_label", "current_date_label", "fridge_drop_zone", "trash_drop_zone", "check_icon", "error_icon", "background_sound", "success_sound", "error_sound")]
+[node name="MainExpiration" type="Node2D" unique_id=108548142 node_paths=PackedStringArray("foods", "date_label", "current_date_label", "fridge_drop_zone", "trash_drop_zone", "check_icon", "error_icon", "good_icon", "bad_icon", "kid_mode_date_nodes", "background_sound", "success_sound", "error_sound")]
 script = ExtResource("1_g3un7")
 foods = [NodePath("Node2D/Milk"), NodePath("Node2D/Banana"), NodePath("Node2D/Cereal"), NodePath("Node2D/Cheese"), NodePath("Node2D/Chicken"), NodePath("Node2D/Yogurt"), NodePath("Node2D/Bread")]
 date_label = NodePath("Date")
@@ -45,6 +47,9 @@ fridge_drop_zone = NodePath("Background/Fridge")
 trash_drop_zone = NodePath("Background/Trash")
 check_icon = NodePath("Check")
 error_icon = NodePath("Error")
+good_icon = NodePath("Good")
+bad_icon = NodePath("Bad")
+kid_mode_date_nodes = [NodePath("Background/CurrentDate"), NodePath("Background/Current"), NodePath("Title"), NodePath("CurrentDate")]
 background_sound = NodePath("BackgroundSound")
 success_sound = NodePath("SuccessSound")
 error_sound = NodePath("ErrorSound")
@@ -139,9 +144,9 @@ offset_bottom = 786.0
 theme_override_font_sizes/font_size = 10
 
 [node name="CurrentDate" type="Label" parent="." unique_id=270506519]
-offset_left = 788.0
+offset_left = 813.0
 offset_top = 215.0
-offset_right = 1323.0
+offset_right = 1348.0
 offset_bottom = 334.0
 
 [node name="Title" type="Label" parent="." unique_id=845844790]
@@ -173,3 +178,15 @@ stream = ExtResource("13_ffkaq")
 
 [node name="ErrorSound" type="AudioStreamPlayer" parent="." unique_id=1579143836]
 stream = ExtResource("14_g3un7")
+
+[node name="Good" type="Sprite2D" parent="." unique_id=438450274]
+visible = false
+position = Vector2(995, 751.00006)
+scale = Vector2(0.17199995, 0.15899982)
+texture = ExtResource("15_g3un7")
+
+[node name="Bad" type="Sprite2D" parent="." unique_id=121077860]
+visible = false
+position = Vector2(997.0001, 753)
+scale = Vector2(0.16712137, 0.13757275)
+texture = ExtResource("16_mxhwo")

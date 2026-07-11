@@ -28,7 +28,7 @@ const BOARD_TEXTURES := {
 # GAME SETTINGS
 # =========================================================
 
-const TOTAL_TIME := 40.0
+var TOTAL_TIME: float = 40.0
 const TOTAL_BOARDS := 6
 
 const DROP_DISTANCE := 115.0
@@ -512,6 +512,7 @@ func _setup_timer_ui():
 		timer_ui.ocultar()
 
 
+
 func _start_global_timer():
 	if not timer_ui:
 		return
@@ -519,10 +520,18 @@ func _start_global_timer():
 	if timer_ui.has_method("set_tamano_panel"):
 		timer_ui.set_tamano_panel(650, 60)
 	
+	var player_age: int = MinigameData.player_age
+
+	if player_age < 12:
+		TOTAL_TIME = 40.0 + _get_time_bonus(player_age)
+	else:
+		TOTAL_TIME = 40.0
+	
 	if timer_ui.has_method("iniciar"):
 		timer_ui.iniciar(TOTAL_TIME, "Tiempo restante", "para reparar el puente")
 	else:
 		push_error("TimerUI no tiene el método iniciar(p_time, p_text_before, p_text_after).")
+
 
 
 func _stop_global_timer():
@@ -990,3 +999,21 @@ func _lose_game():
 func _disable_boards():
 	for board in boards:
 		board.locked = true
+
+# =========================================================
+# TIME BONUS POR EDAD
+# =========================================================
+func _get_time_bonus(age: int) -> float:
+	match age:
+		11:
+			return 2.0
+		10:
+			return 3.0
+		9:
+			return 5.0
+		8:
+			return 7.0
+		7:
+			return 10.0
+		_:
+			return 10.0 if age < 7 else 0.0

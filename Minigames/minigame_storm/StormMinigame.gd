@@ -24,7 +24,7 @@ const DEFAULT_LIGHTNING_SCENE := preload("res://Minigames/minigame_storm/Lightni
 # CONSTANTS
 # =========================================================
 
-const TOTAL_TIME := 20.0
+var TOTAL_TIME: float = 28.0
 const LIGHTNING_SPAWN_MARGIN := 80
 
 
@@ -92,6 +92,26 @@ func _process(_delta):
 
 
 # =========================================================
+# TIME BONUS POR EDAD
+# =========================================================
+
+func _get_time_bonus(age: int) -> float:
+	match age:
+		11:
+			return 2.0
+		10:
+			return 3.0
+		9:
+			return 5.0
+		8:
+			return 7.0
+		7:
+			return 10.0
+		_:
+			return 10.0 if age < 7 else 0.0
+
+
+# =========================================================
 # SETUP METHODS
 # =========================================================
 
@@ -99,14 +119,20 @@ func _setup_timer_ui():
 	_timer_ui = TIMER_UI_SCENE.instantiate()
 	add_child(_timer_ui)
 
-	# Tu TimerUi global emite la señal "time_up"
 	if _timer_ui.has_signal("time_up"):
-		_timer_ui.connect("time_up", Callable(self, "_on_time_up"))
+		_timer_ui.time_up.connect(_on_time_up)
 	else:
 		print("ERROR: El TimerUi no tiene la señal time_up")
 
 	if _timer_ui.has_method("set_tamano_panel"):
 		_timer_ui.set_tamano_panel(500, 60)
+
+	var player_age: int = MinigameData.player_age
+
+	if player_age < 12:
+		TOTAL_TIME = 28.0 + _get_time_bonus(player_age)
+	else:
+		TOTAL_TIME = 28.0
 
 	if _timer_ui.has_method("iniciar"):
 		_timer_ui.iniciar(TOTAL_TIME, "Tiempo restante", "para sobrevivir")
@@ -141,18 +167,21 @@ func _setup_audio():
 			_rain_audio.finished.connect(_on_rain_audio_finished)
 
 	if _thunder_audio:
-		_thunder_audio.volume_db = -3
+		_thunder_audio.volume_db = 6
 
 
 func _connect_background_lightning():
 	if _storm_background == null:
+		print("ERROR: No se encontró StormBackground")
 		return
 
-	if _storm_background.has_signal("lightning_flashes"):
-		_storm_background.connect(
-			"lightning_flashes",
-			Callable(self, "_on_background_lightning_flashes")
-		)
+	var callback := Callable(self, "_on_background_lightning_flashes")
+
+	if _storm_background.has_signal("relampago_aparecio"):
+		if not _storm_background.is_connected("relampago_aparecio", callback):
+			_storm_background.connect("relampago_aparecio", callback)
+	else:
+		print("ERROR: StormBackground no tiene la señal relampago_aparecio")
 
 
 func _connect_lightning_spawn_timer():
@@ -210,8 +239,8 @@ func _on_lightning_spawn_timer_timeout():
 
 	var screen_width: float = get_viewport_rect().size.x
 
-	# Caen más rayos.
-	# A veces cae 1 y a veces caen 2.
+	# Estos son los rayos que el jugador esquiva.
+	# Aquí NO se reproduce sonido.
 	var lightning_amount := randi_range(1, 2)
 
 	for index in range(lightning_amount):
@@ -231,13 +260,28 @@ func _on_lightning_spawn_timer_timeout():
 # AUDIO METHODS
 # =========================================================
 
+func _play_thunder_sound():
+	if _game_finished:
+		return
+
+	if _thunder_audio == null:
+		print("ERROR: No se encontró el nodo ThunderAudio")
+		return
+
+	if _thunder_audio.stream == null:
+		print("ERROR: ThunderAudio no tiene sonido asignado en el Inspector")
+		return
+
+	_thunder_audio.stop()
+	_thunder_audio.volume_db = 6
+	_thunder_audio.play()
+
+
 func _on_background_lightning_flashes():
 	if _game_finished:
 		return
 
-	if _thunder_audio:
-		_thunder_audio.stop()
-		_thunder_audio.play()
+	_play_thunder_sound()
 
 
 func _on_rain_audio_finished():
@@ -263,6 +307,9 @@ func _win_game():
 	if _rain_audio:
 		_rain_audio.stop()
 
+	if _thunder_audio:
+		_thunder_audio.stop()
+
 	if _game_result:
 		if _game_result.has_method("show_win"):
 			_game_result.show_win()
@@ -285,6 +332,9 @@ func _lose_game():
 
 	if _rain_audio:
 		_rain_audio.stop()
+
+	if _thunder_audio:
+		_thunder_audio.stop()
 
 	if _game_result:
 		if _game_result.has_method("show_lose"):

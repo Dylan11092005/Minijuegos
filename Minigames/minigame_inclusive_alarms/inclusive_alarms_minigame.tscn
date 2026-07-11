@@ -1,27 +1,30 @@
 [gd_scene format=3 uid="uid://d0uvbyw6sa8tw"]
 
-[ext_resource type="Script" uid="uid://dqge7pions2yb" path="res://minigame_inclusive_alarms/InclusiveAlarmsMinigame.gd" id="1_x3dmc"]
-[ext_resource type="Texture2D" uid="uid://c0yrxm4kodg8u" path="res://minigame_inclusive_alarms/assets/background/InclusiveAlarmBackground.png" id="2_g6yeq"]
-[ext_resource type="Texture2D" uid="uid://d3ho74um7q3s4" path="res://minigame_inclusive_alarms/assets/ui/panel.png" id="3_scje3"]
-[ext_resource type="Script" uid="uid://bo1x183801yb1" path="res://minigame_inclusive_alarms/DraggableObject.gd" id="5_004fk"]
-[ext_resource type="Texture2D" uid="uid://b2q4nhkgxg02a" path="res://minigame_inclusive_alarms/assets/ui/ObjectsTray.png" id="6_ikpy7"]
-[ext_resource type="Texture2D" uid="uid://bwsg0eh6x2oe8" path="res://minigame_inclusive_alarms/assets/objects/StrobeLight.png" id="7_qd3lx"]
-[ext_resource type="Texture2D" uid="uid://cgaachjeqkwd2" path="res://minigame_inclusive_alarms/assets/objects/EmergencyBeacon.png" id="8_lw27b"]
-[ext_resource type="Texture2D" uid="uid://uf08ajg51uad" path="res://minigame_inclusive_alarms/assets/objects/PillowVibrator.png" id="9_fpq88"]
-[ext_resource type="Texture2D" uid="uid://tdn7ingubwma" path="res://minigame_inclusive_alarms/assets/objects/VibratingWatch.png" id="10_lyp1v"]
-[ext_resource type="Texture2D" uid="uid://b2a5x22x3gbyf" path="res://minigame_inclusive_alarms/assets/objects/EmergencyTextSign.png" id="11_ygxt4"]
-[ext_resource type="Texture2D" uid="uid://fbe3ufapfmlr" path="res://minigame_inclusive_alarms/assets/objects/AccessibleExitSign.png" id="12_gjhm0"]
-[ext_resource type="Texture2D" uid="uid://cv1onebfnoig1" path="res://minigame_inclusive_alarms/assets/objects/TraditionalSiren.png" id="13_ulfnk"]
-[ext_resource type="Texture2D" uid="uid://cudfkg8ibgsny" path="res://minigame_inclusive_alarms/assets/ui/EmptySlot.png" id="14_fpq88"]
-[ext_resource type="Texture2D" uid="uid://xw7xn008ubbh" path="res://minigame_inclusive_alarms/assets/objects/Megaphone.png" id="14_gh8sr"]
-[ext_resource type="Texture2D" uid="uid://dxstv6w3tvnmq" path="res://minigame_inclusive_alarms/assets/ui/CheckIcon.png" id="15_lyp1v"]
-[ext_resource type="Texture2D" uid="uid://1rc8b8m24g6r" path="res://minigame_inclusive_alarms/assets/ui/ErrorIcon.png" id="16_ygxt4"]
-[ext_resource type="Texture2D" uid="uid://cla3ektqh2hfx" path="res://minigame_inclusive_alarms/assets/ui/instructions.png" id="17_lyp1v"]
-[ext_resource type="AudioStream" uid="uid://5obc0fqklug3" path="res://minigame_inclusive_alarms/assets/audio/Music.mp3" id="18_ulfnk"]
-[ext_resource type="AudioStream" uid="uid://dao2n0dd263qy" path="res://minigame_inclusive_alarms/assets/audio/Correct.mp3" id="19_gh8sr"]
-[ext_resource type="AudioStream" uid="uid://bm74bmxf5vg1r" path="res://minigame_inclusive_alarms/assets/audio/Error.mp3" id="20_lx1v7"]
-[ext_resource type="PackedScene" uid="uid://dsdbaxj6xesxn" path="res://ui_global/GameResult.tscn" id="21_gh8sr"]
-[ext_resource type="PackedScene" uid="uid://m3dt448yc1u" path="res://ui_global/TimerUi.tscn" id="22_lx1v7"]
+[ext_resource type="Script" uid="uid://dqge7pions2yb" path="res://Minigames/minigame_inclusive_alarms/InclusiveAlarmsMinigame.gd" id="1_x3dmc"]
+[ext_resource type="Texture2D" uid="uid://c0yrxm4kodg8u" path="res://Minigames/minigame_inclusive_alarms/assets/background/InclusiveAlarmBackground.png" id="2_g6yeq"]
+[ext_resource type="Texture2D" uid="uid://d3ho74um7q3s4" path="res://Minigames/minigame_inclusive_alarms/assets/ui/panel.png" id="3_scje3"]
+[ext_resource type="Script" uid="uid://bo1x183801yb1" path="res://Minigames/minigame_inclusive_alarms/DraggableObject.gd" id="5_004fk"]
+[ext_resource type="Texture2D" uid="uid://b2q4nhkgxg02a" path="res://Minigames/minigame_inclusive_alarms/assets/ui/ObjectsTray.png" id="6_ikpy7"]
+[ext_resource type="Texture2D" uid="uid://dgn8rpq5gketm" path="res://Minigames/minigame_inclusive_alarms/assets/objects/light1.png" id="6_qcyh6"]
+[ext_resource type="Texture2D" uid="uid://dm4sl5stvjnp0" path="res://Minigames/minigame_inclusive_alarms/assets/objects/light2.png" id="7_5r067"]
+[ext_resource type="Texture2D" uid="uid://c3yfkuqgjxtbx" path="res://Minigames/minigame_inclusive_alarms/assets/objects/vibration1.png" id="8_keyhv"]
+[ext_resource type="Texture2D" uid="uid://b16tynp0eq330" path="res://Minigames/minigame_inclusive_alarms/assets/objects/vibration2.png" id="9_upe86"]
+[ext_resource type="Texture2D" uid="uid://bs2sp1e6iakrm" path="res://Minigames/minigame_inclusive_alarms/assets/objects/exit1.png" id="10_nge18"]
+[ext_resource type="Texture2D" uid="uid://b1bgfep7t6vcb" path="res://Minigames/minigame_inclusive_alarms/assets/objects/exit2.png" id="11_mwlnp"]
+[ext_resource type="Texture2D" uid="uid://bu0tdkimlto2q" path="res://Minigames/minigame_inclusive_alarms/assets/objects/trap1.png" id="12_j6tg0"]
+[ext_resource type="Texture2D" uid="uid://w0a86m11skgv" path="res://Minigames/minigame_inclusive_alarms/assets/objects/trap2.png" id="13_s7sem"]
+[ext_resource type="Texture2D" uid="uid://cudfkg8ibgsny" path="res://Minigames/minigame_inclusive_alarms/assets/ui/EmptySlot.png" id="14_fpq88"]
+[ext_resource type="Texture2D" uid="uid://dxstv6w3tvnmq" path="res://Minigames/minigame_inclusive_alarms/assets/ui/CheckIcon.png" id="15_lyp1v"]
+[ext_resource type="Texture2D" uid="uid://1rc8b8m24g6r" path="res://Minigames/minigame_inclusive_alarms/assets/ui/ErrorIcon.png" id="16_ygxt4"]
+[ext_resource type="Texture2D" uid="uid://cla3ektqh2hfx" path="res://Minigames/minigame_inclusive_alarms/assets/ui/instructions.png" id="17_lyp1v"]
+[ext_resource type="AudioStream" uid="uid://5obc0fqklug3" path="res://Minigames/minigame_inclusive_alarms/assets/audio/Music.mp3" id="18_ulfnk"]
+[ext_resource type="AudioStream" uid="uid://dao2n0dd263qy" path="res://Minigames/minigame_inclusive_alarms/assets/audio/Correct.mp3" id="19_gh8sr"]
+[ext_resource type="AudioStream" uid="uid://bm74bmxf5vg1r" path="res://Minigames/minigame_inclusive_alarms/assets/audio/Error.mp3" id="20_lx1v7"]
+[ext_resource type="PackedScene" uid="uid://dsdbaxj6xesxn" path="res://Minigames/ui_global/GameResult.tscn" id="21_gh8sr"]
+[ext_resource type="PackedScene" uid="uid://m3dt448yc1u" path="res://Minigames/ui_global/TimerUi.tscn" id="22_lx1v7"]
+[ext_resource type="Texture2D" uid="uid://bgvbf874j8dpv" path="res://Minigames/minigame_inclusive_alarms/assets/objects/blue.png" id="23_5r067"]
+[ext_resource type="AudioStream" uid="uid://nurprep7mv3g" path="res://Minigames/minigame_expiration/sounds/ExpirationSuccess.mp3" id="24_upe86"]
+[ext_resource type="AudioStream" uid="uid://5icfyabtaels" path="res://Minigames/minigame_expiration/sounds/ExpirationError.mp3" id="25_nge18"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_scje3"]
 size = Vector2(86, 66.75)
@@ -33,13 +36,13 @@ size = Vector2(91, 68)
 size = Vector2(77.5, 71.5)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_lx1v7"]
-size = Vector2(60, 69)
+size = Vector2(63, 66.5)
 
 [node name="InclusiveAlarmsMinigame" type="Node2D" unique_id=494841019]
 script = ExtResource("1_x3dmc")
 
 [node name="Background" type="Sprite2D" parent="." unique_id=607113194]
-position = Vector2(976, 543)
+position = Vector2(966, 543.00006)
 scale = Vector2(1.2578125, 1.0546875)
 texture = ExtResource("2_g6yeq")
 
@@ -75,6 +78,38 @@ position = Vector2(942.99994, 851.00006)
 scale = Vector2(0.8995767, 0.55145276)
 texture = ExtResource("6_ikpy7")
 
+[node name="Slot1" type="Marker2D" parent="ObjectsArea/ObjectsTray" unique_id=873501598]
+position = Vector2(-239.00116, -94.29639)
+scale = Vector2(1.111634, 1.813392)
+
+[node name="Slot2" type="Marker2D" parent="ObjectsArea/ObjectsTray" unique_id=779962479]
+position = Vector2(-233.443, 48.961525)
+scale = Vector2(1.111634, 1.813392)
+
+[node name="Slot3" type="Marker2D" parent="ObjectsArea/ObjectsTray" unique_id=774446794]
+position = Vector2(-75.591, -112.43036)
+scale = Vector2(1.111634, 1.813392)
+
+[node name="Slot4" type="Marker2D" parent="ObjectsArea/ObjectsTray" unique_id=491702949]
+position = Vector2(-75.591, 48.961525)
+scale = Vector2(1.111634, 1.813392)
+
+[node name="Slot5" type="Marker2D" parent="ObjectsArea/ObjectsTray" unique_id=531342811]
+position = Vector2(81.149414, -106.99019)
+scale = Vector2(1.111634, 1.813392)
+
+[node name="Slot6" type="Marker2D" parent="ObjectsArea/ObjectsTray" unique_id=933980990]
+position = Vector2(84.484314, 48.961525)
+scale = Vector2(1.111634, 1.813392)
+
+[node name="Slot7" type="Marker2D" parent="ObjectsArea/ObjectsTray" unique_id=263011245]
+position = Vector2(246.78284, -103.3634)
+scale = Vector2(1.111634, 1.813392)
+
+[node name="Slot8" type="Marker2D" parent="ObjectsArea/ObjectsTray" unique_id=1017564932]
+position = Vector2(242.3363, 54.40171)
+scale = Vector2(1.111634, 1.813392)
+
 [node name="ObjectsContainer" type="Node2D" parent="ObjectsArea" unique_id=862571048]
 
 [node name="StrobeLight" type="Area2D" parent="ObjectsArea/ObjectsContainer" unique_id=230729753]
@@ -82,12 +117,12 @@ script = ExtResource("5_004fk")
 correct_category = "flashing_lights"
 
 [node name="Sprite2D" type="Sprite2D" parent="ObjectsArea/ObjectsContainer/StrobeLight" unique_id=1694920120]
-position = Vector2(726.00006, 789.99994)
-scale = Vector2(0.094400994, 0.100585915)
-texture = ExtResource("7_qd3lx")
+position = Vector2(728.00006, 794)
+scale = Vector2(0.18274255, 0.17430364)
+texture = ExtResource("6_qcyh6")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ObjectsArea/ObjectsContainer/StrobeLight" unique_id=504986626]
-position = Vector2(726, 793)
+position = Vector2(728, 792)
 shape = SubResource("RectangleShape2D_lx1v7")
 
 [node name="EmergencyBeacon" type="Area2D" parent="ObjectsArea/ObjectsContainer" unique_id=68523857]
@@ -95,12 +130,12 @@ script = ExtResource("5_004fk")
 correct_category = "flashing_lights"
 
 [node name="Sprite2D" type="Sprite2D" parent="ObjectsArea/ObjectsContainer/EmergencyBeacon" unique_id=1755536550]
-position = Vector2(868.00006, 875.99994)
-scale = Vector2(0.094400994, 0.100585915)
-texture = ExtResource("8_lw27b")
+position = Vector2(871, 877.99994)
+scale = Vector2(0.18720028, 0.17084104)
+texture = ExtResource("7_5r067")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ObjectsArea/ObjectsContainer/EmergencyBeacon" unique_id=1492791205]
-position = Vector2(871, 879)
+position = Vector2(871, 878)
 shape = SubResource("RectangleShape2D_lx1v7")
 
 [node name="PillowVibrator" type="Area2D" parent="ObjectsArea/ObjectsContainer" unique_id=175120809]
@@ -108,9 +143,9 @@ script = ExtResource("5_004fk")
 correct_category = "vibration_devices"
 
 [node name="Sprite2D" type="Sprite2D" parent="ObjectsArea/ObjectsContainer/PillowVibrator" unique_id=1037107326]
-position = Vector2(727, 884)
-scale = Vector2(0.08951816, 0.100585915)
-texture = ExtResource("9_fpq88")
+position = Vector2(733, 882.00006)
+scale = Vector2(0.1938274, 0.21820346)
+texture = ExtResource("8_keyhv")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ObjectsArea/ObjectsContainer/PillowVibrator" unique_id=2111619177]
 position = Vector2(728, 879)
@@ -121,9 +156,9 @@ script = ExtResource("5_004fk")
 correct_category = "vibration_devices"
 
 [node name="Sprite2D" type="Sprite2D" parent="ObjectsArea/ObjectsContainer/VibratingWatch" unique_id=163146022]
-position = Vector2(1156, 801.99994)
-scale = Vector2(0.094400994, 0.100585915)
-texture = ExtResource("10_lyp1v")
+position = Vector2(1165, 794)
+scale = Vector2(0.18647648, 0.27156985)
+texture = ExtResource("9_upe86")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ObjectsArea/ObjectsContainer/VibratingWatch" unique_id=1749684056]
 position = Vector2(1159, 793)
@@ -134,9 +169,9 @@ script = ExtResource("5_004fk")
 correct_category = "visual_signals"
 
 [node name="Sprite2D" type="Sprite2D" parent="ObjectsArea/ObjectsContainer/EmergencyTextSign" unique_id=1489167141]
-position = Vector2(1156.0001, 886.99994)
-scale = Vector2(0.076660186, 0.100585915)
-texture = ExtResource("11_ygxt4")
+position = Vector2(1162, 878)
+scale = Vector2(0.200492, 0.25029328)
+texture = ExtResource("10_nge18")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ObjectsArea/ObjectsContainer/EmergencyTextSign" unique_id=1692529353]
 position = Vector2(1159, 878)
@@ -147,9 +182,9 @@ script = ExtResource("5_004fk")
 correct_category = "visual_signals"
 
 [node name="Sprite2D" type="Sprite2D" parent="ObjectsArea/ObjectsContainer/AccessibleExitSign" unique_id=126017294]
-position = Vector2(870, 799)
-scale = Vector2(0.059855103, 0.100585915)
-texture = ExtResource("12_gjhm0")
+position = Vector2(878.00006, 792.00006)
+scale = Vector2(0.18194659, 0.24097098)
+texture = ExtResource("11_mwlnp")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ObjectsArea/ObjectsContainer/AccessibleExitSign" unique_id=1155859376]
 position = Vector2(870, 794)
@@ -160,9 +195,9 @@ script = ExtResource("5_004fk")
 correct_category = "distractor"
 
 [node name="Sprite2D" type="Sprite2D" parent="ObjectsArea/ObjectsContainer/TraditionalSiren" unique_id=337058638]
-position = Vector2(1005, 796)
-scale = Vector2(0.06443279, 0.11083981)
-texture = ExtResource("13_ulfnk")
+position = Vector2(1013, 792.00006)
+scale = Vector2(0.2564156, 0.29226193)
+texture = ExtResource("12_j6tg0")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ObjectsArea/ObjectsContainer/TraditionalSiren" unique_id=1499775982]
 position = Vector2(1012, 793)
@@ -173,9 +208,9 @@ script = ExtResource("5_004fk")
 correct_category = "distractor"
 
 [node name="Sprite2D" type="Sprite2D" parent="ObjectsArea/ObjectsContainer/Megaphone" unique_id=1457011166]
-position = Vector2(1011, 881.99994)
-scale = Vector2(0.06443279, 0.10131837)
-texture = ExtResource("14_gh8sr")
+position = Vector2(1010.0001, 879)
+scale = Vector2(0.2671563, 0.27923104)
+texture = ExtResource("13_s7sem")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ObjectsArea/ObjectsContainer/Megaphone" unique_id=1537238578]
 position = Vector2(1014, 879)
@@ -231,6 +266,17 @@ stream = ExtResource("20_lx1v7")
 [node name="GameResult" parent="." unique_id=2106536257 instance=ExtResource("21_gh8sr")]
 
 [node name="TimerUI" parent="." unique_id=1042888595 instance=ExtResource("22_lx1v7")]
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1327443531]
+position = Vector2(914.00006, 305.25)
+scale = Vector2(0.66667646, 0.5972221)
+texture = ExtResource("23_5r067")
+
+[node name="Success" type="AudioStreamPlayer" parent="." unique_id=859522234]
+stream = ExtResource("24_upe86")
+
+[node name="Error" type="AudioStreamPlayer" parent="." unique_id=1589731832]
+stream = ExtResource("25_nge18")
 
 [connection signal="area_entered" from="Categories/FlashingLightsArea" to="." method="_on_flashing_lights_area_area_entered"]
 [connection signal="area_entered" from="Categories/VibrationDevicesArea" to="." method="_on_vibration_devices_area_area_entered"]
