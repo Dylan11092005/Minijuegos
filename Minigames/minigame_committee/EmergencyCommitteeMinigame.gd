@@ -16,6 +16,12 @@ const GAME_RESULT_SCENE_PATH := "res://Minigames/ui_global/GameResult.tscn"
 const LIVES_UI_SCENE_PATH := "res://Minigames/ui_global/LivesUi.tscn"
 const LIVES_UI_SCRIPT_PATH := "res://Minigames/ui_global/LivesUi.gd"
 
+const MUSIC_BACKGROUND_PATH := "res://Minigames/minigame_committee/music/background_music.mp3"
+const MUSIC_PICK_PATH := "res://Minigames/minigame_committee/music/pick_item.mp3"
+const MUSIC_CORRECT_PATH := "res://Minigames/minigame_committee/music/correct.mp3"
+const MUSIC_WRONG_PATH := "res://Minigames/minigame_committee/music/wrong.mp3"
+const MUSIC_LOSE_LIFE_PATH := "res://Minigames/minigame_committee/music/lose_life.mp3"
+
 
 # =========================================================
 # GAME SETTINGS
@@ -24,9 +30,8 @@ const LIVES_UI_SCRIPT_PATH := "res://Minigames/ui_global/LivesUi.gd"
 const TOTAL_TIME := 45.0
 const MAX_LIVES := 3
 
-# Ahora estos valores representan altura deseada en píxeles.
 const ROLE_SCALE := Vector2(310, 310)
-const ITEM_SCALE := Vector2(82, 82)
+const ITEM_SCALE := Vector2(100, 100)
 const PLACED_ITEM_SCALE := Vector2(52, 52)
 
 const DROP_DISTANCE := 230.0
@@ -63,13 +68,18 @@ const C_PHASE_RED := Color("#D63A3A")
 var timer_ui = null
 var game_result = null
 
-var lives_layer: CanvasLayer = null
 var lives_ui = null
 
 var damage_layer: CanvasLayer = null
 var damage_rect: ColorRect = null
 
 var items_tray: Panel = null
+
+var background_music: AudioStreamPlayer = null
+var pick_audio: AudioStreamPlayer = null
+var correct_audio: AudioStreamPlayer = null
+var wrong_audio: AudioStreamPlayer = null
+var lose_life_audio: AudioStreamPlayer = null
 
 var roles: Array = []
 var items: Array = []
@@ -90,6 +100,7 @@ func _ready():
 	randomize()
 	
 	_setup_background()
+	_setup_audio()
 	_setup_timer_ui()
 	_setup_game_result()
 	_setup_lives_ui()
@@ -106,6 +117,10 @@ func _process(_delta):
 	
 	if game_over:
 		return
+	
+	# Loop simple para la música de fondo.
+	if background_music and not background_music.playing:
+		background_music.play()
 	
 	_update_hud()
 
@@ -216,7 +231,7 @@ func _get_items_data() -> Array:
 		},
 		{
 			"id": "flare",
-			"name": "Linterna",
+			"name": "Bengala",
 			"role": "rescuer",
 			"paths": [
 				"res://Minigames/minigame_committee/assets/items/flare.png",
@@ -286,6 +301,48 @@ func _setup_background():
 
 
 # =========================================================
+# AUDIO
+# =========================================================
+
+func _setup_audio():
+	background_music = _create_audio_player("BackgroundMusic", MUSIC_BACKGROUND_PATH, -10.0)
+	pick_audio = _create_audio_player("PickAudio", MUSIC_PICK_PATH, -2.0)
+	correct_audio = _create_audio_player("CorrectAudio", MUSIC_CORRECT_PATH, -1.5)
+	wrong_audio = _create_audio_player("WrongAudio", MUSIC_WRONG_PATH, -1.5)
+	lose_life_audio = _create_audio_player("LoseLifeAudio", MUSIC_LOSE_LIFE_PATH, -1.0)
+
+
+func _create_audio_player(player_name: String, path: String, volume_db: float) -> AudioStreamPlayer:
+	var player := AudioStreamPlayer.new()
+	player.name = player_name
+	player.volume_db = volume_db
+	add_child(player)
+	
+	if ResourceLoader.exists(path):
+		player.stream = load(path)
+	else:
+		push_warning("No se encontró audio: " + path)
+	
+	return player
+
+
+func _start_background_music():
+	if background_music and background_music.stream:
+		background_music.play()
+
+
+func _stop_background_music():
+	if background_music:
+		background_music.stop()
+
+
+func _play_sound(player: AudioStreamPlayer):
+	if player and player.stream:
+		player.stop()
+		player.play()
+
+
+# =========================================================
 # TIMER UI GLOBAL
 # =========================================================
 
@@ -311,7 +368,6 @@ func _start_global_timer():
 	if not timer_ui:
 		return
 	
-	# Tamaño recomendado para que no quede con demasiado espacio.
 	if timer_ui.has_method("set_tamano_panel"):
 		timer_ui.set_tamano_panel(680, 60)
 	
@@ -346,7 +402,6 @@ func _setup_lives_ui():
 		push_error("No se encontró HUD/LivesUi. Crea el nodo dentro del HUD y pégale LivesUi.gd.")
 		return
 	
-	# Si el nodo existe pero no tiene el script global, se lo ponemos por código.
 	if not lives_ui.has_method("actualizar_vidas"):
 		if ResourceLoader.exists(LIVES_UI_SCRIPT_PATH):
 			var lives_script = load(LIVES_UI_SCRIPT_PATH)
@@ -356,9 +411,6 @@ func _setup_lives_ui():
 			return
 	
 	lives_ui.visible = true
-	
-	# IMPORTANTE:
-	# No lo movemos con position si el LivesUi global usa esquina propia.
 	lives_ui.position = Vector2.ZERO
 	lives_ui.z_index = 999
 	
@@ -372,6 +424,7 @@ func _setup_lives_ui():
 	
 	_update_lives_ui()
 
+
 func _set_property_if_exists(node, property_name: String, value):
 	if not node:
 		return
@@ -380,7 +433,8 @@ func _set_property_if_exists(node, property_name: String, value):
 		if property.has("name") and property["name"] == property_name:
 			node.set(property_name, value)
 			return
-			
+
+
 func _update_lives_ui():
 	if not lives_ui:
 		return
@@ -405,10 +459,28 @@ func _setup_game_result():
 		game_result = result_scene.instantiate()
 		game_result.name = "GameResult"
 		add_child(game_result)
+		
+		# Forzamos que el GameResult y sus sonidos puedan sonar bien.
+		game_result.process_mode = Node.PROCESS_MODE_ALWAYS
+		
+		var win_sound = game_result.find_child("WinSound", true, false)
+		var lose_sound = game_result.find_child("LoseSound", true, false)
+		
+		if win_sound and win_sound is AudioStreamPlayer:
+			win_sound.volume_db = 8.0
+			win_sound.process_mode = Node.PROCESS_MODE_ALWAYS
+			print("WinSound encontrado y volumen subido.")
+		else:
+			push_warning("No se encontró WinSound dentro de GameResult.")
+		
+		if lose_sound and lose_sound is AudioStreamPlayer:
+			lose_sound.volume_db = 8.0
+			lose_sound.process_mode = Node.PROCESS_MODE_ALWAYS
+			print("LoseSound encontrado y volumen subido.")
+		else:
+			push_warning("No se encontró LoseSound dentro de GameResult.")
 	else:
 		push_error("No se encontró GameResult.tscn en: " + GAME_RESULT_SCENE_PATH)
-
-
 # =========================================================
 # DAMAGE EFFECT
 # =========================================================
@@ -510,8 +582,8 @@ func _setup_items_tray():
 	
 	items_tray = Panel.new()
 	items_tray.name = "ItemsTray"
-	items_tray.position = Vector2(screen_size.x * 0.08, screen_size.y * 0.755)
-	items_tray.size = Vector2(screen_size.x * 0.84, screen_size.y * 0.19)
+	items_tray.position = Vector2(screen_size.x * 0.07, screen_size.y * 0.755)
+	items_tray.size = Vector2(screen_size.x * 0.86, screen_size.y * 0.19)
 	items_tray.z_index = 5
 	items_tray.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	
@@ -569,7 +641,7 @@ func _start_game():
 	game_over = false
 	
 	current_lives = MAX_LIVES
-	_update_lives_ui()
+	placed_items = 0
 	
 	_clear_round()
 	_create_roles()
@@ -577,6 +649,7 @@ func _start_game():
 	
 	_update_lives_ui()
 	_update_hud()
+	_start_background_music()
 	_start_global_timer()
 
 
@@ -679,6 +752,10 @@ func _create_items():
 			ITEM_SCALE
 		)
 		
+		if item.has_signal("picked"):
+			if not item.picked.is_connected(_on_item_picked):
+				item.picked.connect(_on_item_picked)
+		
 		if item.has_signal("dropped"):
 			if not item.dropped.is_connected(_on_item_dropped):
 				item.dropped.connect(_on_item_dropped)
@@ -690,6 +767,10 @@ func _create_items():
 # DROP LOGIC
 # =========================================================
 
+func _on_item_picked(_item):
+	_play_sound(pick_audio)
+
+
 func _on_item_dropped(item):
 	if game_over:
 		return
@@ -697,6 +778,8 @@ func _on_item_dropped(item):
 	var target_role = _get_matching_role_for_item(item)
 	
 	if target_role:
+		_play_sound(correct_audio)
+		
 		var snap_position: Vector2 = target_role.get_next_item_position()
 		target_role.register_item()
 		
@@ -709,6 +792,8 @@ func _on_item_dropped(item):
 			await get_tree().create_timer(0.35).timeout
 			_win_game()
 	else:
+		_play_sound(wrong_audio)
+		
 		item.set_wrong_feedback()
 		item.return_to_start()
 		_lose_life()
@@ -736,6 +821,7 @@ func _lose_life():
 	current_lives = max(current_lives, 0)
 	
 	_update_lives_ui()
+	_play_sound(lose_life_audio)
 	_play_damage_effect()
 	
 	if current_lives <= 0:
@@ -761,6 +847,7 @@ func _win_game():
 	game_over = true
 	game_started = false
 	
+	_stop_background_music()
 	_stop_global_timer()
 	_disable_items()
 	
@@ -769,6 +856,9 @@ func _win_game():
 			game_result.show_win()
 		elif game_result.has_method("mostrar_ganaste"):
 			game_result.mostrar_ganaste()
+		
+		_play_global_result_sound("WinSound", 10.0)
+	
 
 
 func _lose_game():
@@ -778,6 +868,7 @@ func _lose_game():
 	game_over = true
 	game_started = false
 	
+	_stop_background_music()
 	_stop_global_timer()
 	_disable_items()
 	
@@ -786,7 +877,30 @@ func _lose_game():
 			game_result.show_lose()
 		elif game_result.has_method("mostrar_perdiste"):
 			game_result.mostrar_perdiste()
-
+		
+		_play_global_result_sound("LoseSound", 10.0)
+		
+	
+func _play_global_result_sound(sound_name: String, volume: float = 8.0):
+	if not game_result:
+		push_warning("No existe GameResult para reproducir sonido.")
+		return
+	
+	var sound_node = game_result.find_child(sound_name, true, false)
+	
+	if sound_node and sound_node is AudioStreamPlayer:
+		if sound_node.stream == null:
+			push_warning(sound_name + " existe, pero no tiene audio asignado en el GameResult global.")
+			return
+		
+		sound_node.process_mode = Node.PROCESS_MODE_ALWAYS
+		sound_node.volume_db = volume
+		sound_node.stop()
+		sound_node.play()
+		
+		print("Reproduciendo sonido global: ", sound_name)
+	else:
+		push_warning("No se encontró el sonido global: " + sound_name)
 
 func _disable_items():
 	for item in items:

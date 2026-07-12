@@ -1,6 +1,7 @@
 extends Area2D
 
 
+signal picked(item)
 signal dropped(item)
 
 
@@ -68,6 +69,7 @@ func setup(p_item_id: String, p_item_name: String, p_target_role_id: String, tex
 	if ResourceLoader.exists(texture_path):
 		var texture: Texture2D = load(texture_path)
 		item_sprite.texture = texture
+		item_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 		
 		var target_height: float = p_scale.x
 		var scale_factor: float = target_height / texture.get_size().y
@@ -108,6 +110,8 @@ func _start_drag():
 	dragging = true
 	z_index = 100
 	mouse_offset = global_position - get_global_mouse_position()
+	
+	picked.emit(self)
 	
 	var tween := create_tween()
 	tween.set_ease(Tween.EASE_OUT)
