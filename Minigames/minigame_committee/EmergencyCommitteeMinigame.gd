@@ -311,8 +311,9 @@ func _start_global_timer():
 	if not timer_ui:
 		return
 	
+	# Tamaño recomendado para que no quede con demasiado espacio.
 	if timer_ui.has_method("set_tamano_panel"):
-		timer_ui.set_tamano_panel(780, 60)
+		timer_ui.set_tamano_panel(680, 60)
 	
 	if timer_ui.has_method("iniciar"):
 		timer_ui.iniciar(TOTAL_TIME, "Tiempo restante", "para organizar el comité")
