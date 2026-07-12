@@ -857,7 +857,7 @@ func _win_game():
 		elif game_result.has_method("mostrar_ganaste"):
 			game_result.mostrar_ganaste()
 		
-		_play_global_result_sound("WinSound", 10.0)
+		_play_global_result_sound("WinSound", 8.0)
 	
 
 
@@ -878,7 +878,7 @@ func _lose_game():
 		elif game_result.has_method("mostrar_perdiste"):
 			game_result.mostrar_perdiste()
 		
-		_play_global_result_sound("LoseSound", 10.0)
+		_play_global_result_sound("LoseSound", 8.0)
 		
 	
 func _play_global_result_sound(sound_name: String, volume: float = 8.0):
