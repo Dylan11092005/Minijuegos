@@ -34,7 +34,11 @@ func setup(p_role_id: String, p_role_name: String, texture_path: String, p_posit
 	if ResourceLoader.exists(texture_path):
 		var texture: Texture2D = load(texture_path)
 		character_sprite.texture = texture
-		character_sprite.scale = p_scale
+		
+		# Si p_scale.x es mayor a 1, lo usamos como altura deseada en píxeles.
+		var target_height: float = p_scale.x
+		var scale_factor: float = target_height / texture.get_size().y
+		character_sprite.scale = Vector2(scale_factor, scale_factor)
 	else:
 		push_error("No se encontró personaje: " + texture_path)
 	
@@ -52,11 +56,11 @@ func register_item():
 
 func get_next_item_position() -> Vector2:
 	var positions := [
-		Vector2(-50, 110),
-		Vector2(0, 120),
-		Vector2(50, 110),
-		Vector2(-25, 155),
-		Vector2(25, 155)
+		Vector2(-48, 118),
+		Vector2(0, 126),
+		Vector2(48, 118),
+		Vector2(-25, 162),
+		Vector2(25, 162)
 	]
 	
 	var index: int = placed_items_count % positions.size()
@@ -96,8 +100,8 @@ func _create_missing_nodes():
 
 
 func _setup_role_panel():
-	role_panel.position = Vector2(-90, 150)
-	role_panel.size = Vector2(180, 42)
+	role_panel.position = Vector2(-92, 158)
+	role_panel.size = Vector2(184, 44)
 	role_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	role_panel.z_index = 20
 	
@@ -129,6 +133,6 @@ func _setup_role_panel():
 
 func _setup_collision():
 	var rect := RectangleShape2D.new()
-	rect.size = Vector2(220, 330)
+	rect.size = Vector2(230, 330)
 	collision_shape.shape = rect
 	collision_shape.position = Vector2(0, 25)

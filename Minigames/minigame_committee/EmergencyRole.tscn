@@ -1,3 +1,19 @@
 [gd_scene format=3 uid="uid://cjhv6sjxgom3a"]
 
+[ext_resource type="Script" uid="uid://dh2soaujn4wk5" path="res://Minigames/minigame_committee/EmergencyRole.gd" id="1_4pf8c"]
+
 [node name="EmergencyRole" type="Area2D" unique_id=739848836]
+script = ExtResource("1_4pf8c")
+
+[node name="CharacterSprite" type="Sprite2D" parent="." unique_id=1401433687]
+
+[node name="RolePanel" type="Panel" parent="." unique_id=1787126694]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="RoleLabel" type="Label" parent="RolePanel" unique_id=1148163913]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1917106518]

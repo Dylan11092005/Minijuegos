@@ -12,6 +12,7 @@ const EMERGENCY_ITEM_SCENE_PATH := "res://Minigames/minigame_committee/Emergency
 
 const TIMER_UI_SCENE_PATH := "res://Minigames/ui_global/TimerUI.tscn"
 const GAME_RESULT_SCENE_PATH := "res://Minigames/ui_global/GameResult.tscn"
+
 const LIVES_UI_SCENE_PATH := "res://Minigames/ui_global/LivesUi.tscn"
 const LIVES_UI_SCRIPT_PATH := "res://Minigames/ui_global/LivesUi.gd"
 
@@ -23,11 +24,12 @@ const LIVES_UI_SCRIPT_PATH := "res://Minigames/ui_global/LivesUi.gd"
 const TOTAL_TIME := 45.0
 const MAX_LIVES := 3
 
-const ROLE_SCALE := Vector2(0.18, 0.18)
-const ITEM_SCALE := Vector2(0.15, 0.15)
-const PLACED_ITEM_SCALE := Vector2(0.085, 0.085)
+# Ahora estos valores representan altura deseada en píxeles.
+const ROLE_SCALE := Vector2(240, 240)
+const ITEM_SCALE := Vector2(82, 82)
+const PLACED_ITEM_SCALE := Vector2(52, 52)
 
-const DROP_DISTANCE := 150.0
+const DROP_DISTANCE := 160.0
 
 
 # =========================================================
@@ -67,6 +69,8 @@ var lives_ui = null
 var damage_layer: CanvasLayer = null
 var damage_rect: ColorRect = null
 
+var items_tray: Panel = null
+
 var roles: Array = []
 var items: Array = []
 
@@ -91,6 +95,7 @@ func _ready():
 	_setup_lives_ui()
 	_setup_damage_effect()
 	_setup_ui()
+	_setup_items_tray()
 	
 	call_deferred("_start_game")
 
@@ -117,7 +122,9 @@ func _get_roles_data() -> Array:
 			"paths": [
 				"res://Minigames/minigame_committee/assets/characters/firefighter.png",
 				"res://Minigames/minigame_committee/assets/firefighter.png",
-				"res://Minigames/minigame_committee/assets/fireFighter.png"
+				"res://Minigames/minigame_committee/assets/fireFighter.png",
+				"res://Minigames/minigame_committee/assets/fireFighter.PNG",
+				"res://Minigames/minigame_committee/assets/fireFighter.jpg"
 			]
 		},
 		{
@@ -126,7 +133,9 @@ func _get_roles_data() -> Array:
 			"paths": [
 				"res://Minigames/minigame_committee/assets/characters/cruz_roja.png",
 				"res://Minigames/minigame_committee/assets/cruz_roja.png",
-				"res://Minigames/minigame_committee/assets/cruz Roja.png"
+				"res://Minigames/minigame_committee/assets/cruz Roja.png",
+				"res://Minigames/minigame_committee/assets/cruz Roja.PNG",
+				"res://Minigames/minigame_committee/assets/cruz Roja.jpg"
 			]
 		},
 		{
@@ -134,7 +143,9 @@ func _get_roles_data() -> Array:
 			"name": "Rescatista",
 			"paths": [
 				"res://Minigames/minigame_committee/assets/characters/rescuer.png",
-				"res://Minigames/minigame_committee/assets/rescuer.png"
+				"res://Minigames/minigame_committee/assets/rescuer.png",
+				"res://Minigames/minigame_committee/assets/rescuer.PNG",
+				"res://Minigames/minigame_committee/assets/rescuer.jpg"
 			]
 		},
 		{
@@ -142,7 +153,9 @@ func _get_roles_data() -> Array:
 			"name": "Comunicador",
 			"paths": [
 				"res://Minigames/minigame_committee/assets/characters/communicator.png",
-				"res://Minigames/minigame_committee/assets/communicator.png"
+				"res://Minigames/minigame_committee/assets/communicator.png",
+				"res://Minigames/minigame_committee/assets/communicator.PNG",
+				"res://Minigames/minigame_committee/assets/communicator.jpg"
 			]
 		}
 	]
@@ -157,7 +170,7 @@ func _get_items_data() -> Array:
 			"paths": [
 				"res://Minigames/minigame_committee/assets/items/fire_extinguisher.png",
 				"res://Minigames/minigame_committee/assets/FireExtinguisher.png",
-				"res://Minigames/minigame_committee/assets/fire_extinguisher.png"
+				"res://Minigames/minigame_committee/assets/FireExtinguisher.PNG"
 			]
 		},
 		{
@@ -167,7 +180,8 @@ func _get_items_data() -> Array:
 			"paths": [
 				"res://Minigames/minigame_committee/assets/items/firefighter_hat.png",
 				"res://Minigames/minigame_committee/assets/FirefighterHat.png",
-				"res://Minigames/minigame_committee/assets/FirefigtherHat.png"
+				"res://Minigames/minigame_committee/assets/FirefigtherHat.png",
+				"res://Minigames/minigame_committee/assets/FirefigtherHat.PNG"
 			]
 		},
 		{
@@ -176,7 +190,8 @@ func _get_items_data() -> Array:
 			"role": "firefighter",
 			"paths": [
 				"res://Minigames/minigame_committee/assets/items/hose.png",
-				"res://Minigames/minigame_committee/assets/Hose.png"
+				"res://Minigames/minigame_committee/assets/Hose.png",
+				"res://Minigames/minigame_committee/assets/Hose.PNG"
 			]
 		},
 		{
@@ -185,7 +200,8 @@ func _get_items_data() -> Array:
 			"role": "red_cross",
 			"paths": [
 				"res://Minigames/minigame_committee/assets/items/medicine_cabinet.png",
-				"res://Minigames/minigame_committee/assets/MedicineCabinet.png"
+				"res://Minigames/minigame_committee/assets/MedicineCabinet.png",
+				"res://Minigames/minigame_committee/assets/MedicineCabinet.PNG"
 			]
 		},
 		{
@@ -194,16 +210,18 @@ func _get_items_data() -> Array:
 			"role": "rescuer",
 			"paths": [
 				"res://Minigames/minigame_committee/assets/items/rope.png",
-				"res://Minigames/minigame_committee/assets/Rope.png"
+				"res://Minigames/minigame_committee/assets/Rope.png",
+				"res://Minigames/minigame_committee/assets/Rope.PNG"
 			]
 		},
 		{
 			"id": "flare",
-			"name": "Bengala",
+			"name": "Linterna",
 			"role": "rescuer",
 			"paths": [
 				"res://Minigames/minigame_committee/assets/items/flare.png",
-				"res://Minigames/minigame_committee/assets/Flare.png"
+				"res://Minigames/minigame_committee/assets/Flare.png",
+				"res://Minigames/minigame_committee/assets/Flare.PNG"
 			]
 		},
 		{
@@ -212,7 +230,8 @@ func _get_items_data() -> Array:
 			"role": "communicator",
 			"paths": [
 				"res://Minigames/minigame_committee/assets/items/megaphone.png",
-				"res://Minigames/minigame_committee/assets/Megaphone.png"
+				"res://Minigames/minigame_committee/assets/Megaphone.png",
+				"res://Minigames/minigame_committee/assets/Megaphone.PNG"
 			]
 		},
 		{
@@ -222,7 +241,9 @@ func _get_items_data() -> Array:
 			"paths": [
 				"res://Minigames/minigame_committee/assets/items/communicator_radio.png",
 				"res://Minigames/minigame_committee/assets/Communicator2.png",
-				"res://Minigames/minigame_committee/assets/Communicator 2.png"
+				"res://Minigames/minigame_committee/assets/Communicator 2.png",
+				"res://Minigames/minigame_committee/assets/Communicator2.PNG",
+				"res://Minigames/minigame_committee/assets/Communicator 2.PNG"
 			]
 		}
 	]
@@ -259,7 +280,9 @@ func _setup_background():
 		var scale_x: float = screen_size.x / texture_size.x
 		var scale_y: float = screen_size.y / texture_size.y
 		var final_scale: float = max(scale_x, scale_y)
+		
 		background.scale = Vector2(final_scale, final_scale)
+		background.position = screen_size / 2
 
 
 # =========================================================
@@ -312,7 +335,7 @@ func _stop_global_timer():
 func _setup_lives_ui():
 	lives_layer = CanvasLayer.new()
 	lives_layer.name = "LivesLayer"
-	lives_layer.layer = 35
+	lives_layer.layer = 80
 	add_child(lives_layer)
 	
 	if ResourceLoader.exists(LIVES_UI_SCENE_PATH):
@@ -327,9 +350,20 @@ func _setup_lives_ui():
 		return
 	
 	lives_ui.name = "LivesUI"
-	lives_layer.add_child(lives_ui)
 	
-	lives_ui.position = Vector2(get_viewport_rect().size.x - 350, 20)
+	if lives_ui is CanvasLayer:
+		add_child(lives_ui)
+		lives_ui.layer = 80
+	else:
+		lives_layer.add_child(lives_ui)
+		lives_ui.position = Vector2(get_viewport_rect().size.x - 360, 25)
+		lives_ui.z_index = 200
+	
+	lives_ui.visible = true
+	
+	# Para el LivesUi global que usa esquina.
+	lives_ui.set("panel_corner", 1)
+	lives_ui.set("panel_margin", Vector2(35, 25))
 	
 	if lives_ui.has_method("set_max_lives"):
 		lives_ui.set_max_lives(MAX_LIVES)
@@ -400,6 +434,7 @@ func _play_damage_effect():
 			randf_range(-8.0, 8.0),
 			randf_range(-8.0, 8.0)
 		)
+		
 		shake_tween.tween_property(self, "position", original_position + offset, 0.03)
 	
 	shake_tween.tween_property(self, "position", original_position, 0.05)
@@ -452,6 +487,38 @@ func _setup_ui():
 	counter_label.add_theme_color_override("font_color", C_BLUE)
 	
 	_update_hud()
+
+
+func _setup_items_tray():
+	if items_tray:
+		return
+	
+	var screen_size: Vector2 = get_viewport_rect().size
+	
+	items_tray = Panel.new()
+	items_tray.name = "ItemsTray"
+	items_tray.position = Vector2(screen_size.x * 0.08, screen_size.y * 0.755)
+	items_tray.size = Vector2(screen_size.x * 0.84, screen_size.y * 0.19)
+	items_tray.z_index = 5
+	items_tray.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.90, 0.72, 0.45, 0.88)
+	style.border_color = Color("#E0B080")
+	style.border_width_left = 5
+	style.border_width_right = 5
+	style.border_width_top = 5
+	style.border_width_bottom = 5
+	style.corner_radius_top_left = 28
+	style.corner_radius_top_right = 28
+	style.corner_radius_bottom_left = 28
+	style.corner_radius_bottom_right = 28
+	style.shadow_color = Color(0, 0, 0, 0.25)
+	style.shadow_size = 10
+	style.shadow_offset = Vector2(3, 4)
+	
+	items_tray.add_theme_stylebox_override("panel", style)
+	add_child(items_tray)
 
 
 func _update_hud():
@@ -524,10 +591,10 @@ func _create_roles():
 	var screen_size: Vector2 = get_viewport_rect().size
 	
 	var positions := [
-		Vector2(screen_size.x * 0.18, screen_size.y * 0.50),
-		Vector2(screen_size.x * 0.39, screen_size.y * 0.50),
-		Vector2(screen_size.x * 0.61, screen_size.y * 0.50),
-		Vector2(screen_size.x * 0.82, screen_size.y * 0.50)
+		Vector2(screen_size.x * 0.18, screen_size.y * 0.47),
+		Vector2(screen_size.x * 0.39, screen_size.y * 0.47),
+		Vector2(screen_size.x * 0.61, screen_size.y * 0.47),
+		Vector2(screen_size.x * 0.82, screen_size.y * 0.47)
 	]
 	
 	var role_data: Array = _get_roles_data()
@@ -563,10 +630,10 @@ func _create_items():
 	
 	total_items = item_data.size()
 	
-	var spacing: float = screen_size.x * 0.105
+	var spacing: float = screen_size.x * 0.095
 	var total_width: float = spacing * float(item_data.size() - 1)
 	var start_x: float = screen_size.x * 0.5 - total_width * 0.5
-	var start_y: float = screen_size.y * 0.84
+	var start_y: float = screen_size.y * 0.855
 	
 	for i in range(item_data.size()):
 		var data: Dictionary = item_data[i]

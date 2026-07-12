@@ -68,12 +68,16 @@ func setup(p_item_id: String, p_item_name: String, p_target_role_id: String, tex
 	if ResourceLoader.exists(texture_path):
 		var texture: Texture2D = load(texture_path)
 		item_sprite.texture = texture
-		item_sprite.scale = p_scale
-		base_sprite_scale = p_scale
+		
+		var target_height: float = p_scale.x
+		var scale_factor: float = target_height / texture.get_size().y
+		
+		item_sprite.scale = Vector2(scale_factor, scale_factor)
+		base_sprite_scale = item_sprite.scale
 		item_sprite.modulate = Color.WHITE
 		
 		var rect := RectangleShape2D.new()
-		rect.size = texture.get_size() * p_scale
+		rect.size = texture.get_size() * item_sprite.scale
 		collision_shape.shape = rect
 	else:
 		push_error("No se encontró objeto: " + texture_path)
@@ -128,8 +132,10 @@ func lock_to_position(target_position: Vector2, target_scale: Vector2 = Vector2.
 	
 	var final_scale := base_sprite_scale
 	
-	if target_scale != Vector2.ZERO:
-		final_scale = target_scale
+	if target_scale != Vector2.ZERO and item_sprite and item_sprite.texture:
+		var target_height: float = target_scale.x
+		var scale_factor: float = target_height / item_sprite.texture.get_size().y
+		final_scale = Vector2(scale_factor, scale_factor)
 	
 	var tween := create_tween()
 	tween.set_ease(Tween.EASE_OUT)
