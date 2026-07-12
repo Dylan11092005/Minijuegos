@@ -27,7 +27,7 @@ const MUSIC_LOSE_LIFE_PATH := "res://Minigames/minigame_committee/music/lose_lif
 # GAME SETTINGS
 # =========================================================
 
-const TOTAL_TIME := 45.0
+const BASE_TIME := 45.0
 const MAX_LIVES := 3
 
 const ROLE_SCALE := Vector2(310, 310)
@@ -35,6 +35,10 @@ const ITEM_SCALE := Vector2(100, 100)
 const PLACED_ITEM_SCALE := Vector2(52, 52)
 
 const DROP_DISTANCE := 230.0
+
+# Tiempo total real de la partida (BASE_TIME + bono por edad).
+# Se calcula en _ready() según MinigameData.player_age.
+var TOTAL_TIME: float = BASE_TIME
 
 
 # =========================================================
@@ -99,6 +103,8 @@ var game_over: bool = false
 func _ready():
 	randomize()
 	
+	_apply_age_difficulty()
+	
 	_setup_background()
 	_setup_audio()
 	_setup_timer_ui()
@@ -123,6 +129,33 @@ func _process(_delta):
 		background_music.play()
 	
 	_update_hud()
+
+
+# =========================================================
+# DIFICULTAD SEGÚN EDAD
+# =========================================================
+
+# Ajusta TOTAL_TIME sumando un bono de segundos según la edad del
+# jugador (MinigameData.player_age). A menor edad, más tiempo extra.
+func _apply_age_difficulty() -> void:
+	var player_age: int = MinigameData.player_age
+	TOTAL_TIME = BASE_TIME + _get_time_bonus_for_age(player_age)
+
+
+func _get_time_bonus_for_age(age: int) -> float:
+	match age:
+		11:
+			return 2.0
+		10:
+			return 3.0
+		9:
+			return 5.0
+		8:
+			return 7.0
+		7:
+			return 10.0
+		_:
+			return 10.0 if age < 7 else 0.0
 
 
 # =========================================================

@@ -12,6 +12,19 @@ class_name EvacuationRhythmMinigame
 @export var note_speed := 340.0
 @export var hit_window := 60.0
 
+@export_group("Dificultad según edad")
+# Cuanto más chico el multiplicador, más lento cae la nota (más fácil).
+@export_range(0.3, 1.5, 0.05) var note_speed_multiplier_age_under_7 := 0.60
+@export_range(0.3, 1.5, 0.05) var note_speed_multiplier_age_7 := 0.65
+@export_range(0.3, 1.5, 0.05) var note_speed_multiplier_age_8 := 0.75
+@export_range(0.3, 1.5, 0.05) var note_speed_multiplier_age_9_plus := 1.0
+
+# Segundos EXTRA que se suman al time_limit base según la edad.
+@export_range(0.0, 60.0, 1.0) var extra_time_age_under_7 := 18.0
+@export_range(0.0, 60.0, 1.0) var extra_time_age_7 := 14.0
+@export_range(0.0, 60.0, 1.0) var extra_time_age_8 := 8.0
+@export_range(0.0, 60.0, 1.0) var extra_time_age_9_plus := 0.0
+
 
 const TIMER_HUD_SCENE = preload("res://Minigames/ui_global/TimerUi.tscn")
 const GAME_RESULT_SCENE = preload("res://Minigames/ui_global/GameResult.tscn")
@@ -108,6 +121,11 @@ var background_music_player: AudioStreamPlayer
 var correct_sound_player: AudioStreamPlayer
 var error_sound_player: AudioStreamPlayer
 
+# Multiplicador de velocidad de caída ya calculado según la edad del jugador.
+# Se aplica sobre "note_speed" para que las notas caigan más lento en
+# jugadores más pequeños.
+var _note_speed_age_multiplier: float = 1.0
+
 
 func _ready() -> void:
 	add_to_group("game_manager")
@@ -116,6 +134,8 @@ func _ready() -> void:
 	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 
 	screen_size = get_viewport_rect().size
+
+	_apply_age_difficulty()
 
 	_calculate_layout()
 	_create_layers()
@@ -128,6 +148,43 @@ func _ready() -> void:
 	_create_sequence()
 
 	start_game()
+
+
+# =========================
+# DIFICULTAD SEGÚN EDAD
+# =========================
+
+# Ajusta time_limit y la velocidad de caída de las notas según la edad
+# del jugador (MinigameData.player_age). A menor edad: más tiempo total
+# y notas que caen más despacio (más fáciles de atrapar).
+func _apply_age_difficulty() -> void:
+	var player_age: int = MinigameData.player_age
+
+	_note_speed_age_multiplier = _get_note_speed_multiplier_for_age(player_age)
+	note_speed *= _note_speed_age_multiplier
+
+	var extra_time: float = _get_extra_time_for_age(player_age)
+	time_limit += extra_time
+
+
+func _get_note_speed_multiplier_for_age(age: int) -> float:
+	match age:
+		8:
+			return note_speed_multiplier_age_8
+		7:
+			return note_speed_multiplier_age_7
+		_:
+			return note_speed_multiplier_age_under_7 if age < 7 else note_speed_multiplier_age_9_plus
+
+
+func _get_extra_time_for_age(age: int) -> float:
+	match age:
+		8:
+			return extra_time_age_8
+		7:
+			return extra_time_age_7
+		_:
+			return extra_time_age_under_7 if age < 7 else extra_time_age_9_plus
 
 
 func _calculate_layout() -> void:
