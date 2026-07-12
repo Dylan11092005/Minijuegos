@@ -333,41 +333,52 @@ func _stop_global_timer():
 # =========================================================
 
 func _setup_lives_ui():
-	if lives_layer:
-		return
+	# Primero intenta usar un LivesUi ya puesto dentro del HUD.
+	if hud:
+		lives_ui = hud.get_node_or_null("LivesUi")
+		
+		if not lives_ui:
+			lives_ui = hud.get_node_or_null("LivesUI")
 	
-	lives_layer = CanvasLayer.new()
-	lives_layer.name = "LivesLayer"
-	lives_layer.layer = 300
-	add_child(lives_layer)
+	# Si no existe en la escena, lo crea usando la escena global.
+	if not lives_ui:
+		if ResourceLoader.exists(LIVES_UI_SCENE_PATH):
+			var lives_scene = load(LIVES_UI_SCENE_PATH)
+			lives_ui = lives_scene.instantiate()
+			lives_ui.name = "LivesUi"
+			
+			if lives_ui is CanvasLayer:
+				add_child(lives_ui)
+				lives_ui.layer = 120
+			else:
+				hud.add_child(lives_ui)
+		
+		elif ResourceLoader.exists(LIVES_UI_SCRIPT_PATH):
+			var lives_script = load(LIVES_UI_SCRIPT_PATH)
+			lives_ui = Node2D.new()
+			lives_ui.name = "LivesUi"
+			lives_ui.set_script(lives_script)
+			hud.add_child(lives_ui)
+		
+		else:
+			push_error("No se encontró LivesUi global.")
+			return
 	
-	if ResourceLoader.exists(LIVES_UI_SCENE_PATH):
-		var lives_scene = load(LIVES_UI_SCENE_PATH)
-		lives_ui = lives_scene.instantiate()
-	elif ResourceLoader.exists(LIVES_UI_SCRIPT_PATH):
-		var lives_script = load(LIVES_UI_SCRIPT_PATH)
-		lives_ui = Node2D.new()
-		lives_ui.set_script(lives_script)
-	else:
-		push_error("No se encontró LivesUi global.")
-		return
-	
-	lives_ui.name = "LivesUI"
-	lives_layer.add_child(lives_ui)
-	
-	# Forzamos que se vea encima del fondo.
 	lives_ui.visible = true
 	
-	if lives_ui is Node2D:
-		lives_ui.position = Vector2(get_viewport_rect().size.x - 370, 20)
+	# Si es CanvasLayer, lo dejamos arriba de todo.
+	if lives_ui is CanvasLayer:
+		lives_ui.layer = 120
+	else:
+		# Si es Node2D, lo ponemos dentro del HUD arriba a la derecha.
+		lives_ui.position = Vector2(get_viewport_rect().size.x - 360, 25)
 		lives_ui.z_index = 999
 	
-	# Intentamos respetar las propiedades del LivesUi global.
+	# Intenta configurar propiedades del LivesUi global si existen.
 	_set_property_if_exists(lives_ui, "panel_corner", 1)
-	_set_property_if_exists(lives_ui, "panel_margin", Vector2(35, 20))
-	_set_property_if_exists(lives_ui, "position_corner", 1)
+	_set_property_if_exists(lives_ui, "panel_margin", Vector2(35, 25))
 	_set_property_if_exists(lives_ui, "corner", 1)
-	_set_property_if_exists(lives_ui, "margin", Vector2(35, 20))
+	_set_property_if_exists(lives_ui, "margin", Vector2(35, 25))
 	
 	if lives_ui.has_method("set_max_lives"):
 		lives_ui.set_max_lives(MAX_LIVES)
@@ -376,6 +387,7 @@ func _setup_lives_ui():
 	
 	if lives_ui.has_method("queue_redraw"):
 		lives_ui.queue_redraw()
+		
 		
 
 func _set_property_if_exists(node, property_name: String, value):
@@ -387,7 +399,6 @@ func _set_property_if_exists(node, property_name: String, value):
 			node.set(property_name, value)
 			return
 			
-
 func _update_lives_ui():
 	if not lives_ui:
 		return
@@ -650,15 +661,29 @@ func _create_items():
 	
 	total_items = item_data.size()
 	
-	var spacing: float = screen_size.x * 0.095
-	var total_width: float = spacing * float(item_data.size() - 1)
-	var start_x: float = screen_size.x * 0.5 - total_width * 0.5
-	var start_y: float = screen_size.y * 0.855
+	var tray_slots := [
+		Vector2(screen_size.x * 0.17, screen_size.y * 0.855),
+		Vector2(screen_size.x * 0.27, screen_size.y * 0.855),
+		Vector2(screen_size.x * 0.37, screen_size.y * 0.855),
+		Vector2(screen_size.x * 0.47, screen_size.y * 0.855),
+		Vector2(screen_size.x * 0.57, screen_size.y * 0.855),
+		Vector2(screen_size.x * 0.67, screen_size.y * 0.855),
+		Vector2(screen_size.x * 0.77, screen_size.y * 0.855),
+		Vector2(screen_size.x * 0.87, screen_size.y * 0.855),
+	]
+	
+	tray_slots.shuffle()
 	
 	for i in range(item_data.size()):
 		var data: Dictionary = item_data[i]
 		var texture_path: String = _first_existing_path(data["paths"])
-		var item_position := Vector2(start_x + spacing * float(i), start_y)
+		
+		var random_offset := Vector2(
+			randf_range(-18.0, 18.0),
+			randf_range(-10.0, 10.0)
+		)
+		
+		var item_position: Vector2 = tray_slots[i] + random_offset
 		
 		var item = item_scene.instantiate()
 		items_parent.add_child(item)

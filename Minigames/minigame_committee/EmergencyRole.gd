@@ -4,6 +4,7 @@ extends Area2D
 var character_sprite: Sprite2D
 var role_panel: Panel
 var role_label: Label
+var items_tray: Panel
 var collision_shape: CollisionShape2D
 
 var role_id: String = ""
@@ -34,11 +35,8 @@ func setup(p_role_id: String, p_role_name: String, texture_path: String, p_posit
 	if ResourceLoader.exists(texture_path):
 		var texture: Texture2D = load(texture_path)
 		character_sprite.texture = texture
-		
-		# Suaviza la imagen para que no se vea pixelada.
 		character_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 		
-		# p_scale.x ahora representa la altura deseada en píxeles.
 		var target_height: float = p_scale.x
 		var texture_height: float = texture.get_size().y
 		
@@ -48,6 +46,7 @@ func setup(p_role_id: String, p_role_name: String, texture_path: String, p_posit
 	else:
 		push_error("No se encontró personaje: " + texture_path)
 	
+	_setup_items_tray()
 	_setup_role_panel()
 	_setup_collision()
 
@@ -62,11 +61,11 @@ func register_item():
 
 func get_next_item_position() -> Vector2:
 	var positions := [
-		Vector2(-48, 118),
-		Vector2(0, 126),
-		Vector2(48, 118),
-		Vector2(-25, 162),
-		Vector2(25, 162)
+		Vector2(-65, 145),
+		Vector2(0, 145),
+		Vector2(65, 145),
+		Vector2(-35, 178),
+		Vector2(35, 178)
 	]
 	
 	var index: int = placed_items_count % positions.size()
@@ -80,12 +79,18 @@ func reset_role():
 func _create_missing_nodes():
 	character_sprite = get_node_or_null("CharacterSprite")
 	role_panel = get_node_or_null("RolePanel")
+	items_tray = get_node_or_null("ItemsTray")
 	collision_shape = get_node_or_null("CollisionShape2D")
 	
 	if not character_sprite:
 		character_sprite = Sprite2D.new()
 		character_sprite.name = "CharacterSprite"
 		add_child(character_sprite)
+	
+	if not items_tray:
+		items_tray = Panel.new()
+		items_tray.name = "ItemsTray"
+		add_child(items_tray)
 	
 	if not role_panel:
 		role_panel = Panel.new()
@@ -105,8 +110,32 @@ func _create_missing_nodes():
 		add_child(collision_shape)
 
 
+func _setup_items_tray():
+	items_tray.position = Vector2(-115, 120)
+	items_tray.size = Vector2(230, 78)
+	items_tray.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	items_tray.z_index = 8
+	
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.90, 0.72, 0.45, 0.72)
+	style.border_color = Color("#E0B080")
+	style.border_width_left = 4
+	style.border_width_right = 4
+	style.border_width_top = 4
+	style.border_width_bottom = 4
+	style.corner_radius_top_left = 20
+	style.corner_radius_top_right = 20
+	style.corner_radius_bottom_left = 20
+	style.corner_radius_bottom_right = 20
+	style.shadow_color = Color(0, 0, 0, 0.22)
+	style.shadow_size = 8
+	style.shadow_offset = Vector2(2, 3)
+	
+	items_tray.add_theme_stylebox_override("panel", style)
+
+
 func _setup_role_panel():
-	role_panel.position = Vector2(-92, 158)
+	role_panel.position = Vector2(-92, 205)
 	role_panel.size = Vector2(184, 44)
 	role_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	role_panel.z_index = 20
@@ -139,6 +168,6 @@ func _setup_role_panel():
 
 func _setup_collision():
 	var rect := RectangleShape2D.new()
-	rect.size = Vector2(230, 330)
+	rect.size = Vector2(240, 360)
 	collision_shape.shape = rect
-	collision_shape.position = Vector2(0, 25)
+	collision_shape.position = Vector2(0, 40)
