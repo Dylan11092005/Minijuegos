@@ -16,3 +16,5 @@ script = ExtResource("1_ymb2p")
 [node name="CounterLabel" type="Label" parent="HUD" unique_id=1945480024]
 offset_right = 40.0
 offset_bottom = 23.0
+
+[node name="LivesUi" type="Node2D" parent="HUD" unique_id=1343654944]

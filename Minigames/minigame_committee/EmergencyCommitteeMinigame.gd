@@ -333,48 +333,26 @@ func _stop_global_timer():
 # =========================================================
 
 func _setup_lives_ui():
-	# Primero intenta usar un LivesUi ya puesto dentro del HUD.
+	# Usa el LivesUi que pusiste manualmente dentro del HUD.
+	lives_ui = null
+	
 	if hud:
 		lives_ui = hud.get_node_or_null("LivesUi")
 		
 		if not lives_ui:
 			lives_ui = hud.get_node_or_null("LivesUI")
 	
-	# Si no existe en la escena, lo crea usando la escena global.
 	if not lives_ui:
-		if ResourceLoader.exists(LIVES_UI_SCENE_PATH):
-			var lives_scene = load(LIVES_UI_SCENE_PATH)
-			lives_ui = lives_scene.instantiate()
-			lives_ui.name = "LivesUi"
-			
-			if lives_ui is CanvasLayer:
-				add_child(lives_ui)
-				lives_ui.layer = 120
-			else:
-				hud.add_child(lives_ui)
-		
-		elif ResourceLoader.exists(LIVES_UI_SCRIPT_PATH):
-			var lives_script = load(LIVES_UI_SCRIPT_PATH)
-			lives_ui = Node2D.new()
-			lives_ui.name = "LivesUi"
-			lives_ui.set_script(lives_script)
-			hud.add_child(lives_ui)
-		
-		else:
-			push_error("No se encontró LivesUi global.")
-			return
+		push_error("No se encontró HUD/LivesUi. Revisa que el nodo exista y se llame exactamente LivesUi.")
+		return
 	
 	lives_ui.visible = true
 	
-	# Si es CanvasLayer, lo dejamos arriba de todo.
-	if lives_ui is CanvasLayer:
-		lives_ui.layer = 120
-	else:
-		# Si es Node2D, lo ponemos dentro del HUD arriba a la derecha.
-		lives_ui.position = Vector2(get_viewport_rect().size.x - 360, 25)
-		lives_ui.z_index = 999
+	# Lo ponemos arriba a la derecha, encima del fondo.
+	lives_ui.position = Vector2(get_viewport_rect().size.x - 360, 25)
+	lives_ui.z_index = 999
 	
-	# Intenta configurar propiedades del LivesUi global si existen.
+	# Propiedades del LivesUi global, si existen.
 	_set_property_if_exists(lives_ui, "panel_corner", 1)
 	_set_property_if_exists(lives_ui, "panel_margin", Vector2(35, 25))
 	_set_property_if_exists(lives_ui, "corner", 1)
@@ -384,9 +362,6 @@ func _setup_lives_ui():
 		lives_ui.set_max_lives(MAX_LIVES)
 	
 	_update_lives_ui()
-	
-	if lives_ui.has_method("queue_redraw"):
-		lives_ui.queue_redraw()
 		
 		
 
@@ -587,7 +562,7 @@ func _start_game():
 	game_over = false
 	
 	current_lives = MAX_LIVES
-	placed_items = 0
+	_update_lives_ui()
 	
 	_clear_round()
 	_create_roles()
