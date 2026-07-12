@@ -504,3 +504,32 @@ func _on_button_23_pressed() -> void:
 		return
 
 	get_tree().change_scene_to_file("res://Minigames/ui_global/MinigameIntro.tscn")
+
+func _on_button_25_pressed() -> void:
+	var minigame_data = get_node("/root/MinigameData")
+	
+	minigame_data.title = "¡Comité de emergencias!"
+	
+	minigame_data.description = "Forma parte del comité de emergencias y organiza correctamente a cada integrante según sus responsabilidades."
+	
+	minigame_data.instructions = "Arrastra cada objeto al personaje correcto. El bombero necesita sus herramientas contra incendios, la Cruz Roja necesita objetos médicos, el rescatista necesita equipo de rescate y el comunicador necesita objetos para avisar y coordinar. Si colocas un objeto en el lugar incorrecto, perderás una vida. Si completas todas las asignaciones antes de que se acabe el tiempo, ganarás la partida."
+	
+	minigame_data.video_path = "res://Minigames/minigame_committee/assets/InstructionsCommittee.ogv"
+	
+	minigame_data.minigame_scene = "res://Minigames/minigame_committee/EmergencyCommitteeMinigame.tscn"
+	
+	minigame_data.controls = [
+		{
+			"action": "Arrastrar objetos con el ratón",
+			"icon": "res://Minigames/ui_global/assets/ClickIcon.png"
+		}
+	]
+	
+	print("Minijuego seleccionado: ", minigame_data.title)
+	print("Escena a cargar: ", minigame_data.minigame_scene)
+	
+	if not ResourceLoader.exists(minigame_data.minigame_scene):
+		print("ERROR: No existe la escena en esta ruta: ", minigame_data.minigame_scene)
+		return
+	
+	get_tree().change_scene_to_file("res://Minigames/ui_global/MinigameIntro.tscn")
