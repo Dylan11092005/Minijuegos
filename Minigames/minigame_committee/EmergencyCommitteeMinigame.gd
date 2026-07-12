@@ -25,7 +25,7 @@ const TOTAL_TIME := 45.0
 const MAX_LIVES := 3
 
 # Ahora estos valores representan altura deseada en píxeles.
-const ROLE_SCALE := Vector2(240, 240)
+const ROLE_SCALE := Vector2(310, 310)
 const ITEM_SCALE := Vector2(82, 82)
 const PLACED_ITEM_SCALE := Vector2(52, 52)
 
@@ -333,9 +333,12 @@ func _stop_global_timer():
 # =========================================================
 
 func _setup_lives_ui():
+	if lives_layer:
+		return
+	
 	lives_layer = CanvasLayer.new()
 	lives_layer.name = "LivesLayer"
-	lives_layer.layer = 80
+	lives_layer.layer = 300
 	add_child(lives_layer)
 	
 	if ResourceLoader.exists(LIVES_UI_SCENE_PATH):
@@ -350,26 +353,40 @@ func _setup_lives_ui():
 		return
 	
 	lives_ui.name = "LivesUI"
+	lives_layer.add_child(lives_ui)
 	
-	if lives_ui is CanvasLayer:
-		add_child(lives_ui)
-		lives_ui.layer = 80
-	else:
-		lives_layer.add_child(lives_ui)
-		lives_ui.position = Vector2(get_viewport_rect().size.x - 360, 25)
-		lives_ui.z_index = 200
-	
+	# Forzamos que se vea encima del fondo.
 	lives_ui.visible = true
 	
-	# Para el LivesUi global que usa esquina.
-	lives_ui.set("panel_corner", 1)
-	lives_ui.set("panel_margin", Vector2(35, 25))
+	if lives_ui is Node2D:
+		lives_ui.position = Vector2(get_viewport_rect().size.x - 370, 20)
+		lives_ui.z_index = 999
+	
+	# Intentamos respetar las propiedades del LivesUi global.
+	_set_property_if_exists(lives_ui, "panel_corner", 1)
+	_set_property_if_exists(lives_ui, "panel_margin", Vector2(35, 20))
+	_set_property_if_exists(lives_ui, "position_corner", 1)
+	_set_property_if_exists(lives_ui, "corner", 1)
+	_set_property_if_exists(lives_ui, "margin", Vector2(35, 20))
 	
 	if lives_ui.has_method("set_max_lives"):
 		lives_ui.set_max_lives(MAX_LIVES)
 	
 	_update_lives_ui()
+	
+	if lives_ui.has_method("queue_redraw"):
+		lives_ui.queue_redraw()
+		
 
+func _set_property_if_exists(node, property_name: String, value):
+	if not node:
+		return
+	
+	for property in node.get_property_list():
+		if property.has("name") and property["name"] == property_name:
+			node.set(property_name, value)
+			return
+			
 
 func _update_lives_ui():
 	if not lives_ui:
@@ -377,6 +394,9 @@ func _update_lives_ui():
 	
 	if lives_ui.has_method("actualizar_vidas"):
 		lives_ui.actualizar_vidas(current_lives)
+	else:
+		_set_property_if_exists(lives_ui, "current_lives", current_lives)
+		_set_property_if_exists(lives_ui, "lives", current_lives)
 	
 	if lives_ui.has_method("queue_redraw"):
 		lives_ui.queue_redraw()

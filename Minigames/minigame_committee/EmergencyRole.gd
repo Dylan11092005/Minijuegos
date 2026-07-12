@@ -35,10 +35,16 @@ func setup(p_role_id: String, p_role_name: String, texture_path: String, p_posit
 		var texture: Texture2D = load(texture_path)
 		character_sprite.texture = texture
 		
-		# Si p_scale.x es mayor a 1, lo usamos como altura deseada en píxeles.
+		# Suaviza la imagen para que no se vea pixelada.
+		character_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+		
+		# p_scale.x ahora representa la altura deseada en píxeles.
 		var target_height: float = p_scale.x
-		var scale_factor: float = target_height / texture.get_size().y
-		character_sprite.scale = Vector2(scale_factor, scale_factor)
+		var texture_height: float = texture.get_size().y
+		
+		if texture_height > 0:
+			var scale_factor: float = target_height / texture_height
+			character_sprite.scale = Vector2(scale_factor, scale_factor)
 	else:
 		push_error("No se encontró personaje: " + texture_path)
 	
