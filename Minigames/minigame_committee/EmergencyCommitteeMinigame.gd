@@ -29,7 +29,7 @@ const ROLE_SCALE := Vector2(310, 310)
 const ITEM_SCALE := Vector2(82, 82)
 const PLACED_ITEM_SCALE := Vector2(52, 52)
 
-const DROP_DISTANCE := 160.0
+const DROP_DISTANCE := 230.0
 
 
 # =========================================================
@@ -333,7 +333,6 @@ func _stop_global_timer():
 # =========================================================
 
 func _setup_lives_ui():
-	# Usa el LivesUi que pusiste manualmente dentro del HUD.
 	lives_ui = null
 	
 	if hud:
@@ -343,27 +342,34 @@ func _setup_lives_ui():
 			lives_ui = hud.get_node_or_null("LivesUI")
 	
 	if not lives_ui:
-		push_error("No se encontró HUD/LivesUi. Revisa que el nodo exista y se llame exactamente LivesUi.")
+		push_error("No se encontró HUD/LivesUi. Crea el nodo dentro del HUD y pégale LivesUi.gd.")
 		return
+	
+	# Si el nodo existe pero no tiene el script global, se lo ponemos por código.
+	if not lives_ui.has_method("actualizar_vidas"):
+		if ResourceLoader.exists(LIVES_UI_SCRIPT_PATH):
+			var lives_script = load(LIVES_UI_SCRIPT_PATH)
+			lives_ui.set_script(lives_script)
+		else:
+			push_error("No se encontró LivesUi.gd en: " + LIVES_UI_SCRIPT_PATH)
+			return
 	
 	lives_ui.visible = true
 	
-	# Lo ponemos arriba a la derecha, encima del fondo.
-	lives_ui.position = Vector2(get_viewport_rect().size.x - 360, 25)
+	# IMPORTANTE:
+	# No lo movemos con position si el LivesUi global usa esquina propia.
+	lives_ui.position = Vector2.ZERO
 	lives_ui.z_index = 999
 	
-	# Propiedades del LivesUi global, si existen.
 	_set_property_if_exists(lives_ui, "panel_corner", 1)
-	_set_property_if_exists(lives_ui, "panel_margin", Vector2(35, 25))
+	_set_property_if_exists(lives_ui, "panel_margin", Vector2(35, 20))
 	_set_property_if_exists(lives_ui, "corner", 1)
-	_set_property_if_exists(lives_ui, "margin", Vector2(35, 25))
+	_set_property_if_exists(lives_ui, "margin", Vector2(35, 20))
 	
 	if lives_ui.has_method("set_max_lives"):
 		lives_ui.set_max_lives(MAX_LIVES)
 	
 	_update_lives_ui()
-		
-		
 
 func _set_property_if_exists(node, property_name: String, value):
 	if not node:

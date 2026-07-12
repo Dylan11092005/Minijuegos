@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://kius0l7ljnuf"]
 
 [ext_resource type="Script" uid="uid://nah3m3bhd43r" path="res://Minigames/minigame_committee/EmergencyCommitteeMinigame.gd" id="1_ymb2p"]
+[ext_resource type="Script" uid="uid://db3sdgv4pves7" path="res://Minigames/ui_global/LivesUi.gd" id="2_w3nc5"]
 
 [node name="EmergencyCommitteeMinigame" type="Node2D" unique_id=1796640855]
 script = ExtResource("1_ymb2p")
@@ -18,3 +19,4 @@ offset_right = 40.0
 offset_bottom = 23.0
 
 [node name="LivesUi" type="Node2D" parent="HUD" unique_id=1343654944]
+script = ExtResource("2_w3nc5")
