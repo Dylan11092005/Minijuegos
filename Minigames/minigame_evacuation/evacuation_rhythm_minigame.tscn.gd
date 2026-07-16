@@ -13,13 +13,11 @@ class_name EvacuationRhythmMinigame
 @export var hit_window := 60.0
 
 @export_group("Dificultad según edad")
-# Cuanto más chico el multiplicador, más lento cae la nota (más fácil).
 @export_range(0.3, 1.5, 0.05) var note_speed_multiplier_age_under_7 := 0.60
 @export_range(0.3, 1.5, 0.05) var note_speed_multiplier_age_7 := 0.65
 @export_range(0.3, 1.5, 0.05) var note_speed_multiplier_age_8 := 0.75
 @export_range(0.3, 1.5, 0.05) var note_speed_multiplier_age_9_plus := 1.0
 
-# Segundos EXTRA que se suman al time_limit base según la edad.
 @export_range(0.0, 60.0, 1.0) var extra_time_age_under_7 := 18.0
 @export_range(0.0, 60.0, 1.0) var extra_time_age_7 := 14.0
 @export_range(0.0, 60.0, 1.0) var extra_time_age_8 := 8.0
@@ -37,6 +35,7 @@ const BACKGROUND_MUSIC = preload("res://Minigames/minigame_evacuation/music/Fon.
 const CORRECT_SOUND = preload("res://Minigames/minigame_evacuation/music/Correct.mp3")
 const ERROR_SOUND = preload("res://Minigames/minigame_evacuation/music/Error.mp3")
 
+const GLOBAL_SOUND_VOLUME := -10.0
 
 const C_BEIGE := Color("#E5C89E")
 const C_ORANGE := Color("#E0B080")
@@ -121,9 +120,6 @@ var background_music_player: AudioStreamPlayer
 var correct_sound_player: AudioStreamPlayer
 var error_sound_player: AudioStreamPlayer
 
-# Multiplicador de velocidad de caída ya calculado según la edad del jugador.
-# Se aplica sobre "note_speed" para que las notas caigan más lento en
-# jugadores más pequeños.
 var _note_speed_age_multiplier: float = 1.0
 
 
@@ -154,9 +150,6 @@ func _ready() -> void:
 # DIFICULTAD SEGÚN EDAD
 # =========================
 
-# Ajusta time_limit y la velocidad de caída de las notas según la edad
-# del jugador (MinigameData.player_age). A menor edad: más tiempo total
-# y notas que caen más despacio (más fáciles de atrapar).
 func _apply_age_difficulty() -> void:
 	var player_age: int = MinigameData.player_age
 
@@ -232,23 +225,37 @@ func _create_sequence() -> void:
 func create_audio() -> void:
 	background_music_player = AudioStreamPlayer.new()
 	background_music_player.stream = BACKGROUND_MUSIC
-	background_music_player.volume_db = -12
+	background_music_player.volume_db = GLOBAL_SOUND_VOLUME
 	background_music_player.finished.connect(_on_background_music_finished)
 	add_child(background_music_player)
 
 	correct_sound_player = AudioStreamPlayer.new()
 	correct_sound_player.stream = CORRECT_SOUND
-	correct_sound_player.volume_db = 0
+	correct_sound_player.volume_db = GLOBAL_SOUND_VOLUME
 	add_child(correct_sound_player)
 
 	error_sound_player = AudioStreamPlayer.new()
 	error_sound_player.stream = ERROR_SOUND
-	error_sound_player.volume_db = 0
+	error_sound_player.volume_db = GLOBAL_SOUND_VOLUME
 	add_child(error_sound_player)
+
+
+func _play_sound(sound: AudioStreamPlayer) -> void:
+	if sound == null:
+		return
+
+	if sound.stream == null:
+		return
+
+	sound.volume_db = GLOBAL_SOUND_VOLUME
+	sound.stop()
+	sound.play()
 
 
 func play_background_music() -> void:
 	if background_music_player != null:
+		background_music_player.volume_db = GLOBAL_SOUND_VOLUME
+
 		if not background_music_player.playing:
 			background_music_player.play()
 
@@ -260,19 +267,38 @@ func stop_background_music() -> void:
 
 func _on_background_music_finished() -> void:
 	if game_active and not already_finished:
-		background_music_player.play()
+		play_background_music()
 
 
 func play_correct_sound() -> void:
-	if correct_sound_player != null:
-		correct_sound_player.stop()
-		correct_sound_player.play()
+	_play_sound(correct_sound_player)
 
 
 func play_error_sound() -> void:
-	if error_sound_player != null:
-		error_sound_player.stop()
-		error_sound_player.play()
+	_play_sound(error_sound_player)
+
+
+func _set_game_result_sound_volume() -> void:
+	if game_result_panel == null:
+		return
+
+	var result_sounds := [
+		"WinSound",
+		"win_sound",
+		"AudioWin",
+		"WinAudio",
+		"LoseSound",
+		"lose_sound",
+		"AudioLose",
+		"LoseAudio"
+	]
+
+	for sound_name in result_sounds:
+		var sound = game_result_panel.find_child(sound_name, true, false)
+
+		if sound and sound is AudioStreamPlayer:
+			sound.volume_db = GLOBAL_SOUND_VOLUME
+			sound.process_mode = Node.PROCESS_MODE_ALWAYS
 
 
 # =========================
@@ -294,6 +320,9 @@ func create_game_result_panel() -> void:
 	game_result_panel = GAME_RESULT_SCENE.instantiate()
 	add_child(game_result_panel)
 	game_result_panel.layer = 60
+	game_result_panel.process_mode = Node.PROCESS_MODE_ALWAYS
+
+	_set_game_result_sound_volume()
 
 
 func create_lives_ui() -> void:
@@ -797,6 +826,8 @@ func win_game() -> void:
 
 	queue_redraw()
 
+	_set_game_result_sound_volume()
+
 	if game_result_panel != null:
 		if game_result_panel.has_method("mostrar_ganaste"):
 			game_result_panel.call("mostrar_ganaste")
@@ -819,6 +850,8 @@ func lose_game() -> void:
 
 	stop_background_music()
 	_clear_notes()
+
+	_set_game_result_sound_volume()
 
 	if game_result_panel != null:
 		if game_result_panel.has_method("mostrar_perdiste"):
