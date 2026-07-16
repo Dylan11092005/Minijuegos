@@ -5,6 +5,7 @@ signal game_won
 signal game_lost
 
 const GAME_RESULT_SCENE: PackedScene = preload("res://Minigames/ui_global/GameResult.tscn")
+const GLOBAL_SOUND_VOLUME := -10.0
 
 const PIPE_ROUTES: Array = [
 	[
@@ -315,11 +316,11 @@ func _create_audio_players() -> void:
 		_patch_sound_player.stream = patch_sound_stream
 
 	_background_music_player.bus = "Master"
-	_background_music_player.volume_db = maxf(background_music_volume_db, -16.0)
+	_background_music_player.volume_db = GLOBAL_SOUND_VOLUME
 	_background_music_player.max_polyphony = 1
 
 	_patch_sound_player.bus = "Master"
-	_patch_sound_player.volume_db = maxf(patch_sound_volume_db, -8.0)
+	_patch_sound_player.volume_db = GLOBAL_SOUND_VOLUME
 	_patch_sound_player.max_polyphony = 2
 
 	var background_finished: Callable = Callable(self, "_on_background_music_finished")
@@ -344,7 +345,7 @@ func _create_audio_players() -> void:
 			leak_player.stream = shared_leak_stream
 
 		leak_player.bus = "Master"
-		leak_player.volume_db = maxf(leak_sound_volume_db, -18.0)
+		leak_player.volume_db = GLOBAL_SOUND_VOLUME
 		leak_player.pitch_scale = _random.randf_range(0.94, 1.06)
 		leak_player.max_polyphony = 1
 
@@ -379,7 +380,6 @@ func _create_audio_players() -> void:
 	# de audio ya estén completamente dentro del árbol.
 	call_deferred("_start_audio_after_ready")
 
-
 func _get_or_create_audio_player(player_name: String) -> AudioStreamPlayer:
 	var existing_node: Node = get_node_or_null(NodePath(player_name))
 	if existing_node is AudioStreamPlayer:
@@ -403,9 +403,11 @@ func _start_background_music() -> void:
 		return
 	if _background_music_player.stream == null:
 		return
+
+	_background_music_player.volume_db = GLOBAL_SOUND_VOLUME
+
 	if not _background_music_player.playing:
 		_background_music_player.play(0.0)
-
 
 func _on_background_music_finished() -> void:
 	if _game_finished:
@@ -434,6 +436,8 @@ func _start_leak_sound(leak_index: int) -> void:
 	if leak_player.playing:
 		return
 
+	leak_player.volume_db = GLOBAL_SOUND_VOLUME
+
 	var start_position: float = 0.0
 	var stream_length: float = leak_player.stream.get_length()
 	if stream_length > 1.0:
@@ -442,7 +446,6 @@ func _start_leak_sound(leak_index: int) -> void:
 		start_position = _random.randf_range(0.0, stream_length * 0.65)
 
 	leak_player.play(start_position)
-
 
 func _on_leak_sound_finished(leak_index: int) -> void:
 	_start_leak_sound(leak_index)
@@ -463,10 +466,10 @@ func _play_patch_sound() -> void:
 	if _patch_sound_player.stream == null:
 		return
 
+	_patch_sound_player.volume_db = GLOBAL_SOUND_VOLUME
 	_patch_sound_player.stop()
 	_patch_sound_player.pitch_scale = _random.randf_range(0.97, 1.03)
 	_patch_sound_player.play(0.0)
-
 
 func _stop_continuous_audio() -> void:
 	if _background_music_player != null:
@@ -481,6 +484,34 @@ func _create_game_result() -> void:
 	_game_result = GAME_RESULT_SCENE.instantiate()
 	add_child(_game_result)
 
+	if _game_result is CanvasLayer:
+		_game_result.layer = 60
+
+	_game_result.process_mode = Node.PROCESS_MODE_ALWAYS
+	_set_game_result_sound_volume()
+
+
+func _set_game_result_sound_volume() -> void:
+	if _game_result == null:
+		return
+
+	var result_sounds := [
+		"WinSound",
+		"win_sound",
+		"AudioWin",
+		"WinAudio",
+		"LoseSound",
+		"lose_sound",
+		"AudioLose",
+		"LoseAudio"
+	]
+
+	for sound_name in result_sounds:
+		var sound = _game_result.find_child(sound_name, true, false)
+
+		if sound and sound is AudioStreamPlayer:
+			sound.volume_db = GLOBAL_SOUND_VOLUME
+			sound.process_mode = Node.PROCESS_MODE_ALWAYS
 
 func _update_water_level(delta: float) -> void:
 	var active_leaks: int = _count_active_leaks()
@@ -605,6 +636,7 @@ func _finish_game(did_win: bool) -> void:
 	_game_finished = true
 	_dragging_patch = false
 	_stop_continuous_audio()
+	_set_game_result_sound_volume()
 
 	if did_win:
 		game_won.emit()
