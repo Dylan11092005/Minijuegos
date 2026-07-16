@@ -203,7 +203,6 @@ func _remove_old_bridge_layers():
 # SONIDOS
 # =========================================================
 
-# Ajusta el volumen de los sonidos respecto a su valor original.
 func _setup_sound_volumes() -> void:
 	if background_sound:
 		background_sound.volume_db -= 15.0
@@ -212,9 +211,37 @@ func _setup_sound_volumes() -> void:
 		hammer_sound.volume_db -= 5.0
 
 
-# Arranca el sonido de fondo en loop. Se queda sonando mientras
-# _background_sound_active sea true (es decir, hasta que el
-# minijuego termine, ya sea ganando o perdiendo).
+func _set_result_sound_volume() -> void:
+	if game_result == null:
+		return
+	
+	var possible_win_sounds := [
+		"WinSound",
+		"win_sound",
+		"AudioWin",
+		"WinAudio"
+	]
+	
+	var possible_lose_sounds := [
+		"LoseSound",
+		"lose_sound",
+		"AudioLose",
+		"LoseAudio"
+	]
+	
+	for sound_name in possible_win_sounds:
+		var sound = game_result.get_node_or_null(sound_name)
+		
+		if sound and sound is AudioStreamPlayer:
+			sound.volume_db = -10.0
+	
+	for sound_name in possible_lose_sounds:
+		var sound = game_result.get_node_or_null(sound_name)
+		
+		if sound and sound is AudioStreamPlayer:
+			sound.volume_db = -10.0
+
+
 func _start_background_sound() -> void:
 	_background_sound_active = true
 	
@@ -233,7 +260,6 @@ func _start_background_sound() -> void:
 	background_sound.play()
 
 
-# Fallback manual de loop, por si el stream no soporta loop nativo.
 func _on_background_sound_finished() -> void:
 	if _background_sound_active and background_sound:
 		background_sound.play()
@@ -320,8 +346,6 @@ func _start_hammer_phase():
 	hammer_dragging = false
 	hammer_hit_busy = false
 	hammer_hits = [false, false, false, false, false, false]
-	
-	
 	
 	for board in boards:
 		board.locked = true
@@ -512,7 +536,6 @@ func _setup_timer_ui():
 		timer_ui.ocultar()
 
 
-
 func _start_global_timer():
 	if not timer_ui:
 		return
@@ -521,7 +544,7 @@ func _start_global_timer():
 		timer_ui.set_tamano_panel(650, 60)
 	
 	var player_age: int = MinigameData.player_age
-
+	
 	if player_age < 12:
 		TOTAL_TIME = 40.0 + _get_time_bonus(player_age)
 	else:
@@ -531,7 +554,6 @@ func _start_global_timer():
 		timer_ui.iniciar(TOTAL_TIME, "Tiempo restante", "para reparar el puente")
 	else:
 		push_error("TimerUI no tiene el método iniciar(p_time, p_text_before, p_text_after).")
-
 
 
 func _stop_global_timer():
@@ -669,11 +691,8 @@ func _setup_lives_ui():
 		push_error("No se encontró LivesUi.gd en: " + LIVES_UI_SCRIPT_PATH)
 		return
 	
-	# IMPORTANTE:
-	# No lo movemos con position porque el LivesUi global ya maneja esquinas.
 	lives_ui.position = Vector2.ZERO
 	
-	# TOP_RIGHT en el enum global normalmente es 1.
 	lives_ui.set("panel_corner", 1)
 	lives_ui.set("panel_margin", Vector2(25, 25))
 	
@@ -716,9 +735,6 @@ func _start_game():
 	placed_boards = 0
 	current_lives = MAX_LIVES
 	
-	placed_boards = 0
-	current_lives = MAX_LIVES
-
 	_update_lives_ui()
 	_set_background(BACKGROUND_BROKEN_PATH)
 	
@@ -968,6 +984,8 @@ func _win_game():
 	_stop_background_sound()
 	_disable_boards()
 	
+	_set_result_sound_volume()
+	
 	if game_result:
 		if game_result.has_method("show_win"):
 			game_result.show_win()
@@ -989,6 +1007,8 @@ func _lose_game():
 	if hammer:
 		hammer.visible = false
 	
+	_set_result_sound_volume()
+	
 	if game_result:
 		if game_result.has_method("show_lose"):
 			game_result.show_lose()
@@ -1000,9 +1020,11 @@ func _disable_boards():
 	for board in boards:
 		board.locked = true
 
+
 # =========================================================
 # TIME BONUS POR EDAD
 # =========================================================
+
 func _get_time_bonus(age: int) -> float:
 	match age:
 		11:
