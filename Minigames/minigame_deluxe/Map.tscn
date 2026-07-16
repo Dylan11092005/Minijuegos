@@ -1,0 +1,158 @@
+[gd_scene format=3 uid="uid://dph81b7fx0ff6"]
+
+[ext_resource type="Texture2D" uid="uid://b1a2sw2yqebiv" path="res://Minigames/minigame_deluxe/assets/map_background.png" id="1_0kcq5"]
+[ext_resource type="Script" uid="uid://dxiil0ijmbydj" path="res://Minigames/minigame_deluxe/Map.gd" id="1_qxj6n"]
+[ext_resource type="PackedScene" uid="uid://gsm8hi6v5a4q" path="res://Minigames/minigame_deluxe/Character.tscn" id="2_1503n"]
+
+[sub_resource type="Curve2D" id="Curve2D_0kcq5"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, -440.7685, -322.26447, 0, 0, 0, 0, -286.32748, -318.45068, 0, 0, 0, 0, -225.9273, -284.12665, 0, 0, 0, 0, -157.88153, -265.05774, 0, 0, 0, 0, -18.73169, -272.6853, 0, 0, 0, 0, -16.437988, -300.33524)
+}
+point_count = 6
+
+[sub_resource type="Curve2D" id="Curve2D_1503n"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, -21.02539, -297.4749, 0, 0, 0, 0, 97.48132, -297.4749, 0, 0, 0, 0, 164.76257, -290.80078, 0, 0, 0, 0, 233.57294, -271.73187, 0, 0, 0, 0, 282.50476, -268.87152, 0, 0, 0, 0, 449.1787, -272.6853)
+}
+point_count = 6
+
+[sub_resource type="Curve2D" id="Curve2D_qxj6n"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 450.70776, -262.19742, 0, 0, 0, 0, 495.05225, -220.24582, 0, 0, 0, 0, 540.9258, -192.59592, 0, 0, 0, 0, 569.2145, -143.01678, 0, 0, 0, 0, 583.7412, -114.41342, 0, 0, 0, 0, 584.50574, -78.182495, 0, 0, 0, 0, 569.9791, -52.439484, 0, 0, 0, 0, 553.1588, -32.417114, 0, 0, 0, 0, 530.22205, -9.534454, 0, 0, 0, 0, 488.17126, 8.580994, 0, 0, 0, 0, 449.94324, 22.88269, 0, 0, 0, 0, 416.3026, 22.88269)
+}
+point_count = 12
+
+[sub_resource type="Curve2D" id="Curve2D_3lxi5"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 270.27173, -262.19742, 0, 0, 0, 0, 246.57043, -223.10617, 0, 0, 0, 0, 215.98804, -204.99072, 0, 0, 0, 0, 186.17023, -181.15457, 0, 0, 0, 0, 176.23096, -151.59778, 0, 0, 0, 0, 182.34747, -116.32031, 0, 0, 0, 0, 193.81586, -91.53073, 0, 0, 0, 0, 190.75763, -67.69461, 0, 0, 0, 0, 189.22845, -40.99814, 0, 0, 0, 0, 187.69934, -17.162018, 0, 0, 0, 0, 196.87408, 6.6741333, 0, 0, 0, 0, 205.28424, 32.417175, 0, 0, 0, 0, 239.68939, 27.649902, 0, 0, 0, 0, 265.68445, 26.696472, 0, 0, 0, 0, 316.9099, 20.97583, 0, 0, 0, 0, 416.3026, 24.789612)
+}
+point_count = 16
+
+[sub_resource type="Curve2D" id="Curve2D_mdg45"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 270.27173, -270.77844, 0, 0, 0, 0, 261.09705, -246.94229, 0, 0, 0, 0, 233.57294, -215.4786, 0, 0, 0, 0, 202.22601, -197.36316, 0, 0, 0, 0, 183.87659, -182.10803, 0, 0, 0, 0, 170.87903, -162.08566, 0, 0, 0, 0, 173.93732, -128.71509, 0, 0, 0, 0, 186.17023, -98.204834, 0, 0, 0, 0, 188.46393, -63.88083, 0, 0, 0, 0, 186.17023, -36.230896, 0, 0, 0, 0, 192.28674, 1.9069214, 0, 0, 0, 0, 196.87408, 24.789612, 0, 0, 0, 0, 201.46143, 39.091248, 0, 0, 0, 0, 158.64612, 42.90503, 0, 0, 0, 0, -53.13684, 40.044678)
+}
+point_count = 15
+
+[sub_resource type="Curve2D" id="Curve2D_hbn1a"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 416.3026, 24.789612, 0, 0, 0, 0, 342.9049, 23.83612, 0, 0, 0, 0, 282.50476, 24.789612, 0, 0, 0, 0, 228.9856, 37.184387, 0, 0, 0, 0, 183.87659, 44.81195, 0, 0, 0, 0, -52.372314, 40.99817, 0, 0, 0, 0, 673.1946, -35.277466)
+}
+point_count = 7
+
+[sub_resource type="Curve2D" id="Curve2D_4sat2"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, -52.372314, 38.137817, 0, 0, 0, 0, -53.13684, 80.08942, 0, 0, 0, 0, -498.11047, 73.41528)
+}
+point_count = 3
+
+[sub_resource type="Curve2D" id="Curve2D_m4ls0"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, -496.58133, 73.41528, 0, 0, 0, 0, -488.93576, 122.994446, 0, 0, 0, 0, -459.11792, 150.64435, 0, 0, 0, 0, -431.59378, 164.94604, 0, 0, 0, 0, -402.54053, 189.7356, 0, 0, 0, 0, -377.31006, 212.61829, 0, 0, 0, 0, -360.48975, 244.08197, 0, 0, 0, 0, -368.13535, 277.45258, 0, 0, 0, 0, -389.54303, 303.19556, 0, 0, 0, 0, -422.41907, 338.47302, 0, 0, 0, 0, -446.12042, 375.6574)
+}
+point_count = 11
+
+[sub_resource type="Curve2D" id="Curve2D_q26y0"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, -448.4141, 378.51776, 0, 0, 0, 0, -176.99548, 384.2384)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_ggqcy"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, -178.5246, 378.51776, 0, 0, 0, 0, -124.240906, 391.86597, 0, 0, 0, 0, -79.89642, 406.16766, 0, 0, 0, 0, -34.02289, 416.65558, 0, 0, 0, 0, 37.081177, 419.51587, 0, 0, 0, 0, 92.89398, 412.8418, 0, 0, 0, 0, 291.67944, 409.028)
+}
+point_count = 7
+
+[sub_resource type="Curve2D" id="Curve2D_p5dvf"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 293.97314, 407.1211, 0, 0, 0, 0, 292.44397, 388.0522, 0, 0, 0, 0, 513.40173, 389.9591)
+}
+point_count = 3
+
+[node name="Map" type="Node2D" unique_id=928072519]
+script = ExtResource("1_qxj6n")
+
+[node name="Background" type="Sprite2D" parent="." unique_id=1495856315]
+position = Vector2(1002.5, 541)
+scale = Vector2(1.3079427, 1.048828)
+texture = ExtResource("1_0kcq5")
+
+[node name="Way1-2" type="Path2D" parent="Background" unique_id=2126676189]
+curve = SubResource("Curve2D_0kcq5")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="Background/Way1-2" unique_id=2063821304]
+position = Vector2(-440.7685, -322.26447)
+rotation = 0.024689084
+
+[node name="Character" parent="Background/Way1-2/PathFollow2D" unique_id=303211418 instance=ExtResource("2_1503n")]
+position = Vector2(55.32758, 103.54468)
+
+[node name="Way2-3" type="Path2D" parent="Background" unique_id=862729177]
+curve = SubResource("Curve2D_1503n")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="Background/Way2-3" unique_id=1570557510]
+position = Vector2(-21.02539, -297.4749)
+
+[node name="Way3-4" type="Path2D" parent="Background" unique_id=78381749]
+curve = SubResource("Curve2D_qxj6n")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="Background/Way3-4" unique_id=678702702]
+position = Vector2(450.70776, -262.19742)
+rotation = 0.7576765
+
+[node name="Way2,5 -4" type="Path2D" parent="Background" unique_id=2030482102]
+curve = SubResource("Curve2D_3lxi5")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="Background/Way2,5 -4" unique_id=1686856854]
+position = Vector2(270.27173, -262.19742)
+rotation = 2.1158404
+
+[node name="Way2,5 -5" type="Path2D" parent="Background" unique_id=803815016]
+curve = SubResource("Curve2D_mdg45")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="Background/Way2,5 -5" unique_id=1965921549]
+position = Vector2(270.27173, -270.77844)
+rotation = 1.9382235
+
+[node name="Way4 -5" type="Path2D" parent="Background" unique_id=680890767]
+curve = SubResource("Curve2D_hbn1a")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="Background/Way4 -5" unique_id=414137028]
+position = Vector2(416.3026, 24.789612)
+rotation = -3.1286027
+
+[node name="Way5 -6" type="Path2D" parent="Background" unique_id=457815718]
+curve = SubResource("Curve2D_4sat2")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="Background/Way5 -6" unique_id=108681510]
+position = Vector2(-52.372314, 38.137817)
+rotation = 1.5890183
+
+[node name="Way6 -7" type="Path2D" parent="Background" unique_id=1081110693]
+curve = SubResource("Curve2D_m4ls0")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="Background/Way6 -7" unique_id=82968061]
+position = Vector2(-496.58133, 73.41528)
+rotation = 1.4177922
+
+[node name="Way7 -8" type="Path2D" parent="Background" unique_id=27066763]
+curve = SubResource("Curve2D_q26y0")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="Background/Way7 -8" unique_id=1862498174]
+position = Vector2(-448.4141, 378.51776)
+rotation = 0.021073703
+
+[node name="Way8 -9" type="Path2D" parent="Background" unique_id=470227409]
+curve = SubResource("Curve2D_ggqcy")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="Background/Way8 -9" unique_id=2136315446]
+position = Vector2(-178.5246, 378.51776)
+rotation = 0.24111345
+
+[node name="Way9 -10" type="Path2D" parent="Background" unique_id=1857172992]
+curve = SubResource("Curve2D_p5dvf")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="Background/Way9 -10" unique_id=882205052]
+position = Vector2(293.97314, 407.1211)
+rotation = -1.6508172

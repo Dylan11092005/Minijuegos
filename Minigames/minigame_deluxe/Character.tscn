@@ -1,0 +1,32 @@
+[gd_scene format=3 uid="uid://gsm8hi6v5a4q"]
+
+[ext_resource type="Texture2D" uid="uid://b5j1s0gc0wlk4" path="res://Minigames/minigame_deluxe/assets/map_character3.png" id="1_0i3xq"]
+[ext_resource type="Texture2D" uid="uid://dj5d8gpyffpxm" path="res://Minigames/minigame_deluxe/assets/map_character1.png" id="2_ahv5d"]
+[ext_resource type="Texture2D" uid="uid://ddqnu4jdw5ohi" path="res://Minigames/minigame_deluxe/assets/map_character2.png" id="3_axatj"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_4r074"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_0i3xq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_ahv5d")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_axatj")
+}],
+"loop": true,
+"name": &"Walk",
+"speed": 5.0
+}]
+
+[node name="Character" type="Node2D" unique_id=303211418]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=101767845]
+position = Vector2(-65, -137.5)
+scale = Vector2(0.42477876, 0.30203047)
+sprite_frames = SubResource("SpriteFrames_4r074")
+animation = &"Walk"
+frame = 2
+frame_progress = 0.41890138
