@@ -12,6 +12,8 @@ const LIVES_UI_SCENE = preload("res://Minigames/ui_global/LivesUi.tscn")
 const MUSIC_DIR := "res://Minigames/minigame_landslide/Music/"
 const FIRE_TRUCK_PATH := "res://Minigames/minigame_landslide/assets/fire_truck.png"
 
+const GLOBAL_SOUND_VOLUME := -10.0
+
 @export var spawn_interval := 1.05
 @export var spawn_interval_fast := 0.72
 
@@ -334,7 +336,7 @@ func _create_audio() -> void:
 		alarm_sound = AudioStreamPlayer.new()
 		alarm_sound.name = "AlarmSound"
 		alarm_sound.stream = alarm_stream
-		alarm_sound.volume_db = -2
+		alarm_sound.volume_db = GLOBAL_SOUND_VOLUME
 		add_child(alarm_sound)
 		alarm_sound.finished.connect(_loop_alarm_sound)
 	else:
@@ -344,7 +346,7 @@ func _create_audio() -> void:
 		rocks_sound = AudioStreamPlayer.new()
 		rocks_sound.name = "RocksSound"
 		rocks_sound.stream = rocks_stream
-		rocks_sound.volume_db = -10
+		rocks_sound.volume_db = GLOBAL_SOUND_VOLUME
 		add_child(rocks_sound)
 		rocks_sound.finished.connect(_loop_rocks_sound)
 	else:
@@ -354,7 +356,7 @@ func _create_audio() -> void:
 		keyboard_sound = AudioStreamPlayer.new()
 		keyboard_sound.name = "KeyboardSound"
 		keyboard_sound.stream = keyboard_stream
-		keyboard_sound.volume_db = 0
+		keyboard_sound.volume_db = GLOBAL_SOUND_VOLUME
 		add_child(keyboard_sound)
 	else:
 		push_warning("No se encontró Keyboard.mp3 en Music.")
@@ -363,7 +365,7 @@ func _create_audio() -> void:
 		firetruck_siren_sound = AudioStreamPlayer.new()
 		firetruck_siren_sound.name = "FireTruckSirenSound"
 		firetruck_siren_sound.stream = firetruck_siren_stream
-		firetruck_siren_sound.volume_db = -1
+		firetruck_siren_sound.volume_db = GLOBAL_SOUND_VOLUME
 		add_child(firetruck_siren_sound)
 		firetruck_siren_sound.finished.connect(_loop_firetruck_siren_sound)
 	else:
@@ -373,7 +375,7 @@ func _create_audio() -> void:
 		call_911_sound = AudioStreamPlayer.new()
 		call_911_sound.name = "Call911Sound"
 		call_911_sound.stream = call_911_stream
-		call_911_sound.volume_db = 0
+		call_911_sound.volume_db = GLOBAL_SOUND_VOLUME
 		add_child(call_911_sound)
 	else:
 		push_warning("No se encontró 911.mp3 en Music.")
@@ -394,43 +396,49 @@ func _load_audio(file_names: Array) -> AudioStream:
 
 func _loop_alarm_sound() -> void:
 	if alarm_sound and game_active and not already_finished:
+		alarm_sound.volume_db = GLOBAL_SOUND_VOLUME
 		alarm_sound.play()
 
 
 func _loop_rocks_sound() -> void:
 	if rocks_sound and game_active and not already_finished:
+		rocks_sound.volume_db = GLOBAL_SOUND_VOLUME
 		rocks_sound.play()
 
 
 func _loop_firetruck_siren_sound() -> void:
 	if firetruck_siren_sound and game_active and not already_finished and rescue_started:
+		firetruck_siren_sound.volume_db = GLOBAL_SOUND_VOLUME
 		firetruck_siren_sound.play()
 
 
 func _set_alarm_normal_volume() -> void:
 	if alarm_sound:
-		alarm_sound.volume_db = -2
+		alarm_sound.volume_db = GLOBAL_SOUND_VOLUME
 
 
 func _set_alarm_low_volume() -> void:
 	if alarm_sound:
-		alarm_sound.volume_db = -18
+		alarm_sound.volume_db = GLOBAL_SOUND_VOLUME
 
 
 func _start_alarm_sound() -> void:
 	if alarm_sound and game_active and not already_finished:
+		alarm_sound.volume_db = GLOBAL_SOUND_VOLUME
 		if not alarm_sound.playing:
 			alarm_sound.play()
 
 
 func _start_rocks_sound() -> void:
 	if rocks_sound and game_active and not already_finished:
+		rocks_sound.volume_db = GLOBAL_SOUND_VOLUME
 		if not rocks_sound.playing:
 			rocks_sound.play()
 
 
 func _play_keyboard_sound() -> void:
 	if keyboard_sound:
+		keyboard_sound.volume_db = GLOBAL_SOUND_VOLUME
 		keyboard_sound.stop()
 		keyboard_sound.play()
 
@@ -442,12 +450,14 @@ func _stop_keyboard_sound() -> void:
 
 func _play_911_sound() -> void:
 	if call_911_sound:
+		call_911_sound.volume_db = GLOBAL_SOUND_VOLUME
 		call_911_sound.stop()
 		call_911_sound.play()
 
 
 func _play_firetruck_siren_sound() -> void:
 	if firetruck_siren_sound:
+		firetruck_siren_sound.volume_db = GLOBAL_SOUND_VOLUME
 		firetruck_siren_sound.stop()
 		firetruck_siren_sound.play()
 
@@ -543,6 +553,32 @@ func _create_result_panel() -> void:
 
 	if game_result_panel is CanvasLayer:
 		game_result_panel.layer = 60
+
+	game_result_panel.process_mode = Node.PROCESS_MODE_ALWAYS
+	_set_game_result_sound_volume()
+
+
+func _set_game_result_sound_volume() -> void:
+	if game_result_panel == null:
+		return
+
+	var result_sounds := [
+		"WinSound",
+		"win_sound",
+		"AudioWin",
+		"WinAudio",
+		"LoseSound",
+		"lose_sound",
+		"AudioLose",
+		"LoseAudio"
+	]
+
+	for sound_name in result_sounds:
+		var sound = game_result_panel.find_child(sound_name, true, false)
+
+		if sound and sound is AudioStreamPlayer:
+			sound.volume_db = GLOBAL_SOUND_VOLUME
+			sound.process_mode = Node.PROCESS_MODE_ALWAYS
 
 
 func _create_lives_ui() -> void:
@@ -1305,6 +1341,8 @@ func win_game() -> void:
 		elif timer_hud.has_method("stop_timer"):
 			timer_hud.stop_timer()
 
+	_set_game_result_sound_volume()
+
 	if game_result_panel != null:
 		if game_result_panel.has_method("mostrar_ganaste"):
 			game_result_panel.mostrar_ganaste()
@@ -1328,6 +1366,8 @@ func lose_game() -> void:
 			timer_hud.detener()
 		elif timer_hud.has_method("stop_timer"):
 			timer_hud.stop_timer()
+
+	_set_game_result_sound_volume()
 
 	if game_result_panel != null:
 		if game_result_panel.has_method("mostrar_perdiste"):
@@ -1412,4 +1452,4 @@ func _get_time_bonus(age: int) -> float:
 		7:
 			return 10.0
 		_:
-			return 10.0 if age < 7 else 0.0															
+			return 10.0 if age < 7 else 0.0													
