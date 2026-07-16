@@ -24,8 +24,11 @@ const DEFAULT_LIGHTNING_SCENE := preload("res://Minigames/minigame_storm/Lightni
 # CONSTANTS
 # =========================================================
 
-var TOTAL_TIME: float = 28.0
+const GLOBAL_SOUND_VOLUME := -10.0
+const BASE_TIME := 28.0
 const LIGHTNING_SPAWN_MARGIN := 80
+
+var TOTAL_TIME: float = BASE_TIME
 
 
 # =========================================================
@@ -92,26 +95,6 @@ func _process(_delta):
 
 
 # =========================================================
-# TIME BONUS POR EDAD
-# =========================================================
-
-func _get_time_bonus(age: int) -> float:
-	match age:
-		11:
-			return 2.0
-		10:
-			return 3.0
-		9:
-			return 5.0
-		8:
-			return 7.0
-		7:
-			return 10.0
-		_:
-			return 10.0 if age < 7 else 0.0
-
-
-# =========================================================
 # SETUP METHODS
 # =========================================================
 
@@ -130,9 +113,11 @@ func _setup_timer_ui():
 	var player_age: int = MinigameData.player_age
 
 	if player_age < 12:
-		TOTAL_TIME = 28.0 + _get_time_bonus(player_age)
+		TOTAL_TIME = BASE_TIME - _get_time_penalty(player_age)
 	else:
-		TOTAL_TIME = 28.0
+		TOTAL_TIME = BASE_TIME
+
+	TOTAL_TIME = max(TOTAL_TIME, 10.0)
 
 	if _timer_ui.has_method("iniciar"):
 		_timer_ui.iniciar(TOTAL_TIME, "Tiempo restante", "para sobrevivir")
@@ -157,18 +142,66 @@ func _setup_game_result():
 	if _game_result is CanvasLayer:
 		_game_result.layer = 50
 
+	_game_result.process_mode = Node.PROCESS_MODE_ALWAYS
+	_set_game_result_sound_volume()
+
+
+# =========================================================
+# AUDIO SETUP
+# =========================================================
 
 func _setup_audio():
 	if _rain_audio:
-		_rain_audio.volume_db = -12
+		_rain_audio.volume_db = GLOBAL_SOUND_VOLUME
 		_rain_audio.play()
 
 		if not _rain_audio.finished.is_connected(_on_rain_audio_finished):
 			_rain_audio.finished.connect(_on_rain_audio_finished)
 
 	if _thunder_audio:
-		_thunder_audio.volume_db = 6
+		_thunder_audio.volume_db = GLOBAL_SOUND_VOLUME
 
+	_set_game_result_sound_volume()
+
+
+func _set_game_result_sound_volume() -> void:
+	if _game_result == null:
+		return
+
+	var result_sounds := [
+		"WinSound",
+		"win_sound",
+		"AudioWin",
+		"WinAudio",
+		"LoseSound",
+		"lose_sound",
+		"AudioLose",
+		"LoseAudio"
+	]
+
+	for sound_name in result_sounds:
+		var sound = _game_result.find_child(sound_name, true, false)
+
+		if sound and sound is AudioStreamPlayer:
+			sound.volume_db = GLOBAL_SOUND_VOLUME
+			sound.process_mode = Node.PROCESS_MODE_ALWAYS
+
+
+func _play_sound(sound: AudioStreamPlayer) -> void:
+	if sound == null:
+		return
+
+	if sound.stream == null:
+		return
+
+	sound.volume_db = GLOBAL_SOUND_VOLUME
+	sound.stop()
+	sound.play()
+
+
+# =========================================================
+# CONNECTION METHODS
+# =========================================================
 
 func _connect_background_lightning():
 	if _storm_background == null:
@@ -272,9 +305,7 @@ func _play_thunder_sound():
 		print("ERROR: ThunderAudio no tiene sonido asignado en el Inspector")
 		return
 
-	_thunder_audio.stop()
-	_thunder_audio.volume_db = 6
-	_thunder_audio.play()
+	_play_sound(_thunder_audio)
 
 
 func _on_background_lightning_flashes():
@@ -286,6 +317,7 @@ func _on_background_lightning_flashes():
 
 func _on_rain_audio_finished():
 	if not _game_finished and _rain_audio:
+		_rain_audio.volume_db = GLOBAL_SOUND_VOLUME
 		_rain_audio.play()
 
 
@@ -309,6 +341,8 @@ func _win_game():
 
 	if _thunder_audio:
 		_thunder_audio.stop()
+
+	_set_game_result_sound_volume()
 
 	if _game_result:
 		if _game_result.has_method("show_win"):
@@ -336,6 +370,8 @@ func _lose_game():
 	if _thunder_audio:
 		_thunder_audio.stop()
 
+	_set_game_result_sound_volume()
+
 	if _game_result:
 		if _game_result.has_method("show_lose"):
 			_game_result.show_lose()
@@ -343,3 +379,24 @@ func _lose_game():
 			_game_result.mostrar_perdiste()
 
 	emit_signal("puzzle_failed")
+
+
+# =========================================================
+# DIFICULTAD POR EDAD
+# Entre menor edad, menos tiempo.
+# =========================================================
+
+func _get_time_penalty(age: int) -> float:
+	match age:
+		11:
+			return 2.0
+		10:
+			return 3.0
+		9:
+			return 5.0
+		8:
+			return 7.0
+		7:
+			return 10.0
+		_:
+			return 10.0 if age < 7 else 0.0
