@@ -10,6 +10,8 @@ const LIVES_UI_SCENE := preload("res://Minigames/ui_global/LivesUi.tscn")
 # =========================================================
 # CONSTANTS
 # =========================================================
+const GLOBAL_SOUND_VOLUME := -10.0
+
 var TOTAL_TIME: float = 40.0
 
 # =========================================================
@@ -55,36 +57,42 @@ func _ready():
 	wave.animation = "wave"
 	wave.frame = 0
 	wave_x = wave.position.x
+
 	for obs in obstacles_node.get_children():
 		obs.visible = false
+
 	_setup_timer_ui()
 	_setup_lives_ui()
 	_setup_game_result()
+	_setup_sound_volumes()
 	_setup_background_sound()
-	
-	if jump_sound:
-		jump_sound.volume_db = -5.0   # ✅ bajamos el volumen del salto
+
 
 func _process(delta):
 	if game_over:
 		return
 	
 	wave_timer += delta
+
 	if wave_timer >= wave_fps:
 		wave_timer = 0.0
 		wave_frame += wave_direction
+
 		if wave_frame >= wave.sprite_frames.get_frame_count("wave") - 1:
 			wave_direction = -1
 		elif wave_frame <= 0:
 			wave_direction = 1
+
 		wave.frame = wave_frame
 	
 	score_timer += delta
+
 	if score_timer >= 0.5:
 		score_timer = 0
 		score += 1
 	
 	speed = 300.0 + (score / 10) * speed_increase
+
 
 # =========================================================
 # SETUP
@@ -99,7 +107,6 @@ func _setup_timer_ui():
 	if _timer_ui.has_method("set_tamano_panel"):
 		_timer_ui.set_tamano_panel(500, 60)
 	
-
 	var player_age: int = MinigameData.player_age
 
 	if player_age < 12:
@@ -111,48 +118,109 @@ func _setup_timer_ui():
 		_timer_ui.iniciar(TOTAL_TIME, "Tiempo restante", "para sobrevivir")
 
 
-
 func _setup_lives_ui():
 	_lives_ui = LIVES_UI_SCENE.instantiate()
 	add_child(_lives_ui)
 	_update_lives_ui()
 
+
 func _setup_game_result():
 	_game_result = GAME_RESULT_SCENE.instantiate()
 	add_child(_game_result)
+
 	if _game_result is CanvasLayer:
 		_game_result.layer = 50
 
+	_game_result.process_mode = Node.PROCESS_MODE_ALWAYS
+	_set_game_result_sound_volume()
+
+
 # =========================================================
-# SONIDO DE FONDO (LOOP MANUAL)
+# SONIDOS
+# =========================================================
+func _setup_sound_volumes() -> void:
+	if background_sound and background_sound is AudioStreamPlayer:
+		background_sound.volume_db = GLOBAL_SOUND_VOLUME
+
+	if collision_sound and collision_sound is AudioStreamPlayer:
+		collision_sound.volume_db = GLOBAL_SOUND_VOLUME
+
+	if jump_sound and jump_sound is AudioStreamPlayer:
+		jump_sound.volume_db = GLOBAL_SOUND_VOLUME
+
+	_set_game_result_sound_volume()
+
+
+func _set_game_result_sound_volume() -> void:
+	if _game_result == null:
+		return
+
+	var result_sounds := [
+		"WinSound",
+		"win_sound",
+		"AudioWin",
+		"WinAudio",
+		"LoseSound",
+		"lose_sound",
+		"AudioLose",
+		"LoseAudio"
+	]
+
+	for sound_name in result_sounds:
+		var sound = _game_result.find_child(sound_name, true, false)
+
+		if sound and sound is AudioStreamPlayer:
+			sound.volume_db = GLOBAL_SOUND_VOLUME
+			sound.process_mode = Node.PROCESS_MODE_ALWAYS
+
+
+func _play_sound(sound: AudioStreamPlayer) -> void:
+	if sound == null:
+		return
+
+	if sound.stream == null:
+		return
+
+	sound.volume_db = GLOBAL_SOUND_VOLUME
+	sound.stop()
+	sound.play()
+
+
+# =========================================================
+# SONIDO DE FONDO
 # =========================================================
 func _setup_background_sound():
 	if background_sound == null:
 		return
-	background_sound.volume_db = -15.0   # ✅ bajamos el volumen del fondo
+
+	background_sound.volume_db = GLOBAL_SOUND_VOLUME
 	background_sound.play()
+
 	if not background_sound.finished.is_connected(_on_background_sound_finished):
 		background_sound.finished.connect(_on_background_sound_finished)
 
+
 func _on_background_sound_finished():
-	# ✅ Lo vuelve a reproducir mientras el juego no haya terminado
 	if not game_over and background_sound:
+		background_sound.volume_db = GLOBAL_SOUND_VOLUME
 		background_sound.play()
+
 
 func _stop_background_sound():
 	if background_sound and background_sound.playing:
 		background_sound.stop()
 
+
 # =========================================================
 # SONIDOS PUNTUALES
 # =========================================================
 func play_collision_sound():
-	if collision_sound:
-		collision_sound.play()
+	_play_sound(collision_sound)
+
 
 func play_jump_sound():
-	if jump_sound:
-		jump_sound.play()
+	_play_sound(jump_sound)
+
 
 # =========================================================
 # LIVES
@@ -160,9 +228,12 @@ func play_jump_sound():
 func _update_lives_ui():
 	if _lives_ui == null:
 		return
+
 	var lives_remaining = 3 - hits
+
 	if _lives_ui.has_method("actualizar_vidas"):
 		_lives_ui.actualizar_vidas(lives_remaining)
+
 
 # =========================================================
 # HITS Y OLA
@@ -170,16 +241,16 @@ func _update_lives_ui():
 func register_hit():
 	if game_over:
 		return
+
 	hits += 1
 	wave_x += 160.0
 	wave.position.x = wave_x
 	_update_lives_ui()
 	
-	# ✅ Sonido de choque
 	play_collision_sound()
 	
-	# ✅ Parpadeo de daño en el niño
 	var boy_body = get_node("CharacterBody2D")
+
 	if boy_body.has_method("take_damage_feedback"):
 		boy_body.take_damage_feedback()
 	
@@ -189,26 +260,31 @@ func register_hit():
 		await get_tree().create_timer(0.5).timeout
 		_lose_game()
 
+
 # =========================================================
 # SAFE ZONES
 # =========================================================
 func _on_time_up():
 	if game_over:
 		return
+
 	spawn_safe_zones()
-	# ✅ 3 segundos después empieza secuencia de victoria
+
 	await get_tree().create_timer(3.0).timeout
+
 	if not game_over:
 		_start_win_sequence()
+
 
 func spawn_safe_zones():
 	if safe_zones_spawned:
 		return
+
 	safe_zones_spawned = true
 	
-	# ✅ Desaparecen todos los obstáculos
 	for obs in obstacles_node.get_children():
 		obs.visible = false
+
 		if obs.has_method("set_process"):
 			obs.set_process(false)
 	
@@ -223,8 +299,10 @@ func spawn_safe_zones():
 		add_child(copy)
 		call_deferred("_activate_copy", copy)
 
+
 func _activate_copy(copy: Node):
 	copy.activate(speed)
+
 
 # =========================================================
 # TIMER
@@ -233,43 +311,44 @@ func _stop_timer_ui():
 	if _timer_ui and _timer_ui.has_method("detener"):
 		_timer_ui.detener()
 
+
 # =========================================================
 # SECUENCIA DE VICTORIA
 # =========================================================
 func _start_win_sequence():
 	if game_over:
 		return
+
 	game_over = true
 	_stop_timer_ui()
 	_stop_background_sound()
 	
-	# ✅ Detener obstáculos restantes
 	for obs in obstacles_node.get_children():
 		obs.visible = false
 	
-	# ✅ Detener niño completamente
 	var boy_body = get_node("CharacterBody2D")
 	boy_body.velocity = Vector2.ZERO
 	boy_body.set_process(false)
 	boy_body.set_physics_process(false)
 	boy.stop()
 	
-	# ✅ Detener background
 	background.stop_scroll()
 	
-	# ✅ Ola se va hacia la izquierda con animación
 	var tween = create_tween()
 	tween.set_ease(Tween.EASE_IN)
 	tween.set_trans(Tween.TRANS_CUBIC)
 	tween.tween_property(wave, "position:x", -600.0, 2.0)
 	
-	# ✅ 3 segundos después mostrar ganaste
 	await get_tree().create_timer(3.0).timeout
+
+	_set_game_result_sound_volume()
+
 	if _game_result:
 		if _game_result.has_method("show_win"):
 			_game_result.show_win()
 		elif _game_result.has_method("mostrar_ganaste"):
 			_game_result.mostrar_ganaste()
+
 
 # =========================================================
 # RESULTADO
@@ -277,16 +356,22 @@ func _start_win_sequence():
 func _lose_game():
 	if game_over:
 		return
+
 	game_over = true
 	_stop_timer_ui()
 	_stop_background_sound()
+
 	boy.play("fail")
 	boy.scale = Vector2(1.09, 1.072)
+
+	_set_game_result_sound_volume()
+
 	if _game_result:
 		if _game_result.has_method("show_lose"):
 			_game_result.show_lose()
 		elif _game_result.has_method("mostrar_perdiste"):
 			_game_result.mostrar_perdiste()
+
 
 func trigger_game_over():
 	hits = 3
@@ -294,6 +379,7 @@ func trigger_game_over():
 	wave.position.x = wave_x
 	await get_tree().create_timer(0.5).timeout
 	_lose_game()
+
 
 # =========================================================
 # TIME BONUS POR EDAD
