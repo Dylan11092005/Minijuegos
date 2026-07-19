@@ -20,9 +20,13 @@ var TOTAL_TIME: float = 25.0
 @onready var objects_container := $ObjectsArea/ObjectsContainer
 @onready var objects_tray := $ObjectsArea/ObjectsTray
 
+var damage_layer: CanvasLayer = null
+var damage_rect: ColorRect = null
+
 
 func _ready() -> void:
 	_setup_sound_volumes()
+	_setup_damage_effect()
 	_setup_random_objects()
 	_update_hud()
 
@@ -96,6 +100,50 @@ func _play_sound(sound: AudioStreamPlayer) -> void:
 	sound.volume_db = GLOBAL_SOUND_VOLUME
 	sound.stop()
 	sound.play()
+
+
+# =========================================================
+# DAMAGE EFFECT
+# =========================================================
+
+func _setup_damage_effect():
+	damage_layer = CanvasLayer.new()
+	damage_layer.name = "DamageLayer"
+	damage_layer.layer = 200
+	add_child(damage_layer)
+	
+	damage_rect = ColorRect.new()
+	damage_rect.name = "DamageRect"
+	damage_rect.color = Color(1, 0, 0)
+	damage_rect.modulate.a = 0.0
+	damage_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	damage_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	
+	damage_layer.add_child(damage_rect)
+
+
+func _play_damage_effect():
+	if not damage_rect:
+		return
+	
+	var original_position: Vector2 = position
+	
+	var flash_tween := create_tween()
+	damage_rect.modulate.a = 0.0
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.35, 0.08)
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.0, 0.22)
+	
+	var shake_tween := create_tween()
+	
+	for i in range(6):
+		var offset := Vector2(
+			randf_range(-8.0, 8.0),
+			randf_range(-8.0, 8.0)
+		)
+		
+		shake_tween.tween_property(self, "position", original_position + offset, 0.03)
+	
+	shake_tween.tween_property(self, "position", original_position, 0.05)
 
 
 # =========================================================
@@ -197,6 +245,7 @@ func _check_answer(area: Area2D, target_category: String) -> void:
 
 		errors += 1
 		_update_hud()
+		_play_damage_effect()
 
 		if errors >= MAX_ERRORS:
 			timer_ui.detener()
@@ -223,6 +272,7 @@ func _on_timer_ui_time_up() -> void:
 
 	timer_ui.detener()
 	_play_sound(error_player)
+	_play_damage_effect()
 
 	_set_game_result_sound_volume()
 	game_result.show_lose()
