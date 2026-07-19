@@ -30,11 +30,11 @@ texture = ExtResource("4_rluvt")
 
 [node name="SpriteWatered" type="Sprite2D" parent="." unique_id=1334931950]
 z_index = 15
-position = Vector2(-1, -112)
-scale = Vector2(0.073806144, 0.06438661)
+position = Vector2(-1, -83)
+scale = Vector2(0.21417627, 0.16990525)
 texture = ExtResource("5_ba458")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=304074164]
 z_index = 15
-position = Vector2(-3, -4)
+position = Vector2(-1, 0)
 shape = SubResource("CircleShape2D_k06nb")
