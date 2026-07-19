@@ -111,6 +111,9 @@ var _leak_sprites: Array[Sprite2D] = []
 var _leak_visuals_root: Node2D = null
 var _current_leak_frame: int = -1
 
+var damage_layer: CanvasLayer = null
+var damage_rect: ColorRect = null
+
 
 
 func _ready() -> void:
@@ -129,6 +132,7 @@ func _ready() -> void:
 	_create_leak_visuals()
 	_create_audio_players()
 	_create_game_result()
+	_setup_damage_effect()
 
 	var resize_callable: Callable = Callable(self, "_on_viewport_resized")
 	if not get_viewport().size_changed.is_connected(resize_callable):
@@ -513,6 +517,51 @@ func _set_game_result_sound_volume() -> void:
 			sound.volume_db = GLOBAL_SOUND_VOLUME
 			sound.process_mode = Node.PROCESS_MODE_ALWAYS
 
+
+# =========================================================
+# DAMAGE EFFECT
+# =========================================================
+
+func _setup_damage_effect():
+	damage_layer = CanvasLayer.new()
+	damage_layer.name = "DamageLayer"
+	damage_layer.layer = 200
+	add_child(damage_layer)
+	
+	damage_rect = ColorRect.new()
+	damage_rect.name = "DamageRect"
+	damage_rect.color = Color(1, 0, 0)
+	damage_rect.modulate.a = 0.0
+	damage_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	damage_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	
+	damage_layer.add_child(damage_rect)
+
+
+func _play_damage_effect():
+	if not damage_rect:
+		return
+	
+	var original_position: Vector2 = position
+	
+	var flash_tween := create_tween()
+	damage_rect.modulate.a = 0.0
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.35, 0.08)
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.0, 0.22)
+	
+	var shake_tween := create_tween()
+	
+	for i in range(6):
+		var offset := Vector2(
+			randf_range(-8.0, 8.0),
+			randf_range(-8.0, 8.0)
+		)
+		
+		shake_tween.tween_property(self, "position", original_position + offset, 0.03)
+	
+	shake_tween.tween_property(self, "position", original_position, 0.05)
+
+
 func _update_water_level(delta: float) -> void:
 	var active_leaks: int = _count_active_leaks()
 	if active_leaks <= 0:
@@ -611,6 +660,7 @@ func _try_repair_leak(mouse_position: Vector2) -> void:
 	if selected_index < 0:
 		_invalid_drop_position = mouse_position
 		_invalid_drop_time = 0.45
+		_play_damage_effect()
 		return
 
 	var selected_leak: Dictionary = _leaks[selected_index]
@@ -643,6 +693,7 @@ func _finish_game(did_win: bool) -> void:
 		if _game_result != null and _game_result.has_method("mostrar_ganaste"):
 			_game_result.call("mostrar_ganaste")
 	else:
+		_play_damage_effect()
 		game_lost.emit()
 		if _game_result != null and _game_result.has_method("mostrar_perdiste"):
 			_game_result.call("mostrar_perdiste")
