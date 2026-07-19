@@ -15,7 +15,6 @@ func _ready() -> void:
 	add_to_group("player")
 	z_index = 40
 	set_physics_process(true)
-
 	collision_layer = 1
 	collision_mask = 2
 
@@ -54,7 +53,6 @@ func _update_visual(direction: Vector2) -> void:
 	if direction.x != 0:
 		if sprite:
 			sprite.flip_h = direction.x > 0
-
 		if animated_sprite:
 			animated_sprite.flip_h = direction.x > 0
 

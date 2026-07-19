@@ -13,6 +13,8 @@ const BACKGROUND_MUSIC = preload("res://Minigames/minigame_Question/Music/Music1
 const CORRECT_SOUND = preload("res://Minigames/minigame_Question/Music/Correct.mp3")
 const INCORRECT_SOUND = preload("res://Minigames/minigame_Question/Music/Incorrect.mp3")
 
+const GLOBAL_SOUND_VOLUME := -10.0
+
 var game_active := false
 var already_finished := false
 
@@ -33,6 +35,9 @@ var score_panel: Panel
 var background_music_player: AudioStreamPlayer
 var correct_sound_player: AudioStreamPlayer
 var incorrect_sound_player: AudioStreamPlayer
+
+var damage_layer: CanvasLayer = null
+var damage_rect: ColorRect = null
 
 var questions := [
 	{
@@ -234,6 +239,106 @@ var questions := [
 			"Asustarlos"
 		],
 		"correct": 0
+	},
+	{
+		"question": "¿Qué debe hacer un adulto si un niño está asustado durante un desastre?",
+		"options": [
+			"Consolarlo y explicarle con calma",
+			"Regañarlo por tener miedo",
+			"Dejarlo solo para que se calme",
+			"Ignorar sus sentimientos"
+		],
+		"correct": 0
+	},
+	{
+		"question": "¿Qué es importante para la salud de los niños después de una emergencia?",
+		"options": [
+			"Recibir atención médica si la necesitan",
+			"No decir nada de sus heridas",
+			"Evitar a los médicos",
+			"Curarse solos"
+		],
+		"correct": 0
+	},
+	{
+		"question": "¿Qué deben hacer los niños si se separan de su familia?",
+		"options": [
+			"Buscar a un adulto de uniforme o autoridad",
+			"Esconderse y no hablar con nadie",
+			"Salir a buscarlos solos por la calle",
+			"Quedarse llorando sin pedir ayuda"
+		],
+		"correct": 0
+	},
+	{
+		"question": "¿Por qué es importante que los niños participen en simulacros?",
+		"options": [
+			"Para saber cómo actuar en una emergencia real",
+			"Porque es obligatorio y sin motivo",
+			"Para perder clases",
+			"Porque es un juego sin importancia"
+		],
+		"correct": 0
+	},
+	{
+		"question": "¿Qué derecho tienen los niños a la educación durante un desastre?",
+		"options": [
+			"Seguir aprendiendo aunque cambien las condiciones",
+			"Dejar de estudiar para siempre",
+			"Perder el año sin ayuda",
+			"No tener acceso a maestros"
+		],
+		"correct": 0
+	},
+	{
+		"question": "¿Qué deben hacer los adultos si un niño no entiende las instrucciones de evacuación?",
+		"options": [
+			"Explicarle de forma clara y sencilla",
+			"Gritarle para que corra más rápido",
+			"Dejarlo atrás",
+			"No explicarle nada"
+		],
+		"correct": 0
+	},
+	{
+		"question": "¿Qué es un derecho básico de todo niño o niña en cualquier situación?",
+		"options": [
+			"Tener un nombre y una identidad protegida",
+			"Perder su identidad",
+			"No tener documentos",
+			"Ser tratado como adulto"
+		],
+		"correct": 0
+	},
+	{
+		"question": "¿Qué deben hacer los niños si ven que un adulto está en peligro?",
+		"options": [
+			"Pedir ayuda a otro adulto de confianza",
+			"Intentar rescatarlo solos",
+			"Ignorarlo",
+			"Salir corriendo sin avisar a nadie"
+		],
+		"correct": 0
+	},
+	{
+		"question": "¿Qué es importante mantener durante una emergencia para sentirse seguro?",
+		"options": [
+			"La calma y la comunicación con la familia",
+			"El silencio total sin hablar",
+			"La distancia de todos los adultos",
+			"El desorden"
+		],
+		"correct": 0
+	},
+	{
+		"question": "¿Qué deben recibir los niños que perdieron su hogar en un desastre?",
+		"options": [
+			"Refugio y cuidado seguro",
+			"Ninguna ayuda",
+			"Solo comida sin refugio",
+			"Indiferencia"
+		],
+		"correct": 0
 	}
 ]
 
@@ -272,6 +377,7 @@ func _ready() -> void:
 	create_game_result_panel()
 	create_lives_ui()
 	create_audio()
+	_setup_damage_effect()
 	setup_scene_style()
 	connect_buttons()
 
@@ -284,26 +390,68 @@ func _notification(what):
 			setup_scene_style()
 
 
+# =========================================================
+# AUDIO
+# =========================================================
+
 func create_audio() -> void:
 	background_music_player = AudioStreamPlayer.new()
 	background_music_player.stream = BACKGROUND_MUSIC
-	background_music_player.volume_db = -12
+	background_music_player.volume_db = GLOBAL_SOUND_VOLUME
 	add_child(background_music_player)
 
 	correct_sound_player = AudioStreamPlayer.new()
 	correct_sound_player.stream = CORRECT_SOUND
-	correct_sound_player.volume_db = 0
+	correct_sound_player.volume_db = GLOBAL_SOUND_VOLUME
 	add_child(correct_sound_player)
 
 	incorrect_sound_player = AudioStreamPlayer.new()
 	incorrect_sound_player.stream = INCORRECT_SOUND
-	incorrect_sound_player.volume_db = 0
+	incorrect_sound_player.volume_db = GLOBAL_SOUND_VOLUME
 	add_child(incorrect_sound_player)
 
 
+func _set_game_result_sound_volume() -> void:
+	if game_result_panel == null:
+		return
+
+	var result_sounds := [
+		"WinSound",
+		"win_sound",
+		"AudioWin",
+		"WinAudio",
+		"LoseSound",
+		"lose_sound",
+		"AudioLose",
+		"LoseAudio"
+	]
+
+	for sound_name in result_sounds:
+		var sound = game_result_panel.find_child(sound_name, true, false)
+
+		if sound and sound is AudioStreamPlayer:
+			sound.volume_db = GLOBAL_SOUND_VOLUME
+			sound.process_mode = Node.PROCESS_MODE_ALWAYS
+
+
+func _play_sound(sound: AudioStreamPlayer) -> void:
+	if sound == null:
+		return
+
+	if sound.stream == null:
+		return
+
+	sound.volume_db = GLOBAL_SOUND_VOLUME
+	sound.stop()
+	sound.play()
+
+
 func play_background_music() -> void:
-	if background_music_player != null and not background_music_player.playing:
-		background_music_player.play()
+	if background_music_player != null:
+		background_music_player.volume_db = GLOBAL_SOUND_VOLUME
+
+		if not background_music_player.playing:
+			background_music_player.play()
 
 
 func stop_background_music() -> void:
@@ -312,15 +460,55 @@ func stop_background_music() -> void:
 
 
 func play_correct_sound() -> void:
-	if correct_sound_player != null:
-		correct_sound_player.stop()
-		correct_sound_player.play()
+	_play_sound(correct_sound_player)
 
 
 func play_incorrect_sound() -> void:
-	if incorrect_sound_player != null:
-		incorrect_sound_player.stop()
-		incorrect_sound_player.play()
+	_play_sound(incorrect_sound_player)
+
+
+# =========================================================
+# DAMAGE EFFECT
+# =========================================================
+
+func _setup_damage_effect():
+	damage_layer = CanvasLayer.new()
+	damage_layer.name = "DamageLayer"
+	damage_layer.layer = 200
+	add_child(damage_layer)
+	
+	damage_rect = ColorRect.new()
+	damage_rect.name = "DamageRect"
+	damage_rect.color = Color(1, 0, 0)
+	damage_rect.modulate.a = 0.0
+	damage_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	damage_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	
+	damage_layer.add_child(damage_rect)
+
+
+func _play_damage_effect():
+	if not damage_rect:
+		return
+	
+	var original_position: Vector2 = position
+	
+	var flash_tween := create_tween()
+	damage_rect.modulate.a = 0.0
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.35, 0.08)
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.0, 0.22)
+	
+	var shake_tween := create_tween()
+	
+	for i in range(6):
+		var offset := Vector2(
+			randf_range(-8.0, 8.0),
+			randf_range(-8.0, 8.0)
+		)
+		
+		shake_tween.tween_property(self, "position", original_position + offset, 0.03)
+	
+	shake_tween.tween_property(self, "position", original_position, 0.05)
 
 
 func create_timer() -> void:
@@ -340,6 +528,9 @@ func create_game_result_panel() -> void:
 	game_result_panel = GAME_RESULT_SCENE.instantiate()
 	add_child(game_result_panel)
 	game_result_panel.layer = 60
+	game_result_panel.process_mode = Node.PROCESS_MODE_ALWAYS
+
+	_set_game_result_sound_volume()
 
 
 func create_lives_ui() -> void:
@@ -439,8 +630,6 @@ func start_game() -> void:
 		timer_hud.iniciar(TOTAL_TIME, "Tiempo", "responde las preguntas")
 
 
-
-
 func show_question() -> void:
 	if already_finished:
 		return
@@ -487,6 +676,7 @@ func _on_option_selected(selected_index: int) -> void:
 			lives = 0
 
 		update_lives_ui()
+		_play_damage_effect()
 		show_wrong_answer(selected_index, current_correct_index)
 
 		if lives <= 0:
@@ -502,6 +692,7 @@ func _on_option_selected(selected_index: int) -> void:
 		if correct_answers >= required_correct_answers:
 			win_game()
 		else:
+			_play_damage_effect()
 			lose_game()
 		return
 
@@ -545,6 +736,7 @@ func update_score_ui() -> void:
 func _on_time_up() -> void:
 	if game_active and not already_finished:
 		play_incorrect_sound()
+		_play_damage_effect()
 		lose_game()
 
 
@@ -560,6 +752,7 @@ func win_game() -> void:
 
 	stop_background_music()
 	disable_buttons()
+	_set_game_result_sound_volume()
 
 	if game_result_panel != null:
 		if game_result_panel.has_method("mostrar_ganaste"):
@@ -580,6 +773,7 @@ func lose_game() -> void:
 
 	stop_background_music()
 	disable_buttons()
+	_set_game_result_sound_volume()
 
 	if game_result_panel != null:
 		if game_result_panel.has_method("mostrar_perdiste"):
@@ -718,9 +912,11 @@ func create_panel_style(bg_color: Color, border_color: Color, radius: int, shado
 
 	return style
 
+
 # =========================================================
 # TIME BONUS POR EDAD
 # =========================================================
+
 func _get_time_bonus(age: int) -> float:
 	match age:
 		11:

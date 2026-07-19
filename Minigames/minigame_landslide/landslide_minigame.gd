@@ -12,16 +12,14 @@ const LIVES_UI_SCENE = preload("res://Minigames/ui_global/LivesUi.tscn")
 const MUSIC_DIR := "res://Minigames/minigame_landslide/Music/"
 const FIRE_TRUCK_PATH := "res://Minigames/minigame_landslide/assets/fire_truck.png"
 
+const GLOBAL_SOUND_VOLUME := -10.0
+
 @export var spawn_interval := 1.05
 @export var spawn_interval_fast := 0.72
 
-@export var rock_hit_x_distance := 28.0
-@export var rock_hit_y_min := -75.0
-@export var rock_hit_y_max := 15.0
-
 @export var safe_win_distance := 35.0
 
-@export var rescue_truck_scale := Vector2(0.35, 0.35)
+@export var rescue_truck_scale := Vector2(0.7, 0.7)
 @export var rescue_truck_speed_to_player := 2.0
 @export var rescue_truck_speed_to_safe := 2.6
 
@@ -37,8 +35,11 @@ var has_called_911 := false
 var player_in_phone_zone := false
 var spawn_counter := 0.0
 var current_spawn_interval := 1.05
+<<<<<<< HEAD
 var e_key_was_pressed := false
 var trunk_damage_cooldown_remaining := 0.0
+=======
+>>>>>>> origin/main
 
 var keypad_open := false
 var dialed_number := ""
@@ -68,6 +69,9 @@ var call_911_sound: AudioStreamPlayer = null
 
 var rescue_truck: Sprite2D = null
 
+var damage_layer: CanvasLayer = null
+var damage_rect: ColorRect = null
+
 
 func _ready() -> void:
 	add_to_group("game_manager")
@@ -84,6 +88,7 @@ func _ready() -> void:
 	_create_timer()
 	_create_result_panel()
 	_create_lives_ui()
+	_setup_damage_effect()
 	_create_phone_keypad()
 	_connect_signals()
 
@@ -107,8 +112,6 @@ func _process(delta: float) -> void:
 		return
 
 	_handle_rock_spawn(delta)
-	_check_rock_hits()
-	_check_interaction()
 	_check_safe_win()
 
 
@@ -134,16 +137,45 @@ func _input(event: InputEvent) -> void:
 
 
 func _setup_main_nodes() -> void:
-	player = get_node_or_null("Player") as CharacterBody2D
+	# --- Búsqueda robusta del jugador REAL ---
+	# En vez de confiar en el nombre del nodo o en "el primer CharacterBody2D
+	# que aparezca", buscamos específicamente el nodo que tiene el script
+	# con receive_damage() y la señal damaged. Esto evita el bug de que el
+	# manager agarre un CharacterBody2D "vacío" (sin script) que esté
+	# envolviendo al verdadero jugador (ej: CharacterBody2D > PlayerLandslide).
+	player = _find_player_controller()
+
+	if player == null:
+		player = get_node_or_null("Player") as CharacterBody2D
 
 	if player == null:
 		player = _find_first_character_body()
 
 	if player:
 		player.set_physics_process(true)
-		player.add_to_group("player")
+
+		if not player.is_in_group("player"):
+			player.add_to_group("player")
+
 		player.collision_layer = 1
 		player.collision_mask = 2
+
+		if not player.has_method("receive_damage"):
+			push_warning("El nodo 'player' encontrado (%s) no tiene receive_damage(). Revisa que el script esté en el nodo correcto." % player.name)
+
+		if not player.has_signal("damaged"):
+			push_warning("El nodo 'player' encontrado (%s) no tiene la señal 'damaged'." % player.name)
+
+		# --- Neutralizar cuerpos "fantasma" ---
+		# Si el jugador real está envuelto por otro CharacterBody2D (un
+		# contenedor vacío creado sin querer al arrastrar nodos en el
+		# editor), ese contenedor puede traer su propio CollisionShape2D
+		# con un tamaño gigante y quedarse en collision_layer=1 (el valor
+		# por defecto de Godot), que es la MISMA capa que las rocas
+		# detectan. Esto provoca que el jugador reciba daño sin que la
+		# roca toque visualmente su sprite, porque en realidad está
+		# chocando contra ese cuerpo fantasma inmóvil y sobredimensionado.
+		_neutralize_ghost_bodies(player)
 	else:
 		push_warning(
 			"No se encontró Player. Pon tu personaje como CharacterBody2D y nómbralo Player."
@@ -201,6 +233,19 @@ func _setup_main_nodes() -> void:
 			rock_spawners.add_child(marker)
 
 
+func _find_player_controller() -> CharacterBody2D:
+	# Recorre TODOS los CharacterBody2D del árbol (sin importar su nombre
+	# o nivel de anidación) y devuelve el que realmente tiene el script
+	# del jugador (receive_damage + señal damaged).
+	var candidates := find_children("*", "CharacterBody2D", true, false)
+
+	for candidate in candidates:
+		if candidate.has_method("receive_damage") and candidate.has_signal("damaged"):
+			return candidate as CharacterBody2D
+
+	return null
+
+
 func _find_first_character_body() -> CharacterBody2D:
 	var children := find_children(
 		"*",
@@ -213,6 +258,58 @@ func _find_first_character_body() -> CharacterBody2D:
 		return children[0] as CharacterBody2D
 
 	return null
+
+
+# Busca cualquier otro PhysicsBody2D (CharacterBody2D, StaticBody2D, etc.)
+# que sea ANCESTRO o HERMANO cercano del jugador real y que NO sea el
+# propio jugador. Si encuentra colisiones físicas activas ahí (capa 1,
+# la que detectan las rocas), las apaga para que dejen de "robar" golpes.
+# No borra nodos (por si el usuario los necesita para otra cosa), solo
+# desactiva su participación en colisiones físicas.
+func _neutralize_ghost_bodies(real_player: CharacterBody2D) -> void:
+	var parent := real_player.get_parent()
+
+	if parent == null:
+		return
+
+	# Si el padre directo del jugador es OTRO CharacterBody2D/PhysicsBody2D
+	# distinto del jugador (el caso "CharacterBody2D > PlayerLandslide"),
+	# es ese envoltorio el que hay que revisar.
+	if parent is CollisionObject2D and parent != real_player:
+		_disable_ghost_collision(parent as CollisionObject2D, real_player)
+
+	# También revisamos hermanos directos del jugador: si hay un
+	# CollisionShape2D "suelto" que no cuelga del jugador sino de su
+	# padre (como vimos en la escena: CollisionShape2D como hermano de
+	# PlayerLandslide, ambos bajo el mismo CharacterBody2D contenedor),
+	# lo desactivamos ahí también.
+	for sibling in parent.get_children():
+		if sibling == real_player:
+			continue
+		if sibling is CollisionShape2D:
+			push_warning("Se encontró un CollisionShape2D (%s) que NO es hijo del jugador real. Se está desactivando para que no interfiera con el daño de las rocas. Bórralo del editor o muévelo dentro del nodo del jugador para limpiar la escena." % sibling.name)
+			(sibling as CollisionShape2D).disabled = true
+		elif sibling is CollisionObject2D and sibling != real_player:
+			_disable_ghost_collision(sibling as CollisionObject2D, real_player)
+
+
+func _disable_ghost_collision(body: CollisionObject2D, real_player: CharacterBody2D) -> void:
+	if body == real_player:
+		return
+
+	# Si por alguna razón este nodo SÍ tiene el script del jugador (poco
+	# probable, pero por seguridad), no lo tocamos.
+	if body.has_method("receive_damage") and body.has_signal("damaged"):
+		return
+
+	push_warning("Se encontró un cuerpo físico fantasma '%s' envolviendo o junto al jugador, con collision_layer=%d. Se está poniendo en capa 0 para que las rocas no lo detecten." % [body.name, body.collision_layer])
+
+	body.collision_layer = 0
+	body.collision_mask = 0
+
+	for child in body.get_children():
+		if child is CollisionShape2D:
+			(child as CollisionShape2D).disabled = true
 
 
 func _find_area_node(names: Array) -> Area2D:
@@ -236,11 +333,15 @@ func _find_area_node(names: Array) -> Area2D:
 
 func _setup_collisions() -> void:
 	if player:
+<<<<<<< HEAD
 		_set_character_collision(
 			player,
 			Vector2(46, 82),
 			Vector2(0, 18)
 		)
+=======
+		_set_character_collision(player, Vector2(46, 155), Vector2(0, 6))
+>>>>>>> origin/main
 
 	if phone_cabin:
 		_set_area_collision(
@@ -250,6 +351,7 @@ func _setup_collisions() -> void:
 		)
 
 
+<<<<<<< HEAD
 func _set_character_collision(
 	node: CharacterBody2D,
 	size: Vector2,
@@ -258,18 +360,39 @@ func _set_character_collision(
 	var collision := node.get_node_or_null(
 		"CollisionShape2D"
 	) as CollisionShape2D
+=======
+func _set_character_collision(node: CharacterBody2D, size: Vector2, offset: Vector2) -> void:
+	# IMPORTANTE: antes, si ya existía un CollisionShape2D con una forma
+	# asignada (por ejemplo, creada a mano en el editor con un tamaño
+	# equivocado), el código la dejaba intacta. Eso era exactamente el
+	# bug: una forma vieja/gigante nunca se corregía y el jugador recibía
+	# daño sin que la roca tocara su sprite visualmente. Ahora SIEMPRE
+	# forzamos el tamaño y posición correctos, sin importar lo que hubiera
+	# antes.
+	var collision := node.get_node_or_null("CollisionShape2D") as CollisionShape2D
+>>>>>>> origin/main
 
 	if collision == null:
 		collision = CollisionShape2D.new()
 		collision.name = "CollisionShape2D"
 		node.add_child(collision)
 
-	if collision.shape == null:
-		var shape := RectangleShape2D.new()
-		shape.size = size
-		collision.shape = shape
+	var shape := collision.shape as RectangleShape2D
 
+	if shape == null:
+		shape = RectangleShape2D.new()
+
+	shape.size = size
+	collision.shape = shape
 	collision.position = offset
+	collision.disabled = false
+
+	# También reseteamos cualquier escala/rotación rara que se le haya
+	# quedado pegada al nodo de colisión desde el editor, para que el
+	# tamaño (46, 82) sea el tamaño real en píxeles y no se infle o
+	# encoja por un factor de escala accidental.
+	collision.scale = Vector2.ONE
+	collision.rotation = 0.0
 
 
 func _set_area_collision(
@@ -481,7 +604,7 @@ func _create_audio() -> void:
 		alarm_sound = AudioStreamPlayer.new()
 		alarm_sound.name = "AlarmSound"
 		alarm_sound.stream = alarm_stream
-		alarm_sound.volume_db = -2
+		alarm_sound.volume_db = GLOBAL_SOUND_VOLUME
 		add_child(alarm_sound)
 
 		alarm_sound.finished.connect(
@@ -496,7 +619,7 @@ func _create_audio() -> void:
 		rocks_sound = AudioStreamPlayer.new()
 		rocks_sound.name = "RocksSound"
 		rocks_sound.stream = rocks_stream
-		rocks_sound.volume_db = -10
+		rocks_sound.volume_db = GLOBAL_SOUND_VOLUME
 		add_child(rocks_sound)
 
 		rocks_sound.finished.connect(
@@ -511,7 +634,7 @@ func _create_audio() -> void:
 		keyboard_sound = AudioStreamPlayer.new()
 		keyboard_sound.name = "KeyboardSound"
 		keyboard_sound.stream = keyboard_stream
-		keyboard_sound.volume_db = 0
+		keyboard_sound.volume_db = GLOBAL_SOUND_VOLUME
 		add_child(keyboard_sound)
 	else:
 		push_warning(
@@ -522,7 +645,7 @@ func _create_audio() -> void:
 		firetruck_siren_sound = AudioStreamPlayer.new()
 		firetruck_siren_sound.name = "FireTruckSirenSound"
 		firetruck_siren_sound.stream = firetruck_siren_stream
-		firetruck_siren_sound.volume_db = -1
+		firetruck_siren_sound.volume_db = GLOBAL_SOUND_VOLUME
 		add_child(firetruck_siren_sound)
 
 		firetruck_siren_sound.finished.connect(
@@ -537,7 +660,7 @@ func _create_audio() -> void:
 		call_911_sound = AudioStreamPlayer.new()
 		call_911_sound.name = "Call911Sound"
 		call_911_sound.stream = call_911_stream
-		call_911_sound.volume_db = 0
+		call_911_sound.volume_db = GLOBAL_SOUND_VOLUME
 		add_child(call_911_sound)
 	else:
 		push_warning(
@@ -560,48 +683,58 @@ func _load_audio(file_names: Array) -> AudioStream:
 
 func _loop_alarm_sound() -> void:
 	if alarm_sound and game_active and not already_finished:
+		alarm_sound.volume_db = GLOBAL_SOUND_VOLUME
 		alarm_sound.play()
 
 
 func _loop_rocks_sound() -> void:
 	if rocks_sound and game_active and not already_finished:
+		rocks_sound.volume_db = GLOBAL_SOUND_VOLUME
 		rocks_sound.play()
 
 
 func _loop_firetruck_siren_sound() -> void:
+<<<<<<< HEAD
 	if (
 		firetruck_siren_sound
 		and game_active
 		and not already_finished
 		and rescue_started
 	):
+=======
+	if firetruck_siren_sound and game_active and not already_finished and rescue_started:
+		firetruck_siren_sound.volume_db = GLOBAL_SOUND_VOLUME
+>>>>>>> origin/main
 		firetruck_siren_sound.play()
 
 
 func _set_alarm_normal_volume() -> void:
 	if alarm_sound:
-		alarm_sound.volume_db = -2
+		alarm_sound.volume_db = GLOBAL_SOUND_VOLUME
 
 
 func _set_alarm_low_volume() -> void:
 	if alarm_sound:
-		alarm_sound.volume_db = -18
+		alarm_sound.volume_db = GLOBAL_SOUND_VOLUME
 
 
 func _start_alarm_sound() -> void:
 	if alarm_sound and game_active and not already_finished:
+		alarm_sound.volume_db = GLOBAL_SOUND_VOLUME
 		if not alarm_sound.playing:
 			alarm_sound.play()
 
 
 func _start_rocks_sound() -> void:
 	if rocks_sound and game_active and not already_finished:
+		rocks_sound.volume_db = GLOBAL_SOUND_VOLUME
 		if not rocks_sound.playing:
 			rocks_sound.play()
 
 
 func _play_keyboard_sound() -> void:
 	if keyboard_sound:
+		keyboard_sound.volume_db = GLOBAL_SOUND_VOLUME
 		keyboard_sound.stop()
 		keyboard_sound.play()
 
@@ -613,12 +746,14 @@ func _stop_keyboard_sound() -> void:
 
 func _play_911_sound() -> void:
 	if call_911_sound:
+		call_911_sound.volume_db = GLOBAL_SOUND_VOLUME
 		call_911_sound.stop()
 		call_911_sound.play()
 
 
 func _play_firetruck_siren_sound() -> void:
 	if firetruck_siren_sound:
+		firetruck_siren_sound.volume_db = GLOBAL_SOUND_VOLUME
 		firetruck_siren_sound.stop()
 		firetruck_siren_sound.play()
 
@@ -768,6 +903,32 @@ func _create_result_panel() -> void:
 	if game_result_panel is CanvasLayer:
 		game_result_panel.layer = 60
 
+	game_result_panel.process_mode = Node.PROCESS_MODE_ALWAYS
+	_set_game_result_sound_volume()
+
+
+func _set_game_result_sound_volume() -> void:
+	if game_result_panel == null:
+		return
+
+	var result_sounds := [
+		"WinSound",
+		"win_sound",
+		"AudioWin",
+		"WinAudio",
+		"LoseSound",
+		"lose_sound",
+		"AudioLose",
+		"LoseAudio"
+	]
+
+	for sound_name in result_sounds:
+		var sound = game_result_panel.find_child(sound_name, true, false)
+
+		if sound and sound is AudioStreamPlayer:
+			sound.volume_db = GLOBAL_SOUND_VOLUME
+			sound.process_mode = Node.PROCESS_MODE_ALWAYS
+
 
 func _create_lives_ui() -> void:
 	lives_ui = LIVES_UI_SCENE.instantiate()
@@ -783,9 +944,55 @@ func _create_lives_ui() -> void:
 
 
 # =========================================================
+<<<<<<< HEAD
 # TECLADO DEL TELÉFONO
 # =========================================================
 
+=======
+# DAMAGE EFFECT
+# =========================================================
+
+func _setup_damage_effect():
+	damage_layer = CanvasLayer.new()
+	damage_layer.name = "DamageLayer"
+	damage_layer.layer = 200
+	add_child(damage_layer)
+	
+	damage_rect = ColorRect.new()
+	damage_rect.name = "DamageRect"
+	damage_rect.color = Color(1, 0, 0)
+	damage_rect.modulate.a = 0.0
+	damage_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	damage_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	
+	damage_layer.add_child(damage_rect)
+
+
+func _play_damage_effect():
+	if not damage_rect:
+		return
+	
+	var original_position: Vector2 = position
+	
+	var flash_tween := create_tween()
+	damage_rect.modulate.a = 0.0
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.35, 0.08)
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.0, 0.22)
+	
+	var shake_tween := create_tween()
+	
+	for i in range(6):
+		var offset := Vector2(
+			randf_range(-8.0, 8.0),
+			randf_range(-8.0, 8.0)
+		)
+		
+		shake_tween.tween_property(self, "position", original_position + offset, 0.03)
+	
+	shake_tween.tween_property(self, "position", original_position, 0.05)
+
+
+>>>>>>> origin/main
 func _create_phone_keypad() -> void:
 	phone_overlay = ColorRect.new()
 	phone_overlay.name = "PhoneKeypadOverlay"
@@ -802,8 +1009,10 @@ func _create_phone_keypad() -> void:
 	phone_overlay.size = overlay_size
 	ui_layer.add_child(phone_overlay)
 
+	# --- Cuerpo del teléfono (estilo baquelita retro) ---
 	var phone_panel := Panel.new()
 	phone_panel.name = "PhoneKeypadPanel"
+<<<<<<< HEAD
 	phone_panel.size = Vector2(410, 560)
 	phone_panel.position = (
 		overlay_size - phone_panel.size
@@ -830,10 +1039,76 @@ func _create_phone_keypad() -> void:
 		"panel",
 		panel_style
 	)
+=======
+	phone_panel.size = Vector2(420, 640)
+	phone_panel.position = (overlay_size - phone_panel.size) / 2.0
+	phone_overlay.add_child(phone_panel)
 
+	var panel_style := StyleBoxFlat.new()
+	panel_style.bg_color = Color("#7A1E1E")
+	panel_style.border_color = Color("#4A1010")
+	panel_style.border_width_left = 6
+	panel_style.border_width_right = 6
+	panel_style.border_width_top = 6
+	panel_style.border_width_bottom = 6
+	panel_style.corner_radius_top_left = 26
+	panel_style.corner_radius_top_right = 26
+	panel_style.corner_radius_bottom_left = 46
+	panel_style.corner_radius_bottom_right = 46
+	panel_style.shadow_color = Color(0, 0, 0, 0.45)
+	panel_style.shadow_size = 16
+	panel_style.shadow_offset = Vector2(0, 8)
+	phone_panel.add_theme_stylebox_override("panel", panel_style)
+>>>>>>> origin/main
+
+	# --- Auricular (bocina) apoyado arriba del cuerpo, como los
+	# teléfonos de disco clásicos ---
+	var handset := Panel.new()
+	handset.size = Vector2(310, 66)
+	handset.position = Vector2((phone_panel.size.x - handset.size.x) / 2.0, -34)
+
+	var handset_style := StyleBoxFlat.new()
+	handset_style.bg_color = Color("#2B2B2B")
+	handset_style.border_color = Color("#141414")
+	handset_style.border_width_left = 3
+	handset_style.border_width_right = 3
+	handset_style.border_width_top = 3
+	handset_style.border_width_bottom = 3
+	handset_style.corner_radius_top_left = 33
+	handset_style.corner_radius_top_right = 33
+	handset_style.corner_radius_bottom_left = 33
+	handset_style.corner_radius_bottom_right = 33
+	handset_style.shadow_color = Color(0, 0, 0, 0.35)
+	handset_style.shadow_size = 8
+	handset_style.shadow_offset = Vector2(0, 4)
+	handset.add_theme_stylebox_override("panel", handset_style)
+	phone_panel.add_child(handset)
+
+	# Auriculares (los dos extremos redondos del auricular)
+	for ear_x in [8.0, handset.size.x - 62.0]:
+		var earpiece := Panel.new()
+		earpiece.size = Vector2(54, 54)
+		earpiece.position = Vector2(ear_x, 6)
+
+		var earpiece_style := StyleBoxFlat.new()
+		earpiece_style.bg_color = Color("#1A1A1A")
+		earpiece_style.border_color = Color("#000000")
+		earpiece_style.border_width_left = 2
+		earpiece_style.border_width_right = 2
+		earpiece_style.border_width_top = 2
+		earpiece_style.border_width_bottom = 2
+		earpiece_style.corner_radius_top_left = 27
+		earpiece_style.corner_radius_top_right = 27
+		earpiece_style.corner_radius_bottom_left = 27
+		earpiece_style.corner_radius_bottom_right = 27
+		earpiece.add_theme_stylebox_override("panel", earpiece_style)
+		handset.add_child(earpiece)
+
+	# --- Título ---
 	var title := Label.new()
-	title.text = "Llamar al 911"
+	title.text = "Marca el 911"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+<<<<<<< HEAD
 	title.position = Vector2(35, 30)
 	title.size = Vector2(340, 35)
 
@@ -847,12 +1122,42 @@ func _create_phone_keypad() -> void:
 		Color("#202020")
 	)
 
+=======
+	title.position = Vector2(20, 44)
+	title.size = Vector2(380, 40)
+	title.add_theme_font_size_override("font_size", 26)
+	title.add_theme_color_override("font_color", Color("#F3E7C9"))
+	title.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.4))
+	title.add_theme_constant_override("shadow_offset_x", 2)
+	title.add_theme_constant_override("shadow_offset_y", 2)
+>>>>>>> origin/main
 	phone_panel.add_child(title)
 
+	# --- Tarjetita de número marcado (como las etiquetas de cartón de
+	# las cabinas viejas, no una pantalla digital) ---
+	var display_card := Panel.new()
+	display_card.size = Vector2(180, 56)
+	display_card.position = Vector2((phone_panel.size.x - display_card.size.x) / 2.0, 92)
+
+	var display_style := StyleBoxFlat.new()
+	display_style.bg_color = Color("#F3E7C9")
+	display_style.border_color = Color("#8A6B3D")
+	display_style.border_width_left = 3
+	display_style.border_width_right = 3
+	display_style.border_width_top = 3
+	display_style.border_width_bottom = 3
+	display_style.corner_radius_top_left = 6
+	display_style.corner_radius_top_right = 6
+	display_style.corner_radius_bottom_left = 6
+	display_style.corner_radius_bottom_right = 6
+	display_card.add_theme_stylebox_override("panel", display_style)
+	phone_panel.add_child(display_card)
+
 	dial_display = Label.new()
-	dial_display.text = "___"
+	dial_display.text = "— — —"
 	dial_display.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	dial_display.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+<<<<<<< HEAD
 	dial_display.position = Vector2(55, 85)
 	dial_display.size = Vector2(300, 60)
 
@@ -867,13 +1172,21 @@ func _create_phone_keypad() -> void:
 	)
 
 	phone_panel.add_child(dial_display)
+=======
+	dial_display.position = Vector2.ZERO
+	dial_display.size = display_card.size
+	dial_display.add_theme_font_size_override("font_size", 26)
+	dial_display.add_theme_color_override("font_color", Color("#3A2A12"))
+	display_card.add_child(dial_display)
+>>>>>>> origin/main
 
-	var grid := GridContainer.new()
-	grid.columns = 3
-	grid.position = Vector2(60, 165)
-	grid.size = Vector2(290, 280)
-	phone_panel.add_child(grid)
+	# --- Disco giratorio ---
+	var dial_center := Vector2(phone_panel.size.x / 2.0, 340.0)
+	var dial_outer_radius := 155.0
+	var hole_orbit_radius := 108.0
+	var hole_size := 56.0
 
+<<<<<<< HEAD
 	for number in [
 		"1",
 		"2",
@@ -984,10 +1297,128 @@ func _create_phone_keypad() -> void:
 			button.pressed.connect(
 				_on_keypad_number_pressed.bind(number)
 			)
+=======
+	# Aro metálico exterior del disco
+	var dial_rim := Panel.new()
+	dial_rim.size = Vector2(dial_outer_radius * 2.0, dial_outer_radius * 2.0)
+	dial_rim.position = dial_center - dial_rim.size / 2.0
 
-		grid.add_child(button)
+	var dial_rim_style := StyleBoxFlat.new()
+	dial_rim_style.bg_color = Color("#4A1010")
+	dial_rim_style.border_color = Color("#2E0808")
+	dial_rim_style.border_width_left = 4
+	dial_rim_style.border_width_right = 4
+	dial_rim_style.border_width_top = 4
+	dial_rim_style.border_width_bottom = 4
+	dial_rim_style.corner_radius_top_left = int(dial_outer_radius)
+	dial_rim_style.corner_radius_top_right = int(dial_outer_radius)
+	dial_rim_style.corner_radius_bottom_left = int(dial_outer_radius)
+	dial_rim_style.corner_radius_bottom_right = int(dial_outer_radius)
+	dial_rim_style.shadow_color = Color(0, 0, 0, 0.3)
+	dial_rim_style.shadow_size = 6
+	dial_rim.add_theme_stylebox_override("panel", dial_rim_style)
+	phone_panel.add_child(dial_rim)
+>>>>>>> origin/main
+
+	# Disco blanco/marfil (el plato giratorio en sí)
+	var dial_face_radius := dial_outer_radius - 14.0
+	var dial_face := Panel.new()
+	dial_face.size = Vector2(dial_face_radius * 2.0, dial_face_radius * 2.0)
+	dial_face.position = dial_center - dial_face.size / 2.0
+
+	var dial_face_style := StyleBoxFlat.new()
+	dial_face_style.bg_color = Color("#F3E7C9")
+	dial_face_style.border_color = Color("#C9B27C")
+	dial_face_style.border_width_left = 3
+	dial_face_style.border_width_right = 3
+	dial_face_style.border_width_top = 3
+	dial_face_style.border_width_bottom = 3
+	dial_face_style.corner_radius_top_left = int(dial_face_radius)
+	dial_face_style.corner_radius_top_right = int(dial_face_radius)
+	dial_face_style.corner_radius_bottom_left = int(dial_face_radius)
+	dial_face_style.corner_radius_bottom_right = int(dial_face_radius)
+	dial_face.add_theme_stylebox_override("panel", dial_face_style)
+	phone_panel.add_child(dial_face)
+
+	# Centro metálico
+	var dial_hub := Panel.new()
+	dial_hub.size = Vector2(34, 34)
+	dial_hub.position = dial_center - dial_hub.size / 2.0
+
+	var dial_hub_style := StyleBoxFlat.new()
+	dial_hub_style.bg_color = Color("#8A8A8A")
+	dial_hub_style.border_color = Color("#5A5A5A")
+	dial_hub_style.border_width_left = 2
+	dial_hub_style.border_width_right = 2
+	dial_hub_style.border_width_top = 2
+	dial_hub_style.border_width_bottom = 2
+	dial_hub_style.corner_radius_top_left = 17
+	dial_hub_style.corner_radius_top_right = 17
+	dial_hub_style.corner_radius_bottom_left = 17
+	dial_hub_style.corner_radius_bottom_right = 17
+	dial_hub.add_theme_stylebox_override("panel", dial_hub_style)
+	phone_panel.add_child(dial_hub)
+
+	# Los 10 "huequitos" numerados alrededor del disco, en el orden
+	# clásico de un teléfono de disco: 1 arriba, y el resto en sentido
+	# horario terminando en 0.
+	var digits := ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
+
+	for i in range(digits.size()):
+		var digit: String = digits[i]
+		var angle := deg_to_rad(-90.0 + float(i) * 36.0)
+		var hole_center := dial_center + Vector2(cos(angle), sin(angle)) * hole_orbit_radius
+
+		var hole_button := Button.new()
+		hole_button.text = digit
+		hole_button.size = Vector2(hole_size, hole_size)
+		hole_button.position = hole_center - hole_button.size / 2.0
+		hole_button.add_theme_font_size_override("font_size", 22)
+		hole_button.add_theme_stylebox_override("normal", _create_dial_hole_style(Color("#2B2B2B"), Color("#111111")))
+		hole_button.add_theme_stylebox_override("hover", _create_dial_hole_style(Color("#3A3A3A"), Color("#111111")))
+		hole_button.add_theme_stylebox_override("pressed", _create_dial_hole_style(Color("#1A1A1A"), Color("#000000")))
+		hole_button.add_theme_color_override("font_color", Color("#F3E7C9"))
+		hole_button.pressed.connect(_on_keypad_number_pressed.bind(digit))
+		phone_panel.add_child(hole_button)
+
+	# --- Tope del disco (el pequeño "gancho" fijo donde se detiene el
+	# dedo al marcar). Puramente decorativo. ---
+	var finger_stop := Panel.new()
+	finger_stop.size = Vector2(20, 46)
+	var stop_angle := deg_to_rad(-90.0 + 9.0 * 36.0 + 20.0)
+	var stop_center := dial_center + Vector2(cos(stop_angle), sin(stop_angle)) * (dial_face_radius - 10.0)
+	finger_stop.position = stop_center - finger_stop.size / 2.0
+	finger_stop.rotation = stop_angle + PI / 2.0
+
+	var finger_stop_style := StyleBoxFlat.new()
+	finger_stop_style.bg_color = Color("#8A8A8A")
+	finger_stop_style.border_color = Color("#5A5A5A")
+	finger_stop_style.border_width_left = 2
+	finger_stop_style.border_width_right = 2
+	finger_stop_style.border_width_top = 2
+	finger_stop_style.border_width_bottom = 2
+	finger_stop_style.corner_radius_top_left = 6
+	finger_stop_style.corner_radius_top_right = 6
+	finger_stop_style.corner_radius_bottom_left = 6
+	finger_stop_style.corner_radius_bottom_right = 6
+	finger_stop.add_theme_stylebox_override("panel", finger_stop_style)
+	phone_panel.add_child(finger_stop)
+
+	# --- Botones pequeños de abajo: corregir y colgar ---
+	var correct_button := Button.new()
+	correct_button.text = "⌫ Corregir"
+	correct_button.position = Vector2(30, phone_panel.size.y - 74)
+	correct_button.size = Vector2(160, 46)
+	correct_button.add_theme_font_size_override("font_size", 16)
+	correct_button.add_theme_stylebox_override("normal", _create_key_button_style(Color("#5A2323"), Color("#3A1414")))
+	correct_button.add_theme_stylebox_override("hover", _create_key_button_style(Color("#6E2C2C"), Color("#3A1414")))
+	correct_button.add_theme_stylebox_override("pressed", _create_key_button_style(Color("#421A1A"), Color("#2A0E0E")))
+	correct_button.add_theme_color_override("font_color", Color("#F3E7C9"))
+	correct_button.pressed.connect(_backspace_digit)
+	phone_panel.add_child(correct_button)
 
 	var cancel_button := Button.new()
+<<<<<<< HEAD
 	cancel_button.text = "CERRAR"
 	cancel_button.position = Vector2(115, 475)
 	cancel_button.size = Vector2(180, 45)
@@ -1030,6 +1461,17 @@ func _create_phone_keypad() -> void:
 		_close_phone_keypad
 	)
 
+=======
+	cancel_button.text = "Colgar"
+	cancel_button.position = Vector2(phone_panel.size.x - 190, phone_panel.size.y - 74)
+	cancel_button.size = Vector2(160, 46)
+	cancel_button.add_theme_font_size_override("font_size", 16)
+	cancel_button.add_theme_stylebox_override("normal", _create_key_button_style(Color("#2B2B2B"), Color("#111111")))
+	cancel_button.add_theme_stylebox_override("hover", _create_key_button_style(Color("#3A3A3A"), Color("#111111")))
+	cancel_button.add_theme_stylebox_override("pressed", _create_key_button_style(Color("#1A1A1A"), Color("#000000")))
+	cancel_button.add_theme_color_override("font_color", Color("#F3E7C9"))
+	cancel_button.pressed.connect(_close_phone_keypad)
+>>>>>>> origin/main
 	phone_panel.add_child(cancel_button)
 
 
@@ -1045,14 +1487,33 @@ func _create_key_button_style(
 	style.border_width_right = 2
 	style.border_width_top = 2
 	style.border_width_bottom = 2
-	style.corner_radius_top_left = 32
-	style.corner_radius_top_right = 32
-	style.corner_radius_bottom_left = 32
-	style.corner_radius_bottom_right = 32
-	style.shadow_color = Color(0, 0, 0, 0.16)
+	style.corner_radius_top_left = 23
+	style.corner_radius_top_right = 23
+	style.corner_radius_bottom_left = 23
+	style.corner_radius_bottom_right = 23
+	style.shadow_color = Color(0, 0, 0, 0.25)
 	style.shadow_size = 4
 	style.shadow_offset = Vector2(0, 2)
 
+	return style
+
+
+# Estilo circular para los "huequitos" numerados del disco giratorio.
+func _create_dial_hole_style(background_color: Color, border_color: Color) -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = background_color
+	style.border_color = border_color
+	style.border_width_left = 2
+	style.border_width_right = 2
+	style.border_width_top = 2
+	style.border_width_bottom = 2
+	style.corner_radius_top_left = 28
+	style.corner_radius_top_right = 28
+	style.corner_radius_bottom_left = 28
+	style.corner_radius_bottom_right = 28
+	style.shadow_color = Color(0, 0, 0, 0.3)
+	style.shadow_size = 3
+	style.shadow_offset = Vector2(0, 2)
 	return style
 
 
@@ -1091,8 +1552,11 @@ func start_game() -> void:
 	player_in_phone_zone = false
 	spawn_counter = 0.0
 	current_spawn_interval = spawn_interval
+<<<<<<< HEAD
 	e_key_was_pressed = false
 	trunk_damage_cooldown_remaining = 0.0
+=======
+>>>>>>> origin/main
 	keypad_open = false
 	dialed_number = ""
 
@@ -1111,10 +1575,13 @@ func start_game() -> void:
 	update_lives_ui()
 	_update_hud()
 
+<<<<<<< HEAD
 	_show_prompt(
 		"Busca el teléfono y llama al 911."
 	)
 
+=======
+>>>>>>> origin/main
 	var player_age: int = MinigameData.player_age
 
 	if player_age < 12:
@@ -1138,10 +1605,13 @@ func start_game() -> void:
 		timer_hud.start(TOTAL_TIME)
 
 
+<<<<<<< HEAD
 # =========================================================
 # ROCAS
 # =========================================================
 
+=======
+>>>>>>> origin/main
 func _handle_rock_spawn(delta: float) -> void:
 	spawn_counter += delta
 
@@ -1195,6 +1665,7 @@ func _spawn_rock() -> void:
 		screen_size.y + 120.0
 	)
 
+<<<<<<< HEAD
 	var rock_speed := randf_range(
 		180.0,
 		260.0
@@ -1206,6 +1677,30 @@ func _spawn_rock() -> void:
 			end_position,
 			rock_speed
 		)
+=======
+	# --- Variedad de tamaño y velocidad ---
+	# size_multiplier: 0.7 = roca chica, 1.5 = roca grande.
+	# La velocidad se correlaciona de forma inversa con el tamaño (las
+	# rocas chicas caen más rápido y son más difíciles de ver venir; las
+	# grandes caen más lento pero ocupan más espacio y son más difíciles
+	# de esquivar por su tamaño). Encima le sumamos un rango aleatorio
+	# independiente para que no sea 100% predecible.
+	var size_multiplier := randf_range(0.7, 1.5)
+
+	var base_speed := randf_range(160.0, 250.0)
+	var speed_from_size := remap(size_multiplier, 0.7, 1.5, 1.35, 0.8)
+	var rock_speed := base_speed * speed_from_size
+
+	# De vez en cuando (1 de cada 6), generamos una roca "sorpresa": chica
+	# Y rápida a la vez, rompiendo la correlación normal para que el
+	# jugador no pueda memorizar el patrón "grande = lenta, chica = rápida".
+	if randf() < 0.16:
+		size_multiplier = randf_range(0.65, 0.85)
+		rock_speed = randf_range(300.0, 360.0)
+
+	if rock.has_method("setup"):
+		rock.setup(start_position, end_position, rock_speed, size_multiplier)
+>>>>>>> origin/main
 	else:
 		rock.global_position = start_position
 
@@ -1218,27 +1713,41 @@ func _clear_rocks() -> void:
 			rock.queue_free()
 
 
-func _check_rock_hits() -> void:
-	if player == null:
+func _register_rock_hit(rock: Node, body: Node) -> void:
+	if not game_active or already_finished:
 		return
 
 	if player_in_phone_zone or keypad_open or rescue_started:
 		return
 
+<<<<<<< HEAD
 	for rock in get_tree().get_nodes_in_group(
 		"falling_rocks"
 	):
 		if not is_instance_valid(rock):
 			continue
+=======
+	# Resolvemos el nodo que realmente debe recibir el daño. Si "body"
+	# (el que chocó físicamente) no tiene receive_damage, probamos con
+	# la referencia "player" que guardó el manager. Esto cubre el caso
+	# de jerarquías donde el CollisionShape2D está en un nodo distinto
+	# al que tiene el script.
+	var target: Node = null
+>>>>>>> origin/main
 
-		if rock.get_meta("hit_player", false):
-			continue
+	if body and body.has_method("receive_damage"):
+		target = body
+	elif player and player.has_method("receive_damage"):
+		target = player
 
-		var rock_node: Node2D = rock as Node2D
+	if target == null:
+		push_warning("No se encontró un nodo con receive_damage() para aplicar el daño.")
+		return
 
-		if rock_node == null:
-			continue
+	var rock_node := rock as Node2D
+	var source_position: Vector2 = target.global_position
 
+<<<<<<< HEAD
 		var x_distance: float = abs(
 			rock_node.global_position.x -
 			player.global_position.x
@@ -1283,6 +1792,12 @@ func _check_interaction() -> void:
 			_open_phone_keypad()
 
 	e_key_was_pressed = e_now
+=======
+	if rock_node:
+		source_position = rock_node.global_position
+
+	target.receive_damage(source_position)
+>>>>>>> origin/main
 
 
 func _check_safe_win() -> void:
@@ -1331,9 +1846,13 @@ func _open_phone_keypad() -> void:
 	if player:
 		player.set_physics_process(false)
 
+<<<<<<< HEAD
 	_show_prompt(
 		"Marca 911 y presiona LLAMAR."
 	)
+=======
+	_show_prompt("Gira el disco para marcar el 911.")
+>>>>>>> origin/main
 
 
 func _close_phone_keypad() -> void:
@@ -1352,9 +1871,14 @@ func _close_phone_keypad() -> void:
 	_start_alarm_sound()
 	_start_rocks_sound()
 
+<<<<<<< HEAD
 	_show_prompt(
 		"Presiona E para usar el teléfono."
 	)
+=======
+	if not has_called_911:
+		_show_prompt("Colgaste. Acércate de nuevo a la cabina para reintentar.")
+>>>>>>> origin/main
 
 
 func _on_keypad_number_pressed(
@@ -1372,8 +1896,13 @@ func _add_digit(number: String) -> void:
 	dialed_number += number
 	_update_dial_display()
 
-	if dialed_number == "911":
+	if dialed_number.length() >= 3:
 		_stop_keyboard_sound()
+		# El disco "termina de girar" solo, como en un teléfono real:
+		# apenas se completan los 3 dígitos, se intenta la llamada
+		# automáticamente, sin necesidad de un botón de LLAMAR.
+		await get_tree().create_timer(0.4).timeout
+		_try_call_number()
 
 
 func _backspace_digit() -> void:
@@ -1391,9 +1920,14 @@ func _backspace_digit() -> void:
 func _update_dial_display() -> void:
 	if dial_display:
 		if dialed_number == "":
-			dial_display.text = "___"
+			dial_display.text = "— — —"
 		else:
-			dial_display.text = dialed_number
+			var spaced := ""
+			for i in range(dialed_number.length()):
+				if i > 0:
+					spaced += " "
+				spaced += dialed_number[i]
+			dial_display.text = spaced
 
 
 func _try_call_number() -> void:
@@ -1550,6 +2084,7 @@ func _on_player_damaged() -> void:
 		lives = 0
 
 	update_lives_ui()
+	_play_damage_effect()
 
 	if lives <= 0:
 		lose_game()
@@ -1596,10 +2131,15 @@ func _on_phone_entered(body: Node) -> void:
 
 	player_in_phone_zone = true
 
+<<<<<<< HEAD
 	if not has_called_911:
 		_show_prompt(
 			"Presiona E para usar el teléfono."
 		)
+=======
+	if not has_called_911 and not keypad_open:
+		_open_phone_keypad()
+>>>>>>> origin/main
 
 
 func _on_phone_exited(body: Node) -> void:
@@ -1616,6 +2156,7 @@ func _on_phone_exited(body: Node) -> void:
 
 func _on_time_up() -> void:
 	if game_active and not already_finished:
+		_play_damage_effect()
 		lose_game()
 
 
@@ -1641,6 +2182,8 @@ func win_game() -> void:
 
 		elif timer_hud.has_method("stop_timer"):
 			timer_hud.stop_timer()
+
+	_set_game_result_sound_volume()
 
 	if game_result_panel != null:
 		if game_result_panel.has_method("mostrar_ganaste"):
@@ -1668,6 +2211,8 @@ func lose_game() -> void:
 
 		elif timer_hud.has_method("stop_timer"):
 			timer_hud.stop_timer()
+
+	_set_game_result_sound_volume()
 
 	if game_result_panel != null:
 		if game_result_panel.has_method("mostrar_perdiste"):

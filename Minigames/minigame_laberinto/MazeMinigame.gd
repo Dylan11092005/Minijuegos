@@ -17,6 +17,9 @@ const PANEL_SIZE   := Vector2(240, 108)
 const PANEL_RADIUS := 22.0
 var TOTAL_TIME: float = 50.0
 
+var damage_layer: CanvasLayer = null
+var damage_rect: ColorRect = null
+
 
 func _ready() -> void:
 	var canvas = CanvasLayer.new()
@@ -25,6 +28,8 @@ func _ready() -> void:
 	_panel = Node2D.new()
 	canvas.add_child(_panel)
 	_panel.draw.connect(_on_panel_draw)
+
+	_setup_damage_effect()
 
 	$AudioMusica.play()
 	_randomize_friend_positions()
@@ -42,6 +47,8 @@ func _ready() -> void:
 
 	$TimerUI.iniciar(TOTAL_TIME, "Evacúa en", "segundos")
 	$TimerUI.time_up.connect(_on_tiempo_agotado)
+
+
 func _randomize_friend_positions() -> void:
 	spawn_points.shuffle()
 
@@ -57,12 +64,14 @@ func _process(_delta):
 	pulse += _delta
 	_panel.queue_redraw()
 
+
 func _on_amigo1_rescatado(body):
 	if body.name == "Jugador":
 		amigos_rescatados += 1
 		$Amigos/Amigo1.queue_free()
 		verificar_zona_segura()
 		$AudioRescate.play()
+
 
 func _on_amigo2_rescatado(body):
 	if body.name == "Jugador":
@@ -71,9 +80,11 @@ func _on_amigo2_rescatado(body):
 		verificar_zona_segura()
 		$AudioRescate.play()
 
+
 func verificar_zona_segura():
 	if amigos_rescatados >= 2:
 		$ZonaSegura/BloqueoZona/CollisionShape2D.set_deferred("disabled", true)
+
 
 func _on_zona_segura_entrada(body):
 	if body.name == "Jugador":
@@ -85,11 +96,58 @@ func _on_zona_segura_entrada(body):
 		else:
 			print("Aún faltan amigos por rescatar")
 
+
 func _on_tiempo_agotado():
 	$AudioMusica.stop()
 	$Jugador.bloquear_movimiento()
 	$TimerUI.detener()
+	_play_damage_effect()
 	$ResultadoJuego.mostrar_perdiste()
+
+
+# =========================================================
+# DAMAGE EFFECT
+# =========================================================
+
+func _setup_damage_effect():
+	damage_layer = CanvasLayer.new()
+	damage_layer.name = "DamageLayer"
+	damage_layer.layer = 200
+	add_child(damage_layer)
+	
+	damage_rect = ColorRect.new()
+	damage_rect.name = "DamageRect"
+	damage_rect.color = Color(1, 0, 0)
+	damage_rect.modulate.a = 0.0
+	damage_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	damage_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	
+	damage_layer.add_child(damage_rect)
+
+
+func _play_damage_effect():
+	if not damage_rect:
+		return
+	
+	var original_position: Vector2 = position
+	
+	var flash_tween := create_tween()
+	damage_rect.modulate.a = 0.0
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.35, 0.08)
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.0, 0.22)
+	
+	var shake_tween := create_tween()
+	
+	for i in range(6):
+		var offset := Vector2(
+			randf_range(-8.0, 8.0),
+			randf_range(-8.0, 8.0)
+		)
+		
+		shake_tween.tween_property(self, "position", original_position + offset, 0.03)
+	
+	shake_tween.tween_property(self, "position", original_position, 0.05)
+
 
 func _on_panel_draw():
 	var viewport_size = get_viewport().get_visible_rect().size
@@ -97,6 +155,7 @@ func _on_panel_draw():
 	_panel_draw_panel(pos)
 	_panel_draw_titulo(pos)
 	_panel_draw_iconos_amigos(pos)
+
 
 func _panel_draw_panel(pos: Vector2):
 	_panel_rounded_rect(pos + Vector2(4, 5), PANEL_SIZE, PANEL_RADIUS,
@@ -108,6 +167,7 @@ func _panel_draw_panel(pos: Vector2):
 	_panel.draw_line(pos + Vector2(35, 9), pos + Vector2(PANEL_SIZE.x - 35, 9),
 		Color(1.0, 0.95, 0.84, 0.35), 2)
 
+
 func _panel_draw_titulo(pos: Vector2):
 	var font := ThemeDB.fallback_font
 	_panel.draw_string(font, pos + Vector2(2, 35), "AMIGOS",
@@ -115,6 +175,7 @@ func _panel_draw_titulo(pos: Vector2):
 		Color(1.0, 0.95, 0.86, 0.55))
 	_panel.draw_string(font, pos + Vector2(0, 33), "AMIGOS",
 		HORIZONTAL_ALIGNMENT_CENTER, PANEL_SIZE.x, 22, C_BLUE)
+
 
 func _panel_draw_iconos_amigos(pos: Vector2):
 	var start = pos + Vector2(70, 76)
@@ -133,6 +194,7 @@ func _panel_draw_iconos_amigos(pos: Vector2):
 				Color(0.78, 0.70, 0.60, 0.35),
 				false
 			)
+
 
 func _panel_figura_amigo(centro: Vector2, escala: float, color: Color, shine: Color, activo: bool):
 	var r_cabeza = 10.0 * escala
@@ -163,6 +225,7 @@ func _panel_figura_amigo(centro: Vector2, escala: float, color: Color, shine: Co
 			3
 		)
 
+
 func _panel_rounded_rect(rpos: Vector2, rsize: Vector2, radius: float, color: Color):
 	_panel.draw_rect(Rect2(rpos.x + radius, rpos.y, rsize.x - radius * 2, rsize.y), color)
 	_panel.draw_rect(Rect2(rpos.x, rpos.y + radius, rsize.x, rsize.y - radius * 2), color)
@@ -170,6 +233,7 @@ func _panel_rounded_rect(rpos: Vector2, rsize: Vector2, radius: float, color: Co
 	_panel.draw_circle(rpos + Vector2(rsize.x - radius, radius), radius, color)
 	_panel.draw_circle(rpos + Vector2(radius, rsize.y - radius), radius, color)
 	_panel.draw_circle(rpos + Vector2(rsize.x - radius, rsize.y - radius), radius, color)
+
 
 # =========================================================
 # TIME BONUS POR EDAD
@@ -188,6 +252,7 @@ func _get_time_bonus(age: int) -> float:
 			return 10.0
 		_:
 			return 10.0 if age < 7 else 0.0
+
 
 func _panel_rounded_border(rpos: Vector2, rsize: Vector2, radius: float, color: Color, width: float):
 	_panel.draw_line(rpos + Vector2(radius, 0), rpos + Vector2(rsize.x - radius, 0), color, width)

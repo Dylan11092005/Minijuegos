@@ -5,6 +5,7 @@ signal game_won
 signal game_lost
 
 const GAME_RESULT_SCENE: PackedScene = preload("res://Minigames/ui_global/GameResult.tscn")
+const GLOBAL_SOUND_VOLUME := -10.0
 
 const PIPE_ROUTES: Array = [
 	[
@@ -43,10 +44,25 @@ const LEAK_CANDIDATES: Array[Vector2] = [
 @export_range(10.0, 100.0, 1.0) var starting_water: float = 100.0
 @export_range(0.0, 5.0, 0.05) var base_water_loss_per_second: float = 0.25
 @export_range(0.0, 5.0, 0.05) var water_loss_per_active_leak: float = 0.35
+# Cantidad "de referencia" usada para normalizar el peligro según la
+# PROPORCIÓN de fugas activas (activas / total), no la cantidad absoluta.
+# Así, un niño con pocas fugas totales pero todas abiertas es tan
+# peligroso como uno con muchas fugas totales y todas abiertas; cada
+# fuga que tape cuenta proporcionalmente más si tiene menos fugas en total.
+@export_range(1.0, 20.0, 1.0) var leak_danger_reference_count: float = 10.0
 
 @export_group("Dificultad inicial")
 @export_range(1.0, 3.0, 0.05) var initial_water_loss_multiplier: float = 1.70
 @export_range(1.0, 20.0, 0.5) var initial_fast_loss_duration: float = 7.0
+
+@export_group("Fugas según edad")
+@export_range(1, 20, 1) var leak_count_age_under_7: int = 4
+@export_range(1, 20, 1) var leak_count_age_7: int = 5
+@export_range(1, 20, 1) var leak_count_age_8: int = 6
+@export_range(1, 20, 1) var leak_count_age_9: int = 7
+@export_range(1, 20, 1) var leak_count_age_10: int = 8
+@export_range(1, 20, 1) var leak_count_age_11: int = 9
+@export_range(1, 20, 1) var leak_count_age_12_plus: int = 10
 
 @export_group("Interacción")
 @export_range(20.0, 100.0, 1.0) var leak_hit_radius: float = 52.0
@@ -95,6 +111,9 @@ var _leak_sprites: Array[Sprite2D] = []
 var _leak_visuals_root: Node2D = null
 var _current_leak_frame: int = -1
 
+var damage_layer: CanvasLayer = null
+var damage_rect: ColorRect = null
+
 
 
 func _ready() -> void:
@@ -104,6 +123,7 @@ func _ready() -> void:
 
 	var player_age: int = MinigameData.player_age
 	_water_loss_age_multiplier = _get_water_loss_multiplier(player_age)
+	leak_count = _get_leak_count_for_age(player_age)
 
 	
 	
@@ -112,6 +132,7 @@ func _ready() -> void:
 	_create_leak_visuals()
 	_create_audio_players()
 	_create_game_result()
+	_setup_damage_effect()
 
 	var resize_callable: Callable = Callable(self, "_on_viewport_resized")
 	if not get_viewport().size_changed.is_connected(resize_callable):
@@ -299,11 +320,11 @@ func _create_audio_players() -> void:
 		_patch_sound_player.stream = patch_sound_stream
 
 	_background_music_player.bus = "Master"
-	_background_music_player.volume_db = maxf(background_music_volume_db, -16.0)
+	_background_music_player.volume_db = GLOBAL_SOUND_VOLUME
 	_background_music_player.max_polyphony = 1
 
 	_patch_sound_player.bus = "Master"
-	_patch_sound_player.volume_db = maxf(patch_sound_volume_db, -8.0)
+	_patch_sound_player.volume_db = GLOBAL_SOUND_VOLUME
 	_patch_sound_player.max_polyphony = 2
 
 	var background_finished: Callable = Callable(self, "_on_background_music_finished")
@@ -328,7 +349,7 @@ func _create_audio_players() -> void:
 			leak_player.stream = shared_leak_stream
 
 		leak_player.bus = "Master"
-		leak_player.volume_db = maxf(leak_sound_volume_db, -18.0)
+		leak_player.volume_db = GLOBAL_SOUND_VOLUME
 		leak_player.pitch_scale = _random.randf_range(0.94, 1.06)
 		leak_player.max_polyphony = 1
 
@@ -363,7 +384,6 @@ func _create_audio_players() -> void:
 	# de audio ya estén completamente dentro del árbol.
 	call_deferred("_start_audio_after_ready")
 
-
 func _get_or_create_audio_player(player_name: String) -> AudioStreamPlayer:
 	var existing_node: Node = get_node_or_null(NodePath(player_name))
 	if existing_node is AudioStreamPlayer:
@@ -387,9 +407,11 @@ func _start_background_music() -> void:
 		return
 	if _background_music_player.stream == null:
 		return
+
+	_background_music_player.volume_db = GLOBAL_SOUND_VOLUME
+
 	if not _background_music_player.playing:
 		_background_music_player.play(0.0)
-
 
 func _on_background_music_finished() -> void:
 	if _game_finished:
@@ -418,6 +440,8 @@ func _start_leak_sound(leak_index: int) -> void:
 	if leak_player.playing:
 		return
 
+	leak_player.volume_db = GLOBAL_SOUND_VOLUME
+
 	var start_position: float = 0.0
 	var stream_length: float = leak_player.stream.get_length()
 	if stream_length > 1.0:
@@ -426,7 +450,6 @@ func _start_leak_sound(leak_index: int) -> void:
 		start_position = _random.randf_range(0.0, stream_length * 0.65)
 
 	leak_player.play(start_position)
-
 
 func _on_leak_sound_finished(leak_index: int) -> void:
 	_start_leak_sound(leak_index)
@@ -447,10 +470,10 @@ func _play_patch_sound() -> void:
 	if _patch_sound_player.stream == null:
 		return
 
+	_patch_sound_player.volume_db = GLOBAL_SOUND_VOLUME
 	_patch_sound_player.stop()
 	_patch_sound_player.pitch_scale = _random.randf_range(0.97, 1.03)
 	_patch_sound_player.play(0.0)
-
 
 func _stop_continuous_audio() -> void:
 	if _background_music_player != null:
@@ -465,6 +488,79 @@ func _create_game_result() -> void:
 	_game_result = GAME_RESULT_SCENE.instantiate()
 	add_child(_game_result)
 
+	if _game_result is CanvasLayer:
+		_game_result.layer = 60
+
+	_game_result.process_mode = Node.PROCESS_MODE_ALWAYS
+	_set_game_result_sound_volume()
+
+
+func _set_game_result_sound_volume() -> void:
+	if _game_result == null:
+		return
+
+	var result_sounds := [
+		"WinSound",
+		"win_sound",
+		"AudioWin",
+		"WinAudio",
+		"LoseSound",
+		"lose_sound",
+		"AudioLose",
+		"LoseAudio"
+	]
+
+	for sound_name in result_sounds:
+		var sound = _game_result.find_child(sound_name, true, false)
+
+		if sound and sound is AudioStreamPlayer:
+			sound.volume_db = GLOBAL_SOUND_VOLUME
+			sound.process_mode = Node.PROCESS_MODE_ALWAYS
+
+
+# =========================================================
+# DAMAGE EFFECT
+# =========================================================
+
+func _setup_damage_effect():
+	damage_layer = CanvasLayer.new()
+	damage_layer.name = "DamageLayer"
+	damage_layer.layer = 200
+	add_child(damage_layer)
+	
+	damage_rect = ColorRect.new()
+	damage_rect.name = "DamageRect"
+	damage_rect.color = Color(1, 0, 0)
+	damage_rect.modulate.a = 0.0
+	damage_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	damage_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	
+	damage_layer.add_child(damage_rect)
+
+
+func _play_damage_effect():
+	if not damage_rect:
+		return
+	
+	var original_position: Vector2 = position
+	
+	var flash_tween := create_tween()
+	damage_rect.modulate.a = 0.0
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.35, 0.08)
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.0, 0.22)
+	
+	var shake_tween := create_tween()
+	
+	for i in range(6):
+		var offset := Vector2(
+			randf_range(-8.0, 8.0),
+			randf_range(-8.0, 8.0)
+		)
+		
+		shake_tween.tween_property(self, "position", original_position + offset, 0.03)
+	
+	shake_tween.tween_property(self, "position", original_position, 0.05)
+
 
 func _update_water_level(delta: float) -> void:
 	var active_leaks: int = _count_active_leaks()
@@ -472,9 +568,19 @@ func _update_water_level(delta: float) -> void:
 		_finish_game(true)
 		return
 
+	# El peligro se calcula por PROPORCIÓN de fugas activas sobre el total
+	# de fugas que le tocaron a este jugador, normalizado contra una
+	# cantidad de referencia (leak_danger_reference_count). Esto evita que
+	# tener menos fugas totales (niños pequeños) sea automáticamente más
+	# fácil: si tiene todas sus fugas abiertas, la urgencia es la misma
+	# que la de alguien con muchas más fugas totales y todas abiertas.
+	# Cada fuga que tapa, sin embargo, alivia proporcionalmente más.
+	var total_leaks: int = maxi(_leaks.size(), 1)
+	var active_ratio: float = float(active_leaks) / float(total_leaks)
+
 	var loss_per_second: float = (
 		base_water_loss_per_second
-		+ water_loss_per_active_leak * float(active_leaks)
+		+ water_loss_per_active_leak * active_ratio * leak_danger_reference_count
 	)
 
 	# Durante los primeros segundos el agua se pierde más rápido.
@@ -554,6 +660,7 @@ func _try_repair_leak(mouse_position: Vector2) -> void:
 	if selected_index < 0:
 		_invalid_drop_position = mouse_position
 		_invalid_drop_time = 0.45
+		_play_damage_effect()
 		return
 
 	var selected_leak: Dictionary = _leaks[selected_index]
@@ -579,12 +686,14 @@ func _finish_game(did_win: bool) -> void:
 	_game_finished = true
 	_dragging_patch = false
 	_stop_continuous_audio()
+	_set_game_result_sound_volume()
 
 	if did_win:
 		game_won.emit()
 		if _game_result != null and _game_result.has_method("mostrar_ganaste"):
 			_game_result.call("mostrar_ganaste")
 	else:
+		_play_damage_effect()
 		game_lost.emit()
 		if _game_result != null and _game_result.has_method("mostrar_perdiste"):
 			_game_result.call("mostrar_perdiste")
@@ -1561,3 +1670,22 @@ func _get_water_loss_multiplier(age: int) -> float:
 			return 0.55
 		_:
 			return 0.50 if age < 7 else 1.0
+
+
+# =========================================================
+# CANTIDAD DE FUGAS POR EDAD
+# =========================================================
+func _get_leak_count_for_age(age: int) -> int:
+	match age:
+		11:
+			return leak_count_age_11
+		10:
+			return leak_count_age_10
+		9:
+			return leak_count_age_9
+		8:
+			return leak_count_age_8
+		7:
+			return leak_count_age_7
+		_:
+			return leak_count_age_under_7 if age < 7 else leak_count_age_12_plus

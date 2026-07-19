@@ -1,0 +1,128 @@
+[gd_scene format=3 uid="uid://cdpukfixusqi1"]
+
+[ext_resource type="Script" uid="uid://evgg31un0xo" path="res://Minigames/minigame_landslide/landslide_minigame.gd" id="1_xrwn7"]
+[ext_resource type="Texture2D" uid="uid://d3yc8jmqyet7" path="res://Minigames/minigame_landslide/assets/01_background_landslide.png" id="2_xrwn7"]
+[ext_resource type="PackedScene" uid="uid://baspr7yo4qutn" path="res://Minigames/minigame_landslide/PlayerLandslide.tscn" id="5_3ukm6"]
+[ext_resource type="Texture2D" uid="uid://wvae3oagxp67" path="res://Minigames/minigame_landslide/assets/09_key_e_icon.png" id="7_1ik8k"]
+[ext_resource type="PackedScene" uid="uid://cf4skwm7ohn6a" path="res://Minigames/minigame_landslide/SafeCabin.tscn" id="7_du55d"]
+[ext_resource type="PackedScene" uid="uid://dwg5a3dxrnsvp" path="res://Minigames/minigame_landslide/PhoneCabin.tscn" id="8_1ik8k"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_telab"]
+size = Vector2(257, 264.5)
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_telab"]
+radius = 9.942078
+height = 299.5144
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_sikpy"]
+size = Vector2(13.819855, 550.14984)
+
+[node name="LandslideMinigame" type="Node2D" unique_id=753319566]
+position = Vector2(-8, 24)
+script = ExtResource("1_xrwn7")
+metadata/_edit_vertical_guides_ = [-3448.0]
+
+[node name="Background" type="Sprite2D" parent="." unique_id=929585264]
+position = Vector2(981.99994, 527)
+scale = Vector2(1.273677, 1.0727727)
+texture = ExtResource("2_xrwn7")
+
+[node name="RockSpawners" type="Node2D" parent="." unique_id=86279674]
+position = Vector2(48, 64)
+
+[node name="Marker2D" type="Marker2D" parent="RockSpawners" unique_id=14773880]
+position = Vector2(1522, 603)
+
+[node name="Marker2D2" type="Marker2D" parent="RockSpawners" unique_id=1589535782]
+position = Vector2(1267, 536)
+
+[node name="Marker2D3" type="Marker2D" parent="RockSpawners" unique_id=383624786]
+position = Vector2(1140, 481)
+
+[node name="Marker2D4" type="Marker2D" parent="RockSpawners" unique_id=805564964]
+position = Vector2(867, 414)
+
+[node name="CharacterBody2D" type="CharacterBody2D" parent="." unique_id=945735871]
+
+[node name="PlayerLandslide" parent="CharacterBody2D" unique_id=2051659331 instance=ExtResource("5_3ukm6")]
+position = Vector2(1003, 886)
+scale = Vector2(1.5, 1.5)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D" unique_id=723591867]
+position = Vector2(1006, 878.75)
+shape = SubResource("RectangleShape2D_telab")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1624760842]
+
+[node name="HUD" type="Control" parent="CanvasLayer" unique_id=951253644]
+layout_mode = 3
+anchor_left = -0.105000004
+anchor_top = 0.12900001
+anchor_right = -0.105000004
+anchor_bottom = 0.12900001
+offset_left = -36.039993
+offset_top = 280.408
+offset_right = 33.960007
+offset_bottom = 335.408
+
+[node name="MissionLabel" type="Label" parent="CanvasLayer/HUD" unique_id=1329834337]
+layout_mode = 0
+offset_left = -31.0
+offset_top = 314.0
+offset_right = 9.0
+offset_bottom = 337.0
+
+[node name="PromptLabel" type="Label" parent="CanvasLayer/HUD" unique_id=1577014661]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 2.265
+anchor_top = -6.609
+anchor_right = 2.357
+anchor_bottom = -6.609
+offset_left = 972.45
+offset_top = 794.495
+offset_right = 1021.01
+offset_bottom = 1015.495
+
+[node name="SafeCabin" parent="." unique_id=225917099 instance=ExtResource("7_du55d")]
+position = Vector2(229, 570)
+scale = Vector2(1.5, 1.5)
+
+[node name="PhoneCabin" parent="." unique_id=437809908 instance=ExtResource("8_1ik8k")]
+position = Vector2(1827, 872)
+
+[node name="09KeyEIcon" type="Sprite2D" parent="." unique_id=187291312]
+position = Vector2(1821, 701)
+scale = Vector2(0.8958333, 0.9479167)
+texture = ExtResource("7_1ik8k")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=649903626]
+collision_layer = 2
+
+[node name="CollisionShape2D5" type="CollisionShape2D" parent="StaticBody2D" unique_id=1660733649]
+position = Vector2(228.00006, 481.00006)
+rotation = 1.5515977
+scale = Vector2(0.9409001, 0.9409001)
+shape = SubResource("CapsuleShape2D_telab")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=1696227460]
+position = Vector2(727.35034, 365.90662)
+rotation = 0.79761547
+shape = SubResource("RectangleShape2D_sikpy")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D" unique_id=858817145]
+position = Vector2(1105, 224)
+rotation = 1.595231
+shape = SubResource("CapsuleShape2D_telab")
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D" unique_id=991273172]
+position = Vector2(1251, 325.00003)
+rotation = -0.5131268
+scale = Vector2(0.99999994, 0.99999994)
+shape = SubResource("CapsuleShape2D_telab")
+
+[node name="CollisionShape2D4" type="CollisionShape2D" parent="StaticBody2D" unique_id=1652315333]
+position = Vector2(1609.9998, 445)
+rotation = 1.5498525
+scale = Vector2(0.97, 0.97)
+shape = SubResource("CapsuleShape2D_telab")

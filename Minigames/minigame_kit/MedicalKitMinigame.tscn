@@ -3,14 +3,14 @@
 [ext_resource type="Script" uid="uid://bhw2vxumlxv8o" path="res://Minigames/minigame_kit/MedicalKitMinigame.gd" id="1_5uay0"]
 [ext_resource type="Script" uid="uid://wdblut6421n2" path="res://Minigames/minigame_kit/TargetSlot.gd" id="2_8j4xf"]
 [ext_resource type="Texture2D" uid="uid://bn1mml5a857ou" path="res://Minigames/minigame_kit/assets/fondo.png" id="2_xxftf"]
-[ext_resource type="Texture2D" uid="uid://bk2l3ner3td75" path="res://Minigames/minigame_kit/assets/botiquin_fondo2.PNG" id="3_a5t3a"]
+[ext_resource type="Texture2D" uid="uid://bp4hnk8lng1h3" path="res://Minigames/minigame_kit/assets/botiquin_fondo2.PNG" id="3_a5t3a"]
 [ext_resource type="Texture2D" uid="uid://b6onqveap3j5d" path="res://Minigames/minigame_kit/assets/OpenLid.png" id="4_v8kco"]
 [ext_resource type="PackedScene" uid="uid://ce2leo0ju6ooo" path="res://Minigames/minigame_kit/DraggableItem.tscn" id="4_xfrch"]
 [ext_resource type="Texture2D" uid="uid://c7csp01t6pcbp" path="res://Minigames/minigame_kit/assets/Numero.png" id="7_4rlyd"]
 [ext_resource type="Texture2D" uid="uid://ccet13tly5oo1" path="res://Minigames/minigame_kit/assets/cinta.png" id="7_wr6t0"]
 [ext_resource type="Texture2D" uid="uid://hhfrnpqe7vrr" path="res://Minigames/minigame_kit/assets/mascarilla.png" id="8_38x1a"]
-[ext_resource type="Texture2D" uid="uid://bdgaha12t4m3v" path="res://Minigames/minigame_kit/assets/tijeras.png" id="9_j7cxr"]
-[ext_resource type="Texture2D" uid="uid://gfe363jgjt8k" path="res://Minigames/minigame_kit/assets/gazas.png" id="10_lwg32"]
+[ext_resource type="Texture2D" uid="uid://cv0hy6tbkec6j" path="res://Minigames/minigame_kit/assets/tijerasColor.png" id="10_a5t3a"]
+[ext_resource type="Texture2D" uid="uid://dqhf05i5eglck" path="res://Minigames/minigame_kit/assets/gazasColor.png" id="11_275c3"]
 [ext_resource type="Texture2D" uid="uid://dp3k1j53vct2m" path="res://Minigames/minigame_kit/assets/termometro.png" id="12_6uu3t"]
 [ext_resource type="Texture2D" uid="uid://b41q15nd32gm0" path="res://Minigames/minigame_kit/assets/vendas.png" id="12_a5t3a"]
 [ext_resource type="Texture2D" uid="uid://dw0ome1aqcp3x" path="res://Minigames/minigame_kit/assets/curitas.png" id="13_oy2x5"]
@@ -195,7 +195,6 @@ metadata/_edit_lock_ = true
 position = Vector2(1394, 253)
 scale = Vector2(0.5, 0.5)
 item_id = "number"
-item_texture = ExtResource("7_4rlyd")
 
 [node name="Sprite2D" parent="Items/ItemNumber" index="0" unique_id=521007636]
 position = Vector2(-3.9998894, 20.00003)
@@ -246,12 +245,12 @@ metadata/_edit_lock_ = true
 position = Vector2(1440, 783)
 scale = Vector2(0.5, 0.5)
 item_id = "scissors"
-item_texture = ExtResource("9_j7cxr")
+item_texture = ExtResource("10_a5t3a")
 
 [node name="Sprite2D" parent="Items/ItemScissors" index="0" unique_id=521007636]
 position = Vector2(5.9999995, 0)
 scale = Vector2(0.8576416, 0.7900196)
-texture = ExtResource("9_j7cxr")
+texture = ExtResource("10_a5t3a")
 metadata/_edit_lock_ = true
 
 [node name="CollisionShape2D" parent="Items/ItemScissors" index="1" unique_id=1985551586]
@@ -263,12 +262,12 @@ metadata/_edit_lock_ = true
 position = Vector2(475, 606)
 scale = Vector2(0.5, 0.5)
 item_id = "gauze"
-item_texture = ExtResource("10_lwg32")
+item_texture = ExtResource("11_275c3")
 
 [node name="Sprite2D" parent="Items/ItemGauze" index="0" unique_id=521007636]
 position = Vector2(7.9999304, 3.0755997e-05)
 scale = Vector2(0.6984104, 0.6855049)
-texture = ExtResource("10_lwg32")
+texture = ExtResource("11_275c3")
 metadata/_edit_lock_ = true
 
 [node name="CollisionShape2D" parent="Items/ItemGauze" index="1" unique_id=1985551586]
@@ -354,16 +353,16 @@ metadata/_edit_lock_ = true
 
 [node name="PlacedScissors" type="Sprite2D" parent="PlacedItems" unique_id=2099659222]
 visible = false
-position = Vector2(1092.0001, 504)
-scale = Vector2(0.438, 0.42000002)
-texture = ExtResource("9_j7cxr")
+position = Vector2(1093.5, 506.5)
+scale = Vector2(0.44600004, 0.4260001)
+texture = ExtResource("10_a5t3a")
 metadata/_edit_lock_ = true
 
 [node name="PlacedGauze" type="Sprite2D" parent="PlacedItems" unique_id=1172116843]
 visible = false
-position = Vector2(807.25, 632.9375)
-scale = Vector2(0.3389999, 0.35224998)
-texture = ExtResource("10_lwg32")
+position = Vector2(806.50006, 634)
+scale = Vector2(0.35400003, 0.35224998)
+texture = ExtResource("11_275c3")
 metadata/_edit_lock_ = true
 
 [node name="PlacedBandages" type="Sprite2D" parent="PlacedItems" unique_id=119793541]
@@ -390,13 +389,14 @@ metadata/_edit_lock_ = true
 
 [node name="BackgroundSound" type="AudioStreamPlayer" parent="." unique_id=1879940276]
 stream = ExtResource("14_irkdq")
-volume_db = -7.0
+volume_db = -13.311
 
 [node name="PiecePlacedSound" type="AudioStreamPlayer" parent="." unique_id=26982050]
 stream = ExtResource("16_a5t3a")
 
 [node name="LockSound" type="AudioStreamPlayer" parent="." unique_id=887631748]
 stream = ExtResource("17_kivhu")
+volume_db = -7.068
 
 [node name="ClosedKit" type="Node2D" parent="." unique_id=2062505697]
 visible = false

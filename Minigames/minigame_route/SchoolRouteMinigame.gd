@@ -40,6 +40,9 @@ const CARDINAL_DIRECTIONS: Array[Vector2i] = [
 ]
 
 
+const GLOBAL_SOUND_VOLUME := -10.0
+
+
 @export var path_piece_scene: PackedScene
 
 
@@ -151,6 +154,9 @@ var _random: RandomNumberGenerator = (
 
 var _error_texture: Texture2D = null
 
+var damage_layer: CanvasLayer = null
+var damage_rect: ColorRect = null
+
 
 @onready var _slots_root: Node2D = $Slots
 
@@ -209,9 +215,54 @@ func _ready() -> void:
 	_create_fixed_endpoint_pieces()
 	_layout_interface()
 	_create_global_ui()
+	_setup_damage_effect()
 	_configure_audio()
 	_configure_error_template()
 	_start_game()
+
+
+# ============================================================
+# DAMAGE EFFECT
+# ============================================================
+
+func _setup_damage_effect():
+	damage_layer = CanvasLayer.new()
+	damage_layer.name = "DamageLayer"
+	damage_layer.layer = 200
+	add_child(damage_layer)
+	
+	damage_rect = ColorRect.new()
+	damage_rect.name = "DamageRect"
+	damage_rect.color = Color(1, 0, 0)
+	damage_rect.modulate.a = 0.0
+	damage_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	damage_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	
+	damage_layer.add_child(damage_rect)
+
+
+func _play_damage_effect():
+	if not damage_rect:
+		return
+	
+	var original_position: Vector2 = position
+	
+	var flash_tween := create_tween()
+	damage_rect.modulate.a = 0.0
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.35, 0.08)
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.0, 0.22)
+	
+	var shake_tween := create_tween()
+	
+	for i in range(6):
+		var offset := Vector2(
+			randf_range(-8.0, 8.0),
+			randf_range(-8.0, 8.0)
+		)
+		
+		shake_tween.tween_property(self, "position", original_position + offset, 0.03)
+	
+	shake_tween.tween_property(self, "position", original_position, 0.05)
 
 
 # ============================================================
@@ -247,11 +298,18 @@ func _create_global_ui() -> void:
 	_game_result = GAME_RESULT_SCENE.instantiate()
 	add_child(_game_result)
 
+	if _game_result is CanvasLayer:
+		_game_result.layer = 60
+
+	_game_result.process_mode = Node.PROCESS_MODE_ALWAYS
+	_set_game_result_sound_volume()
+
 
 func _start_game() -> void:
 	_game_finished = false
 
 	if _background_sound != null:
+		_background_sound.volume_db = GLOBAL_SOUND_VOLUME
 		_background_sound.play()
 
 	
@@ -281,20 +339,48 @@ func _start_game() -> void:
 # ============================================================
 
 func _configure_audio() -> void:
-	if _background_sound == null:
+	if _background_sound != null:
+		_background_sound.volume_db = GLOBAL_SOUND_VOLUME
+
+		var finished_callable: Callable = Callable(
+			self,
+			"_on_background_sound_finished"
+		)
+
+		if not _background_sound.finished.is_connected(
+			finished_callable
+		):
+			_background_sound.finished.connect(
+				finished_callable
+			)
+
+	if _piece_sound != null:
+		_piece_sound.volume_db = GLOBAL_SOUND_VOLUME
+
+	_set_game_result_sound_volume()
+
+
+func _set_game_result_sound_volume() -> void:
+	if _game_result == null:
 		return
 
-	var finished_callable: Callable = Callable(
-		self,
-		"_on_background_sound_finished"
-	)
+	var result_sounds := [
+		"WinSound",
+		"win_sound",
+		"AudioWin",
+		"WinAudio",
+		"LoseSound",
+		"lose_sound",
+		"AudioLose",
+		"LoseAudio"
+	]
 
-	if not _background_sound.finished.is_connected(
-		finished_callable
-	):
-		_background_sound.finished.connect(
-			finished_callable
-		)
+	for sound_name in result_sounds:
+		var sound = _game_result.find_child(sound_name, true, false)
+
+		if sound and sound is AudioStreamPlayer:
+			sound.volume_db = GLOBAL_SOUND_VOLUME
+			sound.process_mode = Node.PROCESS_MODE_ALWAYS
 
 
 func _on_background_sound_finished() -> void:
@@ -304,6 +390,7 @@ func _on_background_sound_finished() -> void:
 	if _background_sound == null:
 		return
 
+	_background_sound.volume_db = GLOBAL_SOUND_VOLUME
 	_background_sound.play()
 
 
@@ -311,6 +398,10 @@ func _play_piece_sound() -> void:
 	if _piece_sound == null:
 		return
 
+	if _piece_sound.stream == null:
+		return
+
+	_piece_sound.volume_db = GLOBAL_SOUND_VOLUME
 	_piece_sound.stop()
 	_piece_sound.play()
 
@@ -1979,6 +2070,8 @@ func _finish_game(
 	if _background_sound != null:
 		_background_sound.stop()
 
+	_set_game_result_sound_volume()
+
 	if did_win:
 		game_won.emit()
 
@@ -1993,6 +2086,7 @@ func _finish_game(
 			)
 
 	else:
+		_play_damage_effect()
 		game_lost.emit()
 
 		if (

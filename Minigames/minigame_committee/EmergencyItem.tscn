@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://oyhe0kv8gmd2"]
+
+[ext_resource type="Script" uid="uid://dgsw6m2nh5dn6" path="res://Minigames/minigame_committee/EmergencyItem.gd" id="1_xdp8d"]
+
+[node name="EmergencyItem" type="Area2D" unique_id=1797028966]
+script = ExtResource("1_xdp8d")
+
+[node name="ItemSprite" type="Sprite2D" parent="." unique_id=1866682784]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=740536200]

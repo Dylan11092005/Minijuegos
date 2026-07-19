@@ -12,6 +12,8 @@ const FOREST_MUSIC = preload("res://Minigames/minigame_identify_river/assets/for
 const CORRECT_SOUND = preload("res://Minigames/minigame_identify_river/assets/Correct.mp3")
 const LOSER_SOUND = preload("res://Minigames/minigame_identify_river/assets/Loser.mp3")
 
+const GLOBAL_SOUND_VOLUME := -10.0
+
 var game_active := false
 var already_finished := false
 
@@ -39,6 +41,9 @@ var forest_music_player: AudioStreamPlayer
 var correct_sound_player: AudioStreamPlayer
 var loser_sound_player: AudioStreamPlayer
 
+var damage_layer: CanvasLayer = null
+var damage_rect: ColorRect = null
+
 
 func _ready() -> void:
 	add_to_group("game_manager")
@@ -52,6 +57,7 @@ func _ready() -> void:
 	create_round_ui()
 	create_simple_ui()
 	create_audio()
+	_setup_damage_effect()
 	connect_river_options()
 
 	start_game()
@@ -102,6 +108,9 @@ func create_game_result_panel() -> void:
 	game_result_panel = GAME_RESULT_SCENE.instantiate()
 	add_child(game_result_panel)
 	game_result_panel.layer = 60
+	game_result_panel.process_mode = Node.PROCESS_MODE_ALWAYS
+
+	_set_game_result_sound_volume()
 
 
 func create_lives_ui() -> void:
@@ -188,36 +197,79 @@ func create_simple_ui() -> void:
 	ui_layer.add_child(feedback_label)
 
 
+# =========================================================
+# AUDIO
+# =========================================================
+
 func create_audio() -> void:
 	bass_music_player = AudioStreamPlayer.new()
 	bass_music_player.stream = BASS_MUSIC
-	bass_music_player.volume_db = -14
+	bass_music_player.volume_db = GLOBAL_SOUND_VOLUME
 	add_child(bass_music_player)
 
 	forest_music_player = AudioStreamPlayer.new()
 	forest_music_player.stream = FOREST_MUSIC
-	forest_music_player.volume_db = -8
+	forest_music_player.volume_db = GLOBAL_SOUND_VOLUME
 	add_child(forest_music_player)
 
 	correct_sound_player = AudioStreamPlayer.new()
 	correct_sound_player.stream = CORRECT_SOUND
-	correct_sound_player.volume_db = 0
+	correct_sound_player.volume_db = GLOBAL_SOUND_VOLUME
 	add_child(correct_sound_player)
 
 	loser_sound_player = AudioStreamPlayer.new()
 	loser_sound_player.stream = LOSER_SOUND
-	loser_sound_player.volume_db = 0
+	loser_sound_player.volume_db = GLOBAL_SOUND_VOLUME
 	add_child(loser_sound_player)
 
 	play_background_music()
 
 
+func _set_game_result_sound_volume() -> void:
+	if game_result_panel == null:
+		return
+
+	var result_sounds := [
+		"WinSound",
+		"win_sound",
+		"AudioWin",
+		"WinAudio",
+		"LoseSound",
+		"lose_sound",
+		"AudioLose",
+		"LoseAudio"
+	]
+
+	for sound_name in result_sounds:
+		var sound = game_result_panel.find_child(sound_name, true, false)
+
+		if sound and sound is AudioStreamPlayer:
+			sound.volume_db = GLOBAL_SOUND_VOLUME
+			sound.process_mode = Node.PROCESS_MODE_ALWAYS
+
+
+func _play_sound(sound: AudioStreamPlayer) -> void:
+	if sound == null:
+		return
+
+	if sound.stream == null:
+		return
+
+	sound.volume_db = GLOBAL_SOUND_VOLUME
+	sound.stop()
+	sound.play()
+
+
 func play_background_music() -> void:
 	if bass_music_player != null:
-		bass_music_player.play()
+		bass_music_player.volume_db = GLOBAL_SOUND_VOLUME
+		if not bass_music_player.playing:
+			bass_music_player.play()
 
 	if forest_music_player != null:
-		forest_music_player.play()
+		forest_music_player.volume_db = GLOBAL_SOUND_VOLUME
+		if not forest_music_player.playing:
+			forest_music_player.play()
 
 
 func stop_background_music() -> void:
@@ -229,15 +281,55 @@ func stop_background_music() -> void:
 
 
 func play_correct_sound() -> void:
-	if correct_sound_player != null:
-		correct_sound_player.stop()
-		correct_sound_player.play()
+	_play_sound(correct_sound_player)
 
 
 func play_loser_sound() -> void:
-	if loser_sound_player != null:
-		loser_sound_player.stop()
-		loser_sound_player.play()
+	_play_sound(loser_sound_player)
+
+
+# =========================================================
+# DAMAGE EFFECT
+# =========================================================
+
+func _setup_damage_effect():
+	damage_layer = CanvasLayer.new()
+	damage_layer.name = "DamageLayer"
+	damage_layer.layer = 200
+	add_child(damage_layer)
+	
+	damage_rect = ColorRect.new()
+	damage_rect.name = "DamageRect"
+	damage_rect.color = Color(1, 0, 0)
+	damage_rect.modulate.a = 0.0
+	damage_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	damage_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	
+	damage_layer.add_child(damage_rect)
+
+
+func _play_damage_effect():
+	if not damage_rect:
+		return
+	
+	var original_position: Vector2 = position
+	
+	var flash_tween := create_tween()
+	damage_rect.modulate.a = 0.0
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.35, 0.08)
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.0, 0.22)
+	
+	var shake_tween := create_tween()
+	
+	for i in range(6):
+		var offset := Vector2(
+			randf_range(-8.0, 8.0),
+			randf_range(-8.0, 8.0)
+		)
+		
+		shake_tween.tween_property(self, "position", original_position + offset, 0.03)
+	
+	shake_tween.tween_property(self, "position", original_position, 0.05)
 
 
 func connect_river_options() -> void:
@@ -276,7 +368,6 @@ func start_round() -> void:
 	update_ui()
 	update_lives_ui()
 
-
 	var player_age: int = MinigameData.player_age
 
 	if player_age < 12:
@@ -286,8 +377,6 @@ func start_round() -> void:
 
 	timer_hud.detener()
 	timer_hud.iniciar(TOTAL_TIME, "Tiempo", "identifica el río diferente")
-
-
 
 	var different_index := randi() % river_options.size()
 
@@ -349,6 +438,7 @@ func _on_river_selected(is_different: bool) -> void:
 			lives = 0
 
 		update_lives_ui()
+		_play_damage_effect()
 		show_correct_river()
 
 		feedback_label.text = "Incorrecto. El río correcto está marcado."
@@ -396,6 +486,7 @@ func _on_time_up() -> void:
 			lives = 0
 
 		update_lives_ui()
+		_play_damage_effect()
 		disable_all_rivers()
 		game_active = false
 		timer_hud.detener()
@@ -425,9 +516,13 @@ func win_game() -> void:
 	timer_hud.detener()
 	disable_all_rivers()
 	stop_background_music()
+	_set_game_result_sound_volume()
 
 	if game_result_panel != null:
-		game_result_panel.mostrar_ganaste()
+		if game_result_panel.has_method("mostrar_ganaste"):
+			game_result_panel.mostrar_ganaste()
+		elif game_result_panel.has_method("show_win"):
+			game_result_panel.show_win()
 
 
 func lose_game() -> void:
@@ -440,18 +535,24 @@ func lose_game() -> void:
 	timer_hud.detener()
 	disable_all_rivers()
 	stop_background_music()
+	_set_game_result_sound_volume()
 
 	if game_result_panel != null:
-		game_result_panel.mostrar_perdiste()
+		if game_result_panel.has_method("mostrar_perdiste"):
+			game_result_panel.mostrar_perdiste()
+		elif game_result_panel.has_method("show_lose"):
+			game_result_panel.show_lose()
 
 
 func _on_back_pressed() -> void:
 	stop_background_music()
 	get_tree().change_scene_to_file("res://MenuPrincipal.tscn")
 
+
 # =========================================================
 # TIME BONUS POR EDAD
 # =========================================================
+
 func _get_time_bonus(age: int) -> float:
 	match age:
 		11:

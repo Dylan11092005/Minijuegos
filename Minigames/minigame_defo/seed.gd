@@ -35,14 +35,20 @@ func _process(_delta):
 func _input(event):
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT and not event.pressed and is_active:
-			check_seed_release_position()
-			deactivate_seed()
+			var should_release_bag := check_seed_release_position()
+
+			if should_release_bag:
+				deactivate_seed()
+			else:
+				# Se mantiene agarrado para seguir sembrando
+				is_active = true
+				z_index = 80
 
 		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed and is_active:
 			deactivate_seed()
 
 
-func check_seed_release_position():
+func check_seed_release_position() -> bool:
 	var areas = get_overlapping_areas()
 
 	for area in areas:
@@ -50,7 +56,7 @@ func check_seed_release_position():
 			if area.current_state == area.State.INVALID:
 				print("Seed placed in a bad hole by contact")
 				apply_bad_hole_damage()
-				return
+				return true
 
 	var holes = get_tree().get_nodes_in_group("holes")
 
@@ -76,16 +82,17 @@ func check_seed_release_position():
 	if closest_bad_hole != null and shortest_bad_distance <= bad_hole_distance:
 		print("Seed placed in a bad hole by distance")
 		apply_bad_hole_damage()
-		return
+		return true
 
 	if closest_good_hole != null and shortest_good_distance <= planting_distance:
 		var planted = closest_good_hole.try_plant()
 
 		if planted:
 			print("Seed planted")
-			return
+			return false
 
 	print("The seed was not released over a valid hole")
+	return true
 
 
 func apply_bad_hole_damage():

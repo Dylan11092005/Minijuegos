@@ -22,6 +22,9 @@ var game_active = true
 var TOTAL_TIME: float = 25.0
 var lives = 3
 
+var damage_layer: CanvasLayer = null
+var damage_rect: ColorRect = null
+
 @onready var trash_items = _get_existing_nodes([
 	"TrashBottle",
 	"TrashBag",
@@ -42,6 +45,7 @@ var lives = 3
 
 func _ready() -> void:
 	_setup_lives_ui()
+	_setup_damage_effect()
 	music_player.play()
 
 	var player_age: int = MinigameData.player_age
@@ -87,6 +91,49 @@ func _update_lives_ui():
 		_lives_ui.actualizar_vidas(lives)
 	if _lives_ui.has_method("set_max_lives"):
 		_lives_ui.set_max_lives(3)
+
+# =========================================================
+# DAMAGE EFFECT
+# =========================================================
+
+func _setup_damage_effect():
+	damage_layer = CanvasLayer.new()
+	damage_layer.name = "DamageLayer"
+	damage_layer.layer = 200
+	add_child(damage_layer)
+	
+	damage_rect = ColorRect.new()
+	damage_rect.name = "DamageRect"
+	damage_rect.color = Color(1, 0, 0)
+	damage_rect.modulate.a = 0.0
+	damage_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	damage_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	
+	damage_layer.add_child(damage_rect)
+
+
+func _play_damage_effect():
+	if not damage_rect:
+		return
+	
+	var original_position: Vector2 = position
+	
+	var flash_tween := create_tween()
+	damage_rect.modulate.a = 0.0
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.35, 0.08)
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.0, 0.22)
+	
+	var shake_tween := create_tween()
+	
+	for i in range(6):
+		var offset := Vector2(
+			randf_range(-8.0, 8.0),
+			randf_range(-8.0, 8.0)
+		)
+		
+		shake_tween.tween_property(self, "position", original_position + offset, 0.03)
+	
+	shake_tween.tween_property(self, "position", original_position, 0.05)
 
 # =========================================================
 # HELPERS
@@ -163,6 +210,7 @@ func _on_time_up():
 	game_active = false
 	music_player.stop()
 	timer_ui.detener()
+	_play_damage_effect()
 	result_ui.show_lose()
 
 func show_clean_effect(position_effect):
@@ -197,6 +245,7 @@ func touch_fish(fish_node):
 	lives -= 1
 	error_player.play()
 	_update_lives_ui()
+	_play_damage_effect()
 	fish_node.queue_free()
 	if lives <= 0:
 		game_active = false

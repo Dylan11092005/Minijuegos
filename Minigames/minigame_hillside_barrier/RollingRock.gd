@@ -7,7 +7,8 @@ class_name HillsideRollingRock
 # =========================================================
 
 const HIT_DISTANCE := 100.0
-const ROTATION_SPEED := 7.5
+
+const BASE_ROTATION_SPEED := 7.5
 
 const FRAME_COUNT := 3
 
@@ -15,8 +16,8 @@ const FRAME_COUNT := 3
 const FRAME_WIDTH := 512
 const FRAME_HEIGHT := 864
 
-const ROCK_SCALE := Vector2(0.18, 0.18)
-const ANIMATION_SPEED := 10.0
+const BASE_ROCK_SCALE := Vector2(0.18, 0.18)
+const BASE_ANIMATION_SPEED := 10.0
 
 
 # =========================================================
@@ -32,6 +33,12 @@ var _active := false
 
 var _animation_time := 0.0
 var _current_frame := 0
+
+var _rock_scale := BASE_ROCK_SCALE
+var _rotation_speed := BASE_ROTATION_SPEED
+var _animation_speed := BASE_ANIMATION_SPEED
+var _rotation_direction := 1.0
+var _rock_color := Color.WHITE
 
 var _previous_global_position := Vector2.ZERO
 
@@ -62,6 +69,7 @@ func setup(p_start: Vector2, p_end: Vector2, p_speed: float, p_minigame: Node):
 	_progress = 0.0
 	_active = true
 
+	_randomize_rock_variant()
 	_setup_sprite()
 
 
@@ -70,6 +78,7 @@ func setup(p_start: Vector2, p_end: Vector2, p_speed: float, p_minigame: Node):
 # =========================================================
 
 func _ready():
+	_randomize_rock_variant()
 	_setup_sprite()
 
 
@@ -84,7 +93,7 @@ func _process(delta):
 
 	position = _start_position.lerp(_end_position, _progress)
 
-	rotation += ROTATION_SPEED * delta
+	rotation += _rotation_speed * _rotation_direction * delta
 
 	_update_animation(delta)
 	_check_tree_collision()
@@ -99,6 +108,33 @@ func _process(delta):
 
 
 # =========================================================
+# ROCK VARIANTS
+# =========================================================
+
+func _randomize_rock_variant() -> void:
+	var random_scale := randf_range(0.85, 1.25)
+	_rock_scale = BASE_ROCK_SCALE * random_scale
+
+	_rotation_speed = randf_range(5.5, 10.5)
+	_animation_speed = randf_range(7.0, 13.0)
+
+	if randf() < 0.5:
+		_rotation_direction = -1.0
+	else:
+		_rotation_direction = 1.0
+
+	var color_variants := [
+		Color(1.0, 1.0, 1.0),
+		Color(0.85, 0.85, 0.85),
+		Color(0.75, 0.72, 0.68),
+		Color(0.65, 0.62, 0.58),
+		Color(0.90, 0.82, 0.72)
+	]
+
+	_rock_color = color_variants.pick_random()
+
+
+# =========================================================
 # SPRITE METHODS
 # =========================================================
 
@@ -109,7 +145,8 @@ func _setup_sprite():
 	_rock_sprite.centered = true
 	_rock_sprite.region_enabled = true
 	_rock_sprite.region_rect = Rect2(0, 0, FRAME_WIDTH, FRAME_HEIGHT)
-	_rock_sprite.scale = ROCK_SCALE
+	_rock_sprite.scale = _rock_scale
+	_rock_sprite.modulate = _rock_color
 	_rock_sprite.z_index = 35
 
 
@@ -117,7 +154,7 @@ func _update_animation(delta):
 	if _rock_sprite == null:
 		return
 
-	_animation_time += delta * ANIMATION_SPEED
+	_animation_time += delta * _animation_speed
 
 	var new_frame: int = int(_animation_time) % FRAME_COUNT
 
@@ -156,8 +193,6 @@ func _check_tree_collision():
 		if tree.has_method("get_rock_hit_radius"):
 			hit_radius = tree.get_rock_hit_radius()
 
-		# Ahora revisa la distancia real de la roca al punto del árbol.
-		# Esto evita que desaparezca apenas se planta.
 		var distance_to_tree: float = global_position.distance_to(tree_hit_position)
 
 		if distance_to_tree <= hit_radius:

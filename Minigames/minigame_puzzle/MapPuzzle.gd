@@ -45,6 +45,9 @@ var pieces: Array = []
 var selected_index: int = -1
 var game_active: bool   = false
 
+var damage_layer: CanvasLayer = null
+var damage_rect: ColorRect = null
+
 # =========================================================
 # UI
 # =========================================================
@@ -76,6 +79,8 @@ func _ready() -> void:
 	result_panel = RESULT_PANEL_SCENE.instantiate()
 	add_child(result_panel)
 
+	_setup_damage_effect()
+
 	_build_ui()
 
 	if map_texture:
@@ -99,6 +104,9 @@ func _start_game() -> void:
 	if map_texture == null:
 		return
 
+	var player_age: int = MinigameData.player_age
+	_apply_piece_amount_by_age(player_age)
+
 	guide_preview.texture = map_texture
 
 	var available_width  = 1050.0
@@ -117,8 +125,7 @@ func _start_game() -> void:
 	audio_background.volume_db = -15.0
 	audio_slide.volume_db      = -10.0
 	audio_background.play()
-	
-	var player_age: int = MinigameData.player_age
+
 	if player_age < 12:
 		TOTAL_TIME = 30.0 + _get_time_bonus(player_age)
 	else:
@@ -271,10 +278,11 @@ func _get_piece_at(pos: Vector2) -> int:
 # SWAP PIECES
 # =========================================================
 func _swap_pieces(a: int, b: int) -> void:
-	var temp_pos             = pieces[a]["current_pos"]
+	var temp_pos              = pieces[a]["current_pos"]
 	pieces[a]["current_pos"] = pieces[b]["current_pos"]
 	pieces[b]["current_pos"] = temp_pos
 	_apply_positions()
+
 	# Sonido al intercambiar piezas
 	audio_slide.play()
 
@@ -318,8 +326,52 @@ func _lose() -> void:
 	game_active = false
 	audio_background.stop()
 	timer_hud.detener()
+	_play_damage_effect()
 	result_panel.mostrar_perdiste()
 	emit_signal("puzzle_failed")
+
+# =========================================================
+# DAMAGE EFFECT
+# =========================================================
+
+func _setup_damage_effect():
+	damage_layer = CanvasLayer.new()
+	damage_layer.name = "DamageLayer"
+	damage_layer.layer = 200
+	add_child(damage_layer)
+	
+	damage_rect = ColorRect.new()
+	damage_rect.name = "DamageRect"
+	damage_rect.color = Color(1, 0, 0)
+	damage_rect.modulate.a = 0.0
+	damage_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	damage_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	
+	damage_layer.add_child(damage_rect)
+
+
+func _play_damage_effect():
+	if not damage_rect:
+		return
+	
+	var original_position: Vector2 = position
+	
+	var flash_tween := create_tween()
+	damage_rect.modulate.a = 0.0
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.35, 0.08)
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.0, 0.22)
+	
+	var shake_tween := create_tween()
+	
+	for i in range(6):
+		var offset := Vector2(
+			randf_range(-8.0, 8.0),
+			randf_range(-8.0, 8.0)
+		)
+		
+		shake_tween.tween_property(self, "position", original_position + offset, 0.03)
+	
+	shake_tween.tween_property(self, "position", original_position, 0.05)
 
 # =========================================================
 # TIMER CALLBACK
@@ -327,17 +379,53 @@ func _lose() -> void:
 func _on_time_up() -> void:
 	if game_active:
 		_lose()
+
 # =========================================================
-# Funcion de cuanto tiempo se añade
+# TIME BONUS POR EDAD
 # =========================================================
 func _get_time_bonus(age: int) -> float:
 	match age:
-		11: return 2.0
-		10: return 3.0
-		9:  return 5.0
-		8:  return 7.0
-		7:  return 10.0
-		_:  return 10.0 if age < 7 else 0.0
+		11:
+			return 2.0
+		10:
+			return 3.0
+		9:
+			return 5.0
+		8:
+			return 7.0
+		7:
+			return 10.0
+		_:
+			return 10.0 if age < 7 else 0.0
+
+# =========================================================
+# PIECE AMOUNT POR EDAD
+# =========================================================
+func _apply_piece_amount_by_age(age: int) -> void:
+	match age:
+		11:
+			cols = 3
+			rows = 3 # 9 piezas
+		10:
+			cols = 3
+			rows = 3 # 9 piezas
+		9:
+			cols = 3
+			rows = 2 # 6 piezas
+		8:
+			cols = 3
+			rows = 2 # 6 piezas
+		7:
+			cols = 2
+			rows = 2 # 4 piezas
+		_:
+			if age < 7:
+				cols = 2
+				rows = 2 # 4 piezas
+			else:
+				cols = 4
+				rows = 3 # 12 piezas
+
 # =========================================================
 # BUILD UI
 # =========================================================
