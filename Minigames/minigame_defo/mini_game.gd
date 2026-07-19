@@ -32,6 +32,9 @@ var lose_sound: AudioStreamPlayer
 var health_layer: CanvasLayer
 var health_ui: HealthBarUi
 
+var damage_layer: CanvasLayer = null
+var damage_rect: ColorRect = null
+
 @onready var back_button = get_node_or_null("CanvasLayer/BackButton")
 
 
@@ -43,6 +46,7 @@ func _ready():
 	create_timer()
 	create_game_result_panel()
 	create_health_ui()
+	_setup_damage_effect()
 	connect_back_button()
 
 	timer_hud.set_tamano_panel(600, 60)
@@ -223,8 +227,10 @@ func receive_bad_hole_damage():
 
 	current_damage += 10
 	update_health_bar()
+	_play_damage_effect()
 
 	if health <= 0:
+		await get_tree().create_timer(0.25).timeout
 		lose_game()
 
 
@@ -233,6 +239,50 @@ func connect_back_button():
 		back_button.pressed.connect(_on_back_pressed)
 	else:
 		print("CanvasLayer/BackButton was not found, but the game can continue.")
+
+
+# =========================================================
+# DAMAGE EFFECT
+# =========================================================
+
+func _setup_damage_effect():
+	damage_layer = CanvasLayer.new()
+	damage_layer.name = "DamageLayer"
+	damage_layer.layer = 200
+	add_child(damage_layer)
+	
+	damage_rect = ColorRect.new()
+	damage_rect.name = "DamageRect"
+	damage_rect.color = Color(1, 0, 0)
+	damage_rect.modulate.a = 0.0
+	damage_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	damage_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	
+	damage_layer.add_child(damage_rect)
+
+
+func _play_damage_effect():
+	if not damage_rect:
+		return
+	
+	var original_position: Vector2 = position
+	
+	var flash_tween := create_tween()
+	damage_rect.modulate.a = 0.0
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.35, 0.08)
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.0, 0.22)
+	
+	var shake_tween := create_tween()
+	
+	for i in range(6):
+		var offset := Vector2(
+			randf_range(-8.0, 8.0),
+			randf_range(-8.0, 8.0)
+		)
+		
+		shake_tween.tween_property(self, "position", original_position + offset, 0.03)
+	
+	shake_tween.tween_property(self, "position", original_position, 0.05)
 
 
 # =========================================================

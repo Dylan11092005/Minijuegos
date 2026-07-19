@@ -1,5 +1,3 @@
-# Main.gd
-
 extends Node
 
 # ---- Señales ---------------------------------------------------------------
@@ -66,6 +64,8 @@ var _shake_time: float = 0.0
 var _background_base_position := Vector2.ZERO
 var _player_base_position := Vector2.ZERO
 
+var _damage_active: bool = false
+
 
 # ---- Nodos -----------------------------------------------------------------
 
@@ -79,6 +79,9 @@ var _player_base_position := Vector2.ZERO
 
 var _lives_ui: Node2D = null
 var _game_result: Node = null
+
+var damage_layer: CanvasLayer = null
+var damage_rect: ColorRect = null
 
 
 func _ready() -> void:
@@ -112,6 +115,8 @@ func _ready() -> void:
 		_set_result_sound_volume()
 	else:
 		push_error("Main.gd: No se encontró res://Minigames/ui_global/GameResult.tscn")
+
+	_setup_damage_effect()
 
 	_hud.hide_earthquake_banner()
 
@@ -299,18 +304,82 @@ func _reset_screen_shake() -> void:
 
 
 # ---------------------------------------------------------------------------
+# DAMAGE EFFECT
+# ---------------------------------------------------------------------------
+
+func _setup_damage_effect():
+	damage_layer = CanvasLayer.new()
+	damage_layer.name = "DamageLayer"
+	damage_layer.layer = 200
+	add_child(damage_layer)
+	
+	damage_rect = ColorRect.new()
+	damage_rect.name = "DamageRect"
+	damage_rect.color = Color(1, 0, 0)
+	damage_rect.modulate.a = 0.0
+	damage_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	damage_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	
+	damage_layer.add_child(damage_rect)
+
+
+func _play_damage_effect():
+	if not damage_rect:
+		return
+	
+	var original_background_position: Vector2 = _background_base_position
+	var original_player_position: Vector2 = _player_base_position
+	
+	var flash_tween := create_tween()
+	damage_rect.modulate.a = 0.0
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.35, 0.08)
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.0, 0.22)
+	
+	var shake_tween := create_tween()
+	
+	for i in range(6):
+		var offset := Vector2(
+			randf_range(-8.0, 8.0),
+			randf_range(-8.0, 8.0)
+		)
+		
+		if _background and is_instance_valid(_background):
+			shake_tween.tween_property(_background, "position", original_background_position + offset, 0.03)
+		
+		if _player and is_instance_valid(_player):
+			shake_tween.parallel().tween_property(_player, "position", original_player_position + offset, 0.03)
+	
+	if _background and is_instance_valid(_background):
+		shake_tween.tween_property(_background, "position", original_background_position, 0.05)
+	
+	if _player and is_instance_valid(_player):
+		shake_tween.parallel().tween_property(_player, "position", original_player_position, 0.05)
+
+
+# ---------------------------------------------------------------------------
 # VIDAS
 # ---------------------------------------------------------------------------
 
 func _lose_life() -> void:
+	if _damage_active:
+		return
+	
+	_damage_active = true
+	
 	_current_lives -= 1
 
 	if _lives_ui:
 		_lives_ui.actualizar_vidas(_current_lives)
 
+	_play_damage_effect()
+
 	if _current_lives <= 0:
+		await get_tree().create_timer(0.25).timeout
+		_damage_active = false
 		_set_state(State.LOSE)
 	else:
+		await get_tree().create_timer(0.25).timeout
+		_damage_active = false
 		_set_state(State.WALKING)
 
 
