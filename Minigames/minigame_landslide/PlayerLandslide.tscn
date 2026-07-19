@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://bkagq1s00rrda" path="res://Minigames/minigame_landslide/assets/02_player_landslide.png" id="2_a3jtf"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_a3jtf"]
-size = Vector2(209.375, 226.75)
+size = Vector2(82.6875, 188)
 
 [node name="PlayerLandslide" type="CharacterBody2D" unique_id=2051659331]
 script = ExtResource("1_q4g1s")
@@ -15,5 +15,5 @@ scale = Vector2(0.16910808, 0.19354247)
 texture = ExtResource("2_a3jtf")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1411673206]
-position = Vector2(0, 2)
+position = Vector2(6, -1)
 shape = SubResource("RectangleShape2D_a3jtf")

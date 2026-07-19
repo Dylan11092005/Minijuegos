@@ -25,6 +25,9 @@ const FIRE_TRUCK_PATH := "res://Minigames/minigame_landslide/assets/fire_truck.p
 @export var rescue_truck_speed_to_player := 2.0
 @export var rescue_truck_speed_to_safe := 2.6
 
+# Evita que varios troncos quiten todas las vidas de golpe.
+@export var trunk_damage_cooldown := 0.80
+
 var game_active := false
 var already_finished := false
 var rescue_started := false
@@ -35,6 +38,7 @@ var player_in_phone_zone := false
 var spawn_counter := 0.0
 var current_spawn_interval := 1.05
 var e_key_was_pressed := false
+var trunk_damage_cooldown_remaining := 0.0
 
 var keypad_open := false
 var dialed_number := ""
@@ -72,6 +76,10 @@ func _ready() -> void:
 	_create_audio()
 	_setup_main_nodes()
 	_setup_collisions()
+
+	# Detecta los troncos puestos manualmente.
+	_setup_manual_trunks()
+
 	_create_ui()
 	_create_timer()
 	_create_result_panel()
@@ -83,6 +91,12 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	if trunk_damage_cooldown_remaining > 0.0:
+		trunk_damage_cooldown_remaining = maxf(
+			0.0,
+			trunk_damage_cooldown_remaining - delta
+		)
+
 	if not game_active or already_finished:
 		return
 
@@ -105,12 +119,16 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode >= KEY_0 and event.keycode <= KEY_9:
 			_add_digit(str(event.keycode - KEY_0))
+
 		elif event.keycode >= KEY_KP_0 and event.keycode <= KEY_KP_9:
 			_add_digit(str(event.keycode - KEY_KP_0))
+
 		elif event.keycode == KEY_BACKSPACE:
 			_backspace_digit()
+
 		elif event.keycode == KEY_ENTER or event.keycode == KEY_KP_ENTER:
 			_try_call_number()
+
 		elif event.keycode == KEY_ESCAPE:
 			_close_phone_keypad()
 
@@ -127,16 +145,41 @@ func _setup_main_nodes() -> void:
 		player.collision_layer = 1
 		player.collision_mask = 2
 	else:
-		push_warning("No se encontró Player. Pon tu personaje manualmente como CharacterBody2D y nómbralo Player.")
+		push_warning(
+			"No se encontró Player. Pon tu personaje como CharacterBody2D y nómbralo Player."
+		)
 
-	phone_cabin = _find_area_node(["PhoneCabin", "Telefono", "Teléfono", "Phone", "Movil", "Móvil", "MobilePhone"])
-	safe_cabin = _find_area_node(["SafeCabin", "CabinaSegura", "Refugio", "SafeZone", "Safe"])
+	phone_cabin = _find_area_node(
+		[
+			"PhoneCabin",
+			"Telefono",
+			"Teléfono",
+			"Phone",
+			"Movil",
+			"Móvil",
+			"MobilePhone"
+		]
+	)
+
+	safe_cabin = _find_area_node(
+		[
+			"SafeCabin",
+			"CabinaSegura",
+			"Refugio",
+			"SafeZone",
+			"Safe"
+		]
+	)
 
 	if phone_cabin == null:
-		push_warning("No se encontró PhoneCabin. El juego sigue, pero no podrás abrir el teléfono.")
+		push_warning(
+			"No se encontró PhoneCabin. No podrás abrir el teléfono."
+		)
 
 	if safe_cabin == null:
-		push_warning("No se encontró SafeCabin. El juego sigue, pero no podrás ganar por cabina segura.")
+		push_warning(
+			"No se encontró SafeCabin. No podrás ganar por la cabina segura."
+		)
 
 	rock_spawners = get_node_or_null("RockSpawners") as Node2D
 
@@ -148,13 +191,23 @@ func _setup_main_nodes() -> void:
 	if rock_spawners.get_child_count() == 0:
 		for i in range(6):
 			var marker := Marker2D.new()
+
 			marker.name = "Marker2D" + str(i + 1)
-			marker.position = Vector2(180 + (i * 190), -80)
+			marker.position = Vector2(
+				180 + (i * 190),
+				-80
+			)
+
 			rock_spawners.add_child(marker)
 
 
 func _find_first_character_body() -> CharacterBody2D:
-	var children := find_children("*", "CharacterBody2D", true, false)
+	var children := find_children(
+		"*",
+		"CharacterBody2D",
+		true,
+		false
+	)
 
 	if children.size() > 0:
 		return children[0] as CharacterBody2D
@@ -169,7 +222,11 @@ func _find_area_node(names: Array) -> Area2D:
 		if direct and direct is Area2D:
 			return direct
 
-		var found := find_child(str(node_name), true, false)
+		var found := find_child(
+			str(node_name),
+			true,
+			false
+		)
 
 		if found and found is Area2D:
 			return found
@@ -179,14 +236,28 @@ func _find_area_node(names: Array) -> Area2D:
 
 func _setup_collisions() -> void:
 	if player:
-		_set_character_collision(player, Vector2(46, 82), Vector2(0, 18))
+		_set_character_collision(
+			player,
+			Vector2(46, 82),
+			Vector2(0, 18)
+		)
 
 	if phone_cabin:
-		_set_area_collision(phone_cabin, Vector2(100, 135), Vector2(0, 8))
+		_set_area_collision(
+			phone_cabin,
+			Vector2(100, 135),
+			Vector2(0, 8)
+		)
 
 
-func _set_character_collision(node: CharacterBody2D, size: Vector2, offset: Vector2) -> void:
-	var collision := node.get_node_or_null("CollisionShape2D") as CollisionShape2D
+func _set_character_collision(
+	node: CharacterBody2D,
+	size: Vector2,
+	offset: Vector2
+) -> void:
+	var collision := node.get_node_or_null(
+		"CollisionShape2D"
+	) as CollisionShape2D
 
 	if collision == null:
 		collision = CollisionShape2D.new()
@@ -201,8 +272,14 @@ func _set_character_collision(node: CharacterBody2D, size: Vector2, offset: Vect
 	collision.position = offset
 
 
-func _set_area_collision(node: Area2D, size: Vector2, offset: Vector2) -> void:
-	var collision := node.get_node_or_null("CollisionShape2D") as CollisionShape2D
+func _set_area_collision(
+	node: Area2D,
+	size: Vector2,
+	offset: Vector2
+) -> void:
+	var collision := node.get_node_or_null(
+		"CollisionShape2D"
+	) as CollisionShape2D
 
 	if collision == null:
 		collision = CollisionShape2D.new()
@@ -219,12 +296,186 @@ func _set_area_collision(node: Area2D, size: Vector2, offset: Vector2) -> void:
 	node.monitorable = true
 
 
+# =========================================================
+# TRONCOS COLOCADOS MANUALMENTE
+# =========================================================
+
+func _setup_manual_trunks() -> void:
+	var found_trunks := 0
+
+	for node in find_children("*", "Node2D", true, false):
+		if node == self:
+			continue
+
+		var node_name := str(node.name).to_lower()
+
+		var is_trunk_name := (
+			node_name.begins_with("trunk")
+			or node_name.begins_with("tronco")
+		)
+
+		var is_trunk_scene := false
+
+		if node.scene_file_path != "":
+			is_trunk_scene = node.scene_file_path.ends_with(
+				"Trunk.tscn"
+			)
+
+		if not is_trunk_name and not is_trunk_scene:
+			continue
+
+		var trunk := node as Node2D
+
+		if trunk == null:
+			continue
+
+		_prepare_manual_trunk(trunk)
+		found_trunks += 1
+
+	if found_trunks == 0:
+		push_warning(
+			"No se encontraron troncos. Nómbralos Trunk, Trunk2, Trunk3, etc."
+		)
+
+
+func _prepare_manual_trunk(trunk: Node2D) -> void:
+	trunk.add_to_group("landslide_trunks")
+	trunk.set_meta("player_inside", false)
+
+	# Crea un Area2D dentro del Node2D.
+	var damage_area := trunk.get_node_or_null(
+		"DamageArea"
+	) as Area2D
+
+	if damage_area == null:
+		damage_area = Area2D.new()
+		damage_area.name = "DamageArea"
+		trunk.add_child(damage_area)
+
+	# El jugador está en la capa 1.
+	damage_area.collision_layer = 2
+	damage_area.collision_mask = 1
+	damage_area.monitoring = true
+	damage_area.monitorable = true
+
+	# Busca la colisión que ya tiene el Trunk.
+	var collision := trunk.get_node_or_null(
+		"CollisionShape2D"
+	) as CollisionShape2D
+
+	if collision == null:
+		collision = trunk.find_child(
+			"CollisionShape2D",
+			true,
+			false
+		) as CollisionShape2D
+
+	# Si no tiene CollisionShape2D, la crea.
+	if collision == null:
+		collision = CollisionShape2D.new()
+		collision.name = "CollisionShape2D"
+
+		var rectangle := RectangleShape2D.new()
+		rectangle.size = Vector2(170, 65)
+
+		collision.shape = rectangle
+		damage_area.add_child(collision)
+
+	# Mueve la colisión dentro del Area2D.
+	elif collision.get_parent() != damage_area:
+		collision.reparent(damage_area, true)
+
+	# Si la colisión no tiene Shape, crea un rectángulo.
+	if collision.shape == null:
+		var rectangle := RectangleShape2D.new()
+		rectangle.size = Vector2(170, 65)
+		collision.shape = rectangle
+
+	collision.disabled = false
+
+	var entered_callable := Callable(
+		self,
+		"_on_manual_trunk_body_entered"
+	).bind(trunk)
+
+	var exited_callable := Callable(
+		self,
+		"_on_manual_trunk_body_exited"
+	).bind(trunk)
+
+	if not damage_area.body_entered.is_connected(
+		entered_callable
+	):
+		damage_area.body_entered.connect(
+			entered_callable
+		)
+
+	if not damage_area.body_exited.is_connected(
+		exited_callable
+	):
+		damage_area.body_exited.connect(
+			exited_callable
+		)
+
+
+func _on_manual_trunk_body_entered(
+	body: Node,
+	trunk: Node2D
+) -> void:
+	if not body.is_in_group("player"):
+		return
+
+	if trunk == null or not is_instance_valid(trunk):
+		return
+
+	# Solo quita una vida mientras el jugador siga dentro.
+	if bool(trunk.get_meta("player_inside", false)):
+		return
+
+	trunk.set_meta("player_inside", true)
+
+	_on_trunk_touched()
+
+
+func _on_manual_trunk_body_exited(
+	body: Node,
+	trunk: Node2D
+) -> void:
+	if not body.is_in_group("player"):
+		return
+
+	if trunk and is_instance_valid(trunk):
+		trunk.set_meta("player_inside", false)
+
+
+# =========================================================
+# AUDIO
+# =========================================================
+
 func _create_audio() -> void:
-	var alarm_stream: AudioStream = _load_audio(["Alarm.mp3", "alarm.mp3"])
-	var rocks_stream: AudioStream = _load_audio(["Rocks.mp3", "rocks.mp3"])
-	var keyboard_stream: AudioStream = _load_audio(["Keyboard.mp3", "keyboard.mp3"])
-	var firetruck_siren_stream: AudioStream = _load_audio(["Firetrucksiren.mp3", "firetrucksiren.mp3", "FireTruckSiren.mp3"])
-	var call_911_stream: AudioStream = _load_audio(["911.mp3"])
+	var alarm_stream: AudioStream = _load_audio(
+		["Alarm.mp3", "alarm.mp3"]
+	)
+
+	var rocks_stream: AudioStream = _load_audio(
+		["Rocks.mp3", "rocks.mp3"]
+	)
+
+	var keyboard_stream: AudioStream = _load_audio(
+		["Keyboard.mp3", "keyboard.mp3"]
+	)
+
+	var firetruck_siren_stream: AudioStream = _load_audio(
+		[
+			"Firetrucksiren.mp3",
+			"firetrucksiren.mp3",
+			"FireTruckSiren.mp3"
+		]
+	)
+
+	var call_911_stream: AudioStream = _load_audio(
+		["911.mp3"]
+	)
 
 	if alarm_stream:
 		alarm_sound = AudioStreamPlayer.new()
@@ -232,9 +483,14 @@ func _create_audio() -> void:
 		alarm_sound.stream = alarm_stream
 		alarm_sound.volume_db = -2
 		add_child(alarm_sound)
-		alarm_sound.finished.connect(_loop_alarm_sound)
+
+		alarm_sound.finished.connect(
+			_loop_alarm_sound
+		)
 	else:
-		push_warning("No se encontró Alarm.mp3 en Music.")
+		push_warning(
+			"No se encontró Alarm.mp3 en Music."
+		)
 
 	if rocks_stream:
 		rocks_sound = AudioStreamPlayer.new()
@@ -242,9 +498,14 @@ func _create_audio() -> void:
 		rocks_sound.stream = rocks_stream
 		rocks_sound.volume_db = -10
 		add_child(rocks_sound)
-		rocks_sound.finished.connect(_loop_rocks_sound)
+
+		rocks_sound.finished.connect(
+			_loop_rocks_sound
+		)
 	else:
-		push_warning("No se encontró Rocks.mp3 en Music.")
+		push_warning(
+			"No se encontró Rocks.mp3 en Music."
+		)
 
 	if keyboard_stream:
 		keyboard_sound = AudioStreamPlayer.new()
@@ -253,7 +514,9 @@ func _create_audio() -> void:
 		keyboard_sound.volume_db = 0
 		add_child(keyboard_sound)
 	else:
-		push_warning("No se encontró Keyboard.mp3 en Music.")
+		push_warning(
+			"No se encontró Keyboard.mp3 en Music."
+		)
 
 	if firetruck_siren_stream:
 		firetruck_siren_sound = AudioStreamPlayer.new()
@@ -261,9 +524,14 @@ func _create_audio() -> void:
 		firetruck_siren_sound.stream = firetruck_siren_stream
 		firetruck_siren_sound.volume_db = -1
 		add_child(firetruck_siren_sound)
-		firetruck_siren_sound.finished.connect(_loop_firetruck_siren_sound)
+
+		firetruck_siren_sound.finished.connect(
+			_loop_firetruck_siren_sound
+		)
 	else:
-		push_warning("No se encontró Firetrucksiren.mp3 en Music.")
+		push_warning(
+			"No se encontró Firetrucksiren.mp3 en Music."
+		)
 
 	if call_911_stream:
 		call_911_sound = AudioStreamPlayer.new()
@@ -272,7 +540,9 @@ func _create_audio() -> void:
 		call_911_sound.volume_db = 0
 		add_child(call_911_sound)
 	else:
-		push_warning("No se encontró 911.mp3 en Music.")
+		push_warning(
+			"No se encontró 911.mp3 en Music."
+		)
 
 
 func _load_audio(file_names: Array) -> AudioStream:
@@ -299,7 +569,12 @@ func _loop_rocks_sound() -> void:
 
 
 func _loop_firetruck_siren_sound() -> void:
-	if firetruck_siren_sound and game_active and not already_finished and rescue_started:
+	if (
+		firetruck_siren_sound
+		and game_active
+		and not already_finished
+		and rescue_started
+	):
 		firetruck_siren_sound.play()
 
 
@@ -367,8 +642,14 @@ func _stop_audio() -> void:
 		call_911_sound.stop()
 
 
+# =========================================================
+# INTERFAZ
+# =========================================================
+
 func _create_ui() -> void:
-	ui_layer = get_node_or_null("CanvasLayer") as CanvasLayer
+	ui_layer = get_node_or_null(
+		"CanvasLayer"
+	) as CanvasLayer
 
 	if ui_layer == null:
 		ui_layer = CanvasLayer.new()
@@ -377,21 +658,27 @@ func _create_ui() -> void:
 
 	ui_layer.layer = 40
 
-	hud = ui_layer.get_node_or_null("HUD") as Control
+	hud = ui_layer.get_node_or_null(
+		"HUD"
+	) as Control
 
 	if hud == null:
 		hud = Control.new()
 		hud.name = "HUD"
 		ui_layer.add_child(hud)
 
-	mission_label = hud.get_node_or_null("MissionLabel") as Label
+	mission_label = hud.get_node_or_null(
+		"MissionLabel"
+	) as Label
 
 	if mission_label == null:
 		mission_label = Label.new()
 		mission_label.name = "MissionLabel"
 		hud.add_child(mission_label)
 
-	prompt_label = hud.get_node_or_null("PromptLabel") as Label
+	prompt_label = hud.get_node_or_null(
+		"PromptLabel"
+	) as Label
 
 	if prompt_label == null:
 		prompt_label = Label.new()
@@ -403,19 +690,60 @@ func _create_ui() -> void:
 
 	mission_label.position = Vector2(25, 90)
 	mission_label.size = Vector2(760, 30)
-	mission_label.add_theme_font_size_override("font_size", 21)
-	mission_label.add_theme_color_override("font_color", Color.WHITE)
-	mission_label.add_theme_color_override("font_shadow_color", Color.BLACK)
-	mission_label.add_theme_constant_override("shadow_offset_x", 3)
-	mission_label.add_theme_constant_override("shadow_offset_y", 3)
+
+	mission_label.add_theme_font_size_override(
+		"font_size",
+		21
+	)
+
+	mission_label.add_theme_color_override(
+		"font_color",
+		Color.WHITE
+	)
+
+	mission_label.add_theme_color_override(
+		"font_shadow_color",
+		Color.BLACK
+	)
+
+	mission_label.add_theme_constant_override(
+		"shadow_offset_x",
+		3
+	)
+
+	mission_label.add_theme_constant_override(
+		"shadow_offset_y",
+		3
+	)
 
 	prompt_label.position = Vector2(25, 125)
 	prompt_label.size = Vector2(780, 70)
-	prompt_label.add_theme_font_size_override("font_size", 17)
-	prompt_label.add_theme_color_override("font_color", Color.WHITE)
-	prompt_label.add_theme_color_override("font_shadow_color", Color.BLACK)
-	prompt_label.add_theme_constant_override("shadow_offset_x", 3)
-	prompt_label.add_theme_constant_override("shadow_offset_y", 3)
+
+	prompt_label.add_theme_font_size_override(
+		"font_size",
+		17
+	)
+
+	prompt_label.add_theme_color_override(
+		"font_color",
+		Color.WHITE
+	)
+
+	prompt_label.add_theme_color_override(
+		"font_shadow_color",
+		Color.BLACK
+	)
+
+	prompt_label.add_theme_constant_override(
+		"shadow_offset_x",
+		3
+	)
+
+	prompt_label.add_theme_constant_override(
+		"shadow_offset_y",
+		3
+	)
+
 	prompt_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
 
@@ -454,6 +782,10 @@ func _create_lives_ui() -> void:
 	update_lives_ui()
 
 
+# =========================================================
+# TECLADO DEL TELÉFONO
+# =========================================================
+
 func _create_phone_keypad() -> void:
 	phone_overlay = ColorRect.new()
 	phone_overlay.name = "PhoneKeypadOverlay"
@@ -473,7 +805,10 @@ func _create_phone_keypad() -> void:
 	var phone_panel := Panel.new()
 	phone_panel.name = "PhoneKeypadPanel"
 	phone_panel.size = Vector2(410, 560)
-	phone_panel.position = (overlay_size - phone_panel.size) / 2.0
+	phone_panel.position = (
+		overlay_size - phone_panel.size
+	) / 2.0
+
 	phone_overlay.add_child(phone_panel)
 
 	var panel_style := StyleBoxFlat.new()
@@ -490,15 +825,28 @@ func _create_phone_keypad() -> void:
 	panel_style.shadow_color = Color(0, 0, 0, 0.35)
 	panel_style.shadow_size = 12
 	panel_style.shadow_offset = Vector2(0, 6)
-	phone_panel.add_theme_stylebox_override("panel", panel_style)
+
+	phone_panel.add_theme_stylebox_override(
+		"panel",
+		panel_style
+	)
 
 	var title := Label.new()
 	title.text = "Llamar al 911"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.position = Vector2(35, 30)
 	title.size = Vector2(340, 35)
-	title.add_theme_font_size_override("font_size", 28)
-	title.add_theme_color_override("font_color", Color("#202020"))
+
+	title.add_theme_font_size_override(
+		"font_size",
+		28
+	)
+
+	title.add_theme_color_override(
+		"font_color",
+		Color("#202020")
+	)
+
 	phone_panel.add_child(title)
 
 	dial_display = Label.new()
@@ -507,8 +855,17 @@ func _create_phone_keypad() -> void:
 	dial_display.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	dial_display.position = Vector2(55, 85)
 	dial_display.size = Vector2(300, 60)
-	dial_display.add_theme_font_size_override("font_size", 38)
-	dial_display.add_theme_color_override("font_color", Color("#111111"))
+
+	dial_display.add_theme_font_size_override(
+		"font_size",
+		38
+	)
+
+	dial_display.add_theme_color_override(
+		"font_color",
+		Color("#111111")
+	)
+
 	phone_panel.add_child(dial_display)
 
 	var grid := GridContainer.new()
@@ -517,30 +874,116 @@ func _create_phone_keypad() -> void:
 	grid.size = Vector2(290, 280)
 	phone_panel.add_child(grid)
 
-	for number in ["1", "2", "3", "4", "5", "6", "7", "8", "9", "BORRAR", "0", "LLAMAR"]:
+	for number in [
+		"1",
+		"2",
+		"3",
+		"4",
+		"5",
+		"6",
+		"7",
+		"8",
+		"9",
+		"BORRAR",
+		"0",
+		"LLAMAR"
+	]:
 		var button := Button.new()
 		button.custom_minimum_size = Vector2(88, 64)
-		button.add_theme_font_size_override("font_size", 24)
-		button.add_theme_stylebox_override("normal", _create_key_button_style(Color("#FFFFFF"), Color("#D0D0D0")))
-		button.add_theme_stylebox_override("hover", _create_key_button_style(Color("#F4FAFF"), Color("#6CA9E8")))
-		button.add_theme_stylebox_override("pressed", _create_key_button_style(Color("#D9ECFF"), Color("#4A90E2")))
-		button.add_theme_color_override("font_color", Color("#222222"))
+
+		button.add_theme_font_size_override(
+			"font_size",
+			24
+		)
+
+		button.add_theme_stylebox_override(
+			"normal",
+			_create_key_button_style(
+				Color("#FFFFFF"),
+				Color("#D0D0D0")
+			)
+		)
+
+		button.add_theme_stylebox_override(
+			"hover",
+			_create_key_button_style(
+				Color("#F4FAFF"),
+				Color("#6CA9E8")
+			)
+		)
+
+		button.add_theme_stylebox_override(
+			"pressed",
+			_create_key_button_style(
+				Color("#D9ECFF"),
+				Color("#4A90E2")
+			)
+		)
+
+		button.add_theme_color_override(
+			"font_color",
+			Color("#222222")
+		)
 
 		if number == "BORRAR":
 			button.text = "⌫"
-			button.add_theme_font_size_override("font_size", 28)
-			button.pressed.connect(_backspace_digit)
+
+			button.add_theme_font_size_override(
+				"font_size",
+				28
+			)
+
+			button.pressed.connect(
+				_backspace_digit
+			)
+
 		elif number == "LLAMAR":
 			button.text = "☎"
-			button.add_theme_font_size_override("font_size", 30)
-			button.add_theme_stylebox_override("normal", _create_key_button_style(Color("#39C95F"), Color("#229B42")))
-			button.add_theme_stylebox_override("hover", _create_key_button_style(Color("#4EE874"), Color("#229B42")))
-			button.add_theme_stylebox_override("pressed", _create_key_button_style(Color("#28A94A"), Color("#17752F")))
-			button.add_theme_color_override("font_color", Color.WHITE)
-			button.pressed.connect(_try_call_number)
+
+			button.add_theme_font_size_override(
+				"font_size",
+				30
+			)
+
+			button.add_theme_stylebox_override(
+				"normal",
+				_create_key_button_style(
+					Color("#39C95F"),
+					Color("#229B42")
+				)
+			)
+
+			button.add_theme_stylebox_override(
+				"hover",
+				_create_key_button_style(
+					Color("#4EE874"),
+					Color("#229B42")
+				)
+			)
+
+			button.add_theme_stylebox_override(
+				"pressed",
+				_create_key_button_style(
+					Color("#28A94A"),
+					Color("#17752F")
+				)
+			)
+
+			button.add_theme_color_override(
+				"font_color",
+				Color.WHITE
+			)
+
+			button.pressed.connect(
+				_try_call_number
+			)
+
 		else:
 			button.text = number
-			button.pressed.connect(_on_keypad_number_pressed.bind(number))
+
+			button.pressed.connect(
+				_on_keypad_number_pressed.bind(number)
+			)
 
 		grid.add_child(button)
 
@@ -548,17 +991,54 @@ func _create_phone_keypad() -> void:
 	cancel_button.text = "CERRAR"
 	cancel_button.position = Vector2(115, 475)
 	cancel_button.size = Vector2(180, 45)
-	cancel_button.add_theme_font_size_override("font_size", 18)
-	cancel_button.add_theme_stylebox_override("normal", _create_key_button_style(Color("#EEEEEE"), Color("#C4C4C4")))
-	cancel_button.add_theme_stylebox_override("hover", _create_key_button_style(Color("#FFFFFF"), Color("#AFC9E8")))
-	cancel_button.add_theme_stylebox_override("pressed", _create_key_button_style(Color("#D6D6D6"), Color("#999999")))
-	cancel_button.add_theme_color_override("font_color", Color("#222222"))
-	cancel_button.pressed.connect(_close_phone_keypad)
+
+	cancel_button.add_theme_font_size_override(
+		"font_size",
+		18
+	)
+
+	cancel_button.add_theme_stylebox_override(
+		"normal",
+		_create_key_button_style(
+			Color("#EEEEEE"),
+			Color("#C4C4C4")
+		)
+	)
+
+	cancel_button.add_theme_stylebox_override(
+		"hover",
+		_create_key_button_style(
+			Color("#FFFFFF"),
+			Color("#AFC9E8")
+		)
+	)
+
+	cancel_button.add_theme_stylebox_override(
+		"pressed",
+		_create_key_button_style(
+			Color("#D6D6D6"),
+			Color("#999999")
+		)
+	)
+
+	cancel_button.add_theme_color_override(
+		"font_color",
+		Color("#222222")
+	)
+
+	cancel_button.pressed.connect(
+		_close_phone_keypad
+	)
+
 	phone_panel.add_child(cancel_button)
 
 
-func _create_key_button_style(background_color: Color, border_color: Color) -> StyleBoxFlat:
+func _create_key_button_style(
+	background_color: Color,
+	border_color: Color
+) -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()
+
 	style.bg_color = background_color
 	style.border_color = border_color
 	style.border_width_left = 2
@@ -572,20 +1052,33 @@ func _create_key_button_style(background_color: Color, border_color: Color) -> S
 	style.shadow_color = Color(0, 0, 0, 0.16)
 	style.shadow_size = 4
 	style.shadow_offset = Vector2(0, 2)
+
 	return style
 
 
 func _connect_signals() -> void:
 	if player and player.has_signal("damaged"):
-		if not player.damaged.is_connected(_on_player_damaged):
-			player.damaged.connect(_on_player_damaged)
+		if not player.damaged.is_connected(
+			_on_player_damaged
+		):
+			player.damaged.connect(
+				_on_player_damaged
+			)
 
 	if phone_cabin:
-		if not phone_cabin.body_entered.is_connected(_on_phone_entered):
-			phone_cabin.body_entered.connect(_on_phone_entered)
+		if not phone_cabin.body_entered.is_connected(
+			_on_phone_entered
+		):
+			phone_cabin.body_entered.connect(
+				_on_phone_entered
+			)
 
-		if not phone_cabin.body_exited.is_connected(_on_phone_exited):
-			phone_cabin.body_exited.connect(_on_phone_exited)
+		if not phone_cabin.body_exited.is_connected(
+			_on_phone_exited
+		):
+			phone_cabin.body_exited.connect(
+				_on_phone_exited
+			)
 
 
 func start_game() -> void:
@@ -599,6 +1092,7 @@ func start_game() -> void:
 	spawn_counter = 0.0
 	current_spawn_interval = spawn_interval
 	e_key_was_pressed = false
+	trunk_damage_cooldown_remaining = 0.0
 	keypad_open = false
 	dialed_number = ""
 
@@ -616,25 +1110,37 @@ func start_game() -> void:
 
 	update_lives_ui()
 	_update_hud()
-	_show_prompt("Busca el teléfono y llama al 911.")
 
-	
+	_show_prompt(
+		"Busca el teléfono y llama al 911."
+	)
+
 	var player_age: int = MinigameData.player_age
 
 	if player_age < 12:
-		TOTAL_TIME = 45.0 + _get_time_bonus(player_age)
+		TOTAL_TIME = 45.0 + _get_time_bonus(
+			player_age
+		)
 	else:
 		TOTAL_TIME = 45.0
 
 	if timer_hud.has_method("iniciar"):
-		timer_hud.iniciar(TOTAL_TIME, "Tiempo", "para evacuar")
+		timer_hud.iniciar(
+			TOTAL_TIME,
+			"Tiempo",
+			"para evacuar"
+		)
+
 	elif timer_hud.has_method("start_timer"):
 		timer_hud.start_timer(TOTAL_TIME)
+
 	elif timer_hud.has_method("start"):
 		timer_hud.start(TOTAL_TIME)
 
 
-
+# =========================================================
+# ROCAS
+# =========================================================
 
 func _handle_rock_spawn(delta: float) -> void:
 	spawn_counter += delta
@@ -668,12 +1174,10 @@ func _spawn_rock() -> void:
 		return
 
 	var rock := rock_scene.instantiate()
-
 	add_child(rock)
 
 	rock.add_to_group("falling_rocks")
 	rock.set_meta("hit_player", false)
-
 	rock.z_index = 70
 
 	var screen_size := get_viewport_rect().size
@@ -684,20 +1188,32 @@ func _spawn_rock() -> void:
 	var start_position := marker.global_position
 
 	var end_position := Vector2(
-		randf_range(80.0, screen_size.x - 80.0),
+		randf_range(
+			80.0,
+			screen_size.x - 80.0
+		),
 		screen_size.y + 120.0
 	)
 
-	var rock_speed := randf_range(180.0, 260.0)
+	var rock_speed := randf_range(
+		180.0,
+		260.0
+	)
 
 	if rock.has_method("setup"):
-		rock.setup(start_position, end_position, rock_speed)
+		rock.setup(
+			start_position,
+			end_position,
+			rock_speed
+		)
 	else:
 		rock.global_position = start_position
 
 
 func _clear_rocks() -> void:
-	for rock in get_tree().get_nodes_in_group("falling_rocks"):
+	for rock in get_tree().get_nodes_in_group(
+		"falling_rocks"
+	):
 		if is_instance_valid(rock):
 			rock.queue_free()
 
@@ -709,7 +1225,9 @@ func _check_rock_hits() -> void:
 	if player_in_phone_zone or keypad_open or rescue_started:
 		return
 
-	for rock in get_tree().get_nodes_in_group("falling_rocks"):
+	for rock in get_tree().get_nodes_in_group(
+		"falling_rocks"
+	):
 		if not is_instance_valid(rock):
 			continue
 
@@ -721,14 +1239,27 @@ func _check_rock_hits() -> void:
 		if rock_node == null:
 			continue
 
-		var x_distance: float = abs(rock_node.global_position.x - player.global_position.x)
-		var y_difference: float = rock_node.global_position.y - player.global_position.y
+		var x_distance: float = abs(
+			rock_node.global_position.x -
+			player.global_position.x
+		)
 
-		if x_distance <= rock_hit_x_distance and y_difference >= rock_hit_y_min and y_difference <= rock_hit_y_max:
+		var y_difference: float = (
+			rock_node.global_position.y -
+			player.global_position.y
+		)
+
+		if (
+			x_distance <= rock_hit_x_distance
+			and y_difference >= rock_hit_y_min
+			and y_difference <= rock_hit_y_max
+		):
 			rock.set_meta("hit_player", true)
 
 			if player.has_method("receive_damage"):
-				player.receive_damage(rock_node.global_position)
+				player.receive_damage(
+					rock_node.global_position
+				)
 
 			if is_instance_valid(rock):
 				rock.queue_free()
@@ -741,10 +1272,14 @@ func _check_interaction() -> void:
 	var interact_pressed := false
 
 	if InputMap.has_action("interact"):
-		interact_pressed = Input.is_action_just_pressed("interact")
+		interact_pressed = Input.is_action_just_pressed(
+			"interact"
+		)
 
 	if player_in_phone_zone and not has_called_911:
-		if interact_pressed or (e_now and not e_key_was_pressed):
+		if interact_pressed or (
+			e_now and not e_key_was_pressed
+		):
 			_open_phone_keypad()
 
 	e_key_was_pressed = e_now
@@ -763,11 +1298,17 @@ func _check_safe_win() -> void:
 	if player == null or safe_cabin == null:
 		return
 
-	var distance: float = player.global_position.distance_to(safe_cabin.global_position)
+	var distance: float = player.global_position.distance_to(
+		safe_cabin.global_position
+	)
 
 	if distance <= safe_win_distance:
 		win_game()
 
+
+# =========================================================
+# TELÉFONO
+# =========================================================
 
 func _open_phone_keypad() -> void:
 	if has_called_911:
@@ -775,8 +1316,8 @@ func _open_phone_keypad() -> void:
 
 	keypad_open = true
 	dialed_number = ""
-	_update_dial_display()
 
+	_update_dial_display()
 	_set_alarm_low_volume()
 
 	if alarm_sound and not alarm_sound.playing:
@@ -790,7 +1331,9 @@ func _open_phone_keypad() -> void:
 	if player:
 		player.set_physics_process(false)
 
-	_show_prompt("Marca 911 y presiona LLAMAR.")
+	_show_prompt(
+		"Marca 911 y presiona LLAMAR."
+	)
 
 
 func _close_phone_keypad() -> void:
@@ -809,10 +1352,14 @@ func _close_phone_keypad() -> void:
 	_start_alarm_sound()
 	_start_rocks_sound()
 
-	_show_prompt("Presiona E para usar el teléfono.")
+	_show_prompt(
+		"Presiona E para usar el teléfono."
+	)
 
 
-func _on_keypad_number_pressed(number: String) -> void:
+func _on_keypad_number_pressed(
+	number: String
+) -> void:
 	_add_digit(number)
 
 
@@ -832,7 +1379,11 @@ func _add_digit(number: String) -> void:
 func _backspace_digit() -> void:
 	if dialed_number.length() > 0:
 		_play_keyboard_sound()
-		dialed_number = dialed_number.substr(0, dialed_number.length() - 1)
+
+		dialed_number = dialed_number.substr(
+			0,
+			dialed_number.length() - 1
+		)
 
 	_update_dial_display()
 
@@ -864,14 +1415,25 @@ func _try_call_number() -> void:
 		_start_rocks_sound()
 
 		_update_hud()
-		_show_prompt("Llamaste al 911. Los bomberos vienen en camino.")
+
+		_show_prompt(
+			"Llamaste al 911. Los bomberos vienen en camino."
+		)
 
 		_start_rescue_sequence()
+
 	else:
 		dialed_number = ""
 		_update_dial_display()
-		_show_prompt("Número incorrecto. Marca 911.")
 
+		_show_prompt(
+			"Número incorrecto. Marca 911."
+		)
+
+
+# =========================================================
+# RESCATE
+# =========================================================
 
 func _start_rescue_sequence() -> void:
 	if rescue_started:
@@ -896,20 +1458,37 @@ func _start_rescue_sequence() -> void:
 	if truck_texture is Texture2D:
 		rescue_truck.texture = truck_texture
 	else:
-		push_warning("No se encontró fire_truck.png en assets.")
+		push_warning(
+			"No se encontró fire_truck.png en assets."
+		)
+
 		rescue_truck = null
 		win_game()
 		return
 
 	add_child(rescue_truck)
 
-	var start_position := Vector2(-220, player.global_position.y)
-	var pickup_position := Vector2(player.global_position.x - 90, player.global_position.y)
-	var safe_position := Vector2(safe_cabin.global_position.x, safe_cabin.global_position.y)
+	var start_position := Vector2(
+		-220,
+		player.global_position.y
+	)
+
+	var pickup_position := Vector2(
+		player.global_position.x - 90,
+		player.global_position.y
+	)
+
+	var safe_position := Vector2(
+		safe_cabin.global_position.x,
+		safe_cabin.global_position.y
+	)
 
 	rescue_truck.global_position = start_position
 
-	_show_prompt("Ya casi viene la ayuda...")
+	_show_prompt(
+		"Ya casi viene la ayuda..."
+	)
+
 	_play_firetruck_siren_sound()
 
 	rescue_truck.flip_h = false
@@ -923,16 +1502,19 @@ func _start_rescue_sequence() -> void:
 		rescue_truck_speed_to_player
 	)
 
-	tween.tween_callback(func():
-		_show_prompt("Los bomberos llegaron por ti.")
+	tween.tween_callback(
+		func():
+			_show_prompt(
+				"Los bomberos llegaron por ti."
+			)
 
-		if player:
-			player.visible = false
+			if player:
+				player.visible = false
 
-		if safe_position.x < rescue_truck.global_position.x:
-			rescue_truck.flip_h = true
-		else:
-			rescue_truck.flip_h = false
+			if safe_position.x < rescue_truck.global_position.x:
+				rescue_truck.flip_h = true
+			else:
+				rescue_truck.flip_h = false
 	)
 
 	tween.tween_interval(0.4)
@@ -944,11 +1526,16 @@ func _start_rescue_sequence() -> void:
 		rescue_truck_speed_to_safe
 	)
 
-	tween.tween_callback(func():
-		_stop_firetruck_siren_sound()
-		win_game()
+	tween.tween_callback(
+		func():
+			_stop_firetruck_siren_sound()
+			win_game()
 	)
 
+
+# =========================================================
+# DAÑO
+# =========================================================
 
 func _on_player_damaged() -> void:
 	if not game_active or already_finished:
@@ -969,7 +1556,38 @@ func _on_player_damaged() -> void:
 		return
 
 	current_spawn_interval = spawn_interval_fast
-	_show_prompt("¡Cuidado! Una roca te cayó encima. Perdiste una vida.")
+
+	_show_prompt(
+		"¡Cuidado! Una roca te cayó encima. Perdiste una vida."
+	)
+
+
+func _on_trunk_touched() -> void:
+	if not game_active or already_finished:
+		return
+
+	if player_in_phone_zone or keypad_open or rescue_started:
+		return
+
+	# Evita que pierda varios corazones de golpe.
+	if trunk_damage_cooldown_remaining > 0.0:
+		return
+
+	trunk_damage_cooldown_remaining = trunk_damage_cooldown
+
+	# Quita exactamente una vida.
+	lives -= 1
+	lives = maxi(lives, 0)
+
+	update_lives_ui()
+
+	if lives <= 0:
+		lose_game()
+		return
+
+	_show_prompt(
+		"¡Tocaste un tronco! Perdiste una vida."
+	)
 
 
 func _on_phone_entered(body: Node) -> void:
@@ -979,7 +1597,9 @@ func _on_phone_entered(body: Node) -> void:
 	player_in_phone_zone = true
 
 	if not has_called_911:
-		_show_prompt("Presiona E para usar el teléfono.")
+		_show_prompt(
+			"Presiona E para usar el teléfono."
+		)
 
 
 func _on_phone_exited(body: Node) -> void:
@@ -989,7 +1609,9 @@ func _on_phone_exited(body: Node) -> void:
 	player_in_phone_zone = false
 
 	if not has_called_911 and not keypad_open:
-		_show_prompt("Debes llamar al 911 antes de ir a la cabina segura.")
+		_show_prompt(
+			"Debes llamar al 911 antes de ir a la cabina segura."
+		)
 
 
 func _on_time_up() -> void:
@@ -997,12 +1619,17 @@ func _on_time_up() -> void:
 		lose_game()
 
 
+# =========================================================
+# GANAR Y PERDER
+# =========================================================
+
 func win_game() -> void:
 	if already_finished:
 		return
 
 	already_finished = true
 	game_active = false
+
 	_stop_audio()
 
 	if player:
@@ -1011,12 +1638,14 @@ func win_game() -> void:
 	if timer_hud != null:
 		if timer_hud.has_method("detener"):
 			timer_hud.detener()
+
 		elif timer_hud.has_method("stop_timer"):
 			timer_hud.stop_timer()
 
 	if game_result_panel != null:
 		if game_result_panel.has_method("mostrar_ganaste"):
 			game_result_panel.mostrar_ganaste()
+
 		elif game_result_panel.has_method("show_win"):
 			game_result_panel.show_win()
 
@@ -1027,6 +1656,7 @@ func lose_game() -> void:
 
 	already_finished = true
 	game_active = false
+
 	_stop_audio()
 
 	if player:
@@ -1035,15 +1665,21 @@ func lose_game() -> void:
 	if timer_hud != null:
 		if timer_hud.has_method("detener"):
 			timer_hud.detener()
+
 		elif timer_hud.has_method("stop_timer"):
 			timer_hud.stop_timer()
 
 	if game_result_panel != null:
 		if game_result_panel.has_method("mostrar_perdiste"):
 			game_result_panel.mostrar_perdiste()
+
 		elif game_result_panel.has_method("show_lose"):
 			game_result_panel.show_lose()
 
+
+# =========================================================
+# INTERFAZ DE VIDAS
+# =========================================================
 
 func update_lives_ui() -> void:
 	if lives_ui == null:
@@ -1067,13 +1703,19 @@ func update_lives_ui() -> void:
 	if _call_lives_method("actualizar"):
 		return
 
-	var label := lives_ui.find_child("LivesLabel", true, false)
+	var label := lives_ui.find_child(
+		"LivesLabel",
+		true,
+		false
+	)
 
 	if label and label is Label:
 		label.text = "Vidas: " + str(lives)
 
 
-func _call_lives_method(method_name: String) -> bool:
+func _call_lives_method(
+	method_name: String
+) -> bool:
 	if lives_ui == null:
 		return false
 
@@ -1083,9 +1725,18 @@ func _call_lives_method(method_name: String) -> bool:
 			var count := args.size()
 
 			if count >= 2:
-				lives_ui.call(method_name, lives, max_lives)
+				lives_ui.call(
+					method_name,
+					lives,
+					max_lives
+				)
+
 			elif count == 1:
-				lives_ui.call(method_name, lives)
+				lives_ui.call(
+					method_name,
+					lives
+				)
+
 			else:
 				lives_ui.call(method_name)
 
@@ -1096,29 +1747,40 @@ func _call_lives_method(method_name: String) -> bool:
 
 func _update_hud() -> void:
 	if has_called_911:
-		mission_label.text = "Misión: espera a los bomberos"
+		mission_label.text = (
+			"Misión: espera a los bomberos"
+		)
 	else:
-		mission_label.text = "Misión: llama al 911"
+		mission_label.text = (
+			"Misión: llama al 911"
+		)
 
 
 func _show_prompt(message: String) -> void:
 	if prompt_label:
 		prompt_label.text = message
 
+
 # =========================================================
-# TIME BONUS POR EDAD
+# TIEMPO EXTRA POR EDAD
 # =========================================================
+
 func _get_time_bonus(age: int) -> float:
 	match age:
 		11:
 			return 2.0
+
 		10:
 			return 3.0
+
 		9:
 			return 5.0
+
 		8:
 			return 7.0
+
 		7:
 			return 10.0
+
 		_:
 			return 10.0 if age < 7 else 0.0
