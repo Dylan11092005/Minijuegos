@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://baspr7yo4qutn"]
+
+[ext_resource type="Script" uid="uid://djb5ehyn36a38" path="res://Minigames/minigame_landslide/PlayerLandslide.gd" id="1_q4g1s"]
+[ext_resource type="Texture2D" uid="uid://bkagq1s00rrda" path="res://Minigames/minigame_landslide/minigame_landslide/assets/02_player_landslide.png" id="2_a3jtf"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_a3jtf"]
+size = Vector2(25, 124)
+
+[node name="PlayerLandslide" type="CharacterBody2D" unique_id=2051659331]
+script = ExtResource("1_q4g1s")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=509236114]
+position = Vector2(4, -3)
+scale = Vector2(0.106038414, 0.13681029)
+texture = ExtResource("2_a3jtf")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1411673206]
+position = Vector2(4, -1)
+shape = SubResource("RectangleShape2D_a3jtf")

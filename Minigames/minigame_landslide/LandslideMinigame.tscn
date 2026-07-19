@@ -1,14 +1,11 @@
 [gd_scene format=3 uid="uid://cdpukfixusqi1"]
 
 [ext_resource type="Script" uid="uid://evgg31un0xo" path="res://Minigames/minigame_landslide/landslide_minigame.gd" id="1_xrwn7"]
-[ext_resource type="Texture2D" uid="uid://d3yc8jmqyet7" path="res://Minigames/minigame_landslide/assets/01_background_landslide.png" id="2_xrwn7"]
-[ext_resource type="PackedScene" uid="uid://baspr7yo4qutn" path="res://Minigames/minigame_landslide/PlayerLandslide.tscn" id="5_3ukm6"]
-[ext_resource type="PackedScene" uid="uid://cf4skwm7ohn6a" path="res://Minigames/minigame_landslide/SafeCabin.tscn" id="7_du55d"]
+[ext_resource type="Texture2D" uid="uid://d3yc8jmqyet7" path="res://Minigames/minigame_landslide/minigame_landslide/assets/01_background_landslide.png" id="2_xrwn7"]
+[ext_resource type="PackedScene" uid="uid://baspr7yo4qutn" path="res://Minigames/minigame_landslide/minigame_landslide/PlayerLandslide.tscn" id="5_3ukm6"]
+[ext_resource type="PackedScene" uid="uid://cf4skwm7ohn6a" path="res://Minigames/minigame_landslide/minigame_landslide/SafeCabin.tscn" id="7_du55d"]
 [ext_resource type="PackedScene" uid="uid://b6gh71oryvhkw" path="res://Minigames/minigame_landslide/Trunk.tscn" id="7_telab"]
-[ext_resource type="PackedScene" uid="uid://dwg5a3dxrnsvp" path="res://Minigames/minigame_landslide/PhoneCabin.tscn" id="8_1ik8k"]
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_telab"]
-size = Vector2(77, 264.5)
+[ext_resource type="PackedScene" uid="uid://dwg5a3dxrnsvp" path="res://Minigames/minigame_landslide/minigame_landslide/PhoneCabin.tscn" id="8_1ik8k"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_telab"]
 radius = 9.942078
@@ -23,7 +20,7 @@ script = ExtResource("1_xrwn7")
 metadata/_edit_vertical_guides_ = [-3448.0]
 
 [node name="Background" type="Sprite2D" parent="." unique_id=929585264]
-position = Vector2(983.99994, 527)
+position = Vector2(983.99994, 525)
 scale = Vector2(1.273677, 1.0727727)
 texture = ExtResource("2_xrwn7")
 
@@ -31,26 +28,22 @@ texture = ExtResource("2_xrwn7")
 position = Vector2(48, 64)
 
 [node name="Marker2D" type="Marker2D" parent="RockSpawners" unique_id=14773880]
-position = Vector2(1465, 519)
+position = Vector2(1169, 357)
 
 [node name="Marker2D2" type="Marker2D" parent="RockSpawners" unique_id=1589535782]
-position = Vector2(1220, 478)
+position = Vector2(1085, 267)
 
 [node name="Marker2D3" type="Marker2D" parent="RockSpawners" unique_id=383624786]
-position = Vector2(939, 469)
+position = Vector2(868, 273)
 
 [node name="Marker2D4" type="Marker2D" parent="RockSpawners" unique_id=805564964]
-position = Vector2(655, 494)
+position = Vector2(638, 400)
 
 [node name="CharacterBody2D" type="CharacterBody2D" parent="." unique_id=945735871]
 
 [node name="PlayerLandslide" parent="CharacterBody2D" unique_id=2051659331 instance=ExtResource("5_3ukm6")]
-position = Vector2(1003, 886)
+position = Vector2(547, 957.00006)
 scale = Vector2(1.5, 1.5)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D" unique_id=723591867]
-position = Vector2(1011.5, 878.75)
-shape = SubResource("RectangleShape2D_telab")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1624760842]
 
@@ -79,56 +72,18 @@ anchor_left = 2.265
 anchor_top = -6.609
 anchor_right = 2.357
 anchor_bottom = -6.609
-offset_left = 972.45
-offset_top = 794.495
-offset_right = 1021.01
-offset_bottom = 1015.495
+offset_left = 649.45
+offset_top = 803.495
+offset_right = 698.01
+offset_bottom = 1024.495
 
 [node name="SafeCabin" parent="." unique_id=225917099 instance=ExtResource("7_du55d")]
 position = Vector2(229, 570)
 scale = Vector2(1.5, 1.5)
 
 [node name="PhoneCabin" parent="." unique_id=437809908 instance=ExtResource("8_1ik8k")]
-position = Vector2(1793, 893)
+position = Vector2(1825, 911)
 
-<<<<<<< HEAD
-[node name="PlayerLandslide" parent="." unique_id=2051659331 instance=ExtResource("5_3ukm6")]
-position = Vector2(589, 966)
-
-[node name="09KeyEIcon" type="Sprite2D" parent="." unique_id=187291312]
-position = Vector2(1795, 710)
-scale = Vector2(0.8958333, 0.9479167)
-texture = ExtResource("7_1ik8k")
-
-[node name="Trunk" parent="." unique_id=1153305049 instance=ExtResource("7_telab")]
-position = Vector2(414, 1021)
-
-[node name="Trunk2" parent="." unique_id=559473007 instance=ExtResource("7_telab")]
-position = Vector2(1037, 1017)
-
-[node name="Trunk3" parent="." unique_id=910520244 instance=ExtResource("7_telab")]
-position = Vector2(1684, 702)
-
-[node name="Trunk4" parent="." unique_id=1762176136 instance=ExtResource("7_telab")]
-position = Vector2(1493, 1017)
-rotation = 0.0044837194
-
-[node name="Trunk5" parent="." unique_id=173111122 instance=ExtResource("7_telab")]
-position = Vector2(1255.9999, 901.9999)
-rotation = 0.0044837194
-
-[node name="Trunk6" parent="." unique_id=1396566492 instance=ExtResource("7_telab")]
-position = Vector2(128.99994, 914.99994)
-rotation = 0.0044837194
-
-[node name="Trunk7" parent="." unique_id=903724177 instance=ExtResource("7_telab")]
-position = Vector2(508.99997, 729.00006)
-rotation = 0.0044837194
-
-[node name="Trunk8" parent="." unique_id=1369021742 instance=ExtResource("7_telab")]
-position = Vector2(837.99994, 914.99994)
-rotation = 0.0044837194
-=======
 [node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=649903626]
 collision_layer = 2
 
@@ -159,4 +114,21 @@ position = Vector2(1609.9998, 445)
 rotation = 1.5498525
 scale = Vector2(0.97, 0.97)
 shape = SubResource("CapsuleShape2D_telab")
->>>>>>> origin/main
+
+[node name="Trunk" parent="." unique_id=1153305049 instance=ExtResource("7_telab")]
+position = Vector2(780, 1015)
+
+[node name="Trunk2" parent="." unique_id=1427088758 instance=ExtResource("7_telab")]
+position = Vector2(262, 998)
+
+[node name="Trunk3" parent="." unique_id=438404651 instance=ExtResource("7_telab")]
+position = Vector2(1329, 870)
+
+[node name="Trunk6" parent="." unique_id=1843814437 instance=ExtResource("7_telab")]
+position = Vector2(1524, 1010)
+
+[node name="Trunk4" parent="." unique_id=1160763592 instance=ExtResource("7_telab")]
+position = Vector2(1782, 716)
+
+[node name="Trunk5" parent="." unique_id=2144439511 instance=ExtResource("7_telab")]
+position = Vector2(976, 882)

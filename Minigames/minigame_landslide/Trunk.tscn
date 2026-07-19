@@ -1,10 +1,10 @@
 [gd_scene format=3 uid="uid://b6gh71oryvhkw"]
 
 [ext_resource type="Script" uid="uid://dtmibrkircxmq" path="res://Minigames/minigame_landslide/trunk.gd" id="1_3v11x"]
-[ext_resource type="Texture2D" uid="uid://cyb8iu4voij7j" path="res://Minigames/minigame_landslide/assets/07_tree_log_obstacle.png" id="1_js7q8"]
+[ext_resource type="Texture2D" uid="uid://cyb8iu4voij7j" path="res://Minigames/minigame_landslide/minigame_landslide/assets/07_tree_log_obstacle.png" id="1_js7q8"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fyc5r"]
-size = Vector2(122, 54.289063)
+size = Vector2(96, 35)
 
 [node name="Trunk" type="Node2D" unique_id=1153305049]
 position = Vector2(-1, 2)
@@ -12,10 +12,10 @@ script = ExtResource("1_3v11x")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1555836437]
 z_index = 10
-position = Vector2(2, 3.1445313)
+position = Vector2(0, 1)
 shape = SubResource("RectangleShape2D_fyc5r")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=729430875]
-position = Vector2(2.0000038, -0.99998474)
+position = Vector2(1.9073486e-06, -0.9999924)
 scale = Vector2(0.94804585, 1.091797)
 texture = ExtResource("1_js7q8")
