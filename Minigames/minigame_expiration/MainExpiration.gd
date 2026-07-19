@@ -148,6 +148,9 @@ var _game_result: Node
 var _lives_ui: Node
 var _progress_ui: Node2D
 
+var damage_layer: CanvasLayer = null
+var damage_rect: ColorRect = null
+
 ## true si el jugador tiene 8 años o menos: en ese caso se usa el modo
 ## Good/Bad en vez de fechas de vencimiento.
 var _kid_mode: bool = false
@@ -265,6 +268,7 @@ func _ready() -> void:
 	_setup_lives_ui()
 	_setup_progress_ui()
 	_setup_game_result()
+	_setup_damage_effect()
 
 	_spawn_random_food()
 
@@ -398,6 +402,50 @@ func _set_game_result_sound_volume() -> void:
 
 
 # =========================================================
+# DAMAGE EFFECT
+# =========================================================
+
+func _setup_damage_effect():
+	damage_layer = CanvasLayer.new()
+	damage_layer.name = "DamageLayer"
+	damage_layer.layer = 200
+	add_child(damage_layer)
+	
+	damage_rect = ColorRect.new()
+	damage_rect.name = "DamageRect"
+	damage_rect.color = Color(1, 0, 0)
+	damage_rect.modulate.a = 0.0
+	damage_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	damage_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	
+	damage_layer.add_child(damage_rect)
+
+
+func _play_damage_effect():
+	if not damage_rect:
+		return
+	
+	var original_position: Vector2 = position
+	
+	var flash_tween := create_tween()
+	damage_rect.modulate.a = 0.0
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.35, 0.08)
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.0, 0.22)
+	
+	var shake_tween := create_tween()
+	
+	for i in range(6):
+		var offset := Vector2(
+			randf_range(-8.0, 8.0),
+			randf_range(-8.0, 8.0)
+		)
+		
+		shake_tween.tween_property(self, "position", original_position + offset, 0.03)
+	
+	shake_tween.tween_property(self, "position", original_position, 0.05)
+
+
+# =========================================================
 # TIMER METHODS
 # =========================================================
 
@@ -435,6 +483,7 @@ func _update_lives_ui():
 func _lose_life():
 	_lives -= 1
 	_update_lives_ui()
+	_play_damage_effect()
 
 	if _lives <= 0:
 		_lose_game()
