@@ -102,6 +102,9 @@ var _progress_label: Label
 
 var _rng := RandomNumberGenerator.new()
 
+var damage_layer: CanvasLayer = null
+var damage_rect: ColorRect = null
+
 
 # =========================================================
 # NODE REFERENCES
@@ -141,6 +144,7 @@ func _ready():
 	_setup_lives_ui()
 	_setup_game_result()
 	_setup_progress_ui()
+	_setup_damage_effect()
 	_setup_planting_spots()
 	_setup_rocks()
 	_setup_table_trees()
@@ -245,6 +249,46 @@ func _setup_progress_ui():
 	_progress_label.add_theme_color_override("font_color", Color("#3E5F8F"))
 
 	panel.add_child(_progress_label)
+
+
+func _setup_damage_effect():
+	damage_layer = CanvasLayer.new()
+	damage_layer.name = "DamageLayer"
+	damage_layer.layer = 200
+	add_child(damage_layer)
+	
+	damage_rect = ColorRect.new()
+	damage_rect.name = "DamageRect"
+	damage_rect.color = Color(1, 0, 0)
+	damage_rect.modulate.a = 0.0
+	damage_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	damage_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	
+	damage_layer.add_child(damage_rect)
+
+
+func _play_damage_effect():
+	if not damage_rect:
+		return
+	
+	var original_position: Vector2 = position
+	
+	var flash_tween := create_tween()
+	damage_rect.modulate.a = 0.0
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.35, 0.08)
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.0, 0.22)
+	
+	var shake_tween := create_tween()
+	
+	for i in range(6):
+		var offset := Vector2(
+			randf_range(-8.0, 8.0),
+			randf_range(-8.0, 8.0)
+		)
+		
+		shake_tween.tween_property(self, "position", original_position + offset, 0.03)
+	
+	shake_tween.tween_property(self, "position", original_position, 0.05)
 
 
 func _setup_planting_spots():
@@ -591,6 +635,7 @@ func register_failed_drop(_tree: Node):
 	_lives = max(_lives, 0)
 
 	_update_lives_ui()
+	_play_damage_effect()
 
 	if _error_audio:
 		_error_audio.stop()
@@ -642,6 +687,7 @@ func register_rock_reached_bottom(rock: Node):
 	_lives = max(_lives, 0)
 
 	_update_lives_ui()
+	_play_damage_effect()
 
 	if _landslide_audio:
 		_landslide_audio.stop()
