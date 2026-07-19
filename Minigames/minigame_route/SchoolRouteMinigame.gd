@@ -154,6 +154,9 @@ var _random: RandomNumberGenerator = (
 
 var _error_texture: Texture2D = null
 
+var damage_layer: CanvasLayer = null
+var damage_rect: ColorRect = null
+
 
 @onready var _slots_root: Node2D = $Slots
 
@@ -212,9 +215,54 @@ func _ready() -> void:
 	_create_fixed_endpoint_pieces()
 	_layout_interface()
 	_create_global_ui()
+	_setup_damage_effect()
 	_configure_audio()
 	_configure_error_template()
 	_start_game()
+
+
+# ============================================================
+# DAMAGE EFFECT
+# ============================================================
+
+func _setup_damage_effect():
+	damage_layer = CanvasLayer.new()
+	damage_layer.name = "DamageLayer"
+	damage_layer.layer = 200
+	add_child(damage_layer)
+	
+	damage_rect = ColorRect.new()
+	damage_rect.name = "DamageRect"
+	damage_rect.color = Color(1, 0, 0)
+	damage_rect.modulate.a = 0.0
+	damage_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	damage_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	
+	damage_layer.add_child(damage_rect)
+
+
+func _play_damage_effect():
+	if not damage_rect:
+		return
+	
+	var original_position: Vector2 = position
+	
+	var flash_tween := create_tween()
+	damage_rect.modulate.a = 0.0
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.35, 0.08)
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.0, 0.22)
+	
+	var shake_tween := create_tween()
+	
+	for i in range(6):
+		var offset := Vector2(
+			randf_range(-8.0, 8.0),
+			randf_range(-8.0, 8.0)
+		)
+		
+		shake_tween.tween_property(self, "position", original_position + offset, 0.03)
+	
+	shake_tween.tween_property(self, "position", original_position, 0.05)
 
 
 # ============================================================
@@ -2038,6 +2086,7 @@ func _finish_game(
 			)
 
 	else:
+		_play_damage_effect()
 		game_lost.emit()
 
 		if (
