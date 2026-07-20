@@ -47,20 +47,59 @@ func _ready() -> void:
 
 
 func generate_question() -> void:
-	var is_addition := randi_range(0, 1) == 0
+	var player_age: int = MinigameData.player_age
 	var a := 0
 	var b := 0
 
-	if is_addition:
-		a = randi_range(0, 9)
-		b = randi_range(0, 9 - a)
-		current_answer = a + b
-		operator.texture = load(SYMBOL_PATH + "+.png")
+	# Reinicia la rotación y el tamaño por defecto (suma/resta usan el símbolo tal cual)
+	operator.rotation_degrees = 0
+	operator.scale = Vector2(1.0, 1.0)
+
+	if player_age >= 10:
+		# A partir de los 10 años: se mezclan suma, resta y multiplicación.
+		# A partir de los 11 (más de 10) también se suma la división.
+		var max_op_type := 3 if player_age > 10 else 2
+		var op_type := randi_range(0, max_op_type)
+		match op_type:
+			0:
+				a = randi_range(0, 9)
+				b = randi_range(0, 9 - a)
+				current_answer = a + b
+				operator.texture = load(SYMBOL_PATH + "+.png")
+			1:
+				a = randi_range(0, 9)
+				b = randi_range(0, a)
+				current_answer = a - b
+				operator.texture = load(SYMBOL_PATH + "-.png")
+			2:
+				# Se limita el producto a un solo dígito (0-9) porque los
+				# botones de respuesta solo cubren ese rango.
+				a = randi_range(1, 3)
+				b = randi_range(0, int(9.0 / a))
+				current_answer = a * b
+				operator.texture = load(SYMBOL_PATH + "+.png")
+				operator.rotation_degrees = 45  # "+" rotado 45° se ve como "x"
+			3:
+				# Se elige un divisor y un cociente de un solo dígito para
+				# que el dividendo (a) también quepa en la textura 0-9.
+				b = randi_range(1, 3)
+				var q := randi_range(0, int(9.0 / b))
+				a = b * q
+				current_answer = q
+				operator.texture = load(SYMBOL_PATH + "division.png")
+				operator.scale = Vector2(0.5, 0.5)
 	else:
-		a = randi_range(0, 9)
-		b = randi_range(0, a)
-		current_answer = a - b
-		operator.texture = load(SYMBOL_PATH + "-.png")
+		var is_addition := randi_range(0, 1) == 0
+		if is_addition:
+			a = randi_range(0, 9)
+			b = randi_range(0, 9 - a)
+			current_answer = a + b
+			operator.texture = load(SYMBOL_PATH + "+.png")
+		else:
+			a = randi_range(0, 9)
+			b = randi_range(0, a)
+			current_answer = a - b
+			operator.texture = load(SYMBOL_PATH + "-.png")
 
 	number_a.texture = load(SYMBOL_PATH + str(a) + ".png")
 	number_b.texture = load(SYMBOL_PATH + str(b) + ".png")
