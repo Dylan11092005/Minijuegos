@@ -106,7 +106,7 @@ b = Vector2(-42, 395)
 size = Vector2(136, 121)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_p6kfs"]
-size = Vector2(38, 108)
+size = Vector2(43, 110)
 
 [node name="FamilyMeetingMinigame" type="Node2D" unique_id=113976049]
 script = ExtResource("1_lnjs2")
@@ -122,23 +122,23 @@ scale = Vector2(0.37548846, 0.29150394)
 texture = ExtResource("2_grild")
 
 [node name="FatherIcon" type="Sprite2D" parent="FamilyPanel" unique_id=1681799249]
-position = Vector2(-197.07654, -171.52423)
-scale = Vector2(0.23228224, 0.2483948)
+position = Vector2(-191.75017, -188.67668)
+scale = Vector2(0.39097032, 0.51994354)
 texture = ExtResource("4_pg5k7")
 
 [node name="SonIcon" type="Sprite2D" parent="FamilyPanel" unique_id=531656141]
-position = Vector2(-197.07657, 243.56451)
-scale = Vector2(0.2526006, 0.26786715)
+position = Vector2(-199.73987, 229.84248)
+scale = Vector2(0.42465797, 0.5225782)
 texture = ExtResource("5_5igj4")
 
 [node name="MotherIcon" type="Sprite2D" parent="FamilyPanel" unique_id=1300608439]
-position = Vector2(191.7503, -168.09378)
-scale = Vector2(0.2947007, 0.2746371)
+position = Vector2(191.75024, -174.95473)
+scale = Vector2(0.39702484, 0.54437107)
 texture = ExtResource("6_1ol4d")
 
 [node name="DaughterIcon" type="Sprite2D" parent="FamilyPanel" unique_id=1581980854]
-position = Vector2(191.75024, 250.42543)
-scale = Vector2(0.26950562, 0.27233392)
+position = Vector2(189.08691, 243.56448)
+scale = Vector2(0.4574927, 0.5638959)
 texture = ExtResource("7_7kjlo")
 
 [node name="FamilyMembers" type="Node2D" parent="." unique_id=123526984]
@@ -146,8 +146,8 @@ texture = ExtResource("7_7kjlo")
 [node name="Mother" type="Area2D" parent="FamilyMembers" unique_id=1044362881]
 
 [node name="Sprite2D" type="Sprite2D" parent="FamilyMembers/Mother" unique_id=252047116]
-position = Vector2(255, 343)
-scale = Vector2(0.08520505, 0.09334313)
+position = Vector2(255, 337.0001)
+scale = Vector2(0.15002441, 0.1560466)
 texture = ExtResource("5_o5yv5")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="FamilyMembers/Mother" unique_id=1660928905]
@@ -157,8 +157,8 @@ shape = SubResource("RectangleShape2D_h5ns7")
 [node name="Son" type="Area2D" parent="FamilyMembers" unique_id=22133231]
 
 [node name="Sprite2D" type="Sprite2D" parent="FamilyMembers/Son" unique_id=1513560632]
-position = Vector2(256, 585.00006)
-scale = Vector2(0.08129879, 0.079671234)
+position = Vector2(254, 581)
+scale = Vector2(0.15588376, 0.19348153)
 texture = ExtResource("6_lnjs2")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="FamilyMembers/Son" unique_id=1713266398]
@@ -168,8 +168,8 @@ shape = SubResource("RectangleShape2D_h5ns7")
 [node name="Daughter" type="Area2D" parent="FamilyMembers" unique_id=1914450472]
 
 [node name="Sprite2D" type="Sprite2D" parent="FamilyMembers/Daughter" unique_id=1618498968]
-position = Vector2(1158.0938, 384.29688)
-scale = Vector2(0.08380134, 0.087626144)
+position = Vector2(1162, 371.00003)
+scale = Vector2(0.16765593, 0.15200038)
 texture = ExtResource("7_eyq48")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="FamilyMembers/Daughter" unique_id=924726732]
@@ -181,7 +181,8 @@ position = Vector2(678, 296)
 scale = Vector2(0.1, 0.1)
 
 [node name="Sprite2D" type="Sprite2D" parent="FamilyMembers/Father" unique_id=1336345494]
-scale = Vector2(0.76049817, 1.022644)
+position = Vector2(-10, 30)
+scale = Vector2(1.4544675, 1.8107727)
 texture = ExtResource("4_eyq48")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="FamilyMembers/Father" unique_id=1781845471]
@@ -312,32 +313,32 @@ position = Vector2(297, 930)
 script = ExtResource("3_o5yv5")
 
 [node name="Sprite2D" type="Sprite2D" parent="Player" unique_id=45995188]
-position = Vector2(38, -1.9999999)
-scale = Vector2(0.09985353, 0.090169325)
+position = Vector2(38.000004, -7.999976)
+scale = Vector2(0.17605591, 0.1944173)
 texture = ExtResource("3_o755a")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player" unique_id=7310631]
-position = Vector2(37, 3)
+position = Vector2(40, -9)
 shape = SubResource("RectangleShape2D_p6kfs")
 
 [node name="FatherFollower" type="Sprite2D" parent="Player" unique_id=1245144924]
-position = Vector2(5.000001, -1)
-scale = Vector2(0.07, 0.097)
+position = Vector2(3.0000038, -13.000015)
+scale = Vector2(0.14046878, 0.17870831)
 texture = ExtResource("4_pg5k7")
 
 [node name="MotherFollower" type="Sprite2D" parent="Player" unique_id=1137588926]
-position = Vector2(-1, 36)
-scale = Vector2(0.08300779, 0.106770866)
+position = Vector2(5.0000086, 20.999977)
+scale = Vector2(0.17041016, 0.18359368)
 texture = ExtResource("6_1ol4d")
 
 [node name="SonFollower" type="Sprite2D" parent="Player" unique_id=1450082824]
-position = Vector2(23, 46)
-scale = Vector2(0.07739257, 0.07958985)
+position = Vector2(23, 42.99999)
+scale = Vector2(0.13439941, 0.1530762)
 texture = ExtResource("5_5igj4")
 
 [node name="DaughterFollower" type="Sprite2D" parent="Player" unique_id=1121362422]
-position = Vector2(50, 49.000023)
-scale = Vector2(0.069152825, 0.092447914)
+position = Vector2(45.999985, 47.000015)
+scale = Vector2(0.15303034, 0.16569014)
 texture = ExtResource("7_7kjlo")
 
 [node name="FootstepsPlayer" type="AudioStreamPlayer2D" parent="Player" unique_id=1989051822]
