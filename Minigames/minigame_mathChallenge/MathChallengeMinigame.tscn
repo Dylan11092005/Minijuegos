@@ -161,35 +161,35 @@ flat = true
 [node name="Formula" type="Node2D" parent="." unique_id=568910953]
 
 [node name="NumberA" type="Sprite2D" parent="Formula" unique_id=786607538]
-position = Vector2(635, 283)
-scale = Vector2(0.21679688, 0.21679688)
+position = Vector2(648.99994, 290.00003)
+scale = Vector2(0.7841796, 0.8015137)
 texture = ExtResource("4_dt3j7")
 
 [node name="Operator" type="Sprite2D" parent="Formula" unique_id=52865065]
-position = Vector2(785, 299)
-scale = Vector2(0.15039063, 0.16406249)
+position = Vector2(788.99994, 309)
+scale = Vector2(0.7119141, 0.7304688)
 texture = ExtResource("5_ssvdq")
 
 [node name="NumberB" type="Sprite2D" parent="Formula" unique_id=1980019700]
-position = Vector2(926, 290)
-scale = Vector2(0.1791992, 0.21533205)
+position = Vector2(924, 301)
+scale = Vector2(0.6833497, 0.82336426)
 texture = ExtResource("6_6st3i")
 
 [node name="Equal" type="Sprite2D" parent="Formula" unique_id=879442546]
-position = Vector2(1066, 285)
+position = Vector2(1070, 295)
 scale = Vector2(0.1533203, 0.15429688)
 texture = ExtResource("7_xj55e")
 
 [node name="Answer" type="Sprite2D" parent="Formula" unique_id=357209320]
-position = Vector2(1207, 286.00003)
-scale = Vector2(0.16805016, 0.18273926)
+position = Vector2(1202, 300)
+scale = Vector2(0.7480467, 1.0935673)
 texture = ExtResource("8_dt3j7")
 
 [node name="NumberSprites" type="Sprite2D" parent="." unique_id=1243167053]
 
 [node name="Number0" type="Sprite2D" parent="NumberSprites" unique_id=503048884]
-position = Vector2(630, 711)
-scale = Vector2(0.09326175, 0.08300789)
+position = Vector2(623.2656, 713.84375)
+scale = Vector2(0.32604948, 0.29028317)
 texture = ExtResource("9_4irs6")
 
 [node name="Number1" type="Sprite2D" parent="NumberSprites" unique_id=1277541244]
@@ -203,8 +203,8 @@ scale = Vector2(0.08764644, 0.07861334)
 texture = ExtResource("11_brhp0")
 
 [node name="Number3" type="Sprite2D" parent="NumberSprites" unique_id=84346472]
-position = Vector2(1137, 710)
-scale = Vector2(0.09326175, 0.08300789)
+position = Vector2(1136.0001, 710.00006)
+scale = Vector2(0.31823736, 0.3316649)
 texture = ExtResource("4_dt3j7")
 
 [node name="Number4" type="Sprite2D" parent="NumberSprites" unique_id=194553272]
@@ -213,8 +213,8 @@ scale = Vector2(0.09326175, 0.08300789)
 texture = ExtResource("12_hcvh5")
 
 [node name="Number5" type="Sprite2D" parent="NumberSprites" unique_id=209881124]
-position = Vector2(626, 814)
-scale = Vector2(0.09326175, 0.08300789)
+position = Vector2(626.0156, 812.84375)
+scale = Vector2(0.34362787, 0.28247046)
 texture = ExtResource("6_6st3i")
 
 [node name="Number6" type="Sprite2D" parent="NumberSprites" unique_id=443310540]
@@ -228,8 +228,8 @@ scale = Vector2(0.09326175, 0.08300789)
 texture = ExtResource("14_ijc01")
 
 [node name="Number8" type="Sprite2D" parent="NumberSprites" unique_id=1811751654]
-position = Vector2(1139, 815.00006)
-scale = Vector2(0.09326175, 0.08300789)
+position = Vector2(1136, 816.00006)
+scale = Vector2(0.3200682, 0.34228563)
 texture = ExtResource("15_ru4dg")
 
 [node name="Number9" type="Sprite2D" parent="NumberSprites" unique_id=1149521838]
