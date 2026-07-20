@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://dwg5a3dxrnsvp"]
+
+[ext_resource type="Texture2D" uid="uid://h0jrblkejlbf" path="res://Minigames/minigame_landslide/assets/03_phone_cabin_911.png" id="1_1gxwg"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1gxwg"]
+size = Vector2(238.25, 303.625)
+
+[node name="PhoneCabin" type="Area2D" unique_id=437809908]
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1643794590]
+position = Vector2(-3.9999943, 13.000001)
+scale = Vector2(0.5499023, 0.5019531)
+texture = ExtResource("1_1gxwg")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=362314361]
+position = Vector2(2, 1)
+shape = SubResource("RectangleShape2D_1gxwg")

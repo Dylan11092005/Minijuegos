@@ -1,5 +1,3 @@
-# Main.gd
-
 extends Node
 
 # ---- Señales ---------------------------------------------------------------
@@ -26,16 +24,14 @@ signal earthquake_ended
 
 @export var walk_speed_variance: float = 15.0
 
-@export var music_volume_offset_db: float = -20.0
-@export var warning_volume_offset_db: float = -17.0
-@export var eq_volume_offset_db: float = -17.0
-
 # Tiempo mínimo antes del terremoto donde ya se permite presionar el botón.
 @export var button_warning_window: float = 1.5
 
 # Movimiento de pantalla durante terremoto.
 @export var screen_shake_strength: float = 10.0
 @export var screen_shake_speed: float = 45.0
+
+const GLOBAL_SOUND_VOLUME := -10.0
 
 
 # ---- Estado interno --------------------------------------------------------
@@ -68,6 +64,8 @@ var _shake_time: float = 0.0
 var _background_base_position := Vector2.ZERO
 var _player_base_position := Vector2.ZERO
 
+var _damage_active: bool = false
+
 
 # ---- Nodos -----------------------------------------------------------------
 
@@ -81,6 +79,9 @@ var _player_base_position := Vector2.ZERO
 
 var _lives_ui: Node2D = null
 var _game_result: Node = null
+
+var damage_layer: CanvasLayer = null
+var damage_rect: ColorRect = null
 
 
 func _ready() -> void:
@@ -110,22 +111,19 @@ func _ready() -> void:
 	if result_scene:
 		_game_result = result_scene.instantiate()
 		add_child(_game_result)
+		_game_result.process_mode = Node.PROCESS_MODE_ALWAYS
+		_set_result_sound_volume()
 	else:
 		push_error("Main.gd: No se encontró res://Minigames/ui_global/GameResult.tscn")
+
+	_setup_damage_effect()
 
 	_hud.hide_earthquake_banner()
 
 	if _hud.has_method("set_hide_button_mode"):
 		_hud.set_hide_button_mode("normal")
 
-	if _audio_music and is_instance_valid(_audio_music):
-		_audio_music.volume_db += music_volume_offset_db
-
-	if _audio_warning and is_instance_valid(_audio_warning):
-		_audio_warning.volume_db += warning_volume_offset_db
-
-	if _audio_eq and is_instance_valid(_audio_eq):
-		_audio_eq.volume_db += eq_volume_offset_db
+	_setup_sound_volumes()
 
 	if _audio_music and is_instance_valid(_audio_music):
 		_audio_music.finished.connect(_on_music_finished)
@@ -199,15 +197,60 @@ func _scroll_background(delta: float) -> void:
 # AUDIO
 # ---------------------------------------------------------------------------
 
+func _setup_sound_volumes() -> void:
+	if _audio_music and is_instance_valid(_audio_music):
+		_audio_music.volume_db = GLOBAL_SOUND_VOLUME
+
+	if _audio_warning and is_instance_valid(_audio_warning):
+		_audio_warning.volume_db = GLOBAL_SOUND_VOLUME
+
+	if _audio_eq and is_instance_valid(_audio_eq):
+		_audio_eq.volume_db = GLOBAL_SOUND_VOLUME
+
+	_set_result_sound_volume()
+
+
+func _set_result_sound_volume() -> void:
+	if _game_result == null:
+		return
+
+	var result_sounds := [
+		"WinSound",
+		"win_sound",
+		"AudioWin",
+		"WinAudio",
+		"LoseSound",
+		"lose_sound",
+		"AudioLose",
+		"LoseAudio"
+	]
+
+	for sound_name in result_sounds:
+		var sound = _game_result.find_child(sound_name, true, false)
+
+		if sound and sound is AudioStreamPlayer:
+			sound.volume_db = GLOBAL_SOUND_VOLUME
+			sound.process_mode = Node.PROCESS_MODE_ALWAYS
+
+
 func _play_warning() -> void:
 	if _audio_warning and is_instance_valid(_audio_warning):
+		_audio_warning.volume_db = GLOBAL_SOUND_VOLUME
 		_audio_warning.stop()
 		_audio_warning.play()
+
+
+func _play_earthquake_sound() -> void:
+	if _audio_eq and is_instance_valid(_audio_eq):
+		_audio_eq.volume_db = GLOBAL_SOUND_VOLUME
+		_audio_eq.stop()
+		_audio_eq.play()
 
 
 func _on_music_finished() -> void:
 	if _state != State.WIN and _state != State.LOSE:
 		if _audio_music and is_instance_valid(_audio_music):
+			_audio_music.volume_db = GLOBAL_SOUND_VOLUME
 			_audio_music.play()
 
 
@@ -218,8 +261,6 @@ func _on_music_finished() -> void:
 func on_hide_button_pressed() -> void:
 	_button_held = true
 
-	# Antes perdía vida apenas presionaba en WALKING.
-	# Ahora solo pierde si presiona demasiado temprano.
 	if _state == State.WALKING:
 		if not _button_allowed:
 			_lose_life()
@@ -263,18 +304,82 @@ func _reset_screen_shake() -> void:
 
 
 # ---------------------------------------------------------------------------
+# DAMAGE EFFECT
+# ---------------------------------------------------------------------------
+
+func _setup_damage_effect():
+	damage_layer = CanvasLayer.new()
+	damage_layer.name = "DamageLayer"
+	damage_layer.layer = 200
+	add_child(damage_layer)
+	
+	damage_rect = ColorRect.new()
+	damage_rect.name = "DamageRect"
+	damage_rect.color = Color(1, 0, 0)
+	damage_rect.modulate.a = 0.0
+	damage_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	damage_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	
+	damage_layer.add_child(damage_rect)
+
+
+func _play_damage_effect():
+	if not damage_rect:
+		return
+	
+	var original_background_position: Vector2 = _background_base_position
+	var original_player_position: Vector2 = _player_base_position
+	
+	var flash_tween := create_tween()
+	damage_rect.modulate.a = 0.0
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.35, 0.08)
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.0, 0.22)
+	
+	var shake_tween := create_tween()
+	
+	for i in range(6):
+		var offset := Vector2(
+			randf_range(-8.0, 8.0),
+			randf_range(-8.0, 8.0)
+		)
+		
+		if _background and is_instance_valid(_background):
+			shake_tween.tween_property(_background, "position", original_background_position + offset, 0.03)
+		
+		if _player and is_instance_valid(_player):
+			shake_tween.parallel().tween_property(_player, "position", original_player_position + offset, 0.03)
+	
+	if _background and is_instance_valid(_background):
+		shake_tween.tween_property(_background, "position", original_background_position, 0.05)
+	
+	if _player and is_instance_valid(_player):
+		shake_tween.parallel().tween_property(_player, "position", original_player_position, 0.05)
+
+
+# ---------------------------------------------------------------------------
 # VIDAS
 # ---------------------------------------------------------------------------
 
 func _lose_life() -> void:
+	if _damage_active:
+		return
+	
+	_damage_active = true
+	
 	_current_lives -= 1
 
 	if _lives_ui:
 		_lives_ui.actualizar_vidas(_current_lives)
 
+	_play_damage_effect()
+
 	if _current_lives <= 0:
+		await get_tree().create_timer(0.25).timeout
+		_damage_active = false
 		_set_state(State.LOSE)
 	else:
+		await get_tree().create_timer(0.25).timeout
+		_damage_active = false
 		_set_state(State.WALKING)
 
 
@@ -316,9 +421,7 @@ func _set_state(new_state: State) -> void:
 
 			_current_eq_duration = randf_range(earthquake_duration_min, earthquake_duration_max)
 
-			if _audio_eq and is_instance_valid(_audio_eq):
-				_audio_eq.stop()
-				_audio_eq.play()
+			_play_earthquake_sound()
 
 			_hud.show_earthquake_banner()
 
@@ -348,6 +451,8 @@ func _set_state(new_state: State) -> void:
 			if _player and _player.has_method("set_win"):
 				_player.set_win()
 
+			_set_result_sound_volume()
+
 			if _game_result and _game_result.has_method("mostrar_ganaste"):
 				_game_result.mostrar_ganaste()
 
@@ -371,6 +476,8 @@ func _set_state(new_state: State) -> void:
 
 			if _player and _player.has_method("set_idle"):
 				_player.set_idle()
+
+			_set_result_sound_volume()
 
 			if _game_result and _game_result.has_method("mostrar_perdiste"):
 				_game_result.mostrar_perdiste()

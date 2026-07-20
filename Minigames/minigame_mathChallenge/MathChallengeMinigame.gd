@@ -23,8 +23,12 @@ const MAX_ERRORS := 3
 const SYMBOL_PATH := "res://Minigames/minigame_mathChallenge/assets/objects/math_symbols/"
 var TOTAL_TIME: float = 50.0
 
+var damage_layer: CanvasLayer = null
+var damage_rect: ColorRect = null
+
 
 func _ready() -> void:
+	_setup_damage_effect()
 	update_hud()
 
 	var player_age: int = MinigameData.player_age
@@ -77,6 +81,7 @@ func check_answer(selected_number: int) -> void:
 	else:
 		wrong_answers += 1
 		error_player.play()
+		_play_damage_effect()
 
 	update_hud()
 
@@ -141,7 +146,53 @@ func _on_timer_ui_time_up() -> void:
 
 	game_finished = true
 	music_player.stop()
+	_play_damage_effect()
 	game_result.show_lose()
+
+
+# =========================================================
+# DAMAGE EFFECT
+# =========================================================
+
+func _setup_damage_effect():
+	damage_layer = CanvasLayer.new()
+	damage_layer.name = "DamageLayer"
+	damage_layer.layer = 200
+	add_child(damage_layer)
+	
+	damage_rect = ColorRect.new()
+	damage_rect.name = "DamageRect"
+	damage_rect.color = Color(1, 0, 0)
+	damage_rect.modulate.a = 0.0
+	damage_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	damage_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	
+	damage_layer.add_child(damage_rect)
+
+
+func _play_damage_effect():
+	if not damage_rect:
+		return
+	
+	var original_position: Vector2 = position
+	
+	var flash_tween := create_tween()
+	damage_rect.modulate.a = 0.0
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.35, 0.08)
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.0, 0.22)
+	
+	var shake_tween := create_tween()
+	
+	for i in range(6):
+		var offset := Vector2(
+			randf_range(-8.0, 8.0),
+			randf_range(-8.0, 8.0)
+		)
+		
+		shake_tween.tween_property(self, "position", original_position + offset, 0.03)
+	
+	shake_tween.tween_property(self, "position", original_position, 0.05)
+
 
 # =========================================================
 # TIME BONUS POR EDAD

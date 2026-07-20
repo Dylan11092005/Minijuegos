@@ -31,6 +31,8 @@ const MONTH_NAMES = [
 	"julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
 ]
 
+const GLOBAL_SOUND_VOLUME := -10.0
+
 
 # =========================================================
 # EXPORTED VARIABLES
@@ -146,6 +148,9 @@ var _game_result: Node
 var _lives_ui: Node
 var _progress_ui: Node2D
 
+var damage_layer: CanvasLayer = null
+var damage_rect: ColorRect = null
+
 ## true si el jugador tiene 8 años o menos: en ese caso se usa el modo
 ## Good/Bad en vez de fechas de vencimiento.
 var _kid_mode: bool = false
@@ -234,9 +239,7 @@ func _ready() -> void:
 	# no activado su propio "loop"), conectando la señal "finished" para
 	# volver a reproducirlo cada vez que termina. ---
 	if background_sound:
-		# Le bajamos 15 dB al volumen que tenga puesto en el Inspector
-		# (no lo dejamos fijo en -15, así respetamos lo que ya hayas ajustado ahí).
-		background_sound.volume_db -= 15.0
+		background_sound.volume_db = GLOBAL_SOUND_VOLUME
 		if not background_sound.finished.is_connected(_on_background_sound_finished):
 			background_sound.finished.connect(_on_background_sound_finished)
 		background_sound.play()
@@ -244,14 +247,12 @@ func _ready() -> void:
 		print("DEBUG background_sound NO está asignado en el Inspector")
 
 	if success_sound:
-		# Le bajamos 10 dB al volumen del efecto de acierto.
-		success_sound.volume_db -= 10.0
+		success_sound.volume_db = GLOBAL_SOUND_VOLUME
 	else:
 		print("DEBUG success_sound NO está asignado en el Inspector")
 
 	if error_sound:
-		# Le bajamos 10 dB al volumen del efecto de error.
-		error_sound.volume_db -= 10.0
+		error_sound.volume_db = GLOBAL_SOUND_VOLUME
 	else:
 		print("DEBUG error_sound NO está asignado en el Inspector")
 
@@ -267,6 +268,7 @@ func _ready() -> void:
 	_setup_lives_ui()
 	_setup_progress_ui()
 	_setup_game_result()
+	_setup_damage_effect()
 
 	_spawn_random_food()
 
@@ -368,9 +370,79 @@ func _update_progress_ui():
 func _setup_game_result():
 	_game_result = GAME_RESULT_SCENE.instantiate()
 	add_child(_game_result)
+	_game_result.process_mode = Node.PROCESS_MODE_ALWAYS
 
 	if _game_result is CanvasLayer:
 		_game_result.layer = 50
+
+	_set_game_result_sound_volume()
+
+
+func _set_game_result_sound_volume() -> void:
+	if _game_result == null:
+		return
+
+	var result_sounds := [
+		"WinSound",
+		"win_sound",
+		"AudioWin",
+		"WinAudio",
+		"LoseSound",
+		"lose_sound",
+		"AudioLose",
+		"LoseAudio"
+	]
+
+	for sound_name in result_sounds:
+		var sound = _game_result.find_child(sound_name, true, false)
+
+		if sound and sound is AudioStreamPlayer:
+			sound.volume_db = GLOBAL_SOUND_VOLUME
+			sound.process_mode = Node.PROCESS_MODE_ALWAYS
+
+
+# =========================================================
+# DAMAGE EFFECT
+# =========================================================
+
+func _setup_damage_effect():
+	damage_layer = CanvasLayer.new()
+	damage_layer.name = "DamageLayer"
+	damage_layer.layer = 200
+	add_child(damage_layer)
+	
+	damage_rect = ColorRect.new()
+	damage_rect.name = "DamageRect"
+	damage_rect.color = Color(1, 0, 0)
+	damage_rect.modulate.a = 0.0
+	damage_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	damage_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	
+	damage_layer.add_child(damage_rect)
+
+
+func _play_damage_effect():
+	if not damage_rect:
+		return
+	
+	var original_position: Vector2 = position
+	
+	var flash_tween := create_tween()
+	damage_rect.modulate.a = 0.0
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.35, 0.08)
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.0, 0.22)
+	
+	var shake_tween := create_tween()
+	
+	for i in range(6):
+		var offset := Vector2(
+			randf_range(-8.0, 8.0),
+			randf_range(-8.0, 8.0)
+		)
+		
+		shake_tween.tween_property(self, "position", original_position + offset, 0.03)
+	
+	shake_tween.tween_property(self, "position", original_position, 0.05)
 
 
 # =========================================================
@@ -411,6 +483,7 @@ func _update_lives_ui():
 func _lose_life():
 	_lives -= 1
 	_update_lives_ui()
+	_play_damage_effect()
 
 	if _lives <= 0:
 		_lose_game()
@@ -601,6 +674,8 @@ func _play_feedback_sound(correct: bool) -> void:
 	var player: AudioStreamPlayer = success_sound if correct else error_sound
 	if player == null:
 		return
+
+	player.volume_db = GLOBAL_SOUND_VOLUME
 	player.stop()
 	player.play()
 
@@ -609,6 +684,7 @@ func _on_background_sound_finished() -> void:
 	# Mientras el minijuego no haya terminado, lo volvemos a reproducir
 	# para que suene en bucle infinito.
 	if not _game_finished and background_sound:
+		background_sound.volume_db = GLOBAL_SOUND_VOLUME
 		background_sound.play()
 
 
@@ -682,6 +758,7 @@ func _win_game():
 
 	_stop_timer_ui()
 	_stop_background_sound()
+	_set_game_result_sound_volume()
 
 	if _game_result:
 		if _game_result.has_method("show_win"):
@@ -700,6 +777,7 @@ func _lose_game():
 
 	_stop_timer_ui()
 	_stop_background_sound()
+	_set_game_result_sound_volume()
 
 	if _game_result:
 		if _game_result.has_method("show_lose"):

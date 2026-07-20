@@ -1,0 +1,70 @@
+[gd_scene format=3 uid="uid://cdpukfixusqi1"]
+
+[ext_resource type="Script" uid="uid://evgg31un0xo" path="res://Minigames/minigame_landslide/landslide_minigame.gd" id="1_xrwn7"]
+
+[sub_resource type="GDScript" id="GDScript_jsbik"]
+script/source = "extends Node2D
+
+@export var speed := 180.0
+@export var damage := 1
+@export var lifetime := 6.0
+@export var rotation_speed := 4.0
+
+var direction := Vector2.DOWN
+
+
+func _ready() -> void:
+	body_entered.connect(_on_body_entered)
+
+	await get_tree().create_timer(lifetime).timeout
+
+	if is_instance_valid(self):
+		queue_free()
+
+
+func _physics_process(delta: float) -> void:
+	global_position += direction * speed * delta
+	rotation += rotation_speed * delta
+
+
+func _on_body_entered(body: Node) -> void:
+	if body.is_in_group(\"player\") and body.has_method(\"receive_damage\"):
+		body.receive_damage(global_position)
+		queue_free()
+"
+
+[node name="LandslideMinigame" type="Node2D" unique_id=753319566]
+script = ExtResource("1_xrwn7")
+
+[node name="Player" type="CharacterBody2D" parent="." unique_id=1547546853]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Player" unique_id=518530866]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player" unique_id=1665304034]
+
+[node name="PhoneCabin" type="Area2D" parent="." unique_id=1544585690]
+
+[node name="Sprite2D" type="Sprite2D" parent="PhoneCabin" unique_id=1065057888]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PhoneCabin" unique_id=815071617]
+
+[node name="SafeCabin" type="Area2D" parent="." unique_id=233964259]
+
+[node name="Sprite2D" type="Sprite2D" parent="SafeCabin" unique_id=1837349323]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="SafeCabin" unique_id=1981907417]
+
+[node name="FallingRock" type="Node2D" parent="." unique_id=86279674]
+script = SubResource("GDScript_jsbik")
+speed = null
+damage = null
+lifetime = null
+rotation_speed = null
+
+[node name="Sprite2D" type="Sprite2D" parent="FallingRock" unique_id=738032807]
+
+[node name="Hitbox" type="Area2D" parent="FallingRock" unique_id=1350205489]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FallingRock/Hitbox" unique_id=1131223056]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1624760842]

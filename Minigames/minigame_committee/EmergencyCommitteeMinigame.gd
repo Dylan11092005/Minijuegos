@@ -36,8 +36,8 @@ const PLACED_ITEM_SCALE := Vector2(52, 52)
 
 const DROP_DISTANCE := 230.0
 
-# Tiempo total real de la partida (BASE_TIME + bono por edad).
-# Se calcula en _ready() según MinigameData.player_age.
+const GLOBAL_SOUND_VOLUME := -10.0
+
 var TOTAL_TIME: float = BASE_TIME
 
 
@@ -124,7 +124,6 @@ func _process(_delta):
 	if game_over:
 		return
 	
-	# Loop simple para la música de fondo.
 	if background_music and not background_music.playing:
 		background_music.play()
 	
@@ -135,8 +134,6 @@ func _process(_delta):
 # DIFICULTAD SEGÚN EDAD
 # =========================================================
 
-# Ajusta TOTAL_TIME sumando un bono de segundos según la edad del
-# jugador (MinigameData.player_age). A menor edad, más tiempo extra.
 func _apply_age_difficulty() -> void:
 	var player_age: int = MinigameData.player_age
 	TOTAL_TIME = BASE_TIME + _get_time_bonus_for_age(player_age)
@@ -338,11 +335,11 @@ func _setup_background():
 # =========================================================
 
 func _setup_audio():
-	background_music = _create_audio_player("BackgroundMusic", MUSIC_BACKGROUND_PATH, -10.0)
-	pick_audio = _create_audio_player("PickAudio", MUSIC_PICK_PATH, -2.0)
-	correct_audio = _create_audio_player("CorrectAudio", MUSIC_CORRECT_PATH, -1.5)
-	wrong_audio = _create_audio_player("WrongAudio", MUSIC_WRONG_PATH, -1.5)
-	lose_life_audio = _create_audio_player("LoseLifeAudio", MUSIC_LOSE_LIFE_PATH, -1.0)
+	background_music = _create_audio_player("BackgroundMusic", MUSIC_BACKGROUND_PATH, GLOBAL_SOUND_VOLUME)
+	pick_audio = _create_audio_player("PickAudio", MUSIC_PICK_PATH, GLOBAL_SOUND_VOLUME)
+	correct_audio = _create_audio_player("CorrectAudio", MUSIC_CORRECT_PATH, GLOBAL_SOUND_VOLUME)
+	wrong_audio = _create_audio_player("WrongAudio", MUSIC_WRONG_PATH, GLOBAL_SOUND_VOLUME)
+	lose_life_audio = _create_audio_player("LoseLifeAudio", MUSIC_LOSE_LIFE_PATH, GLOBAL_SOUND_VOLUME)
 
 
 func _create_audio_player(player_name: String, path: String, volume_db: float) -> AudioStreamPlayer:
@@ -371,6 +368,7 @@ func _stop_background_music():
 
 func _play_sound(player: AudioStreamPlayer):
 	if player and player.stream:
+		player.volume_db = GLOBAL_SOUND_VOLUME
 		player.stop()
 		player.play()
 
@@ -493,27 +491,35 @@ func _setup_game_result():
 		game_result.name = "GameResult"
 		add_child(game_result)
 		
-		# Forzamos que el GameResult y sus sonidos puedan sonar bien.
 		game_result.process_mode = Node.PROCESS_MODE_ALWAYS
-		
-		var win_sound = game_result.find_child("WinSound", true, false)
-		var lose_sound = game_result.find_child("LoseSound", true, false)
-		
-		if win_sound and win_sound is AudioStreamPlayer:
-			win_sound.volume_db = 8.0
-			win_sound.process_mode = Node.PROCESS_MODE_ALWAYS
-			print("WinSound encontrado y volumen subido.")
-		else:
-			push_warning("No se encontró WinSound dentro de GameResult.")
-		
-		if lose_sound and lose_sound is AudioStreamPlayer:
-			lose_sound.volume_db = 8.0
-			lose_sound.process_mode = Node.PROCESS_MODE_ALWAYS
-			print("LoseSound encontrado y volumen subido.")
-		else:
-			push_warning("No se encontró LoseSound dentro de GameResult.")
+		_set_result_sound_volume()
 	else:
 		push_error("No se encontró GameResult.tscn en: " + GAME_RESULT_SCENE_PATH)
+
+
+func _set_result_sound_volume() -> void:
+	if game_result == null:
+		return
+	
+	var result_sounds := [
+		"WinSound",
+		"win_sound",
+		"AudioWin",
+		"WinAudio",
+		"LoseSound",
+		"lose_sound",
+		"AudioLose",
+		"LoseAudio"
+	]
+	
+	for sound_name in result_sounds:
+		var sound = game_result.find_child(sound_name, true, false)
+		
+		if sound and sound is AudioStreamPlayer:
+			sound.volume_db = GLOBAL_SOUND_VOLUME
+			sound.process_mode = Node.PROCESS_MODE_ALWAYS
+
+
 # =========================================================
 # DAMAGE EFFECT
 # =========================================================
@@ -883,15 +889,13 @@ func _win_game():
 	_stop_background_music()
 	_stop_global_timer()
 	_disable_items()
+	_set_result_sound_volume()
 	
 	if game_result:
 		if game_result.has_method("show_win"):
 			game_result.show_win()
 		elif game_result.has_method("mostrar_ganaste"):
 			game_result.mostrar_ganaste()
-		
-		_play_global_result_sound("WinSound", 8.0)
-	
 
 
 func _lose_game():
@@ -904,36 +908,14 @@ func _lose_game():
 	_stop_background_music()
 	_stop_global_timer()
 	_disable_items()
+	_set_result_sound_volume()
 	
 	if game_result:
 		if game_result.has_method("show_lose"):
 			game_result.show_lose()
 		elif game_result.has_method("mostrar_perdiste"):
 			game_result.mostrar_perdiste()
-		
-		_play_global_result_sound("LoseSound", 8.0)
-		
-	
-func _play_global_result_sound(sound_name: String, volume: float = 8.0):
-	if not game_result:
-		push_warning("No existe GameResult para reproducir sonido.")
-		return
-	
-	var sound_node = game_result.find_child(sound_name, true, false)
-	
-	if sound_node and sound_node is AudioStreamPlayer:
-		if sound_node.stream == null:
-			push_warning(sound_name + " existe, pero no tiene audio asignado en el GameResult global.")
-			return
-		
-		sound_node.process_mode = Node.PROCESS_MODE_ALWAYS
-		sound_node.volume_db = volume
-		sound_node.stop()
-		sound_node.play()
-		
-		print("Reproduciendo sonido global: ", sound_name)
-	else:
-		push_warning("No se encontró el sonido global: " + sound_name)
+
 
 func _disable_items():
 	for item in items:

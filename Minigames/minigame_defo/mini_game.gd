@@ -18,6 +18,8 @@ const WATER_SOUND = preload("res://Minigames/minigame_defo/Music/Regadera.mp3")
 const WIN_SOUND = preload("res://Minigames/minigame_defo/Music/MusicaVictoria.mp3")
 const LOSE_SOUND = preload("res://Minigames/minigame_defo/Music/JuegoPerdido.mp3")
 
+const GLOBAL_SOUND_VOLUME := -10.0
+
 var timer_hud: CanvasLayer
 var game_result_panel: CanvasLayer
 
@@ -30,6 +32,9 @@ var lose_sound: AudioStreamPlayer
 var health_layer: CanvasLayer
 var health_ui: HealthBarUi
 
+var damage_layer: CanvasLayer = null
+var damage_rect: ColorRect = null
+
 @onready var back_button = get_node_or_null("CanvasLayer/BackButton")
 
 
@@ -41,6 +46,7 @@ func _ready():
 	create_timer()
 	create_game_result_panel()
 	create_health_ui()
+	_setup_damage_effect()
 	connect_back_button()
 
 	timer_hud.set_tamano_panel(600, 60)
@@ -55,17 +61,26 @@ func _process(_delta):
 	if game_active and not already_finished:
 		check_win_condition()
 
+
 # =========================================================
 # TIME BONUS POR EDAD
 # =========================================================
+
 func _get_time_bonus(age: int) -> float:
 	match age:
-		11: return 2.0
-		10: return 3.0
-		9:  return 5.0
-		8:  return 7.0
-		7:  return 10.0
-		_:  return 10.0 if age < 7 else 0.0
+		11:
+			return 2.0
+		10:
+			return 3.0
+		9:
+			return 5.0
+		8:
+			return 7.0
+		7:
+			return 10.0
+		_:
+			return 10.0 if age < 7 else 0.0
+
 
 func randomize_bad_holes():
 	var holes = get_tree().get_nodes_in_group("holes")
@@ -87,33 +102,76 @@ func randomize_bad_holes():
 	print("Random bad holes: ", amount)
 
 
+# =========================================================
+# AUDIO
+# =========================================================
+
 func create_audio():
 	background_music = AudioStreamPlayer.new()
 	background_music.stream = BACKGROUND_MUSIC
-	background_music.volume_db = -8
+	background_music.volume_db = GLOBAL_SOUND_VOLUME
 	add_child(background_music)
 	background_music.play()
 
 	plant_sound = AudioStreamPlayer.new()
 	plant_sound.stream = PLANT_SOUND
-	plant_sound.volume_db = 0
+	plant_sound.volume_db = GLOBAL_SOUND_VOLUME
 	add_child(plant_sound)
 
 	water_sound = AudioStreamPlayer.new()
 	water_sound.stream = WATER_SOUND
-	water_sound.volume_db = 0
+	water_sound.volume_db = GLOBAL_SOUND_VOLUME
 	add_child(water_sound)
 
 	win_sound = AudioStreamPlayer.new()
 	win_sound.stream = WIN_SOUND
-	win_sound.volume_db = 0
+	win_sound.volume_db = GLOBAL_SOUND_VOLUME
 	add_child(win_sound)
 
 	lose_sound = AudioStreamPlayer.new()
 	lose_sound.stream = LOSE_SOUND
-	lose_sound.volume_db = 0
+	lose_sound.volume_db = GLOBAL_SOUND_VOLUME
 	add_child(lose_sound)
 
+
+func _play_sound(sound: AudioStreamPlayer) -> void:
+	if sound == null:
+		return
+
+	if sound.stream == null:
+		return
+
+	sound.volume_db = GLOBAL_SOUND_VOLUME
+	sound.stop()
+	sound.play()
+
+
+func _set_game_result_sound_volume() -> void:
+	if game_result_panel == null:
+		return
+
+	var result_sounds := [
+		"WinSound",
+		"win_sound",
+		"AudioWin",
+		"WinAudio",
+		"LoseSound",
+		"lose_sound",
+		"AudioLose",
+		"LoseAudio"
+	]
+
+	for sound_name in result_sounds:
+		var sound = game_result_panel.find_child(sound_name, true, false)
+
+		if sound and sound is AudioStreamPlayer:
+			sound.volume_db = GLOBAL_SOUND_VOLUME
+			sound.process_mode = Node.PROCESS_MODE_ALWAYS
+
+
+# =========================================================
+# TIMER
+# =========================================================
 
 func create_timer():
 	timer_hud = TIMER_HUD_SCENE.instantiate()
@@ -128,7 +186,14 @@ func create_game_result_panel():
 	game_result_panel = GAME_RESULT_SCENE.instantiate()
 	add_child(game_result_panel)
 	game_result_panel.layer = 60
+	game_result_panel.process_mode = Node.PROCESS_MODE_ALWAYS
 
+	_set_game_result_sound_volume()
+
+
+# =========================================================
+# HEALTH UI
+# =========================================================
 
 func create_health_ui():
 	health_layer = CanvasLayer.new()
@@ -162,8 +227,10 @@ func receive_bad_hole_damage():
 
 	current_damage += 10
 	update_health_bar()
+	_play_damage_effect()
 
 	if health <= 0:
+		await get_tree().create_timer(0.25).timeout
 		lose_game()
 
 
@@ -174,6 +241,54 @@ func connect_back_button():
 		print("CanvasLayer/BackButton was not found, but the game can continue.")
 
 
+# =========================================================
+# DAMAGE EFFECT
+# =========================================================
+
+func _setup_damage_effect():
+	damage_layer = CanvasLayer.new()
+	damage_layer.name = "DamageLayer"
+	damage_layer.layer = 200
+	add_child(damage_layer)
+	
+	damage_rect = ColorRect.new()
+	damage_rect.name = "DamageRect"
+	damage_rect.color = Color(1, 0, 0)
+	damage_rect.modulate.a = 0.0
+	damage_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	damage_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	
+	damage_layer.add_child(damage_rect)
+
+
+func _play_damage_effect():
+	if not damage_rect:
+		return
+	
+	var original_position: Vector2 = position
+	
+	var flash_tween := create_tween()
+	damage_rect.modulate.a = 0.0
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.35, 0.08)
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.0, 0.22)
+	
+	var shake_tween := create_tween()
+	
+	for i in range(6):
+		var offset := Vector2(
+			randf_range(-8.0, 8.0),
+			randf_range(-8.0, 8.0)
+		)
+		
+		shake_tween.tween_property(self, "position", original_position + offset, 0.03)
+	
+	shake_tween.tween_property(self, "position", original_position, 0.05)
+
+
+# =========================================================
+# GAME START
+# =========================================================
+
 func start_game():
 	game_active = true
 	already_finished = false
@@ -181,9 +296,9 @@ func start_game():
 	health = 100
 	current_damage = 10
 	update_health_bar()
-	
-	# --- NUEVO: ajustar tiempo según edad del jugador ---
-	var player_age: int = MinigameData.player_age  # <-- ajusta el nombre del autoload
+
+	var player_age: int = MinigameData.player_age
+
 	if player_age < 12:
 		time_limit = 30.0 + _get_time_bonus(player_age)
 	else:
@@ -214,6 +329,10 @@ func _on_time_up():
 		lose_game()
 
 
+# =========================================================
+# WIN / LOSE
+# =========================================================
+
 func win_game():
 	if already_finished:
 		return
@@ -226,8 +345,8 @@ func win_game():
 	if background_music != null:
 		background_music.stop()
 
-	if win_sound != null:
-		win_sound.play()
+	_set_game_result_sound_volume()
+	_play_sound(win_sound)
 
 	game_result_panel.mostrar_ganaste()
 
@@ -244,20 +363,22 @@ func lose_game():
 	if background_music != null:
 		background_music.stop()
 
-	if lose_sound != null:
-		lose_sound.play()
+	_set_game_result_sound_volume()
+	_play_sound(lose_sound)
 
 	game_result_panel.mostrar_perdiste()
 
 
+# =========================================================
+# PUBLIC SOUND METHODS
+# =========================================================
+
 func play_plant_sound():
-	if plant_sound != null:
-		plant_sound.play()
+	_play_sound(plant_sound)
 
 
 func play_water_sound():
-	if water_sound != null:
-		water_sound.play()
+	_play_sound(water_sound)
 
 
 func _on_back_pressed():

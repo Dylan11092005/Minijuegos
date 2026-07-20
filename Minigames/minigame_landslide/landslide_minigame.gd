@@ -12,6 +12,8 @@ const LIVES_UI_SCENE = preload("res://Minigames/ui_global/LivesUi.tscn")
 const MUSIC_DIR := "res://Minigames/minigame_landslide/Music/"
 const FIRE_TRUCK_PATH := "res://Minigames/minigame_landslide/assets/fire_truck.png"
 
+const GLOBAL_SOUND_VOLUME := -10.0
+
 @export var spawn_interval := 1.05
 @export var spawn_interval_fast := 0.72
 
@@ -20,6 +22,9 @@ const FIRE_TRUCK_PATH := "res://Minigames/minigame_landslide/assets/fire_truck.p
 @export var rescue_truck_scale := Vector2(0.7, 0.7)
 @export var rescue_truck_speed_to_player := 2.0
 @export var rescue_truck_speed_to_safe := 2.6
+
+# Tiempo de protección para que un tronco no quite varias vidas de golpe.
+@export var trunk_damage_cooldown := 0.80
 
 var game_active := false
 var already_finished := false
@@ -30,6 +35,7 @@ var has_called_911 := false
 var player_in_phone_zone := false
 var spawn_counter := 0.0
 var current_spawn_interval := 1.05
+var trunk_damage_cooldown_remaining := 0.0
 
 var keypad_open := false
 var dialed_number := ""
@@ -59,6 +65,9 @@ var call_911_sound: AudioStreamPlayer = null
 
 var rescue_truck: Sprite2D = null
 
+var damage_layer: CanvasLayer = null
+var damage_rect: ColorRect = null
+
 
 func _ready() -> void:
 	add_to_group("game_manager")
@@ -67,10 +76,12 @@ func _ready() -> void:
 	_create_audio()
 	_setup_main_nodes()
 	_setup_collisions()
+	_setup_manual_trunks()
 	_create_ui()
 	_create_timer()
 	_create_result_panel()
 	_create_lives_ui()
+	_setup_damage_effect()
 	_create_phone_keypad()
 	_connect_signals()
 
@@ -78,6 +89,9 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	if trunk_damage_cooldown_remaining > 0.0:
+		trunk_damage_cooldown_remaining = maxf(0.0, trunk_damage_cooldown_remaining - delta)
+
 	if not game_active or already_finished:
 		return
 
@@ -323,6 +337,147 @@ func _set_area_collision(node: Area2D, size: Vector2, offset: Vector2) -> void:
 	node.monitorable = true
 
 
+
+# =========================================================
+# TRONCOS COLOCADOS MANUALMENTE
+# =========================================================
+
+func _setup_manual_trunks() -> void:
+	var found_trunks := 0
+
+	for node in find_children("*", "Node2D", true, false):
+		if node == self:
+			continue
+
+		var node_name := str(node.name).to_lower()
+		var is_trunk_name := (
+			node_name.begins_with("trunk")
+			or node_name.begins_with("tronco")
+		)
+
+		var is_trunk_scene := false
+
+		if node.scene_file_path != "":
+			is_trunk_scene = node.scene_file_path.to_lower().ends_with("trunk.tscn")
+
+		if not is_trunk_name and not is_trunk_scene:
+			continue
+
+		var trunk := node as Node2D
+
+		if trunk == null:
+			continue
+
+		_prepare_manual_trunk(trunk)
+		found_trunks += 1
+
+	if found_trunks == 0:
+		push_warning("No se encontraron troncos. Usa instancias de Trunk.tscn o nombres como Trunk, Trunk2, Trunk3.")
+
+
+func _prepare_manual_trunk(trunk: Node2D) -> void:
+	if trunk.is_in_group("configured_landslide_trunk"):
+		return
+
+	trunk.add_to_group("configured_landslide_trunk")
+	trunk.set_meta("player_inside", false)
+
+	var damage_area := trunk.get_node_or_null("DamageArea") as Area2D
+
+	if damage_area == null:
+		damage_area = Area2D.new()
+		damage_area.name = "DamageArea"
+		trunk.add_child(damage_area)
+
+	damage_area.position = Vector2.ZERO
+	damage_area.rotation = 0.0
+	damage_area.scale = Vector2.ONE
+	damage_area.collision_layer = 2
+	damage_area.collision_mask = 1
+	damage_area.monitoring = true
+	damage_area.monitorable = true
+
+	var collision := trunk.get_node_or_null("CollisionShape2D") as CollisionShape2D
+
+	if collision == null:
+		collision = trunk.find_child("CollisionShape2D", true, false) as CollisionShape2D
+
+	if collision == null:
+		collision = CollisionShape2D.new()
+		collision.name = "CollisionShape2D"
+
+		var rectangle := RectangleShape2D.new()
+		rectangle.size = Vector2(170, 65)
+
+		collision.shape = rectangle
+		damage_area.add_child(collision)
+
+	elif collision.get_parent() != damage_area:
+		collision.reparent(damage_area, true)
+
+	if collision.shape == null:
+		var rectangle := RectangleShape2D.new()
+		rectangle.size = Vector2(170, 65)
+		collision.shape = rectangle
+
+	collision.disabled = false
+
+	var entered_callable := Callable(self, "_on_trunk_body_entered").bind(trunk)
+	var exited_callable := Callable(self, "_on_trunk_body_exited").bind(trunk)
+
+	if not damage_area.body_entered.is_connected(entered_callable):
+		damage_area.body_entered.connect(entered_callable)
+
+	if not damage_area.body_exited.is_connected(exited_callable):
+		damage_area.body_exited.connect(exited_callable)
+
+
+func _on_trunk_body_entered(body: Node, trunk: Node2D) -> void:
+	if body == null or not body.is_in_group("player"):
+		return
+
+	if trunk == null or not is_instance_valid(trunk):
+		return
+
+	if bool(trunk.get_meta("player_inside", false)):
+		return
+
+	trunk.set_meta("player_inside", true)
+	_damage_player_with_trunk()
+
+
+func _on_trunk_body_exited(body: Node, trunk: Node2D) -> void:
+	if body == null or not body.is_in_group("player"):
+		return
+
+	if trunk and is_instance_valid(trunk):
+		trunk.set_meta("player_inside", false)
+
+
+func _damage_player_with_trunk() -> void:
+	if not game_active or already_finished:
+		return
+
+	if player_in_phone_zone or keypad_open or rescue_started:
+		return
+
+	if trunk_damage_cooldown_remaining > 0.0:
+		return
+
+	trunk_damage_cooldown_remaining = trunk_damage_cooldown
+
+	lives -= 1
+	lives = maxi(lives, 0)
+
+	update_lives_ui()
+	_play_damage_effect()
+
+	if lives <= 0:
+		lose_game()
+		return
+
+	_show_prompt("¡Cuidado! Tocaste un tronco y perdiste una vida.")
+
 func _create_audio() -> void:
 	var alarm_stream: AudioStream = _load_audio(["Alarm.mp3", "alarm.mp3"])
 	var rocks_stream: AudioStream = _load_audio(["Rocks.mp3", "rocks.mp3"])
@@ -334,7 +489,7 @@ func _create_audio() -> void:
 		alarm_sound = AudioStreamPlayer.new()
 		alarm_sound.name = "AlarmSound"
 		alarm_sound.stream = alarm_stream
-		alarm_sound.volume_db = -2
+		alarm_sound.volume_db = GLOBAL_SOUND_VOLUME
 		add_child(alarm_sound)
 		alarm_sound.finished.connect(_loop_alarm_sound)
 	else:
@@ -344,7 +499,7 @@ func _create_audio() -> void:
 		rocks_sound = AudioStreamPlayer.new()
 		rocks_sound.name = "RocksSound"
 		rocks_sound.stream = rocks_stream
-		rocks_sound.volume_db = -10
+		rocks_sound.volume_db = GLOBAL_SOUND_VOLUME
 		add_child(rocks_sound)
 		rocks_sound.finished.connect(_loop_rocks_sound)
 	else:
@@ -354,7 +509,7 @@ func _create_audio() -> void:
 		keyboard_sound = AudioStreamPlayer.new()
 		keyboard_sound.name = "KeyboardSound"
 		keyboard_sound.stream = keyboard_stream
-		keyboard_sound.volume_db = 0
+		keyboard_sound.volume_db = GLOBAL_SOUND_VOLUME
 		add_child(keyboard_sound)
 	else:
 		push_warning("No se encontró Keyboard.mp3 en Music.")
@@ -363,7 +518,7 @@ func _create_audio() -> void:
 		firetruck_siren_sound = AudioStreamPlayer.new()
 		firetruck_siren_sound.name = "FireTruckSirenSound"
 		firetruck_siren_sound.stream = firetruck_siren_stream
-		firetruck_siren_sound.volume_db = -1
+		firetruck_siren_sound.volume_db = GLOBAL_SOUND_VOLUME
 		add_child(firetruck_siren_sound)
 		firetruck_siren_sound.finished.connect(_loop_firetruck_siren_sound)
 	else:
@@ -373,7 +528,7 @@ func _create_audio() -> void:
 		call_911_sound = AudioStreamPlayer.new()
 		call_911_sound.name = "Call911Sound"
 		call_911_sound.stream = call_911_stream
-		call_911_sound.volume_db = 0
+		call_911_sound.volume_db = GLOBAL_SOUND_VOLUME
 		add_child(call_911_sound)
 	else:
 		push_warning("No se encontró 911.mp3 en Music.")
@@ -394,43 +549,49 @@ func _load_audio(file_names: Array) -> AudioStream:
 
 func _loop_alarm_sound() -> void:
 	if alarm_sound and game_active and not already_finished:
+		alarm_sound.volume_db = GLOBAL_SOUND_VOLUME
 		alarm_sound.play()
 
 
 func _loop_rocks_sound() -> void:
 	if rocks_sound and game_active and not already_finished:
+		rocks_sound.volume_db = GLOBAL_SOUND_VOLUME
 		rocks_sound.play()
 
 
 func _loop_firetruck_siren_sound() -> void:
 	if firetruck_siren_sound and game_active and not already_finished and rescue_started:
+		firetruck_siren_sound.volume_db = GLOBAL_SOUND_VOLUME
 		firetruck_siren_sound.play()
 
 
 func _set_alarm_normal_volume() -> void:
 	if alarm_sound:
-		alarm_sound.volume_db = -2
+		alarm_sound.volume_db = GLOBAL_SOUND_VOLUME
 
 
 func _set_alarm_low_volume() -> void:
 	if alarm_sound:
-		alarm_sound.volume_db = -18
+		alarm_sound.volume_db = GLOBAL_SOUND_VOLUME
 
 
 func _start_alarm_sound() -> void:
 	if alarm_sound and game_active and not already_finished:
+		alarm_sound.volume_db = GLOBAL_SOUND_VOLUME
 		if not alarm_sound.playing:
 			alarm_sound.play()
 
 
 func _start_rocks_sound() -> void:
 	if rocks_sound and game_active and not already_finished:
+		rocks_sound.volume_db = GLOBAL_SOUND_VOLUME
 		if not rocks_sound.playing:
 			rocks_sound.play()
 
 
 func _play_keyboard_sound() -> void:
 	if keyboard_sound:
+		keyboard_sound.volume_db = GLOBAL_SOUND_VOLUME
 		keyboard_sound.stop()
 		keyboard_sound.play()
 
@@ -442,12 +603,14 @@ func _stop_keyboard_sound() -> void:
 
 func _play_911_sound() -> void:
 	if call_911_sound:
+		call_911_sound.volume_db = GLOBAL_SOUND_VOLUME
 		call_911_sound.stop()
 		call_911_sound.play()
 
 
 func _play_firetruck_siren_sound() -> void:
 	if firetruck_siren_sound:
+		firetruck_siren_sound.volume_db = GLOBAL_SOUND_VOLUME
 		firetruck_siren_sound.stop()
 		firetruck_siren_sound.play()
 
@@ -544,6 +707,32 @@ func _create_result_panel() -> void:
 	if game_result_panel is CanvasLayer:
 		game_result_panel.layer = 60
 
+	game_result_panel.process_mode = Node.PROCESS_MODE_ALWAYS
+	_set_game_result_sound_volume()
+
+
+func _set_game_result_sound_volume() -> void:
+	if game_result_panel == null:
+		return
+
+	var result_sounds := [
+		"WinSound",
+		"win_sound",
+		"AudioWin",
+		"WinAudio",
+		"LoseSound",
+		"lose_sound",
+		"AudioLose",
+		"LoseAudio"
+	]
+
+	for sound_name in result_sounds:
+		var sound = game_result_panel.find_child(sound_name, true, false)
+
+		if sound and sound is AudioStreamPlayer:
+			sound.volume_db = GLOBAL_SOUND_VOLUME
+			sound.process_mode = Node.PROCESS_MODE_ALWAYS
+
 
 func _create_lives_ui() -> void:
 	lives_ui = LIVES_UI_SCENE.instantiate()
@@ -556,6 +745,50 @@ func _create_lives_ui() -> void:
 		lives_ui.position = Vector2(980, 25)
 
 	update_lives_ui()
+
+
+# =========================================================
+# DAMAGE EFFECT
+# =========================================================
+
+func _setup_damage_effect():
+	damage_layer = CanvasLayer.new()
+	damage_layer.name = "DamageLayer"
+	damage_layer.layer = 200
+	add_child(damage_layer)
+	
+	damage_rect = ColorRect.new()
+	damage_rect.name = "DamageRect"
+	damage_rect.color = Color(1, 0, 0)
+	damage_rect.modulate.a = 0.0
+	damage_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	damage_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	
+	damage_layer.add_child(damage_rect)
+
+
+func _play_damage_effect():
+	if not damage_rect:
+		return
+	
+	var original_position: Vector2 = position
+	
+	var flash_tween := create_tween()
+	damage_rect.modulate.a = 0.0
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.35, 0.08)
+	flash_tween.tween_property(damage_rect, "modulate:a", 0.0, 0.22)
+	
+	var shake_tween := create_tween()
+	
+	for i in range(6):
+		var offset := Vector2(
+			randf_range(-8.0, 8.0),
+			randf_range(-8.0, 8.0)
+		)
+		
+		shake_tween.tween_property(self, "position", original_position + offset, 0.03)
+	
+	shake_tween.tween_property(self, "position", original_position, 0.05)
 
 
 func _create_phone_keypad() -> void:
@@ -880,6 +1113,7 @@ func start_game() -> void:
 	player_in_phone_zone = false
 	spawn_counter = 0.0
 	current_spawn_interval = spawn_interval
+	trunk_damage_cooldown_remaining = 0.0
 	keypad_open = false
 	dialed_number = ""
 
@@ -1254,6 +1488,7 @@ func _on_player_damaged() -> void:
 		lives = 0
 
 	update_lives_ui()
+	_play_damage_effect()
 
 	if lives <= 0:
 		lose_game()
@@ -1285,6 +1520,7 @@ func _on_phone_exited(body: Node) -> void:
 
 func _on_time_up() -> void:
 	if game_active and not already_finished:
+		_play_damage_effect()
 		lose_game()
 
 
@@ -1304,6 +1540,8 @@ func win_game() -> void:
 			timer_hud.detener()
 		elif timer_hud.has_method("stop_timer"):
 			timer_hud.stop_timer()
+
+	_set_game_result_sound_volume()
 
 	if game_result_panel != null:
 		if game_result_panel.has_method("mostrar_ganaste"):
@@ -1328,6 +1566,8 @@ func lose_game() -> void:
 			timer_hud.detener()
 		elif timer_hud.has_method("stop_timer"):
 			timer_hud.stop_timer()
+
+	_set_game_result_sound_volume()
 
 	if game_result_panel != null:
 		if game_result_panel.has_method("mostrar_perdiste"):
@@ -1412,4 +1652,4 @@ func _get_time_bonus(age: int) -> float:
 		7:
 			return 10.0
 		_:
-			return 10.0 if age < 7 else 0.0															
+			return 10.0 if age < 7 else 0.0
