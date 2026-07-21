@@ -163,3 +163,4 @@ text = "Deluxe"
 [connection signal="pressed" from="GridContainer/Button24" to="." method="_on_button_24_pressed"]
 [connection signal="pressed" from="GridContainer/Button25" to="." method="_on_button_25_pressed"]
 [connection signal="pressed" from="GridContainer/Button26" to="." method="_on_button_26_pressed"]
+[connection signal="pressed" from="GridContainer/Button27" to="." method="_on_button_27_pressed"]

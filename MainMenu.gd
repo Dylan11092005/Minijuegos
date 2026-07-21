@@ -533,3 +533,17 @@ func _on_button_25_pressed() -> void:
 		return
 	
 	get_tree().change_scene_to_file("res://Minigames/ui_global/MinigameIntro.tscn")
+
+
+func _on_button_27_pressed() -> void:
+	var minigame_data = get_node("/root/MinigameData")
+	
+	
+	
+	minigame_data.minigame_scene = "res://Minigames/minigame_deluxe/Map.tscn"
+	
+	if not ResourceLoader.exists(minigame_data.minigame_scene):
+		print("ERROR: No existe la escena en esta ruta: ", minigame_data.minigame_scene)
+		return
+	
+	get_tree().change_scene_to_file("res://Minigames/ui_global/MinigameIntro.tscn")
