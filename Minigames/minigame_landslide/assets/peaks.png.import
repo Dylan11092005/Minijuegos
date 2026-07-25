@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cayp341ilxike"
-path="res://.godot/imported/phone.png-8fb2cc310afaa6e01c6cdd6b244d4593.ctex"
+uid="uid://cx1rjq4f2gxpi"
+path="res://.godot/imported/peaks.png-c41bab6ef7f44562c4ddac16810eca49.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Minigames/minigame_landslide/assets/phone.png"
-dest_files=["res://.godot/imported/phone.png-8fb2cc310afaa6e01c6cdd6b244d4593.ctex"]
+source_file="res://Minigames/minigame_landslide/assets/peaks.png"
+dest_files=["res://.godot/imported/peaks.png-c41bab6ef7f44562c4ddac16810eca49.ctex"]
 
 [params]
 

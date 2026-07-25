@@ -23,22 +23,20 @@ const GLOBAL_SOUND_VOLUME := -10.0
 @export var rescue_truck_speed_to_player := 2.0
 @export var rescue_truck_speed_to_safe := 2.6
 
-# Tiempo de protección para que un tronco no quite varias vidas de golpe.
-@export var trunk_damage_cooldown := 0.80
-
 var game_active := false
 var already_finished := false
 var rescue_started := false
 
-var lives := 3
-var has_called_911 := false
-var player_in_phone_zone := false
 var spawn_counter := 0.0
 var current_spawn_interval := 1.05
-var trunk_damage_cooldown_remaining := 0.0
+var trunk_damage_cooldown := false
 
 var keypad_open := false
 var dialed_number := ""
+
+var lives := 3
+var has_called_911 := false
+var player_in_phone_zone := false
 
 var player: CharacterBody2D = null
 var phone_cabin: Area2D = null
@@ -69,6 +67,7 @@ var damage_layer: CanvasLayer = null
 var damage_rect: ColorRect = null
 
 
+
 func _ready() -> void:
 	add_to_group("game_manager")
 	randomize()
@@ -76,7 +75,6 @@ func _ready() -> void:
 	_create_audio()
 	_setup_main_nodes()
 	_setup_collisions()
-	_setup_manual_trunks()
 	_create_ui()
 	_create_timer()
 	_create_result_panel()
@@ -89,9 +87,6 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	if trunk_damage_cooldown_remaining > 0.0:
-		trunk_damage_cooldown_remaining = maxf(0.0, trunk_damage_cooldown_remaining - delta)
-
 	if not game_active or already_finished:
 		return
 
@@ -336,147 +331,6 @@ func _set_area_collision(node: Area2D, size: Vector2, offset: Vector2) -> void:
 	node.monitoring = true
 	node.monitorable = true
 
-
-
-# =========================================================
-# TRONCOS COLOCADOS MANUALMENTE
-# =========================================================
-
-func _setup_manual_trunks() -> void:
-	var found_trunks := 0
-
-	for node in find_children("*", "Node2D", true, false):
-		if node == self:
-			continue
-
-		var node_name := str(node.name).to_lower()
-		var is_trunk_name := (
-			node_name.begins_with("trunk")
-			or node_name.begins_with("tronco")
-		)
-
-		var is_trunk_scene := false
-
-		if node.scene_file_path != "":
-			is_trunk_scene = node.scene_file_path.to_lower().ends_with("trunk.tscn")
-
-		if not is_trunk_name and not is_trunk_scene:
-			continue
-
-		var trunk := node as Node2D
-
-		if trunk == null:
-			continue
-
-		_prepare_manual_trunk(trunk)
-		found_trunks += 1
-
-	if found_trunks == 0:
-		push_warning("No se encontraron troncos. Usa instancias de Trunk.tscn o nombres como Trunk, Trunk2, Trunk3.")
-
-
-func _prepare_manual_trunk(trunk: Node2D) -> void:
-	if trunk.is_in_group("configured_landslide_trunk"):
-		return
-
-	trunk.add_to_group("configured_landslide_trunk")
-	trunk.set_meta("player_inside", false)
-
-	var damage_area := trunk.get_node_or_null("DamageArea") as Area2D
-
-	if damage_area == null:
-		damage_area = Area2D.new()
-		damage_area.name = "DamageArea"
-		trunk.add_child(damage_area)
-
-	damage_area.position = Vector2.ZERO
-	damage_area.rotation = 0.0
-	damage_area.scale = Vector2.ONE
-	damage_area.collision_layer = 2
-	damage_area.collision_mask = 1
-	damage_area.monitoring = true
-	damage_area.monitorable = true
-
-	var collision := trunk.get_node_or_null("CollisionShape2D") as CollisionShape2D
-
-	if collision == null:
-		collision = trunk.find_child("CollisionShape2D", true, false) as CollisionShape2D
-
-	if collision == null:
-		collision = CollisionShape2D.new()
-		collision.name = "CollisionShape2D"
-
-		var rectangle := RectangleShape2D.new()
-		rectangle.size = Vector2(170, 65)
-
-		collision.shape = rectangle
-		damage_area.add_child(collision)
-
-	elif collision.get_parent() != damage_area:
-		collision.reparent(damage_area, true)
-
-	if collision.shape == null:
-		var rectangle := RectangleShape2D.new()
-		rectangle.size = Vector2(170, 65)
-		collision.shape = rectangle
-
-	collision.disabled = false
-
-	var entered_callable := Callable(self, "_on_trunk_body_entered").bind(trunk)
-	var exited_callable := Callable(self, "_on_trunk_body_exited").bind(trunk)
-
-	if not damage_area.body_entered.is_connected(entered_callable):
-		damage_area.body_entered.connect(entered_callable)
-
-	if not damage_area.body_exited.is_connected(exited_callable):
-		damage_area.body_exited.connect(exited_callable)
-
-
-func _on_trunk_body_entered(body: Node, trunk: Node2D) -> void:
-	if body == null or not body.is_in_group("player"):
-		return
-
-	if trunk == null or not is_instance_valid(trunk):
-		return
-
-	if bool(trunk.get_meta("player_inside", false)):
-		return
-
-	trunk.set_meta("player_inside", true)
-	_damage_player_with_trunk()
-
-
-func _on_trunk_body_exited(body: Node, trunk: Node2D) -> void:
-	if body == null or not body.is_in_group("player"):
-		return
-
-	if trunk and is_instance_valid(trunk):
-		trunk.set_meta("player_inside", false)
-
-
-func _damage_player_with_trunk() -> void:
-	if not game_active or already_finished:
-		return
-
-	if player_in_phone_zone or keypad_open or rescue_started:
-		return
-
-	if trunk_damage_cooldown_remaining > 0.0:
-		return
-
-	trunk_damage_cooldown_remaining = trunk_damage_cooldown
-
-	lives -= 1
-	lives = maxi(lives, 0)
-
-	update_lives_ui()
-	_play_damage_effect()
-
-	if lives <= 0:
-		lose_game()
-		return
-
-	_show_prompt("¡Cuidado! Tocaste un tronco y perdiste una vida.")
 
 func _create_audio() -> void:
 	var alarm_stream: AudioStream = _load_audio(["Alarm.mp3", "alarm.mp3"])
@@ -1102,6 +956,14 @@ func _connect_signals() -> void:
 		if not phone_cabin.body_exited.is_connected(_on_phone_exited):
 			phone_cabin.body_exited.connect(_on_phone_exited)
 
+	# Conecta todas las enredaderas con espinas.
+	var thorn_callback := Callable(self, "_on_trunk_touched")
+
+	for thorn in get_tree().get_nodes_in_group("thorn_obstacles"):
+		if thorn.has_signal("trunk_touched"):
+			if not thorn.is_connected("trunk_touched", thorn_callback):
+				thorn.connect("trunk_touched", thorn_callback)
+
 
 func start_game() -> void:
 	game_active = true
@@ -1113,7 +975,6 @@ func start_game() -> void:
 	player_in_phone_zone = false
 	spawn_counter = 0.0
 	current_spawn_interval = spawn_interval
-	trunk_damage_cooldown_remaining = 0.0
 	keypad_open = false
 	dialed_number = ""
 
@@ -1496,7 +1357,35 @@ func _on_player_damaged() -> void:
 
 	current_spawn_interval = spawn_interval_fast
 	_show_prompt("¡Cuidado! Una roca te cayó encima. Perdiste una vida.")
+	
+func _on_trunk_touched() -> void:
+	if not game_active or already_finished:
+		return
 
+	if keypad_open or rescue_started:
+		return
+
+	if trunk_damage_cooldown:
+		return
+
+	trunk_damage_cooldown = true
+
+	lives -= 1
+
+	if lives < 0:
+		lives = 0
+
+	update_lives_ui()
+	_play_damage_effect()
+
+	if lives <= 0:
+		lose_game()
+		return
+
+	_show_prompt("¡Cuidado! Tocaste los picos de piedra. Perdiste una vida.")
+
+	await get_tree().create_timer(0.7).timeout
+	trunk_damage_cooldown = false
 
 func _on_phone_entered(body: Node) -> void:
 	if not body.is_in_group("player"):

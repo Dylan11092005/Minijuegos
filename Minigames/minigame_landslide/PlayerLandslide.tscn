@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://baspr7yo4qutn"]
+[gd_scene format=3 uid="uid://cq3cuxenf2hh"]
 
 [ext_resource type="Script" uid="uid://djb5ehyn36a38" path="res://Minigames/minigame_landslide/PlayerLandslide.gd" id="1_q4g1s"]
 [ext_resource type="Texture2D" uid="uid://bkagq1s00rrda" path="res://Minigames/minigame_landslide/assets/02_player_landslide.png" id="2_a3jtf"]
