@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ctju280anwgve"
-path="res://.godot/imported/map_background.png-351d548fa7155646fd897215aa6ce1a5.ctex"
+uid="uid://b6xga4i2pslmk"
+path="res://.godot/imported/life_jacket.png-c71650e19561c2c2ef5b8c5f7759b610.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Minigames/minigame_deluxe/assets/map_background.png"
-dest_files=["res://.godot/imported/map_background.png-351d548fa7155646fd897215aa6ce1a5.ctex"]
+source_file="res://Minigames/minigame_deluxe/mini_minigame_level1/assets/life_jacket.png"
+dest_files=["res://.godot/imported/life_jacket.png-c71650e19561c2c2ef5b8c5f7759b610.ctex"]
 
 [params]
 

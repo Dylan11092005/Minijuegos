@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ctju280anwgve"
-path="res://.godot/imported/map_background.png-351d548fa7155646fd897215aa6ce1a5.ctex"
+uid="uid://bvxl57i3rsk7g"
+path="res://.godot/imported/ball.png-2b358fc7738f2e130b62bf07a1682452.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Minigames/minigame_deluxe/assets/map_background.png"
-dest_files=["res://.godot/imported/map_background.png-351d548fa7155646fd897215aa6ce1a5.ctex"]
+source_file="res://Minigames/minigame_deluxe/mini_minigame_level1/assets/ball.png"
+dest_files=["res://.godot/imported/ball.png-2b358fc7738f2e130b62bf07a1682452.ctex"]
 
 [params]
 

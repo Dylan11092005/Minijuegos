@@ -9,7 +9,6 @@ const FLOATING_OBJECT_SCENE_PATH := "res://Minigames/minigame_deluxe/mini_miniga
 const OBJECTS_FOLDER := "res://Minigames/minigame_deluxe/mini_minigame_level1/assets/"
 
 const TIMER_UI_SCRIPT_PATH := "res://Minigames/ui_global/TimerUI.gd"
-const GAME_RESULT_SCENE_PATH := "res://Minigames/ui_global/GameResult.tscn"
 const LIVES_UI_SCRIPT_PATH := "res://Minigames/ui_global/LivesUi.gd"
 
 
@@ -28,11 +27,29 @@ const BAD_OBJECTS := ["ball", "flowers", "game_console", "guitar", "party_hat"]
 
 
 # =========================================================
+# COLORES DEL PANEL DE RESULTADO PROPIO
+# =========================================================
+
+const RC_BEIGE := Color("#E5C89E")
+const RC_ORANGE := Color("#E0B080")
+const RC_BLUE := Color("#3E5F8F")
+const RC_CYAN := Color("#30C0F0")
+const RC_LIGHT_BLUE := Color("#C0E0FF")
+const RC_WHITE := Color("#F5F5F5")
+
+const RESULT_PANEL_SIZE := Vector2(500, 260)
+const RESULT_BUTTON_SIZE := Vector2(240, 56)
+
+const WIN_MESSAGE := "¡Felicidades!\nGanaste el juego"
+const LOSE_MESSAGE := "¡Qué mal!\nPerdiste"
+const BACK_BUTTON_TEXT := "Volver al mapa"
+
+
+# =========================================================
 # NODE / UI GLOBAL
 # =========================================================
 
 var timer_ui = null
-var game_result = null
 
 @onready var background_sound: AudioStreamPlayer = get_node_or_null("BackgroundSound")
 var _background_sound_active: bool = false
@@ -47,6 +64,12 @@ var damage_rect: ColorRect = null
 
 var spawn_timer: Timer = null
 
+# --- Panel de resultado propio (creado por código) ---
+var resultado_layer: CanvasLayer = null
+var resultado_panel: Panel = null
+var resultado_label: Label = null
+var resultado_boton: Button = null
+
 
 # =========================================================
 # VARIABLES
@@ -58,7 +81,6 @@ var rescued: int = 0
 var game_over: bool = false
 var game_started: bool = false
 
-# NUEVO: guarda si el resultado final fue victoria, para cuando se presione el botón
 var _resultado_gano: bool = false
 
 
@@ -70,7 +92,7 @@ func _ready():
 	randomize()
 
 	_setup_timer_ui()
-	_setup_game_result()
+	_setup_resultado_ui()
 	_setup_lives_ui()
 	_setup_damage_effect()
 	_setup_spawn_timer()
@@ -119,41 +141,83 @@ func _stop_global_timer():
 
 
 # =========================================================
-# GAME RESULT GLOBAL
+# PANEL DE RESULTADO PROPIO (100% por código, no usa GameResult.tscn)
 # =========================================================
 
-func _setup_game_result():
-	if ResourceLoader.exists(GAME_RESULT_SCENE_PATH):
-		var result_scene = load(GAME_RESULT_SCENE_PATH)
-		game_result = result_scene.instantiate()
-		game_result.name = "GameResult"
-		add_child(game_result)
-		_reconectar_boton_volver()
-	else:
-		push_error("No se encontró GameResult.tscn en: " + GAME_RESULT_SCENE_PATH)
+func _setup_resultado_ui():
+	resultado_layer = CanvasLayer.new()
+	resultado_layer.name = "ResultadoLayer"
+	resultado_layer.layer = 150
+	add_child(resultado_layer)
+
+	resultado_panel = Panel.new()
+	resultado_panel.custom_minimum_size = RESULT_PANEL_SIZE
+	resultado_panel.visible = false
+	resultado_layer.add_child(resultado_panel)
+
+	var estilo_panel := StyleBoxFlat.new()
+	estilo_panel.bg_color = RC_BEIGE
+	estilo_panel.border_color = RC_ORANGE
+	estilo_panel.set_border_width_all(6)
+	estilo_panel.set_corner_radius_all(28)
+	estilo_panel.shadow_color = Color(0, 0, 0, 0.28)
+	estilo_panel.shadow_size = 16
+	estilo_panel.content_margin_left = 24
+	estilo_panel.content_margin_right = 24
+	estilo_panel.content_margin_top = 24
+	estilo_panel.content_margin_bottom = 24
+	resultado_panel.add_theme_stylebox_override("panel", estilo_panel)
+
+	var vbox := VBoxContainer.new()
+	vbox.set_anchors_preset(Control.PRESET_FULL_RECT)
+	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	vbox.add_theme_constant_override("separation", 24)
+	resultado_panel.add_child(vbox)
+
+	resultado_label = Label.new()
+	resultado_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	resultado_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	resultado_label.add_theme_color_override("font_color", RC_BLUE)
+	resultado_label.add_theme_font_size_override("font_size", 34)
+	vbox.add_child(resultado_label)
+
+	resultado_boton = Button.new()
+	resultado_boton.text = BACK_BUTTON_TEXT
+	resultado_boton.custom_minimum_size = RESULT_BUTTON_SIZE
+	resultado_boton.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+
+	var estilo_normal := StyleBoxFlat.new()
+	estilo_normal.bg_color = RC_CYAN
+	estilo_normal.border_color = RC_BLUE
+	estilo_normal.set_border_width_all(4)
+	estilo_normal.set_corner_radius_all(18)
+
+	var estilo_hover := estilo_normal.duplicate()
+	estilo_hover.bg_color = RC_LIGHT_BLUE
+
+	var estilo_pressed := estilo_normal.duplicate()
+	estilo_pressed.bg_color = RC_BLUE
+	estilo_pressed.border_color = RC_CYAN
+
+	resultado_boton.add_theme_stylebox_override("normal", estilo_normal)
+	resultado_boton.add_theme_stylebox_override("hover", estilo_hover)
+	resultado_boton.add_theme_stylebox_override("pressed", estilo_pressed)
+	resultado_boton.add_theme_color_override("font_color", RC_WHITE)
+	resultado_boton.add_theme_font_size_override("font_size", 22)
+
+	resultado_boton.pressed.connect(_on_volver_al_mapa_pressed)
+	vbox.add_child(resultado_boton)
 
 
-# NUEVO: quita la conexión original del botón (que iba al menú principal)
-# y la reemplaza por una que nos regresa a nuestro Map.tscn.
-# No toca GameResult.gd para nada.
-func _reconectar_boton_volver():
-	if not game_result:
-		return
+func _mostrar_resultado(gano: bool):
+	_resultado_gano = gano
+	resultado_label.text = WIN_MESSAGE if gano else LOSE_MESSAGE
 
-	var boton: Button = game_result.get("back_button")
-	if boton == null:
-		push_warning("No se encontró back_button en GameResult; revisa el nombre de la variable.")
-		return
-
-	# Desconecta TODAS las conexiones existentes de esa señal (la original hacia menu_path)
-	for conexion in boton.pressed.get_connections():
-		boton.pressed.disconnect(conexion["callable"])
-
-	# Conecta nuestra propia función
-	boton.pressed.connect(_on_volver_al_mapa_pressed)
+	var screen := get_viewport().get_visible_rect().size
+	resultado_panel.position = (screen - RESULT_PANEL_SIZE) / 2.0
+	resultado_panel.visible = true
 
 
-# NUEVO: esta es la función que se ejecuta al presionar "Volver al menú"
 func _on_volver_al_mapa_pressed():
 	GameState.volver_al_mapa_con_resultado(_resultado_gano)
 
@@ -422,7 +486,6 @@ func _win_game():
 
 	game_over = true
 	game_started = false
-	_resultado_gano = true  # NUEVO
 
 	_stop_global_timer()
 	_stop_background_sound()
@@ -430,12 +493,7 @@ func _win_game():
 		spawn_timer.stop()
 	_clear_objects()
 
-	if game_result:
-		if game_result.has_method("show_win"):
-			game_result.show_win()
-		elif game_result.has_method("mostrar_ganaste"):
-			game_result.mostrar_ganaste()
-	# Ya no navega solo — el botón "Volver al menú" (reconectado) se encarga
+	_mostrar_resultado(true)
 
 
 func _lose_game():
@@ -444,7 +502,6 @@ func _lose_game():
 
 	game_over = true
 	game_started = false
-	_resultado_gano = false  # NUEVO
 
 	_stop_global_timer()
 	_stop_background_sound()
@@ -452,12 +509,7 @@ func _lose_game():
 		spawn_timer.stop()
 	_clear_objects()
 
-	if game_result:
-		if game_result.has_method("show_lose"):
-			game_result.show_lose()
-		elif game_result.has_method("mostrar_perdiste"):
-			game_result.mostrar_perdiste()
-	# Ya no navega solo — el botón "Volver al menú" (reconectado) se encarga
+	_mostrar_resultado(false)
 
 
 func _clear_objects():

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ctju280anwgve"
-path="res://.godot/imported/map_background.png-351d548fa7155646fd897215aa6ce1a5.ctex"
+uid="uid://byjatiaog6mq8"
+path="res://.godot/imported/water_bottle.png-09527346ee054a33df3a19b973a4962d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Minigames/minigame_deluxe/assets/map_background.png"
-dest_files=["res://.godot/imported/map_background.png-351d548fa7155646fd897215aa6ce1a5.ctex"]
+source_file="res://Minigames/minigame_deluxe/mini_minigame_level1/assets/water_bottle.png"
+dest_files=["res://.godot/imported/water_bottle.png-09527346ee054a33df3a19b973a4962d.ctex"]
 
 [params]
 

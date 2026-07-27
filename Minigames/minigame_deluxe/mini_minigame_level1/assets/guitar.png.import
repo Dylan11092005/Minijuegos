@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ctju280anwgve"
-path="res://.godot/imported/map_background.png-351d548fa7155646fd897215aa6ce1a5.ctex"
+uid="uid://ir7vms7hvfma"
+path="res://.godot/imported/guitar.png-98271739881f79842def7caf41aeafd4.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Minigames/minigame_deluxe/assets/map_background.png"
-dest_files=["res://.godot/imported/map_background.png-351d548fa7155646fd897215aa6ce1a5.ctex"]
+source_file="res://Minigames/minigame_deluxe/mini_minigame_level1/assets/guitar.png"
+dest_files=["res://.godot/imported/guitar.png-98271739881f79842def7caf41aeafd4.ctex"]
 
 [params]
 
