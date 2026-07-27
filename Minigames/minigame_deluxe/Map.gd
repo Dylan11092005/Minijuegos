@@ -10,11 +10,23 @@ var nodo_actual: int = 1
 var nivel_completado_actual: bool = false
 var esperando_inicio: bool = false
 
-const COLOR_FONDO := Color(0.13, 0.09, 0.07, 0.95)
-const COLOR_BORDE := Color(0.80, 0.65, 0.30)
-const COLOR_TEXTO := Color(0.95, 0.90, 0.75)
-const COLOR_BOTON := Color(0.25, 0.18, 0.12)
-const COLOR_BOTON_HOVER := Color(0.35, 0.25, 0.15)
+# ── Paleta unificada con TimerUI (reloj de "Tiempo restante") ──────────────────
+const C_BEIGE        := Color("#E5C89E")
+const C_ORANGE_BORDE  := Color("#E0B080")
+const C_ORANGE_FUERTE := Color("#E07820")
+const C_BLUE          := Color("#3E5F8F")
+const C_WHITE         := Color("#FFFFFF")
+
+# Colores usados por el panel de nivel / botón (renombrados para mantener
+# compatibilidad con el resto del script, pero ahora con la misma paleta)
+const COLOR_FONDO        := C_BEIGE
+const COLOR_BORDE        := C_ORANGE_BORDE
+const COLOR_TEXTO        := C_BLUE
+const COLOR_BOTON        := C_BLUE
+const COLOR_BOTON_HOVER  := Color("#4B71A8")   # azul un poco más claro
+const COLOR_BOTON_PRESS  := Color("#324D73")   # azul un poco más oscuro
+const COLOR_BOTON_TEXTO  := C_WHITE
+# ────────────────────────────────────────────────────────────────────────────
 
 var descripciones_nivel := {
 	1: "Nivel 1: rescata los objetos buenos antes de que se acabe el tiempo.",
@@ -118,49 +130,73 @@ func _crear_ui():
 	ui_capa.layer = 10
 	add_child(ui_capa)
 
+	# ── Panel del nivel: mismo lenguaje visual que el reloj de tiempo ──────────
 	panel_nivel = Panel.new()
-	panel_nivel.custom_minimum_size = Vector2(260, 140)
+	panel_nivel.custom_minimum_size = Vector2(280, 150)
 	panel_nivel.visible = false
 	ui_capa.add_child(panel_nivel)
 
 	var estilo_panel := StyleBoxFlat.new()
 	estilo_panel.bg_color = COLOR_FONDO
 	estilo_panel.border_color = COLOR_BORDE
-	estilo_panel.set_border_width_all(3)
-	estilo_panel.set_corner_radius_all(14)
-	estilo_panel.content_margin_left = 16
-	estilo_panel.content_margin_right = 16
-	estilo_panel.content_margin_top = 14
-	estilo_panel.content_margin_bottom = 14
+	estilo_panel.set_border_width_all(4)
+	estilo_panel.set_corner_radius_all(22)
+	estilo_panel.content_margin_left = 18
+	estilo_panel.content_margin_right = 18
+	estilo_panel.content_margin_top = 16
+	estilo_panel.content_margin_bottom = 16
+	# sombra suave, igual de estilo "tarjeta" que el panel del reloj
+	estilo_panel.shadow_color = Color(0, 0, 0, 0.25)
+	estilo_panel.shadow_size = 6
+	estilo_panel.shadow_offset = Vector2(0, 3)
 	panel_nivel.add_theme_stylebox_override("panel", estilo_panel)
 
 	var vbox := VBoxContainer.new()
 	vbox.set_anchors_preset(Control.PRESET_FULL_RECT)
-	vbox.add_theme_constant_override("separation", 10)
+	vbox.add_theme_constant_override("separation", 12)
 	panel_nivel.add_child(vbox)
 
 	label_nivel = Label.new()
 	label_nivel.autowrap_mode = TextServer.AUTOWRAP_WORD
 	label_nivel.add_theme_color_override("font_color", COLOR_TEXTO)
-	label_nivel.add_theme_font_size_override("font_size", 16)
+	label_nivel.add_theme_font_size_override("font_size", 17)
 	label_nivel.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(label_nivel)
 
+	# ── Botón "Empezar": azul del reloj sobre fondo beige, con estados claros ──
 	boton_comenzar = Button.new()
-	boton_comenzar.text = "Empezar"
-	boton_comenzar.custom_minimum_size = Vector2(0, 36)
+	boton_comenzar.text = "▶  Empezar"
+	boton_comenzar.custom_minimum_size = Vector2(0, 42)
+	boton_comenzar.add_theme_font_size_override("font_size", 18)
 
 	var estilo_boton := StyleBoxFlat.new()
 	estilo_boton.bg_color = COLOR_BOTON
-	estilo_boton.border_color = COLOR_BORDE
-	estilo_boton.set_border_width_all(2)
-	estilo_boton.set_corner_radius_all(8)
+	estilo_boton.border_color = C_WHITE
+	estilo_boton.set_border_width_all(3)
+	estilo_boton.set_corner_radius_all(18)
+	estilo_boton.shadow_color = Color(0, 0, 0, 0.2)
+	estilo_boton.shadow_size = 4
+	estilo_boton.shadow_offset = Vector2(0, 2)
+
 	var estilo_boton_hover := estilo_boton.duplicate()
 	estilo_boton_hover.bg_color = COLOR_BOTON_HOVER
+	estilo_boton_hover.border_color = C_ORANGE_BORDE
+
+	var estilo_boton_press := estilo_boton.duplicate()
+	estilo_boton_press.bg_color = COLOR_BOTON_PRESS
+	estilo_boton_press.shadow_size = 1
+	estilo_boton_press.shadow_offset = Vector2(0, 1)
+
+	var estilo_boton_focus := estilo_boton_hover.duplicate()
+	estilo_boton_focus.border_color = C_ORANGE_FUERTE
 
 	boton_comenzar.add_theme_stylebox_override("normal", estilo_boton)
 	boton_comenzar.add_theme_stylebox_override("hover", estilo_boton_hover)
-	boton_comenzar.add_theme_color_override("font_color", COLOR_TEXTO)
+	boton_comenzar.add_theme_stylebox_override("pressed", estilo_boton_press)
+	boton_comenzar.add_theme_stylebox_override("focus", estilo_boton_focus)
+	boton_comenzar.add_theme_color_override("font_color", COLOR_BOTON_TEXTO)
+	boton_comenzar.add_theme_color_override("font_hover_color", COLOR_BOTON_TEXTO)
+	boton_comenzar.add_theme_color_override("font_pressed_color", COLOR_BOTON_TEXTO)
 	boton_comenzar.pressed.connect(_on_boton_empezar_pressed)
 	vbox.add_child(boton_comenzar)
 
