@@ -30,7 +30,7 @@ const COLOR_BOTON_TEXTO  := C_WHITE
 
 var descripciones_nivel := {
 	1: "Nivel 1: rescata los objetos buenos antes de que se acabe el tiempo.",
-	2: "Nivel 2: un poco más de dificultad te espera.",
+	2: "Nivel 2: cierra todas las llaves de agua antes de que se acabe el tiempo.",
 	3: "Nivel 3: pon a prueba tus reflejos.",
 	4: "Nivel 4: resuelve el acertijo del camino.",
 	5: "Nivel 5: cuidado con los obstáculos.",
@@ -43,7 +43,8 @@ var descripciones_nivel := {
 
 # Qué escena de minijuego corresponde a cada nivel
 var escenas_minijuego := {
-	1: "res://Minigames/minigame_deluxe/mini_minigame_level1/FloodGame.tscn"
+	1: "res://Minigames/minigame_deluxe/mini_minigame_level1/FloodGame.tscn",
+	2: "res://Minigames/minigame_deluxe/mini_minigame_level2/FaucetGame.tscn"
 }
 
 var conexiones = {
