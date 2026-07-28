@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://svn1ag5ka3c5"]
+
+[ext_resource type="Texture2D" uid="uid://hsarb2vgc1s3" path="res://Minigames/minigame_deluxe/mini_minigame_level2/assets/key_gray.png" id="1_0iukh"]
+[ext_resource type="Script" uid="uid://db1edriqkwelb" path="res://Minigames/minigame_deluxe/mini_minigame_level2/Faucet.gd" id="1_uxtq5"]
+[ext_resource type="Texture2D" uid="uid://wb52kb1loxg3" path="res://Minigames/minigame_deluxe/mini_minigame_level2/assets/water_key.png" id="2_ia4yg"]
+[ext_resource type="Texture2D" uid="uid://c5x3vgklodj2k" path="res://Minigames/minigame_deluxe/mini_minigame_level2/assets/water_fall1.png" id="3_ia4yg"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_uxtq5"]
+size = Vector2(256, 234)
+
+[node name="Faucet" type="Node2D" unique_id=1534338999]
+script = ExtResource("1_uxtq5")
+
+[node name="FaucetSprite" type="Sprite2D" parent="." unique_id=2091413017]
+texture = ExtResource("1_0iukh")
+
+[node name="WaterDrop" type="Sprite2D" parent="." unique_id=924194983]
+position = Vector2(-78, 169)
+texture = ExtResource("2_ia4yg")
+
+[node name="Area2D" type="Area2D" parent="." unique_id=1327451316]
+position = Vector2(-23, 28)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1749150449]
+position = Vector2(36, -18)
+shape = SubResource("RectangleShape2D_uxtq5")
+
+[node name="Waterfall" type="Sprite2D" parent="." unique_id=639141023]
+position = Vector2(-80, 272)
+scale = Vector2(0.50363636, 0.57894737)
+texture = ExtResource("3_ia4yg")
