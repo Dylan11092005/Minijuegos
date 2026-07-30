@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://djskjffmy5wdb"]
+
+[ext_resource type="Script" uid="uid://bs4rjy4lp1v5l" path="res://Minigames/minigame_deluxe/mini_minigame_level3/FlameMain.gd" id="1_twwbe"]
+[ext_resource type="Texture2D" uid="uid://clqtksragq34d" path="res://Minigames/minigame_deluxe/mini_minigame_level3/assets/background_level3.png" id="2_8s06i"]
+[ext_resource type="AudioStream" uid="uid://bfb6l6aovgjub" path="res://Minigames/minigame_hillside_barrier/assets/sounds/Background.mp3" id="3_6oks4"]
+[ext_resource type="AudioStream" uid="uid://bwd6do3usvr4l" path="res://Minigames/minigame_fire/assets/sound/fire.mp3" id="4_dire5"]
+
+[node name="FlameMain" type="Node2D" unique_id=918541143]
+script = ExtResource("1_twwbe")
+
+[node name="Background" type="Sprite2D" parent="." unique_id=1259288702]
+position = Vector2(991.9999, 558.5)
+scale = Vector2(1.2903645, 1.0830078)
+texture = ExtResource("2_8s06i")
+
+[node name="BackgroundSound" type="AudioStreamPlayer" parent="." unique_id=1029995865]
+stream = ExtResource("3_6oks4")
+
+[node name="ExtinguishFlameSound" type="AudioStreamPlayer" parent="." unique_id=788565498]
+stream = ExtResource("4_dire5")

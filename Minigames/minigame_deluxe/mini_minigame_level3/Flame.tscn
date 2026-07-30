@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://cbnkd85cgr3bm"]
+
+[ext_resource type="Texture2D" uid="uid://cwie8ohpxs2uq" path="res://Minigames/minigame_deluxe/mini_minigame_level3/assets/city_fire.png" id="1_1vxup"]
+[ext_resource type="Script" uid="uid://cq1hifavhqo5m" path="res://Minigames/minigame_deluxe/mini_minigame_level3/Flame.gd" id="1_jcsvg"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6f61b"]
+size = Vector2(311.69897, 369.84833)
+
+[node name="Flame" type="Area2D" unique_id=537928731]
+position = Vector2(257, 398)
+scale = Vector2(0.9207602, 0.8030321)
+script = ExtResource("1_jcsvg")
+
+[node name="FlameSprite" type="Sprite2D" parent="." unique_id=1489528452]
+texture = ExtResource("1_1vxup")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=733655831]
+position = Vector2(7.059387, 11.830231)
+scale = Vector2(1, 0.99999946)
+shape = SubResource("RectangleShape2D_6f61b")
