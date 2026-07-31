@@ -89,42 +89,42 @@ curve = SubResource("Curve2D_qxj6n")
 position = Vector2(450.70776, -262.19742)
 rotation = 0.7576765
 
-[node name="Way4 -5" type="Path2D" parent="Background" unique_id=680890767]
+[node name="Way4-5" type="Path2D" parent="Background" unique_id=680890767]
 curve = SubResource("Curve2D_hbn1a")
 
 [node name="PathFollow2D" type="PathFollow2D" parent="Background/Way4 -5" unique_id=414137028]
 position = Vector2(416.3026, 24.789612)
 rotation = -3.1286027
 
-[node name="Way5 -6" type="Path2D" parent="Background" unique_id=457815718]
+[node name="Way5-6" type="Path2D" parent="Background" unique_id=457815718]
 curve = SubResource("Curve2D_4sat2")
 
 [node name="PathFollow2D" type="PathFollow2D" parent="Background/Way5 -6" unique_id=108681510]
 position = Vector2(-52.372314, 38.137817)
 rotation = 1.5890183
 
-[node name="Way6 -7" type="Path2D" parent="Background" unique_id=1081110693]
+[node name="Way6-7" type="Path2D" parent="Background" unique_id=1081110693]
 curve = SubResource("Curve2D_m4ls0")
 
 [node name="PathFollow2D" type="PathFollow2D" parent="Background/Way6 -7" unique_id=82968061]
 position = Vector2(-496.58133, 73.41528)
 rotation = 2.6638207
 
-[node name="Way7 -8" type="Path2D" parent="Background" unique_id=27066763]
+[node name="Way7-8" type="Path2D" parent="Background" unique_id=27066763]
 curve = SubResource("Curve2D_q26y0")
 
 [node name="PathFollow2D" type="PathFollow2D" parent="Background/Way7 -8" unique_id=1862498174]
 position = Vector2(-420.1254, 343.2403)
 rotation = 0.36503386
 
-[node name="Way8 -9" type="Path2D" parent="Background" unique_id=470227409]
+[node name="Way8-9" type="Path2D" parent="Background" unique_id=470227409]
 curve = SubResource("Curve2D_ggqcy")
 
 [node name="PathFollow2D" type="PathFollow2D" parent="Background/Way8 -9" unique_id=2136315446]
 position = Vector2(-177.76007, 371.84363)
 rotation = 0.019950502
 
-[node name="Way9 -10" type="Path2D" parent="Background" unique_id=1857172992]
+[node name="Way9-10" type="Path2D" parent="Background" unique_id=1857172992]
 curve = SubResource("Curve2D_p5dvf")
 
 [node name="PathFollow2D" type="PathFollow2D" parent="Background/Way9 -10" unique_id=882205052]

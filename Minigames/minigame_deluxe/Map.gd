@@ -10,6 +10,12 @@ var nodo_actual: int = 1
 var nivel_completado_actual: bool = false
 var esperando_inicio: bool = false
 
+# Offset fijo del sprite del personaje respecto al origen del PathFollow2D
+# (ajuste visual para que los pies queden sobre el camino). Se usa SIEMPRE
+# el mismo valor tras cada reparent, para no arrastrar offsets corruptos
+# por la rotación/posición del tramo anterior (ver reparent() más abajo).
+const CHARACTER_OFFSET := Vector2(55.32758, 103.54468)
+
 # ── Paleta unificada con TimerUI (reloj de "Tiempo restante") ──────────────────
 const C_BEIGE        := Color("#E5C89E")
 const C_ORANGE_BORDE  := Color("#E0B080")
@@ -44,7 +50,8 @@ var descripciones_nivel := {
 # Qué escena de minijuego corresponde a cada nivel
 var escenas_minijuego := {
 	1: "res://Minigames/minigame_deluxe/mini_minigame_level1/FloodGame.tscn",
-	2: "res://Minigames/minigame_deluxe/mini_minigame_level2/FaucetGame.tscn"
+	2: "res://Minigames/minigame_deluxe/mini_minigame_level2/FaucetGame.tscn",
+	3: "res://Minigames/minigame_deluxe/mini_minigame_level3/FlameMain.tscn"
 }
 
 var conexiones = {
@@ -99,6 +106,8 @@ func _ready():
 	if sprite_personaje == null:
 		push_warning("No se encontró ningún Sprite2D/AnimatedSprite2D dentro de Character")
 
+	print("[DEBUG] _ready() del Mapa -> nodo_actual (antes de procesar)=", nodo_actual)
+
 	_crear_ui()
 
 	iniciar_minijuego.connect(_on_iniciar_minijuego)
@@ -113,18 +122,65 @@ func _buscar_sprite(nodo: Node) -> CanvasItem:
 
 func _procesar_resultado_minijuego():
 	var resultado = GameState.consumir_resultado()
+	print("[DEBUG] _procesar_resultado_minijuego -> resultado=", resultado,
+		" | GameState.nivel_actual=", GameState.nivel_actual,
+		" | GameState.tramo_guardado_path=", GameState.tramo_guardado_path,
+		" | GameState.tramo_guardado_ratio=", GameState.tramo_guardado_ratio)
 
 	if resultado == "gano":
 		nodo_actual = GameState.nivel_actual
 		nivel_completado_actual = true
 		esperando_inicio = false
+		_ubicar_personaje_en_nodo(nodo_actual)
 		panel_nivel.visible = false
 	elif resultado == "perdio":
 		nodo_actual = GameState.nivel_actual
 		nivel_completado_actual = false
+		_ubicar_personaje_en_nodo(nodo_actual)
 		_mostrar_ventanita(nodo_actual)
 	else:
+		_ubicar_personaje_en_nodo(nodo_actual)
 		_mostrar_ventanita(nodo_actual)
+
+	print("[DEBUG] después de procesar -> nodo_actual=", nodo_actual,
+		" | personaje.global_position=", personaje.global_position,
+		" | tramo_actual=", tramo_actual.get_path() if tramo_actual else "null",
+		" | tramo_actual.progress_ratio=", tramo_actual.progress_ratio if tramo_actual else "null")
+
+# ── Reposiciona al personaje (sin animación) en su posición exacta de antes
+# de entrar al minijuego. Necesario porque, al volver de un minijuego, Godot
+# reinstancia la escena del mapa y "Character" siempre reaparece en su
+# posición original dentro de la escena (Way1-2), sin importar cuánto
+# camino se había recorrido antes de entrar al minijuego.
+#
+# En vez de adivinar en qué extremo (ratio 0.0 o 1.0) de un tramo está cada
+# nodo -algo que depende de en qué sentido se dibujó cada Path2D en el
+# editor y puede fallar-, usamos la posición exacta (tramo + progress_ratio)
+# que se guardó en GameState justo antes de salir al minijuego.
+func _ubicar_personaje_en_nodo(nivel: int):
+	var path_str: String = GameState.tramo_guardado_path
+	var ratio: float = GameState.tramo_guardado_ratio
+
+	# Fallback para la primera carga del mapa (todavía no hay nada guardado):
+	# el personaje empieza en el nodo 1, al inicio de Way1-2.
+	if path_str == "":
+		path_str = "Background/Way1-2/PathFollow2D"
+		ratio = 0.0
+
+	var tramo: PathFollow2D = get_node(path_str)
+	tramo.rotates = false
+
+	if personaje.get_parent() != tramo:
+		# keep_global_transform=false: NO queremos que Godot "preserve" la
+		# posición global (eso es lo que causaba el desfase de ~480px:
+		# arrastraba un offset calculado con la rotación del tramo anterior).
+		# En vez de eso, fijamos siempre el mismo offset conocido.
+		personaje.reparent(tramo, false)
+		personaje.position = CHARACTER_OFFSET
+		personaje.rotation = 0
+
+	tramo.progress_ratio = ratio
+	tramo_actual = tramo
 
 func _crear_ui():
 	ui_capa = CanvasLayer.new()
@@ -224,6 +280,13 @@ func _on_boton_empezar_pressed():
 
 func _on_iniciar_minijuego(nivel: int):
 	if escenas_minijuego.has(nivel):
+		# Guardamos la posición exacta (tramo + progress_ratio) del personaje
+		# ANTES de cambiar de escena, para poder restaurarla tal cual al volver.
+		GameState.tramo_guardado_path = str(get_path_to(tramo_actual))
+		GameState.tramo_guardado_ratio = tramo_actual.progress_ratio
+		print("[DEBUG] _on_iniciar_minijuego(", nivel, ") -> guardando path=",
+			GameState.tramo_guardado_path, " ratio=", GameState.tramo_guardado_ratio,
+			" | nodo_actual=", nodo_actual)
 		GameState.ir_a_minijuego(nivel, escenas_minijuego[nivel])
 	else:
 		push_warning("No hay minijuego configurado para el nivel %d" % nivel)
@@ -256,6 +319,8 @@ func _input(event):
 	var destino_path = get_node(info["path"])
 	var nodo_destino = info["destino"]
 
+	print("[DEBUG] _input -> moviendo de nodo ", nodo_actual, " a ", nodo_destino,
+		" via ", info["path"], " invertido=", info["invertido"])
 	mover_por_tramo(destino_path, info["invertido"], 1.0, nodo_destino)
 	nodo_actual = nodo_destino
 
@@ -269,7 +334,12 @@ func _input(event):
 
 func mover_por_tramo(destino: PathFollow2D, invertido: bool = false, duracion: float = 1.0, nodo_destino: int = -1):
 	destino.rotates = false
-	personaje.reparent(destino)
+	# keep_global_transform=false + offset fijo, por la misma razón que en
+	# _ubicar_personaje_en_nodo: evitar que se arrastre un offset corrupto
+	# por la rotación del tramo de origen.
+	personaje.reparent(destino, false)
+	personaje.position = CHARACTER_OFFSET
+	personaje.rotation = 0
 	var inicio_ratio = 1.0 if invertido else 0.0
 	var final_ratio = 0.0 if invertido else 1.0
 	destino.progress_ratio = inicio_ratio
