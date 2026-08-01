@@ -7,7 +7,6 @@ var personaje: Node2D
 var sprite_personaje: CanvasItem
 var nodo_actual: int = 1
 
-var nivel_completado_actual: bool = false
 var esperando_inicio: bool = false
 
 # Offset fijo del sprite del personaje respecto al origen del PathFollow2D
@@ -38,7 +37,7 @@ var descripciones_nivel := {
 	1: "Nivel 1: rescata los objetos buenos antes de que se acabe el tiempo.",
 	2: "Nivel 2: cierra todas las llaves de agua antes de que se acabe el tiempo.",
 	3: "Nivel 3: pon a prueba tus reflejos.",
-	4: "Nivel 4: resuelve el acertijo del camino.",
+	4: "Nivel 4: cierra las ventanas antes de que se acabe el tiempo.",
 	5: "Nivel 5: cuidado con los obstáculos.",
 	6: "Nivel 6: la mitad del camino recorrido.",
 	7: "Nivel 7: se pone interesante.",
@@ -51,7 +50,8 @@ var descripciones_nivel := {
 var escenas_minijuego := {
 	1: "res://Minigames/minigame_deluxe/mini_minigame_level1/FloodGame.tscn",
 	2: "res://Minigames/minigame_deluxe/mini_minigame_level2/FaucetGame.tscn",
-	3: "res://Minigames/minigame_deluxe/mini_minigame_level3/FlameMain.tscn"
+	3: "res://Minigames/minigame_deluxe/mini_minigame_level3/FlameMain.tscn",
+	4: "res://Minigames/minigame_deluxe/mini_minigame_level4/WindowsMain.tscn"
 }
 
 var conexiones = {
@@ -106,6 +106,12 @@ func _ready():
 	if sprite_personaje == null:
 		push_warning("No se encontró ningún Sprite2D/AnimatedSprite2D dentro de Character")
 
+	# Seguro adicional: desactivamos "rotates" en TODOS los PathFollow2D del
+	# mapa desde el arranque (no solo en el tramo actual), para que ningún
+	# tramo pueda hacer rotar al personaje al pasar por su curva, sin
+	# importar cómo se haya dibujado esa curva en el editor.
+	_desactivar_rotacion_en_todos_los_tramos()
+
 	print("[DEBUG] _ready() del Mapa -> nodo_actual (antes de procesar)=", nodo_actual)
 
 	_crear_ui()
@@ -113,6 +119,25 @@ func _ready():
 	iniciar_minijuego.connect(_on_iniciar_minijuego)
 
 	_procesar_resultado_minijuego()
+
+func _desactivar_rotacion_en_todos_los_tramos():
+	var contenedor := get_node_or_null("Background")
+	if contenedor == null:
+		return
+
+	for tramo_nodo in contenedor.get_children():
+		if tramo_nodo.name.begins_with("Way"):
+			var pf: PathFollow2D = tramo_nodo.get_node_or_null("PathFollow2D")
+			if pf:
+				pf.rotates = false
+
+# Garantiza que el personaje SIEMPRE se vea igual (sin rotación), sin
+# importar la curva del tramo por el que esté pasando en ese momento.
+# Se fuerza cada frame porque es la única forma de blindarlo del todo,
+# incluso si algún PathFollow2D quedó con "rotates" en true por error.
+func _process(_delta):
+	if personaje:
+		personaje.global_rotation = 0.0
 
 func _buscar_sprite(nodo: Node) -> CanvasItem:
 	for hijo in nodo.get_children():
@@ -128,19 +153,20 @@ func _procesar_resultado_minijuego():
 		" | GameState.tramo_guardado_ratio=", GameState.tramo_guardado_ratio)
 
 	if resultado == "gano":
+		# El nivel ya quedó marcado como completado en GameState desde
+		# volver_al_mapa_con_resultado(). Acá solo actualizamos la posición
+		# y nos aseguramos de que el panel de "Empezar" no se muestre.
 		nodo_actual = GameState.nivel_actual
-		nivel_completado_actual = true
 		esperando_inicio = false
 		_ubicar_personaje_en_nodo(nodo_actual)
 		panel_nivel.visible = false
 	elif resultado == "perdio":
 		nodo_actual = GameState.nivel_actual
-		nivel_completado_actual = false
 		_ubicar_personaje_en_nodo(nodo_actual)
-		_mostrar_ventanita(nodo_actual)
+		_entrar_a_nodo(nodo_actual)
 	else:
 		_ubicar_personaje_en_nodo(nodo_actual)
-		_mostrar_ventanita(nodo_actual)
+		_entrar_a_nodo(nodo_actual)
 
 	print("[DEBUG] después de procesar -> nodo_actual=", nodo_actual,
 		" | personaje.global_position=", personaje.global_position,
@@ -257,6 +283,17 @@ func _crear_ui():
 	boton_comenzar.pressed.connect(_on_boton_empezar_pressed)
 	vbox.add_child(boton_comenzar)
 
+# Decide qué pasa al llegar/estar en un nodo: si el nivel ya fue completado
+# antes, no se muestra el cartel de "Empezar" y el jugador queda libre para
+# seguir moviéndose. Si todavía no se completó, se muestra la ventanita
+# para jugarlo.
+func _entrar_a_nodo(nivel: int):
+	if GameState.nivel_esta_completado(nivel):
+		esperando_inicio = false
+		panel_nivel.visible = false
+	else:
+		_mostrar_ventanita(nivel)
+
 func _mostrar_ventanita(nivel: int):
 	esperando_inicio = true
 
@@ -291,9 +328,10 @@ func _on_iniciar_minijuego(nivel: int):
 	else:
 		push_warning("No hay minijuego configurado para el nivel %d" % nivel)
 
+# Se deja por compatibilidad, por si algún minijuego llama a esta función
+# directamente en vez de pasar por GameState.volver_al_mapa_con_resultado().
 func nivel_completado(nivel: int):
-	if nivel == nodo_actual:
-		nivel_completado_actual = true
+	GameState.marcar_nivel_completado(nivel)
 
 func _input(event):
 	if esperando_inicio:
@@ -313,7 +351,14 @@ func _input(event):
 	var info = conexiones[nodo_actual][direccion]
 	var es_avance = info["destino"] > nodo_actual
 
-	if es_avance and not nivel_completado_actual:
+	# Para avanzar hacia un nodo nuevo, el nivel donde estás parado debe
+	# estar completado (GameState lo recuerda aunque el Mapa se recargue).
+	# Para retroceder, o para moverte por nodos ya completados en cualquier
+	# dirección, no hay restricción: te movés libre.
+	if es_avance and not GameState.nivel_esta_completado(nodo_actual):
+		print("[DEBUG] Avance bloqueado: el nivel ", nodo_actual,
+			" todavía no está marcado como completado en GameState. ",
+			"niveles_completados=", GameState.niveles_completados)
 		return
 
 	var destino_path = get_node(info["path"])
@@ -350,5 +395,5 @@ func mover_por_tramo(destino: PathFollow2D, invertido: bool = false, duracion: f
 		if sprite_personaje != null and sprite_personaje.has_method("stop"):
 			sprite_personaje.stop()
 		if nodo_destino != -1:
-			_mostrar_ventanita(nodo_destino)
+			_entrar_a_nodo(nodo_destino)
 	)
