@@ -38,7 +38,7 @@ var descripciones_nivel := {
 	2: "Nivel 2: cierra todas las llaves de agua antes de que se acabe el tiempo.",
 	3: "Nivel 3: pon a prueba tus reflejos.",
 	4: "Nivel 4: cierra las ventanas antes de que se acabe el tiempo.",
-	5: "Nivel 5: cuidado con los obstáculos.",
+	5: "Nivel 5: encuentra las 3 mesas antes que se acabe el tiempo.",
 	6: "Nivel 6: la mitad del camino recorrido.",
 	7: "Nivel 7: se pone interesante.",
 	8: "Nivel 8: cerca del volcán, ten cuidado.",
@@ -51,7 +51,8 @@ var escenas_minijuego := {
 	1: "res://Minigames/minigame_deluxe/mini_minigame_level1/FloodGame.tscn",
 	2: "res://Minigames/minigame_deluxe/mini_minigame_level2/FaucetGame.tscn",
 	3: "res://Minigames/minigame_deluxe/mini_minigame_level3/FlameMain.tscn",
-	4: "res://Minigames/minigame_deluxe/mini_minigame_level4/WindowsMain.tscn"
+	4: "res://Minigames/minigame_deluxe/mini_minigame_level4/WindowsMain.tscn",
+	5: "res://Minigames/minigame_deluxe/mini_minigame_level5/FarmMain.tscn"
 }
 
 var conexiones = {

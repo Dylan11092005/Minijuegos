@@ -1,0 +1,160 @@
+[gd_scene format=3 uid="uid://573k1a0jy03b"]
+
+[ext_resource type="Script" uid="uid://bllxs1obqdlvk" path="res://Minigames/minigame_deluxe/mini_minigame_level5/FarmMain.gd" id="0_farmmain"]
+[ext_resource type="Texture2D" uid="uid://cfvy88io80yc3" path="res://Minigames/minigame_deluxe/mini_minigame_level5/assets/background_level5.png" id="1_00kag"]
+[ext_resource type="Texture2D" uid="uid://cjh5htb7ro2ey" path="res://Minigames/minigame_deluxe/mini_minigame_level5/assets/farm_table.png" id="2_k0n3j"]
+[ext_resource type="AudioStream" uid="uid://bfb6l6aovgjub" path="res://Minigames/minigame_hillside_barrier/assets/sounds/Background.mp3" id="3_a387x"]
+[ext_resource type="AudioStream" uid="uid://djouf7d5uur0u" path="res://Minigames/minigame_Question/Music/Correct.mp3" id="4_cirr6"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bsci0"]
+size = Vector2(107.125, 77)
+
+[node name="FarmMain" type="Node2D" unique_id=967498660]
+script = ExtResource("0_farmmain")
+
+[node name="Background" type="Sprite2D" parent="." unique_id=871480235]
+position = Vector2(980.5, 539)
+scale = Vector2(1.2779946, 1.0585938)
+texture = ExtResource("1_00kag")
+
+[node name="Table1" type="StaticBody2D" parent="." unique_id=719725746]
+visible = false
+
+[node name="Sprite2D" type="Sprite2D" parent="Table1" unique_id=1520505788]
+position = Vector2(1355.0001, 1023)
+scale = Vector2(0.34339613, 0.25000006)
+texture = ExtResource("2_k0n3j")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Table1" unique_id=1078955932]
+position = Vector2(1357.125, 1020)
+shape = SubResource("RectangleShape2D_bsci0")
+
+[node name="Table2" type="StaticBody2D" parent="." unique_id=1229539493]
+visible = false
+
+[node name="Sprite2D" type="Sprite2D" parent="Table2" unique_id=651947486]
+position = Vector2(1714.0001, 344)
+scale = Vector2(0.2584905, 0.21417177)
+texture = ExtResource("2_k0n3j")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Table2" unique_id=1665517403]
+position = Vector2(1726, 337)
+shape = SubResource("RectangleShape2D_bsci0")
+
+[node name="Table3" type="StaticBody2D" parent="." unique_id=554095729]
+visible = false
+
+[node name="Sprite2D" type="Sprite2D" parent="Table3" unique_id=2002440502]
+position = Vector2(876.00006, 546)
+rotation = 6.2831855
+scale = Vector2(0.26132107, 0.21417177)
+skew = -0.034906585
+texture = ExtResource("2_k0n3j")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Table3" unique_id=1822744046]
+position = Vector2(879, 536)
+shape = SubResource("RectangleShape2D_bsci0")
+
+[node name="Table4" type="StaticBody2D" parent="." unique_id=1799867222]
+visible = false
+
+[node name="Sprite2D" type="Sprite2D" parent="Table4" unique_id=2123882391]
+position = Vector2(358, 456)
+rotation = 6.2831855
+scale = Vector2(0.26132107, 0.21417177)
+skew = -0.034906585
+texture = ExtResource("2_k0n3j")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Table4" unique_id=358892802]
+position = Vector2(358, 451)
+shape = SubResource("RectangleShape2D_bsci0")
+
+[node name="Table5" type="StaticBody2D" parent="." unique_id=878620083]
+visible = false
+
+[node name="Sprite2D" type="Sprite2D" parent="Table5" unique_id=429281786]
+position = Vector2(1791.7063, 938.70636)
+rotation = 6.2831855
+scale = Vector2(0.28210226, 0.23841697)
+skew = -0.034906585
+texture = ExtResource("2_k0n3j")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Table5" unique_id=1625002503]
+position = Vector2(1780, 931)
+shape = SubResource("RectangleShape2D_bsci0")
+
+[node name="Table6" type="StaticBody2D" parent="." unique_id=706438784]
+visible = false
+
+[node name="Sprite2D" type="Sprite2D" parent="Table6" unique_id=356444169]
+position = Vector2(342.13025, 941.70624)
+rotation = 6.2831855
+scale = Vector2(0.3158032, 0.26266184)
+skew = -0.034906585
+texture = ExtResource("2_k0n3j")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Table6" unique_id=1668001123]
+position = Vector2(344, 931)
+shape = SubResource("RectangleShape2D_bsci0")
+
+[node name="Table7" type="StaticBody2D" parent="." unique_id=5477057]
+visible = false
+
+[node name="Sprite2D" type="Sprite2D" parent="Table7" unique_id=1157633013]
+position = Vector2(504, 419)
+rotation = 12.644911
+scale = Vector2(0.23932768, 0.17204888)
+skew = -0.034906585
+texture = ExtResource("2_k0n3j")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Table7" unique_id=922568863]
+position = Vector2(511, 416)
+shape = SubResource("RectangleShape2D_bsci0")
+
+[node name="Table8" type="StaticBody2D" parent="." unique_id=259837444]
+visible = false
+
+[node name="Sprite2D" type="Sprite2D" parent="Table8" unique_id=1823960790]
+position = Vector2(1343, 276)
+rotation = 12.5227375
+scale = Vector2(0.23932768, 0.17204888)
+skew = -0.034906585
+texture = ExtResource("2_k0n3j")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Table8" unique_id=912000082]
+position = Vector2(1345, 273)
+shape = SubResource("RectangleShape2D_bsci0")
+
+[node name="Table9" type="StaticBody2D" parent="." unique_id=749193443]
+visible = false
+
+[node name="Sprite2D" type="Sprite2D" parent="Table9" unique_id=1002917887]
+position = Vector2(1431, 633)
+rotation = 12.5227375
+scale = Vector2(0.23932768, 0.17204888)
+skew = -0.034906585
+texture = ExtResource("2_k0n3j")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Table9" unique_id=984950425]
+position = Vector2(1423, 633)
+shape = SubResource("RectangleShape2D_bsci0")
+
+[node name="Table10" type="StaticBody2D" parent="." unique_id=585440423]
+visible = false
+
+[node name="Sprite2D" type="Sprite2D" parent="Table10" unique_id=654673535]
+position = Vector2(1896, 497.00003)
+rotation = 0.14137167
+scale = Vector2(0.23932768, 0.17204888)
+skew = -0.034906585
+texture = ExtResource("2_k0n3j")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Table10" unique_id=1518162274]
+position = Vector2(1898, 490)
+shape = SubResource("RectangleShape2D_bsci0")
+
+[node name="BackgroundSound" type="AudioStreamPlayer" parent="." unique_id=1148684108]
+stream = ExtResource("3_a387x")
+
+[node name="TouchTable" type="AudioStreamPlayer" parent="." unique_id=864178258]
+stream = ExtResource("4_cirr6")
