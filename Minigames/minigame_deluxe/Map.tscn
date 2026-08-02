@@ -1,12 +1,12 @@
 [gd_scene format=3 uid="uid://dph81b7fx0ff6"]
 
-[ext_resource type="Texture2D" uid="uid://b1a2sw2yqebiv" path="res://Minigames/minigame_deluxe/assets/map_background.png" id="1_0kcq5"]
+[ext_resource type="Texture2D" uid="uid://ctju280anwgve" path="res://Minigames/minigame_deluxe/assets/map_background.png" id="1_0kcq5"]
 [ext_resource type="Script" uid="uid://dxiil0ijmbydj" path="res://Minigames/minigame_deluxe/Map.gd" id="1_qxj6n"]
 [ext_resource type="PackedScene" uid="uid://gsm8hi6v5a4q" path="res://Minigames/minigame_deluxe/Character.tscn" id="2_1503n"]
 
 [sub_resource type="Curve2D" id="Curve2D_0kcq5"]
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, -440.7685, -322.26447, 0, 0, 0, 0, -286.32748, -318.45068, 0, 0, 0, 0, -225.9273, -284.12665, 0, 0, 0, 0, -157.88153, -265.05774, 0, 0, 0, 0, -18.73169, -272.6853, 0, 0, 0, 0, -16.437988, -300.33524)
+"points": PackedVector2Array(0, 0, 0, 0, -391.07214, -327.98514, 0, 0, 0, 0, -286.32748, -318.45068, 0, 0, 0, 0, -225.9273, -284.12665, 0, 0, 0, 0, -157.88153, -265.05774, 0, 0, 0, 0, -18.73169, -272.6853, 0, 0, 0, 0, -16.437988, -300.33524)
 }
 point_count = 6
 
@@ -22,21 +22,9 @@ _data = {
 }
 point_count = 12
 
-[sub_resource type="Curve2D" id="Curve2D_3lxi5"]
-_data = {
-"points": PackedVector2Array(0, 0, 0, 0, 270.27173, -262.19742, 0, 0, 0, 0, 246.57043, -223.10617, 0, 0, 0, 0, 215.98804, -204.99072, 0, 0, 0, 0, 186.17023, -181.15457, 0, 0, 0, 0, 176.23096, -151.59778, 0, 0, 0, 0, 182.34747, -116.32031, 0, 0, 0, 0, 193.81586, -91.53073, 0, 0, 0, 0, 190.75763, -67.69461, 0, 0, 0, 0, 189.22845, -40.99814, 0, 0, 0, 0, 187.69934, -17.162018, 0, 0, 0, 0, 196.87408, 6.6741333, 0, 0, 0, 0, 205.28424, 32.417175, 0, 0, 0, 0, 239.68939, 27.649902, 0, 0, 0, 0, 265.68445, 26.696472, 0, 0, 0, 0, 316.9099, 20.97583, 0, 0, 0, 0, 416.3026, 24.789612)
-}
-point_count = 16
-
-[sub_resource type="Curve2D" id="Curve2D_mdg45"]
-_data = {
-"points": PackedVector2Array(0, 0, 0, 0, 270.27173, -270.77844, 0, 0, 0, 0, 261.09705, -246.94229, 0, 0, 0, 0, 233.57294, -215.4786, 0, 0, 0, 0, 202.22601, -197.36316, 0, 0, 0, 0, 183.87659, -182.10803, 0, 0, 0, 0, 170.87903, -162.08566, 0, 0, 0, 0, 173.93732, -128.71509, 0, 0, 0, 0, 186.17023, -98.204834, 0, 0, 0, 0, 188.46393, -63.88083, 0, 0, 0, 0, 186.17023, -36.230896, 0, 0, 0, 0, 192.28674, 1.9069214, 0, 0, 0, 0, 196.87408, 24.789612, 0, 0, 0, 0, 201.46143, 39.091248, 0, 0, 0, 0, 158.64612, 42.90503, 0, 0, 0, 0, -53.13684, 40.044678)
-}
-point_count = 15
-
 [sub_resource type="Curve2D" id="Curve2D_hbn1a"]
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, 416.3026, 24.789612, 0, 0, 0, 0, 342.9049, 23.83612, 0, 0, 0, 0, 282.50476, 24.789612, 0, 0, 0, 0, 228.9856, 37.184387, 0, 0, 0, 0, 183.87659, 44.81195, 0, 0, 0, 0, -52.372314, 40.99817, 0, 0, 0, 0, 673.1946, -35.277466)
+"points": PackedVector2Array(0, 0, 0, 0, 416.3026, 24.789612, 0, 0, 0, 0, 342.9049, 23.83612, 0, 0, 0, 0, 282.50476, 24.789612, 0, 0, 0, 0, 228.9856, 37.184387, 0, 0, 0, 0, 183.87659, 44.81195, 0, 0, 0, 0, -52.372314, 40.99817, 0, 0, 0, 0, -30.200073, 65.78772)
 }
 point_count = 7
 
@@ -48,25 +36,25 @@ point_count = 3
 
 [sub_resource type="Curve2D" id="Curve2D_m4ls0"]
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, -496.58133, 73.41528, 0, 0, 0, 0, -488.93576, 122.994446, 0, 0, 0, 0, -459.11792, 150.64435, 0, 0, 0, 0, -431.59378, 164.94604, 0, 0, 0, 0, -402.54053, 189.7356, 0, 0, 0, 0, -377.31006, 212.61829, 0, 0, 0, 0, -360.48975, 244.08197, 0, 0, 0, 0, -368.13535, 277.45258, 0, 0, 0, 0, -389.54303, 303.19556, 0, 0, 0, 0, -422.41907, 338.47302, 0, 0, 0, 0, -446.12042, 375.6574)
+"points": PackedVector2Array(0, 0, 0, 0, -496.58133, 73.41528, 0, 0, 0, 0, -627.321, 141.10992, 0, 0, 0, 0, -654.08057, 172.57361, 0, 0, 0, 0, -609.73615, 203.08386, 0, 0, 0, 0, -556.217, 231.6872, 0, 0, 0, 0, -484.3484, 277.45258, 0, 0, 0, 0, -454.53058, 310.82312, 0, 0, 0, 0, -442.2976, 324.1714, 0, 0, 0, 0, -422.41907, 338.47302, 0, 0, 0, 0, -446.12042, 375.6574)
 }
-point_count = 11
+point_count = 10
 
 [sub_resource type="Curve2D" id="Curve2D_q26y0"]
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, -448.4141, 378.51776, 0, 0, 0, 0, -176.99548, 384.2384)
+"points": PackedVector2Array(0, 0, 0, 0, -420.1254, 343.2403, 0, 0, 0, 0, -325.32004, 379.4712, 0, 0, 0, 0, -262.62616, 384.2384, 0, 0, 0, 0, -173.17267, 374.70398)
 }
-point_count = 2
+point_count = 4
 
 [sub_resource type="Curve2D" id="Curve2D_ggqcy"]
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, -178.5246, 378.51776, 0, 0, 0, 0, -124.240906, 391.86597, 0, 0, 0, 0, -79.89642, 406.16766, 0, 0, 0, 0, -34.02289, 416.65558, 0, 0, 0, 0, 37.081177, 419.51587, 0, 0, 0, 0, 92.89398, 412.8418, 0, 0, 0, 0, 291.67944, 409.028)
+"points": PackedVector2Array(0, 0, 0, 0, -177.76007, 371.84363, 0, 0, 0, 0, -82.190125, 373.75055, 0, 0, 0, 0, -33.2583, 383.28497, 0, 0, 0, 0, 8.79248, 396.63324, 0, 0, 0, 0, 83.7193, 420.46936, 0, 0, 0, 0, 162.46893, 414.74866, 0, 0, 0, 0, 273.33008, 376.61084)
 }
 point_count = 7
 
 [sub_resource type="Curve2D" id="Curve2D_p5dvf"]
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, 293.97314, 407.1211, 0, 0, 0, 0, 292.44397, 388.0522, 0, 0, 0, 0, 513.40173, 389.9591)
+"points": PackedVector2Array(0, 0, 0, 0, 267.2135, 373.75055, 0, 0, 0, 0, 371.95825, 382.33154, 0, 0, 0, 0, 511.87256, 376.61084)
 }
 point_count = 3
 
@@ -82,8 +70,8 @@ texture = ExtResource("1_0kcq5")
 curve = SubResource("Curve2D_0kcq5")
 
 [node name="PathFollow2D" type="PathFollow2D" parent="Background/Way1-2" unique_id=2063821304]
-position = Vector2(-440.7685, -322.26447)
-rotation = 0.024689084
+position = Vector2(-391.07214, -327.98514)
+rotation = 0.09077553
 
 [node name="Character" parent="Background/Way1-2/PathFollow2D" unique_id=303211418 instance=ExtResource("2_1503n")]
 position = Vector2(55.32758, 103.54468)
@@ -101,58 +89,44 @@ curve = SubResource("Curve2D_qxj6n")
 position = Vector2(450.70776, -262.19742)
 rotation = 0.7576765
 
-[node name="Way2,5 -4" type="Path2D" parent="Background" unique_id=2030482102]
-curve = SubResource("Curve2D_3lxi5")
-
-[node name="PathFollow2D" type="PathFollow2D" parent="Background/Way2,5 -4" unique_id=1686856854]
-position = Vector2(270.27173, -262.19742)
-rotation = 2.1158404
-
-[node name="Way2,5 -5" type="Path2D" parent="Background" unique_id=803815016]
-curve = SubResource("Curve2D_mdg45")
-
-[node name="PathFollow2D" type="PathFollow2D" parent="Background/Way2,5 -5" unique_id=1965921549]
-position = Vector2(270.27173, -270.77844)
-rotation = 1.9382235
-
-[node name="Way4 -5" type="Path2D" parent="Background" unique_id=680890767]
+[node name="Way4-5" type="Path2D" parent="Background" unique_id=680890767]
 curve = SubResource("Curve2D_hbn1a")
 
 [node name="PathFollow2D" type="PathFollow2D" parent="Background/Way4 -5" unique_id=414137028]
 position = Vector2(416.3026, 24.789612)
 rotation = -3.1286027
 
-[node name="Way5 -6" type="Path2D" parent="Background" unique_id=457815718]
+[node name="Way5-6" type="Path2D" parent="Background" unique_id=457815718]
 curve = SubResource("Curve2D_4sat2")
 
 [node name="PathFollow2D" type="PathFollow2D" parent="Background/Way5 -6" unique_id=108681510]
 position = Vector2(-52.372314, 38.137817)
 rotation = 1.5890183
 
-[node name="Way6 -7" type="Path2D" parent="Background" unique_id=1081110693]
+[node name="Way6-7" type="Path2D" parent="Background" unique_id=1081110693]
 curve = SubResource("Curve2D_m4ls0")
 
 [node name="PathFollow2D" type="PathFollow2D" parent="Background/Way6 -7" unique_id=82968061]
 position = Vector2(-496.58133, 73.41528)
-rotation = 1.4177922
+rotation = 2.6638207
 
-[node name="Way7 -8" type="Path2D" parent="Background" unique_id=27066763]
+[node name="Way7-8" type="Path2D" parent="Background" unique_id=27066763]
 curve = SubResource("Curve2D_q26y0")
 
 [node name="PathFollow2D" type="PathFollow2D" parent="Background/Way7 -8" unique_id=1862498174]
-position = Vector2(-448.4141, 378.51776)
-rotation = 0.021073703
+position = Vector2(-420.1254, 343.2403)
+rotation = 0.36503386
 
-[node name="Way8 -9" type="Path2D" parent="Background" unique_id=470227409]
+[node name="Way8-9" type="Path2D" parent="Background" unique_id=470227409]
 curve = SubResource("Curve2D_ggqcy")
 
 [node name="PathFollow2D" type="PathFollow2D" parent="Background/Way8 -9" unique_id=2136315446]
-position = Vector2(-178.5246, 378.51776)
-rotation = 0.24111345
+position = Vector2(-177.76007, 371.84363)
+rotation = 0.019950502
 
-[node name="Way9 -10" type="Path2D" parent="Background" unique_id=1857172992]
+[node name="Way9-10" type="Path2D" parent="Background" unique_id=1857172992]
 curve = SubResource("Curve2D_p5dvf")
 
 [node name="PathFollow2D" type="PathFollow2D" parent="Background/Way9 -10" unique_id=882205052]
-position = Vector2(293.97314, 407.1211)
-rotation = -1.6508172
+position = Vector2(267.2135, 373.75055)
+rotation = 0.081740364

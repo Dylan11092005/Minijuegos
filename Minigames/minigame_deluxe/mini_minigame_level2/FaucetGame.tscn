@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://kwi03whjw7ih"]
+
+[ext_resource type="Texture2D" uid="uid://c86hqhcspcfjw" path="res://Minigames/minigame_deluxe/mini_minigame_level2/assets/background_level2.png" id="1_i6gad"]
+[ext_resource type="Script" uid="uid://cw3x1817c3vma" path="res://Minigames/minigame_deluxe/mini_minigame_level2/FaucetGame.gd" id="1_y3sfm"]
+[ext_resource type="AudioStream" uid="uid://c7603rtcvlkb2" path="res://Minigames/minigame_wave/music/SoundBackground.mp3" id="6_ab8oj"]
+[ext_resource type="AudioStream" uid="uid://cr2c5n875akhw" path="res://Minigames/minigame_committee/music/pick_item.mp3" id="7_st1eo"]
+
+[node name="FaucetGame" type="Node2D" unique_id=1754108633]
+script = ExtResource("1_y3sfm")
+
+[node name="Background" type="Sprite2D" parent="." unique_id=1805953224]
+position = Vector2(983.5, 563.5)
+scale = Vector2(1.3066406, 1.1220703)
+texture = ExtResource("1_i6gad")
+
+[node name="BackgroundSound" type="AudioStreamPlayer" parent="." unique_id=2081682241]
+stream = ExtResource("6_ab8oj")
+
+[node name="CloseFaucetSound" type="AudioStreamPlayer" parent="." unique_id=242452048]
+stream = ExtResource("7_st1eo")

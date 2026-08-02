@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://cf5xkrk8mu052"]
+
+[ext_resource type="Script" uid="uid://c5hnfa4bh4hfm" path="res://Minigames/minigame_deluxe/mini_minigame_level1/FloatingObject.gd" id="1_rvqra"]
+
+[node name="FloatingObject" type="Area2D" unique_id=1182311588]
+script = ExtResource("1_rvqra")

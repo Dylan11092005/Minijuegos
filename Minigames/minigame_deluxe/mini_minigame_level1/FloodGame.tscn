@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://cjak7al5bc4di"]
+
+[ext_resource type="Script" uid="uid://dlphitv62p63d" path="res://Minigames/minigame_deluxe/mini_minigame_level1/FloodGame.gd" id="1_crbr6"]
+[ext_resource type="Texture2D" uid="uid://c7y135p88ih5y" path="res://Minigames/minigame_deluxe/mini_minigame_level1/assets/Background_Level1.png" id="2_lo2di"]
+[ext_resource type="AudioStream" uid="uid://d4ih3nb4y7w5g" path="res://Minigames/minigame_committee/music/background_music.mp3" id="3_hbdyc"]
+[ext_resource type="AudioStream" uid="uid://cbtye2uhmvstp" path="res://Minigames/minigame_water_leak/assets/parche.wav" id="4_eptfr"]
+
+[node name="FloodGame" type="Node2D" unique_id=2079692031]
+script = ExtResource("1_crbr6")
+
+[node name="Background" type="Sprite2D" parent="." unique_id=486354443]
+position = Vector2(978.75, 551.25)
+scale = Vector2(1.2985027, 1.0952147)
+texture = ExtResource("2_lo2di")
+
+[node name="BackgroundSound" type="AudioStreamPlayer" parent="." unique_id=2041847006]
+stream = ExtResource("3_hbdyc")
+
+[node name="PickObject" type="AudioStreamPlayer" parent="." unique_id=1659043896]
+stream = ExtResource("4_eptfr")
