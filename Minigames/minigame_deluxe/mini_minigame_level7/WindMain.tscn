@@ -1,0 +1,65 @@
+[gd_scene format=3 uid="uid://b70bjydotgqrg"]
+
+[ext_resource type="Script" uid="uid://ca621bd8lh1dm" path="res://Minigames/minigame_deluxe/mini_minigame_level7/WindMain.gd" id="0_windmain"]
+[ext_resource type="Texture2D" uid="uid://c1vgqyovvgvv3" path="res://Minigames/minigame_deluxe/mini_minigame_level7/assets/background_level7.png" id="1_crp5f"]
+[ext_resource type="Texture2D" uid="uid://bwind0swirl01" path="res://Minigames/minigame_deluxe/mini_minigame_level4/assets/wind.png" id="2_0ncf8"]
+[ext_resource type="AudioStream" uid="uid://d4ih3nb4y7w5g" path="res://Minigames/minigame_committee/music/background_music.mp3" id="2_ab4cq"]
+[ext_resource type="AudioStream" uid="uid://cv32wuejhf5wj" path="res://Minigames/minigame_landslide/minigame_landslide/Music/Firetrucksiren.mp3" id="3_ab4cq"]
+[ext_resource type="Texture2D" uid="uid://chvk72w2m3q4f" path="res://Minigames/minigame_deluxe/mini_minigame_level6/assets/character2_level5.png" id="3_rqh8j"]
+[ext_resource type="AudioStream" uid="uid://bmhxn8a34megl" path="res://Minigames/minigame_bridge/music/BridgeSound.mp3" id="3_uelta"]
+[ext_resource type="Texture2D" uid="uid://cln6e4un3e1lm" path="res://Minigames/minigame_deluxe/mini_minigame_level6/assets/character1_level5.png" id="4_7fud4"]
+[ext_resource type="Texture2D" uid="uid://bxceglg7itf08" path="res://Minigames/minigame_deluxe/mini_minigame_level6/assets/character3_level5.png" id="5_ab0io"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ab4cq"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_rqh8j")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_7fud4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_ab0io")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="Curve2D" id="Curve2D_0ncf8"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 830, 999, 0, 0, 0, 0, 982, 704, 0, 0, 0, 0, 1067, 629, 0, 0, 0, 0, 1128, 592, 0, 0, 0, 0, 1210, 571, 0, 0, 0, 0, 1328, 525, 0, 0, 0, 0, 1404, 495, 0, 0, 0, 0, 1410, 446, 0, 0, 0, 0, 1377, 419, 0, 0, 0, 0, 1348, 406, 0, 0, 0, 0, 1327, 380, 0, 0, 0, 0, 1349, 355, 0, 0, 0, 0, 1389, 347, 0, 0, 0, 0, 1440, 333, 0, 0, 0, 0, 1478, 317, 0, 0, 0, 0, 1505, 306, 0, 0, 0, 0, 1471, 284, 0, 0, 0, 0, 1423, 274, 0, 0, 0, 0, 1383, 260, 0, 0, 0, 0, 1374, 246, 0, 0, 0, 0, 1401, 242, 0, 0, 0, 0, 1427, 233, 0, 0, 0, 0, 1473, 225, 0, 0, 0, 0, 1522, 216, 0, 0, 0, 0, 1560, 208, 0, 0, 0, 0, 1595, 204)
+}
+point_count = 26
+
+[node name="WindMain" type="Node2D" unique_id=684615498]
+script = ExtResource("0_windmain")
+
+[node name="Background" type="AudioStreamPlayer" parent="." unique_id=1395786884]
+stream = ExtResource("2_ab4cq")
+
+[node name="WindSound" type="AudioStreamPlayer" parent="." unique_id=1824525590]
+stream = ExtResource("3_uelta")
+
+[node name="WindWarning" type="AudioStreamPlayer" parent="." unique_id=1957703910]
+stream = ExtResource("3_ab4cq")
+
+[node name="BackgroundSprite" type="Sprite2D" parent="." unique_id=1211209352]
+position = Vector2(1030, 548.5)
+scale = Vector2(1.3424479, 1.0654297)
+texture = ExtResource("1_crp5f")
+
+[node name="Wind" type="Sprite2D" parent="." unique_id=1807120730]
+visible = false
+position = Vector2(1844.8472, 361.016)
+scale = Vector2(0.58343005, 0.4638496)
+texture = ExtResource("2_0ncf8")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2056883597]
+position = Vector2(843.00006, 943.00006)
+scale = Vector2(0.78054297, 0.6549637)
+sprite_frames = SubResource("SpriteFrames_ab4cq")
+
+[node name="Path2D" type="Path2D" parent="." unique_id=602982838]
+curve = SubResource("Curve2D_0ncf8")
