@@ -19,7 +19,7 @@ const GAME_TIME := 60.0
 const MAX_LIVES := 3
 
 # Velocidad de caminata a lo largo del path (píxeles/segundo).
-const WALK_SPEED := 150.0
+const WALK_SPEED := 100.0
 
 # Cada cuánto llega una racha de viento (segundos entre rachas).
 const WIND_INTERVAL_MIN := 4.0

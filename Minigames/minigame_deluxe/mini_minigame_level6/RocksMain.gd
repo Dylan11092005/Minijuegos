@@ -15,12 +15,12 @@ const LIVES_UI_SCRIPT_PATH := "res://Minigames/ui_global/LivesUi.gd"
 # =========================================================
 
 # Cuánto tiempo hay que sobrevivir esquivando rocas para ganar.
-const GAME_TIME := 45.0
+const GAME_TIME := 25.0
 const MAX_LIVES := 3
 
 # Cada cuánto cae una roca nueva.
-const SPAWN_INTERVAL_MIN := 1.2
-const SPAWN_INTERVAL_MAX := 2.2
+const SPAWN_INTERVAL_MIN := 0.5
+const SPAWN_INTERVAL_MAX := 1.0
 
 # Velocidad de caída (píxeles/segundo). Las rocas más grandes caen
 # un poco más rápido que las chicas para que sean más peligrosas.
