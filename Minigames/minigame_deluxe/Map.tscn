@@ -24,7 +24,7 @@ point_count = 12
 
 [sub_resource type="Curve2D" id="Curve2D_hbn1a"]
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, 416.3026, 24.789612, 0, 0, 0, 0, 342.9049, 23.83612, 0, 0, 0, 0, 282.50476, 24.789612, 0, 0, 0, 0, 228.9856, 37.184387, 0, 0, 0, 0, 183.87659, 44.81195, 0, 0, 0, 0, -52.372314, 40.99817, 0, 0, 0, 0, -30.200073, 65.78772)
+"points": PackedVector2Array(0, 0, 0, 0, 436.9458, 6.6741333, 0, 0, 0, 0, 342.9049, 23.83612, 0, 0, 0, 0, 287.09204, 40.044678, 0, 0, 0, 0, 232.04382, 49.579163, 0, 0, 0, 0, 180.05377, 55.299805, 0, 0, 0, 0, -52.372314, 40.99817, 0, 0, 0, 0, -30.200073, 65.78772)
 }
 point_count = 7
 
@@ -92,41 +92,41 @@ rotation = 0.7576765
 [node name="Way4-5" type="Path2D" parent="Background" unique_id=680890767]
 curve = SubResource("Curve2D_hbn1a")
 
-[node name="PathFollow2D" type="PathFollow2D" parent="Background/Way4 -5" unique_id=414137028]
-position = Vector2(416.3026, 24.789612)
-rotation = -3.1286027
+[node name="PathFollow2D" type="PathFollow2D" parent="Background/Way4-5" unique_id=414137028]
+position = Vector2(436.9458, 6.6741333)
+rotation = 2.9610841
 
 [node name="Way5-6" type="Path2D" parent="Background" unique_id=457815718]
 curve = SubResource("Curve2D_4sat2")
 
-[node name="PathFollow2D" type="PathFollow2D" parent="Background/Way5 -6" unique_id=108681510]
+[node name="PathFollow2D" type="PathFollow2D" parent="Background/Way5-6" unique_id=108681510]
 position = Vector2(-52.372314, 38.137817)
 rotation = 1.5890183
 
 [node name="Way6-7" type="Path2D" parent="Background" unique_id=1081110693]
 curve = SubResource("Curve2D_m4ls0")
 
-[node name="PathFollow2D" type="PathFollow2D" parent="Background/Way6 -7" unique_id=82968061]
+[node name="PathFollow2D" type="PathFollow2D" parent="Background/Way6-7" unique_id=82968061]
 position = Vector2(-496.58133, 73.41528)
 rotation = 2.6638207
 
 [node name="Way7-8" type="Path2D" parent="Background" unique_id=27066763]
 curve = SubResource("Curve2D_q26y0")
 
-[node name="PathFollow2D" type="PathFollow2D" parent="Background/Way7 -8" unique_id=1862498174]
+[node name="PathFollow2D" type="PathFollow2D" parent="Background/Way7-8" unique_id=1862498174]
 position = Vector2(-420.1254, 343.2403)
 rotation = 0.36503386
 
 [node name="Way8-9" type="Path2D" parent="Background" unique_id=470227409]
 curve = SubResource("Curve2D_ggqcy")
 
-[node name="PathFollow2D" type="PathFollow2D" parent="Background/Way8 -9" unique_id=2136315446]
+[node name="PathFollow2D" type="PathFollow2D" parent="Background/Way8-9" unique_id=2136315446]
 position = Vector2(-177.76007, 371.84363)
 rotation = 0.019950502
 
 [node name="Way9-10" type="Path2D" parent="Background" unique_id=1857172992]
 curve = SubResource("Curve2D_p5dvf")
 
-[node name="PathFollow2D" type="PathFollow2D" parent="Background/Way9 -10" unique_id=882205052]
+[node name="PathFollow2D" type="PathFollow2D" parent="Background/Way9-10" unique_id=882205052]
 position = Vector2(267.2135, 373.75055)
 rotation = 0.081740364

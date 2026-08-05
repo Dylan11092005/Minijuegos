@@ -9,6 +9,12 @@ var nodo_actual: int = 1
 
 var esperando_inicio: bool = false
 
+# Bloquea el input mientras el personaje está a mitad de un tramo (tween en
+# curso). Sin esto, si el jugador aprieta otra tecla mientras se está
+# moviendo, se dispara un reparent() nuevo a mitad de camino y el personaje
+# "se sale" del Path2D y termina caminando libre por el mapa.
+var en_movimiento: bool = false
+
 # Offset fijo del sprite del personaje respecto al origen del PathFollow2D
 # (ajuste visual para que los pies queden sobre el camino). Se usa SIEMPRE
 # el mismo valor tras cada reparent, para no arrastrar offsets corruptos
@@ -52,47 +58,52 @@ var escenas_minijuego := {
 	2: "res://Minigames/minigame_deluxe/mini_minigame_level2/FaucetGame.tscn",
 	3: "res://Minigames/minigame_deluxe/mini_minigame_level3/FlameMain.tscn",
 	4: "res://Minigames/minigame_deluxe/mini_minigame_level4/WindowsMain.tscn",
-	5: "res://Minigames/minigame_deluxe/mini_minigame_level5/FarmMain.tscn"
+	5: "res://Minigames/minigame_deluxe/mini_minigame_level5/FarmMain.tscn",
+	6: "res://Minigames/minigame_deluxe/mini_minigame_level6/RocksMain.tscn",
+	7: "res://Minigames/minigame_deluxe/mini_minigame_level7/WindMain.tscn"
 }
 
-var conexiones = {
-	1: {"derecha": {"path": "Background/Way1-2/PathFollow2D", "destino": 2, "invertido": false}},
-	2: {
-		"izquierda": {"path": "Background/Way1-2/PathFollow2D", "destino": 1, "invertido": true},
-		"derecha": {"path": "Background/Way2-3/PathFollow2D", "destino": 3, "invertido": false}
-	},
-	3: {
-		"izquierda": {"path": "Background/Way2-3/PathFollow2D", "destino": 2, "invertido": true},
-		"derecha": {"path": "Background/Way3-4/PathFollow2D", "destino": 4, "invertido": false}
-	},
-	4: {
-		"izquierda": {"path": "Background/Way3-4/PathFollow2D", "destino": 3, "invertido": true},
-		"derecha": {"path": "Background/Way4-5/PathFollow2D", "destino": 5, "invertido": false}
-	},
-	5: {
-		"izquierda": {"path": "Background/Way4-5/PathFollow2D", "destino": 4, "invertido": true},
-		"derecha": {"path": "Background/Way5-6/PathFollow2D", "destino": 6, "invertido": false}
-	},
-	6: {
-		"izquierda": {"path": "Background/Way5-6/PathFollow2D", "destino": 5, "invertido": true},
-		"derecha": {"path": "Background/Way6-7/PathFollow2D", "destino": 7, "invertido": false}
-	},
-	7: {
-		"izquierda": {"path": "Background/Way6-7/PathFollow2D", "destino": 6, "invertido": true},
-		"derecha": {"path": "Background/Way7-8/PathFollow2D", "destino": 8, "invertido": false}
-	},
-	8: {
-		"izquierda": {"path": "Background/Way7-8/PathFollow2D", "destino": 7, "invertido": true},
-		"derecha": {"path": "Background/Way8-9/PathFollow2D", "destino": 9, "invertido": false}
-	},
-	9: {
-		"izquierda": {"path": "Background/Way8-9/PathFollow2D", "destino": 8, "invertido": true},
-		"derecha": {"path": "Background/Way9-10/PathFollow2D", "destino": 10, "invertido": false}
-	},
-	10: {
-		"izquierda": {"path": "Background/Way9-10/PathFollow2D", "destino": 9, "invertido": true}
-	}
+# Cada tramo (edge) tiene UNA tecla fija para avanzar. La tecla para
+# retroceder por ese mismo tramo es siempre la opuesta (derecha<->izquierda,
+# arriba<->abajo), así que no hay que repetirla: se calcula sola más abajo
+# con _construir_conexiones().
+const OPUESTA := {
+	"ui_right": "ui_left",
+	"ui_left": "ui_right",
+	"ui_up": "ui_down",
+	"ui_down": "ui_up",
 }
+
+# path del tramo, nodo de origen, nodo de destino, tecla para ir de origen -> destino
+var tramos_definicion := [
+	{"path": "Background/Way1-2/PathFollow2D", "de": 1, "a": 2, "tecla": "ui_right"},
+	{"path": "Background/Way2-3/PathFollow2D", "de": 2, "a": 3, "tecla": "ui_right"},
+	{"path": "Background/Way3-4/PathFollow2D", "de": 3, "a": 4, "tecla": "ui_down"},
+	{"path": "Background/Way4-5/PathFollow2D", "de": 4, "a": 5, "tecla": "ui_left"},
+	{"path": "Background/Way5-6/PathFollow2D", "de": 5, "a": 6, "tecla": "ui_left"},
+	{"path": "Background/Way6-7/PathFollow2D", "de": 6, "a": 7, "tecla": "ui_down"},
+	{"path": "Background/Way7-8/PathFollow2D", "de": 7, "a": 8, "tecla": "ui_right"},
+	{"path": "Background/Way8-9/PathFollow2D", "de": 8, "a": 9, "tecla": "ui_right"},
+	{"path": "Background/Way9-10/PathFollow2D", "de": 9, "a": 10, "tecla": "ui_right"},
+]
+
+var conexiones = {}
+
+func _construir_conexiones():
+	conexiones = {}
+	for t in tramos_definicion:
+		var de: int = t["de"]
+		var a: int = t["a"]
+		var tecla: String = t["tecla"]
+		var tecla_vuelta: String = OPUESTA[tecla]
+
+		if not conexiones.has(de):
+			conexiones[de] = {}
+		if not conexiones.has(a):
+			conexiones[a] = {}
+
+		conexiones[de][tecla] = {"path": t["path"], "destino": a, "invertido": false}
+		conexiones[a][tecla_vuelta] = {"path": t["path"], "destino": de, "invertido": true}
 
 var ui_capa: CanvasLayer
 var panel_nivel: Panel
@@ -100,6 +111,8 @@ var label_nivel: Label
 var boton_comenzar: Button
 
 func _ready():
+	_construir_conexiones()
+
 	tramo_actual = $"Background/Way1-2/PathFollow2D"
 	tramo_actual.rotates = false
 	personaje = tramo_actual.get_node("Character")
@@ -131,6 +144,15 @@ func _desactivar_rotacion_en_todos_los_tramos():
 			var pf: PathFollow2D = tramo_nodo.get_node_or_null("PathFollow2D")
 			if pf:
 				pf.rotates = false
+				# rotates = false congela la rotación en el valor que haya
+				# quedado guardado en la escena (arrastrado de cuando se
+				# movió/rotó el PathFollow2D a mano en el editor). Como
+				# CHARACTER_OFFSET es una posición LOCAL al PathFollow2D,
+				# cualquier rotación residual distinta de 0 hace que ese
+				# offset se aplique "girado", desplazando al personaje del
+				# camino dibujado (ej: Way4-5 tenía ~170° guardados). Por
+				# eso hay que resetearla explícitamente a 0 acá también.
+				pf.rotation = 0
 
 # Garantiza que el personaje SIEMPRE se vea igual (sin rotación), sin
 # importar la curva del tramo por el que esté pasando en ese momento.
@@ -196,6 +218,7 @@ func _ubicar_personaje_en_nodo(nivel: int):
 
 	var tramo: PathFollow2D = get_node(path_str)
 	tramo.rotates = false
+	tramo.rotation = 0  # ver nota en _desactivar_rotacion_en_todos_los_tramos()
 
 	if personaje.get_parent() != tramo:
 		# keep_global_transform=false: NO queremos que Godot "preserve" la
@@ -338,11 +361,22 @@ func _input(event):
 	if esperando_inicio:
 		return
 
+	# Mientras el personaje está a mitad de un tramo, no se acepta ningún
+	# input nuevo. Esto es lo que evita que, al apretar rápido, se dispare
+	# otro movimiento antes de que termine el actual y el personaje termine
+	# "saliéndose" del camino.
+	if en_movimiento:
+		return
+
 	var direccion = ""
 	if event.is_action_pressed("ui_right"):
-		direccion = "derecha"
+		direccion = "ui_right"
 	elif event.is_action_pressed("ui_left"):
-		direccion = "izquierda"
+		direccion = "ui_left"
+	elif event.is_action_pressed("ui_up"):
+		direccion = "ui_up"
+	elif event.is_action_pressed("ui_down"):
+		direccion = "ui_down"
 	else:
 		return
 
@@ -371,15 +405,18 @@ func _input(event):
 	nodo_actual = nodo_destino
 
 	if sprite_personaje != null:
-		if direccion == "izquierda":
+		if direccion == "ui_left":
 			sprite_personaje.flip_h = true
-		elif direccion == "derecha":
+		elif direccion == "ui_right":
 			sprite_personaje.flip_h = false
 		if sprite_personaje.has_method("play"):
 			sprite_personaje.play("Walk")
 
 func mover_por_tramo(destino: PathFollow2D, invertido: bool = false, duracion: float = 1.0, nodo_destino: int = -1):
+	en_movimiento = true
+
 	destino.rotates = false
+	destino.rotation = 0  # ver nota en _desactivar_rotacion_en_todos_los_tramos()
 	# keep_global_transform=false + offset fijo, por la misma razón que en
 	# _ubicar_personaje_en_nodo: evitar que se arrastre un offset corrupto
 	# por la rotación del tramo de origen.
@@ -393,6 +430,7 @@ func mover_por_tramo(destino: PathFollow2D, invertido: bool = false, duracion: f
 	var tween = create_tween()
 	tween.tween_property(destino, "progress_ratio", final_ratio, duracion)
 	tween.tween_callback(func():
+		en_movimiento = false
 		if sprite_personaje != null and sprite_personaje.has_method("stop"):
 			sprite_personaje.stop()
 		if nodo_destino != -1:
