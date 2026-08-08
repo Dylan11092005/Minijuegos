@@ -1,0 +1,86 @@
+[gd_scene format=3 uid="uid://cldp6t3h1r33k"]
+
+[ext_resource type="Texture2D" uid="uid://c8o4qimt2ufba" path="res://Minigames/minigame_deluxe/mini_minigame_level8/assets/background_level8.png" id="1_x6gcr"]
+[ext_resource type="Texture2D" uid="uid://bvlnnmio8t8vj" path="res://Minigames/minigame_deluxe/mini_minigame_level8/assets/kid_eruption.png" id="2_2hid0"]
+[ext_resource type="Texture2D" uid="uid://k8w3qc2k0bdh" path="res://Minigames/minigame_deluxe/mini_minigame_level8/assets/face_mask.png" id="3_8jwik"]
+[ext_resource type="Texture2D" uid="uid://h1ksddutfo4b" path="res://Minigames/minigame_deluxe/mini_minigame_level8/assets/kid_hat.png" id="4_8k106"]
+[ext_resource type="Texture2D" uid="uid://xpcumkib41kk" path="res://Minigames/minigame_deluxe/mini_minigame_level8/assets/glasses.png" id="5_ehalx"]
+[ext_resource type="Script" uid="uid://rmxb4rnqo3no" path="res://Minigames/minigame_deluxe/mini_minigame_level8/EruptionMain.gd" id="6_emain"]
+[ext_resource type="Script" uid="uid://b7iry2vp0y35d" path="res://Minigames/minigame_deluxe/mini_minigame_level8/DraggableItem.gd" id="7_ditem"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_facemask"]
+size = Vector2(600, 430)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_glasses"]
+size = Vector2(440, 160)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hat"]
+size = Vector2(520, 320)
+
+[node name="EruptionMain" type="Node2D" unique_id=267920270]
+script = ExtResource("6_emain")
+
+[node name="Background" type="Sprite2D" parent="." unique_id=809211492]
+position = Vector2(1020, 569)
+scale = Vector2(1.3268229, 1.1132813)
+texture = ExtResource("1_x6gcr")
+
+[node name="Kid" type="Sprite2D" parent="." unique_id=207057885]
+position = Vector2(1000, 752)
+scale = Vector2(0.89192706, 0.87890625)
+texture = ExtResource("2_2hid0")
+
+[node name="KidFaceMask" type="Sprite2D" parent="." unique_id=2094482157]
+visible = false
+position = Vector2(988.9598, 851.1833)
+scale = Vector2(0.4896356, 0.49768898)
+texture = ExtResource("3_8jwik")
+
+[node name="KidHat" type="Sprite2D" parent="." unique_id=2011886673]
+visible = false
+position = Vector2(975.99994, 488.00003)
+scale = Vector2(1.0309646, 0.860412)
+texture = ExtResource("4_8k106")
+
+[node name="KidGlasses" type="Sprite2D" parent="." unique_id=220585762]
+visible = false
+position = Vector2(983.99994, 717)
+scale = Vector2(0.7622145, 0.80672425)
+texture = ExtResource("5_ehalx")
+
+[node name="FaceMask" type="Area2D" parent="." unique_id=24224087]
+position = Vector2(320, 636)
+script = ExtResource("7_ditem")
+
+[node name="Sprite2D" type="Sprite2D" parent="FaceMask" unique_id=1228699530]
+scale = Vector2(0.4095313, 0.4343913)
+texture = ExtResource("3_8jwik")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FaceMask" unique_id=1262935330]
+shape = SubResource("RectangleShape2D_facemask")
+
+[node name="Glasses" type="Area2D" parent="." unique_id=1378188996]
+position = Vector2(1712, 963)
+script = ExtResource("7_ditem")
+
+[node name="Sprite2D" type="Sprite2D" parent="Glasses" unique_id=498225585]
+position = Vector2(-100, 5)
+scale = Vector2(0.7622145, 0.80672425)
+texture = ExtResource("5_ehalx")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Glasses" unique_id=1763095633]
+position = Vector2(-105, 5)
+shape = SubResource("RectangleShape2D_glasses")
+
+[node name="Hat" type="Area2D" parent="." unique_id=1184674446]
+position = Vector2(1709, 468.00003)
+script = ExtResource("7_ditem")
+
+[node name="Sprite2D" type="Sprite2D" parent="Hat" unique_id=1824252420]
+position = Vector2(-118.000015, 77.99997)
+scale = Vector2(1.0309646, 0.860412)
+texture = ExtResource("4_8k106")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hat" unique_id=1240575691]
+position = Vector2(-95, 89.99997)
+shape = SubResource("RectangleShape2D_hat")
