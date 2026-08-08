@@ -1,0 +1,114 @@
+[gd_scene format=3 uid="uid://d36bis3g4bgcg"]
+
+[ext_resource type="Texture2D" uid="uid://cug4bpp3cy644" path="res://Minigames/minigame_deluxe/mini_minigame_level9/assets/background_level9.png" id="1_8stb0"]
+[ext_resource type="Texture2D" uid="uid://clwvalrbqcjhi" path="res://Minigames/minigame_deluxe/mini_minigame_level9/assets/head.png" id="1_v0r7s"]
+[ext_resource type="Texture2D" uid="uid://f3lp8aplxge7" path="res://Minigames/minigame_deluxe/mini_minigame_level9/assets/cold_kid.png" id="2_diwyg"]
+[ext_resource type="Texture2D" uid="uid://dhd1fujc7srgn" path="res://Minigames/minigame_deluxe/mini_minigame_level9/assets/pants.png" id="4_q2evi"]
+[ext_resource type="Texture2D" uid="uid://d4m5kd4041gyr" path="res://Minigames/minigame_deluxe/mini_minigame_level9/assets/shoe2-removebg-preview.png" id="5_aayxx"]
+[ext_resource type="Texture2D" uid="uid://l0ksmecir3nd" path="res://Minigames/minigame_deluxe/mini_minigame_level9/assets/jacket.png" id="6_jacket"]
+[ext_resource type="Script" uid="uid://73v1iehsu4nl" path="res://Minigames/minigame_deluxe/mini_minigame_level9/ColdMain.gd" id="7_cmain"]
+[ext_resource type="Script" uid="uid://noj836bj1fw7" path="res://Minigames/minigame_deluxe/mini_minigame_level9/DraggableItem.gd" id="8_ditem"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_pants"]
+size = Vector2(202, 325)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_shoe1"]
+size = Vector2(84, 89)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_shoe2"]
+size = Vector2(84, 95)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jacket"]
+size = Vector2(300, 344)
+
+[node name="ColdMain" type="Node2D" unique_id=711613116]
+script = ExtResource("7_cmain")
+
+[node name="Background" type="Sprite2D" parent="." unique_id=265440431]
+z_index = -10
+position = Vector2(987.00006, 569.5)
+scale = Vector2(1.2903646, 1.1083984)
+texture = ExtResource("1_8stb0")
+
+[node name="Kid" type="Sprite2D" parent="." unique_id=251007320]
+z_index = -5
+position = Vector2(934.37506, 582.875)
+scale = Vector2(1.4486141, 1.3453205)
+texture = ExtResource("2_diwyg")
+
+[node name="KidJacket" type="Sprite2D" parent="." unique_id=1173579302]
+z_index = 1
+position = Vector2(935.5, 514.8052)
+scale = Vector2(0.6282353, 0.7118239)
+texture = ExtResource("6_jacket")
+
+[node name="Head" type="Sprite2D" parent="." unique_id=267151396]
+z_index = 1
+position = Vector2(932.00006, 308)
+scale = Vector2(1.5302541, 1.3439679)
+texture = ExtResource("1_v0r7s")
+
+[node name="KidPants" type="Sprite2D" parent="." unique_id=365474490]
+visible = false
+z_index = 1
+position = Vector2(942, 761.00006)
+scale = Vector2(0.65242165, 0.5609119)
+texture = ExtResource("4_q2evi")
+
+[node name="KidShoe1" type="Sprite2D" parent="." unique_id=489844103]
+visible = false
+z_index = 1
+position = Vector2(882.63116, 909.80615)
+scale = Vector2(0.8561468, 0.65523094)
+texture = ExtResource("5_aayxx")
+
+[node name="KidShoe2" type="Sprite2D" parent="." unique_id=785706973]
+visible = false
+z_index = 1
+position = Vector2(998.5337, 907.86035)
+scale = Vector2(0.85777205, 0.69701713)
+texture = ExtResource("5_aayxx")
+
+[node name="Pants" type="Area2D" parent="." unique_id=1456522759]
+position = Vector2(272.24997, 838.3632)
+script = ExtResource("8_ditem")
+
+[node name="Sprite2D" type="Sprite2D" parent="Pants" unique_id=1329182984]
+scale = Vector2(0.6082623, 0.54878914)
+texture = ExtResource("4_q2evi")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Pants" unique_id=738657862]
+shape = SubResource("RectangleShape2D_pants")
+
+[node name="Shoe1" type="Area2D" parent="." unique_id=871378110]
+position = Vector2(1553, 789)
+script = ExtResource("8_ditem")
+
+[node name="Sprite2D" type="Sprite2D" parent="Shoe1" unique_id=1023111572]
+scale = Vector2(0.8561468, 0.65523094)
+texture = ExtResource("5_aayxx")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Shoe1" unique_id=1077957722]
+shape = SubResource("RectangleShape2D_shoe1")
+
+[node name="Shoe2" type="Area2D" parent="." unique_id=604450358]
+position = Vector2(1355.0001, 949.00006)
+script = ExtResource("8_ditem")
+
+[node name="Sprite2D" type="Sprite2D" parent="Shoe2" unique_id=1293896642]
+scale = Vector2(0.85777205, 0.69701713)
+texture = ExtResource("5_aayxx")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Shoe2" unique_id=1467642886]
+shape = SubResource("RectangleShape2D_shoe2")
+
+[node name="Jacket" type="Area2D" parent="." unique_id=1492203877]
+position = Vector2(569, 893.99994)
+script = ExtResource("8_ditem")
+
+[node name="Sprite2D" type="Sprite2D" parent="Jacket" unique_id=1340114652]
+scale = Vector2(0.580869, 0.6798867)
+texture = ExtResource("6_jacket")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Jacket" unique_id=1767862937]
+shape = SubResource("RectangleShape2D_jacket")
