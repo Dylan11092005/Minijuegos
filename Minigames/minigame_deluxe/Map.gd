@@ -60,7 +60,9 @@ var escenas_minijuego := {
 	4: "res://Minigames/minigame_deluxe/mini_minigame_level4/WindowsMain.tscn",
 	5: "res://Minigames/minigame_deluxe/mini_minigame_level5/FarmMain.tscn",
 	6: "res://Minigames/minigame_deluxe/mini_minigame_level6/RocksMain.tscn",
-	7: "res://Minigames/minigame_deluxe/mini_minigame_level7/WindMain.tscn"
+	7: "res://Minigames/minigame_deluxe/mini_minigame_level7/WindMain.tscn",
+	8: "res://Minigames/minigame_deluxe/mini_minigame_level8/EruptionMain.tscn",
+	9: "res://Minigames/minigame_deluxe/mini_minigame_level9/ColdMain.tscn"
 }
 
 # Cada tramo (edge) tiene UNA tecla fija para avanzar. La tecla para
