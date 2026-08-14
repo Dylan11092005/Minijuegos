@@ -7,6 +7,8 @@
 [ext_resource type="Texture2D" uid="uid://xpcumkib41kk" path="res://Minigames/minigame_deluxe/mini_minigame_level8/assets/glasses.png" id="5_ehalx"]
 [ext_resource type="Script" uid="uid://rmxb4rnqo3no" path="res://Minigames/minigame_deluxe/mini_minigame_level8/EruptionMain.gd" id="6_emain"]
 [ext_resource type="Script" uid="uid://b7iry2vp0y35d" path="res://Minigames/minigame_deluxe/mini_minigame_level8/DraggableItem.gd" id="7_ditem"]
+[ext_resource type="AudioStream" uid="uid://bfb6l6aovgjub" path="res://Minigames/minigame_hillside_barrier/assets/sounds/Background.mp3" id="8_bgsound"]
+[ext_resource type="AudioStream" uid="uid://cr2c5n875akhw" path="res://Minigames/minigame_committee/music/pick_item.mp3" id="9_placesound"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_facemask"]
 size = Vector2(600, 430)
@@ -19,6 +21,12 @@ size = Vector2(520, 320)
 
 [node name="EruptionMain" type="Node2D" unique_id=267920270]
 script = ExtResource("6_emain")
+
+[node name="BackgroundSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_bgsound")
+
+[node name="PlaceItemSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("9_placesound")
 
 [node name="Background" type="Sprite2D" parent="." unique_id=809211492]
 position = Vector2(1020, 569)

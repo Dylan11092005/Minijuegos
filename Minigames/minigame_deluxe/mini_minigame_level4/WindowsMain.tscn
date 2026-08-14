@@ -7,7 +7,7 @@
 [ext_resource type="Script" uid="uid://cufxet21ekbek" path="res://Minigames/minigame_deluxe/mini_minigame_level4/Window.gd" id="5_wwin"]
 [ext_resource type="Texture2D" uid="uid://bwind0swirl01" path="res://Minigames/minigame_deluxe/mini_minigame_level4/assets/wind.png" id="6_wind"]
 [ext_resource type="AudioStream" uid="uid://bfb6l6aovgjub" path="res://Minigames/minigame_hillside_barrier/assets/sounds/Background.mp3" id="7_jk3b0"]
-[ext_resource type="AudioStream" uid="uid://drsykw2q8xuqd" path="res://Minigames/minigame_defo/Music/Plantar.mp3" id="8_qk1pa"]
+[ext_resource type="AudioStream" uid="uid://cr2c5n875akhw" path="res://Minigames/minigame_committee/music/pick_item.mp3" id="8_jk3b0"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_isfoc"]
 size = Vector2(142, 112.5)
@@ -498,4 +498,4 @@ shape = SubResource("RectangleShape2D_isfoc")
 stream = ExtResource("7_jk3b0")
 
 [node name="WindowTap" type="AudioStreamPlayer" parent="." unique_id=1135145995]
-stream = ExtResource("8_qk1pa")
+stream = ExtResource("8_jk3b0")

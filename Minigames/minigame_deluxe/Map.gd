@@ -40,16 +40,16 @@ const COLOR_BOTON_TEXTO  := C_WHITE
 # ────────────────────────────────────────────────────────────────────────────
 
 var descripciones_nivel := {
-	1: "Nivel 1: rescata los objetos buenos antes de que se acabe el tiempo.",
-	2: "Nivel 2: cierra todas las llaves de agua antes de que se acabe el tiempo.",
-	3: "Nivel 3: pon a prueba tus reflejos.",
-	4: "Nivel 4: cierra las ventanas antes de que se acabe el tiempo.",
-	5: "Nivel 5: encuentra las 3 mesas antes que se acabe el tiempo.",
-	6: "Nivel 6: la mitad del camino recorrido.",
-	7: "Nivel 7: se pone interesante.",
-	8: "Nivel 8: cerca del volcán, ten cuidado.",
-	9: "Nivel 9: casi llegas a la meta.",
-	10: "Nivel 10: el reto final."
+	1: "Arrastra los objetos útiles para la emergencia a un lugar seguro y evita los que no sirven, antes de que se acabe el tiempo.",
+	2: "Cierra 10 llaves de agua abiertas antes de que se acabe el tiempo. ¡Se vuelven a abrir solas!",
+	3: "Apaga 12 llamas tocándolas antes de que crezcan demasiado y se acabe el tiempo.",
+	4: "Cierra las 10 ventanas antes de que se acabe el tiempo, sin dejar ninguna abierta.",
+	5: "Encuentra las 3 mesas escondidas antes de que se acabe el tiempo.",
+	6: "Mueve al personaje de un lado a otro para esquivar las rocas que van cayendo.",
+	7: "Mantén apretada la tecla para subir la montaña, pero quédate quieto cuando llegue el viento.",
+	8: "Arrastra la mascarilla, los lentes y el sombrero sobre el niño para protegerlo antes de la erupción.",
+	9: "Arrastra la campera, el pantalón y los zapatos para abrigar al niño antes de que se acabe el tiempo.",
+	10: "Responde correctamente las preguntas antes de fallar demasiadas veces o que se acabe el tiempo."
 }
 
 # Qué escena de minijuego corresponde a cada nivel
@@ -62,7 +62,8 @@ var escenas_minijuego := {
 	6: "res://Minigames/minigame_deluxe/mini_minigame_level6/RocksMain.tscn",
 	7: "res://Minigames/minigame_deluxe/mini_minigame_level7/WindMain.tscn",
 	8: "res://Minigames/minigame_deluxe/mini_minigame_level8/EruptionMain.tscn",
-	9: "res://Minigames/minigame_deluxe/mini_minigame_level9/ColdMain.tscn"
+	9: "res://Minigames/minigame_deluxe/mini_minigame_level9/ColdMain.tscn",
+	10: "res://Minigames/minigame_deluxe/mini_minigame_level10/AskMain.tscn"
 }
 
 # Cada tramo (edge) tiene UNA tecla fija para avanzar. La tecla para
@@ -112,8 +113,34 @@ var panel_nivel: Panel
 var label_nivel: Label
 var boton_comenzar: Button
 
+@onready var background_sound: AudioStreamPlayer = get_node_or_null("BackgroundSound")
+
+
+func _start_background_sound() -> void:
+	if not background_sound:
+		return
+
+	if background_sound.stream:
+		if background_sound.stream is AudioStreamWAV:
+			background_sound.stream.loop_mode = AudioStreamWAV.LOOP_FORWARD
+		elif background_sound.stream is AudioStreamOggVorbis:
+			background_sound.stream.loop = true
+
+	if not background_sound.finished.is_connected(_on_background_sound_finished):
+		background_sound.finished.connect(_on_background_sound_finished)
+
+	background_sound.play()
+
+
+func _on_background_sound_finished() -> void:
+	if background_sound:
+		background_sound.play()
+
+
 func _ready():
 	_construir_conexiones()
+
+	_start_background_sound()
 
 	tramo_actual = $"Background/Way1-2/PathFollow2D"
 	tramo_actual.rotates = false
@@ -241,7 +268,7 @@ func _crear_ui():
 
 	# ── Panel del nivel: mismo lenguaje visual que el reloj de tiempo ──────────
 	panel_nivel = Panel.new()
-	panel_nivel.custom_minimum_size = Vector2(280, 150)
+	panel_nivel.custom_minimum_size = Vector2(PANEL_NIVEL_ANCHO, PANEL_NIVEL_ALTO_MINIMO)
 	panel_nivel.visible = false
 	ui_capa.add_child(panel_nivel)
 
@@ -262,6 +289,13 @@ func _crear_ui():
 
 	var vbox := VBoxContainer.new()
 	vbox.set_anchors_preset(Control.PRESET_FULL_RECT)
+	# Un Panel normal (a diferencia de un PanelContainer) no aplica solo los
+	# content_margin del stylebox a sus hijos, así que hay que insertar el
+	# mismo margen "a mano" para que el texto no quede pegado al borde.
+	vbox.offset_left = 18
+	vbox.offset_top = 16
+	vbox.offset_right = -18
+	vbox.offset_bottom = -16
 	vbox.add_theme_constant_override("separation", 12)
 	panel_nivel.add_child(vbox)
 
@@ -320,11 +354,24 @@ func _entrar_a_nodo(nivel: int):
 	else:
 		_mostrar_ventanita(nivel)
 
+# Ancho fijo del panel de nivel; el alto se calcula según el texto para
+# que la descripción siempre quepa completa y se pueda leer entera.
+const PANEL_NIVEL_ANCHO := 320.0
+const PANEL_NIVEL_MARGEN_H := 36.0   # content_margin_left + content_margin_right
+const PANEL_NIVEL_MARGEN_V := 32.0   # content_margin_top + content_margin_bottom
+const PANEL_NIVEL_SEPARACION := 12.0 # separación del VBoxContainer
+const PANEL_NIVEL_BOTON_ALTO := 42.0
+const PANEL_NIVEL_ALTO_MINIMO := 150.0
+const PANEL_NIVEL_MARGEN_PANTALLA := 16.0
+
 func _mostrar_ventanita(nivel: int):
 	esperando_inicio = true
 
-	label_nivel.text = descripciones_nivel.get(nivel, "Nivel %d" % nivel)
+	var descripcion: String = descripciones_nivel.get(nivel, "")
+	label_nivel.text = "Nivel %d\n\n%s" % [nivel, descripcion]
 	panel_nivel.visible = true
+
+	_ajustar_tamano_panel()
 
 	var pos_personaje = personaje.global_position
 	var camera = get_viewport().get_camera_2d()
@@ -334,7 +381,47 @@ func _mostrar_ventanita(nivel: int):
 	else:
 		pos_pantalla = pos_personaje
 
-	panel_nivel.position = pos_pantalla + Vector2(60, -70)
+	pos_pantalla += Vector2(60, -70)
+
+	# Nunca dejar que el panel se salga de los bordes de la pantalla, para
+	# que el texto siempre se pueda leer completo sin importar en qué
+	# parte del mapa esté el personaje.
+	var pantalla: Vector2 = get_viewport().get_visible_rect().size
+	pos_pantalla.x = clamp(
+		pos_pantalla.x,
+		PANEL_NIVEL_MARGEN_PANTALLA,
+		pantalla.x - panel_nivel.size.x - PANEL_NIVEL_MARGEN_PANTALLA
+	)
+	pos_pantalla.y = clamp(
+		pos_pantalla.y,
+		PANEL_NIVEL_MARGEN_PANTALLA,
+		pantalla.y - panel_nivel.size.y - PANEL_NIVEL_MARGEN_PANTALLA
+	)
+
+	panel_nivel.position = pos_pantalla
+
+
+# Calcula cuánto alto necesita el texto actual de label_nivel (ya envuelto
+# en varias líneas si hace falta) y redimensiona el panel para que entre
+# completo, sin que el texto se corte ni se salga del cartel.
+func _ajustar_tamano_panel():
+	var font: Font = label_nivel.get_theme_font("font")
+	var font_size: int = label_nivel.get_theme_font_size("font_size")
+	var ancho_texto: float = PANEL_NIVEL_ANCHO - PANEL_NIVEL_MARGEN_H
+
+	var texto_size: Vector2 = font.get_multiline_string_size(
+		label_nivel.text,
+		HORIZONTAL_ALIGNMENT_CENTER,
+		ancho_texto,
+		font_size
+	)
+
+	var alto_necesario: float = texto_size.y + PANEL_NIVEL_SEPARACION + PANEL_NIVEL_BOTON_ALTO + PANEL_NIVEL_MARGEN_V
+	alto_necesario = max(alto_necesario, PANEL_NIVEL_ALTO_MINIMO)
+
+	panel_nivel.size = Vector2(PANEL_NIVEL_ANCHO, alto_necesario)
+	panel_nivel.custom_minimum_size = panel_nivel.size
+
 
 func _on_boton_empezar_pressed():
 	panel_nivel.visible = false

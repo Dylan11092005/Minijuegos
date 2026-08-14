@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://rk470x2btkn6"]
+
+[ext_resource type="Script" path="res://Minigames/minigame_deluxe/mini_minigame_level10/AskMain.gd" id="0_askmain"]
+[ext_resource type="Texture2D" uid="uid://cwuri5l6mlboh" path="res://Minigames/minigame_deluxe/mini_minigame_level10/assets/background_level10.png" id="1_0tei3"]
+[ext_resource type="AudioStream" uid="uid://do5diwfpl0cdp" path="res://Minigames/ui_global/music/Sound_Instruction.mp3" id="2_bgsound"]
+[ext_resource type="AudioStream" uid="uid://djouf7d5uur0u" path="res://Minigames/minigame_Question/Music/Correct.mp3" id="3_correct"]
+[ext_resource type="AudioStream" uid="uid://683s8vh3soqo" path="res://Minigames/minigame_evacuation/music/Error.mp3" id="4_wrong"]
+
+[node name="AskMain" type="Node2D" unique_id=627623942]
+script = ExtResource("0_askmain")
+
+[node name="Background" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_bgsound")
+
+[node name="CorrectAnswer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_correct")
+
+[node name="WrongAnswer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_wrong")
+
+[node name="BackgroundSprite" type="Sprite2D" parent="." unique_id=1014025976]
+position = Vector2(978.5, 563)
+scale = Vector2(1.2714844, 1.1035156)
+texture = ExtResource("1_0tei3")
