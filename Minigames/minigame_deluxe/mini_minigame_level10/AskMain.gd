@@ -206,6 +206,7 @@ func _ready():
 
 	_setup_timer_ui()
 	_setup_resultado_ui()
+	_setup_resultado_sound()
 	_setup_lives_ui()
 	_setup_quiz_ui()
 
@@ -367,9 +368,39 @@ func _setup_resultado_ui():
 	vbox.add_child(resultado_boton)
 
 
+# =========================================================
+# SONIDO DE GANAR / PERDER (compartido por todos los minijuegos)
+# =========================================================
+
+const WIN_SOUND_PATH := "res://Minigames/ui_global/music/MusicaVictoria.mp3"
+const LOSE_SOUND_PATH := "res://Minigames/ui_global/music/JuegoPerdido.mp3"
+
+var resultado_sound_player: AudioStreamPlayer = null
+
+
+func _setup_resultado_sound():
+	resultado_sound_player = AudioStreamPlayer.new()
+	resultado_sound_player.name = "ResultadoSoundPlayer"
+	add_child(resultado_sound_player)
+
+
+func _play_resultado_sound(gano: bool):
+	if not resultado_sound_player:
+		return
+
+	var path: String = WIN_SOUND_PATH if gano else LOSE_SOUND_PATH
+	if not ResourceLoader.exists(path):
+		push_error("No se encontró el sonido de resultado en: " + path)
+		return
+
+	resultado_sound_player.stream = load(path)
+	resultado_sound_player.play()
+
+
 func _mostrar_resultado(gano: bool):
 	_resultado_gano = gano
 	resultado_label.text = WIN_MESSAGE if gano else LOSE_MESSAGE
+	_play_resultado_sound(gano)
 
 	if quiz_panel:
 		quiz_panel.visible = false

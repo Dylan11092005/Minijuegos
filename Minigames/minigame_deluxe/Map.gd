@@ -39,6 +39,20 @@ const COLOR_BOTON_PRESS  := Color("#324D73")   # azul un poco más oscuro
 const COLOR_BOTON_TEXTO  := C_WHITE
 # ────────────────────────────────────────────────────────────────────────────
 
+# ── Vidas del recorrido (reutiliza el mismo LivesUi.gd de los minijuegos) ──
+const LIVES_UI_SCRIPT_PATH := "res://Minigames/ui_global/LivesUi.gd"
+
+# ── Sonidos de ganar/perder, iguales a los de los minijuegos ───────────────
+const WIN_SOUND_PATH := "res://Minigames/ui_global/music/MusicaVictoria.mp3"
+const LOSE_SOUND_PATH := "res://Minigames/ui_global/music/JuegoPerdido.mp3"
+
+# ── Panel de resultado FINAL (ganar/perder todo el recorrido) ──────────────
+const RESULT_FINAL_PANEL_SIZE := Vector2(520, 280)
+const RESULT_FINAL_BUTTON_SIZE := Vector2(260, 56)
+const WIN_FINAL_MESSAGE := "¡Felicidades!\n¡Completaste todo el recorrido!"
+const LOSE_FINAL_MESSAGE := "¡Qué mal!\nSe acabaron tus vidas.\nHay que empezar de nuevo."
+const JUGAR_DE_NUEVO_TEXT := "🔄  Jugar de nuevo"
+
 var descripciones_nivel := {
 	1: "Arrastra los objetos útiles para la emergencia a un lugar seguro y evita los que no sirven, antes de que se acabe el tiempo.",
 	2: "Cierra 10 llaves de agua abiertas antes de que se acabe el tiempo. ¡Se vuelven a abrir solas!",
@@ -113,6 +127,16 @@ var panel_nivel: Panel
 var label_nivel: Label
 var boton_comenzar: Button
 
+var lives_layer: CanvasLayer = null
+var lives_ui = null
+
+var resultado_final_layer: CanvasLayer = null
+var resultado_final_panel: Panel = null
+var resultado_final_label: Label = null
+var resultado_final_boton: Button = null
+
+var resultado_sound_player: AudioStreamPlayer = null
+
 @onready var background_sound: AudioStreamPlayer = get_node_or_null("BackgroundSound")
 
 
@@ -158,6 +182,9 @@ func _ready():
 	print("[DEBUG] _ready() del Mapa -> nodo_actual (antes de procesar)=", nodo_actual)
 
 	_crear_ui()
+	_setup_lives_ui()
+	_setup_resultado_final_ui()
+	_setup_resultado_sound()
 
 	iniciar_minijuego.connect(_on_iniciar_minijuego)
 
@@ -213,12 +240,31 @@ func _procesar_resultado_minijuego():
 		_ubicar_personaje_en_nodo(nodo_actual)
 		panel_nivel.visible = false
 	elif resultado == "perdio":
+		# Perdió el minijuego pero todavía le quedan vidas: reintenta el
+		# mismo nivel donde estaba.
 		nodo_actual = GameState.nivel_actual
 		_ubicar_personaje_en_nodo(nodo_actual)
 		_entrar_a_nodo(nodo_actual)
+	elif resultado == "juego_ganado":
+		# Completó el último nivel: ganó todo el recorrido.
+		nodo_actual = GameState.nivel_actual
+		esperando_inicio = false
+		_ubicar_personaje_en_nodo(nodo_actual)
+		panel_nivel.visible = false
+		_mostrar_resultado_final(true)
+	elif resultado == "juego_perdido":
+		# Se quedó sin vidas: GameState ya reinició todo el progreso
+		# (niveles completados, vidas y posición) antes de volver acá.
+		nodo_actual = 1
+		esperando_inicio = false
+		_ubicar_personaje_en_nodo(nodo_actual)
+		panel_nivel.visible = false
+		_mostrar_resultado_final(false)
 	else:
 		_ubicar_personaje_en_nodo(nodo_actual)
 		_entrar_a_nodo(nodo_actual)
+
+	_update_lives_ui()
 
 	print("[DEBUG] después de procesar -> nodo_actual=", nodo_actual,
 		" | personaje.global_position=", personaje.global_position,
@@ -343,6 +389,158 @@ func _crear_ui():
 	boton_comenzar.pressed.connect(_on_boton_empezar_pressed)
 	vbox.add_child(boton_comenzar)
 
+# =========================================================
+# VIDAS DEL RECORRIDO (todo el mapa, no de un solo minijuego)
+# =========================================================
+
+func _setup_lives_ui():
+	if lives_layer:
+		return
+
+	lives_layer = CanvasLayer.new()
+	lives_layer.name = "LivesLayer"
+	lives_layer.layer = 120
+	add_child(lives_layer)
+
+	if ResourceLoader.exists(LIVES_UI_SCRIPT_PATH):
+		var lives_script = load(LIVES_UI_SCRIPT_PATH)
+		lives_ui = Node2D.new()
+		lives_ui.name = "LivesUI"
+		lives_ui.set_script(lives_script)
+		lives_layer.add_child(lives_ui)
+	else:
+		push_error("No se encontró LivesUi.gd en: " + LIVES_UI_SCRIPT_PATH)
+		return
+
+	if lives_ui.has_method("set_max_lives"):
+		lives_ui.set_max_lives(GameState.MAX_VIDAS_MAPA)
+	else:
+		lives_ui.set("max_lives", GameState.MAX_VIDAS_MAPA)
+
+	_update_lives_ui()
+
+
+func _update_lives_ui():
+	if not lives_ui:
+		return
+
+	if lives_ui.has_method("actualizar_vidas"):
+		lives_ui.actualizar_vidas(GameState.vidas_mapa)
+	else:
+		lives_ui.set("current_lives", GameState.vidas_mapa)
+
+	if lives_ui.has_method("queue_redraw"):
+		lives_ui.queue_redraw()
+
+
+# =========================================================
+# SONIDO DE GANAR / PERDER (mismo que en los minijuegos)
+# =========================================================
+
+func _setup_resultado_sound():
+	resultado_sound_player = AudioStreamPlayer.new()
+	resultado_sound_player.name = "ResultadoSoundPlayer"
+	add_child(resultado_sound_player)
+
+
+func _play_resultado_sound(gano: bool):
+	if not resultado_sound_player:
+		return
+
+	var path: String = WIN_SOUND_PATH if gano else LOSE_SOUND_PATH
+	if not ResourceLoader.exists(path):
+		push_error("No se encontró el sonido de resultado en: " + path)
+		return
+
+	resultado_sound_player.stream = load(path)
+	resultado_sound_player.play()
+
+
+# =========================================================
+# PANEL DE RESULTADO FINAL (ganó/perdió todo el recorrido)
+# =========================================================
+
+func _setup_resultado_final_ui():
+	resultado_final_layer = CanvasLayer.new()
+	resultado_final_layer.name = "ResultadoFinalLayer"
+	resultado_final_layer.layer = 160
+	add_child(resultado_final_layer)
+
+	resultado_final_panel = Panel.new()
+	resultado_final_panel.custom_minimum_size = RESULT_FINAL_PANEL_SIZE
+	resultado_final_panel.visible = false
+	resultado_final_layer.add_child(resultado_final_panel)
+
+	var estilo_panel := StyleBoxFlat.new()
+	estilo_panel.bg_color = COLOR_FONDO
+	estilo_panel.border_color = COLOR_BORDE
+	estilo_panel.set_border_width_all(6)
+	estilo_panel.set_corner_radius_all(28)
+	estilo_panel.shadow_color = Color(0, 0, 0, 0.28)
+	estilo_panel.shadow_size = 16
+	estilo_panel.content_margin_left = 24
+	estilo_panel.content_margin_right = 24
+	estilo_panel.content_margin_top = 24
+	estilo_panel.content_margin_bottom = 24
+	resultado_final_panel.add_theme_stylebox_override("panel", estilo_panel)
+
+	var vbox := VBoxContainer.new()
+	vbox.set_anchors_preset(Control.PRESET_FULL_RECT)
+	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	vbox.add_theme_constant_override("separation", 24)
+	resultado_final_panel.add_child(vbox)
+
+	resultado_final_label = Label.new()
+	resultado_final_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	resultado_final_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	resultado_final_label.add_theme_color_override("font_color", COLOR_TEXTO)
+	resultado_final_label.add_theme_font_size_override("font_size", 32)
+	vbox.add_child(resultado_final_label)
+
+	resultado_final_boton = Button.new()
+	resultado_final_boton.text = JUGAR_DE_NUEVO_TEXT
+	resultado_final_boton.custom_minimum_size = RESULT_FINAL_BUTTON_SIZE
+	resultado_final_boton.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	resultado_final_boton.add_theme_font_size_override("font_size", 20)
+
+	var estilo_boton := StyleBoxFlat.new()
+	estilo_boton.bg_color = COLOR_BOTON
+	estilo_boton.border_color = C_WHITE
+	estilo_boton.set_border_width_all(3)
+	estilo_boton.set_corner_radius_all(18)
+
+	var estilo_boton_hover := estilo_boton.duplicate()
+	estilo_boton_hover.bg_color = COLOR_BOTON_HOVER
+	estilo_boton_hover.border_color = C_ORANGE_BORDE
+
+	var estilo_boton_press := estilo_boton.duplicate()
+	estilo_boton_press.bg_color = COLOR_BOTON_PRESS
+
+	resultado_final_boton.add_theme_stylebox_override("normal", estilo_boton)
+	resultado_final_boton.add_theme_stylebox_override("hover", estilo_boton_hover)
+	resultado_final_boton.add_theme_stylebox_override("pressed", estilo_boton_press)
+	resultado_final_boton.add_theme_color_override("font_color", COLOR_BOTON_TEXTO)
+	resultado_final_boton.add_theme_color_override("font_hover_color", COLOR_BOTON_TEXTO)
+	resultado_final_boton.add_theme_color_override("font_pressed_color", COLOR_BOTON_TEXTO)
+
+	resultado_final_boton.pressed.connect(_on_jugar_de_nuevo_pressed)
+	vbox.add_child(resultado_final_boton)
+
+
+func _mostrar_resultado_final(gano: bool):
+	resultado_final_label.text = WIN_FINAL_MESSAGE if gano else LOSE_FINAL_MESSAGE
+	_play_resultado_sound(gano)
+
+	var screen := get_viewport().get_visible_rect().size
+	resultado_final_panel.position = (screen - RESULT_FINAL_PANEL_SIZE) / 2.0
+	resultado_final_panel.visible = true
+
+
+func _on_jugar_de_nuevo_pressed():
+	GameState.reiniciar_progreso()
+	get_tree().reload_current_scene()
+
+
 # Decide qué pasa al llegar/estar en un nodo: si el nivel ya fue completado
 # antes, no se muestra el cartel de "Empezar" y el jugador queda libre para
 # seguir moviéndose. Si todavía no se completó, se muestra la ventanita
@@ -447,6 +645,9 @@ func nivel_completado(nivel: int):
 	GameState.marcar_nivel_completado(nivel)
 
 func _input(event):
+	if resultado_final_panel and resultado_final_panel.visible:
+		return
+
 	if esperando_inicio:
 		return
 

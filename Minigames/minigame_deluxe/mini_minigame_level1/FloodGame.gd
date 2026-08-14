@@ -83,6 +83,8 @@ var game_started: bool = false
 
 var _resultado_gano: bool = false
 
+var meta_label: Label = null
+
 
 # =========================================================
 # LIFECYCLE
@@ -93,9 +95,11 @@ func _ready():
 
 	_setup_timer_ui()
 	_setup_resultado_ui()
+	_setup_resultado_sound()
 	_setup_lives_ui()
 	_setup_damage_effect()
 	_setup_spawn_timer()
+	_setup_meta_label()
 
 	call_deferred("_start_game")
 
@@ -209,9 +213,39 @@ func _setup_resultado_ui():
 	vbox.add_child(resultado_boton)
 
 
+# =========================================================
+# SONIDO DE GANAR / PERDER (compartido por todos los minijuegos)
+# =========================================================
+
+const WIN_SOUND_PATH := "res://Minigames/ui_global/music/MusicaVictoria.mp3"
+const LOSE_SOUND_PATH := "res://Minigames/ui_global/music/JuegoPerdido.mp3"
+
+var resultado_sound_player: AudioStreamPlayer = null
+
+
+func _setup_resultado_sound():
+	resultado_sound_player = AudioStreamPlayer.new()
+	resultado_sound_player.name = "ResultadoSoundPlayer"
+	add_child(resultado_sound_player)
+
+
+func _play_resultado_sound(gano: bool):
+	if not resultado_sound_player:
+		return
+
+	var path: String = WIN_SOUND_PATH if gano else LOSE_SOUND_PATH
+	if not ResourceLoader.exists(path):
+		push_error("No se encontró el sonido de resultado en: " + path)
+		return
+
+	resultado_sound_player.stream = load(path)
+	resultado_sound_player.play()
+
+
 func _mostrar_resultado(gano: bool):
 	_resultado_gano = gano
 	resultado_label.text = WIN_MESSAGE if gano else LOSE_MESSAGE
+	_play_resultado_sound(gano)
 
 	var screen := get_viewport().get_visible_rect().size
 	resultado_panel.position = (screen - RESULT_PANEL_SIZE) / 2.0
@@ -419,6 +453,31 @@ func _load_texture(obj_name: String) -> Texture2D:
 # GAME START
 # =========================================================
 
+func _setup_meta_label():
+	var meta_layer := CanvasLayer.new()
+	meta_layer.name = "MetaLayer"
+	meta_layer.layer = 90
+	add_child(meta_layer)
+
+	meta_label = Label.new()
+	meta_label.add_theme_color_override("font_color", RC_WHITE)
+	meta_label.add_theme_font_size_override("font_size", 24)
+	meta_label.add_theme_constant_override("outline_size", 7)
+	meta_label.add_theme_color_override("font_outline_color", RC_BLUE)
+	meta_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	meta_label.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	meta_label.position = Vector2(-250, 90)
+	meta_label.custom_minimum_size = Vector2(500, 36)
+
+	meta_layer.add_child(meta_label)
+
+
+func _update_meta_label():
+	if not meta_label:
+		return
+	meta_label.text = "Objetos rescatados: %d / %d" % [rescued, GOOD_OBJECTS.size()]
+
+
 func _start_game():
 	game_started = true
 	game_over = false
@@ -427,6 +486,7 @@ func _start_game():
 	current_lives = MAX_LIVES
 
 	_update_lives_ui()
+	_update_meta_label()
 	_build_object_pool()
 	_schedule_next_spawn()
 	_start_global_timer()
@@ -445,6 +505,7 @@ func _on_object_clicked(obj):
 
 	if obj.is_good:
 		rescued += 1
+		_update_meta_label()
 		if rescued >= GOOD_OBJECTS.size():
 			_win_game()
 	else:

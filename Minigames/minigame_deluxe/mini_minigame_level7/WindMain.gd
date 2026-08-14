@@ -126,6 +126,8 @@ var game_started: bool = false
 
 var _resultado_gano: bool = false
 
+var meta_label: Label = null
+
 var original_root_position: Vector2 = Vector2.ZERO
 
 # --- Viento ---
@@ -158,10 +160,12 @@ func _ready():
 	_setup_wind_template()
 	_setup_timer_ui()
 	_setup_resultado_ui()
+	_setup_resultado_sound()
 	_setup_lives_ui()
 	_setup_damage_effect()
 	_setup_warning_ui()
 	_setup_wind_timers()
+	_setup_meta_label()
 
 	call_deferred("_start_game")
 
@@ -229,6 +233,7 @@ func _update_walking(delta: float) -> void:
 		fraction = progress_distance / total_length
 
 	player.scale = character_start_scale.lerp(character_end_scale, fraction)
+	_update_meta_label(fraction)
 
 	if progress_distance >= total_length:
 		_win_game()
@@ -251,6 +256,31 @@ func _unhandled_input(event: InputEvent) -> void:
 # =========================================================
 # VIENTO
 # =========================================================
+
+func _setup_meta_label():
+	var meta_layer := CanvasLayer.new()
+	meta_layer.name = "MetaLayer"
+	meta_layer.layer = 90
+	add_child(meta_layer)
+
+	meta_label = Label.new()
+	meta_label.add_theme_color_override("font_color", RC_WHITE)
+	meta_label.add_theme_font_size_override("font_size", 24)
+	meta_label.add_theme_constant_override("outline_size", 7)
+	meta_label.add_theme_color_override("font_outline_color", RC_BLUE)
+	meta_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	meta_label.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	meta_label.position = Vector2(-250, 90)
+	meta_label.custom_minimum_size = Vector2(500, 36)
+
+	meta_layer.add_child(meta_label)
+
+
+func _update_meta_label(fraction: float):
+	if not meta_label:
+		return
+	meta_label.text = "Camino recorrido hacia la cima: %d%%" % int(round(fraction * 100.0))
+
 
 func _setup_wind_template():
 	if not wind_template:
@@ -482,9 +512,39 @@ func _setup_resultado_ui():
 	vbox.add_child(resultado_boton)
 
 
+# =========================================================
+# SONIDO DE GANAR / PERDER (compartido por todos los minijuegos)
+# =========================================================
+
+const WIN_SOUND_PATH := "res://Minigames/ui_global/music/MusicaVictoria.mp3"
+const LOSE_SOUND_PATH := "res://Minigames/ui_global/music/JuegoPerdido.mp3"
+
+var resultado_sound_player: AudioStreamPlayer = null
+
+
+func _setup_resultado_sound():
+	resultado_sound_player = AudioStreamPlayer.new()
+	resultado_sound_player.name = "ResultadoSoundPlayer"
+	add_child(resultado_sound_player)
+
+
+func _play_resultado_sound(gano: bool):
+	if not resultado_sound_player:
+		return
+
+	var path: String = WIN_SOUND_PATH if gano else LOSE_SOUND_PATH
+	if not ResourceLoader.exists(path):
+		push_error("No se encontró el sonido de resultado en: " + path)
+		return
+
+	resultado_sound_player.stream = load(path)
+	resultado_sound_player.play()
+
+
 func _mostrar_resultado(gano: bool):
 	_resultado_gano = gano
 	resultado_label.text = WIN_MESSAGE if gano else LOSE_MESSAGE
+	_play_resultado_sound(gano)
 
 	var screen := get_viewport().get_visible_rect().size
 	resultado_panel.position = (screen - RESULT_PANEL_SIZE) / 2.0
@@ -711,6 +771,7 @@ func _start_game():
 	wind_active = false
 	_clear_wind_sprites()
 	_update_lives_ui()
+	_update_meta_label(0.0)
 
 	if player and curve:
 		player.position = path_node.position + curve.sample_baked(0.0)

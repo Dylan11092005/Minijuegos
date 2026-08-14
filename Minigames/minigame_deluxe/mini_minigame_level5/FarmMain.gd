@@ -67,6 +67,8 @@ var game_started: bool = false
 
 var _resultado_gano: bool = false
 
+var meta_label: Label = null
+
 # Todas las mesas de la escena (Table1..TableN).
 var all_tables: Array = []
 # Las mesas elegidas al azar para esta partida (fijas durante toda la ronda).
@@ -83,6 +85,8 @@ func _ready():
 	_collect_tables()
 	_setup_timer_ui()
 	_setup_resultado_ui()
+	_setup_resultado_sound()
+	_setup_meta_label()
 
 	call_deferred("_start_game")
 
@@ -90,6 +94,30 @@ func _ready():
 # =========================================================
 # RECOLECCIÓN DE MESAS
 # =========================================================
+
+func _setup_meta_label():
+	var meta_layer := CanvasLayer.new()
+	meta_layer.name = "MetaLayer"
+	meta_layer.layer = 90
+	add_child(meta_layer)
+
+	meta_label = Label.new()
+	meta_label.add_theme_color_override("font_color", RC_WHITE)
+	meta_label.add_theme_font_size_override("font_size", 24)
+	meta_label.add_theme_constant_override("outline_size", 7)
+	meta_label.add_theme_color_override("font_outline_color", RC_BLUE)
+	meta_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	meta_label.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	meta_label.position = Vector2(-250, 90)
+	meta_label.custom_minimum_size = Vector2(500, 36)
+
+	meta_layer.add_child(meta_label)
+
+
+func _update_meta_label():
+	if not meta_label:
+		return
+	meta_label.text = "Mesas encontradas: %d / %d" % [found_count, TABLES_TO_FIND]
 
 func _collect_tables():
 	all_tables.clear()
@@ -212,9 +240,39 @@ func _setup_resultado_ui():
 	vbox.add_child(resultado_boton)
 
 
+# =========================================================
+# SONIDO DE GANAR / PERDER (compartido por todos los minijuegos)
+# =========================================================
+
+const WIN_SOUND_PATH := "res://Minigames/ui_global/music/MusicaVictoria.mp3"
+const LOSE_SOUND_PATH := "res://Minigames/ui_global/music/JuegoPerdido.mp3"
+
+var resultado_sound_player: AudioStreamPlayer = null
+
+
+func _setup_resultado_sound():
+	resultado_sound_player = AudioStreamPlayer.new()
+	resultado_sound_player.name = "ResultadoSoundPlayer"
+	add_child(resultado_sound_player)
+
+
+func _play_resultado_sound(gano: bool):
+	if not resultado_sound_player:
+		return
+
+	var path: String = WIN_SOUND_PATH if gano else LOSE_SOUND_PATH
+	if not ResourceLoader.exists(path):
+		push_error("No se encontró el sonido de resultado en: " + path)
+		return
+
+	resultado_sound_player.stream = load(path)
+	resultado_sound_player.play()
+
+
 func _mostrar_resultado(gano: bool):
 	_resultado_gano = gano
 	resultado_label.text = WIN_MESSAGE if gano else LOSE_MESSAGE
+	_play_resultado_sound(gano)
 
 	var screen := get_viewport().get_visible_rect().size
 	resultado_panel.position = (screen - RESULT_PANEL_SIZE) / 2.0
@@ -301,6 +359,7 @@ func _start_game():
 
 	_reset_all_tables()
 	_reveal_round_tables()
+	_update_meta_label()
 	_start_global_timer()
 	_start_background_sound()
 
@@ -343,6 +402,7 @@ func _on_table_found(table: Node):
 	_play_touch_sound()
 
 	found_count += 1
+	_update_meta_label()
 	if found_count >= TABLES_TO_FIND:
 		_win_game()
 

@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://dsdbaxj6xesxn"]
 
-[ext_resource type="Script" uid="uid://7wk2j2cui3vk" path="res://ui_global/GameResult.gd" id="1_dq4m0"]
-[ext_resource type="AudioStream" uid="uid://chdy44sxabuoh" path="res://ui_global/music/MusicaVictoria.mp3" id="2_tilk3"]
-[ext_resource type="AudioStream" uid="uid://c4ynbpm8q7nw" path="res://ui_global/music/JuegoPerdido.mp3" id="3_ti5tt"]
+[ext_resource type="Script" uid="uid://7wk2j2cui3vk" path="res://Minigames/ui_global/GameResult.gd" id="1_dq4m0"]
+[ext_resource type="AudioStream" uid="uid://chdy44sxabuoh" path="res://Minigames/ui_global/music/MusicaVictoria.mp3" id="2_tilk3"]
+[ext_resource type="AudioStream" uid="uid://c4ynbpm8q7nw" path="res://Minigames/ui_global/music/JuegoPerdido.mp3" id="3_ti5tt"]
 
 [node name="GameResult" type="CanvasLayer" unique_id=2106536257]
 script = ExtResource("1_dq4m0")
